@@ -1,71 +1,7 @@
 ; RichEdit Control
 ; Unicode with Syntax Highlighting and Font Menu
-;
-define _STDCALL_SUPPORTED
-include lang/en.txt
-include windows.inc
-include richedit.inc
-include winres.inc
 
-IDR_MAINMENU        equ 100
-IDM_OPEN            equ 40001
-IDM_SAVE            equ 40002
-IDM_CLOSE           equ 40003
-IDM_SAVEAS          equ 40004
-IDM_EXIT            equ 40005
-IDM_UNDO            equ 40006
-IDM_REDO            equ 40007
-IDM_COPY            equ 40008
-IDM_CUT             equ 40009
-IDM_PASTE           equ 40010
-IDM_DELETE          equ 40011
-IDM_SELECTALL       equ 40012
-IDM_FIND            equ 40013
-IDM_FINDNEXT        equ 40014
-IDM_FINDPREV        equ 40015
-IDM_REPLACE         equ 40016
-IDM_GOTOLINE        equ 40017
-IDM_FONT            equ 40018
-IDM_COLOR           equ 40019
-IDM_STATUSBAR       equ 40020
-IDM_VIEWHELP        equ 40021
-IDM_ABOUT           equ 40022
-
-IDD_OPTIONDLG       equ 101
-IDC_BACKCOLORBOX    equ 1000
-IDC_TEXTCOLORBOX    equ 1001
-IDR_MAINACCEL       equ 105
-IDD_FINDDLG         equ 102
-IDD_GOTODLG         equ 103
-IDD_REPLACEDLG      equ 104
-IDC_FINDEDIT        equ 1000
-IDC_MATCHCASE       equ 1001
-IDC_REPLACEEDIT     equ 1001
-IDC_WHOLEWORD       equ 1002
-IDC_DOWN            equ 1003
-IDC_UP              equ 1004
-IDC_LINENO          equ 1005
-RichEditID          equ 300
-;
-; Attrib  A - Set forground color
-; Quote   Q - Set color of quoted text
-; Digit   D - Set color of numbers
-; Char    C - Set color of chars
-; Start   S - Set color from start of string
-; Word    W - Set color of words
-; Nested  N - Set color of nested strings
-;
-ST_ATTRIB   equ 1   ; attrib    <at>
-ST_QUOTE    equ 2   ; quote     <at>
-ST_NUMBER   equ 3   ; number    <at>
-ST_CHAR     equ 4   ; char      <at> <chars>
-ST_START    equ 5   ; start     <at> <string>
-ST_WORD     equ 6   ; word      <at> <words> ...
-ST_NESTED   equ 7   ; nested    <at> <string1> <string2>
-ST_COUNT    equ 7
-
-STYLESIZE   equ 0x4000
-MAX_ENTRY   equ 256
+include RichEditControl.inc
 
 .data?
 style           db STYLESIZE dup(?)
@@ -78,7 +14,7 @@ Profile         TCHAR 512 dup(?)
 hEdit           HWND ?
 hAccel          HACCEL ?
 hInstance       HINSTANCE ?
-OldWndProc      PVOID ?
+OldWndProc      LONG_PTR ?
 uFlags          dd ?
 hSearch         HANDLE ?    ; handle to the search/replace dialog box
 FileOpened      dd ?
@@ -105,196 +41,26 @@ SyntaxColors    dd RGB(0,0,0)
                 dd RGB(255,0,255)
                 dd RGB(255,255,0)
                 dd RGB(255,255,255)
-hFont           dd 0
+hFont           HANDLE 0
 AppName         TCHAR "Testpad",0
 ASMFilter       TCHAR "ASM Source code (*.asm)",0,"*.asm",0
                 TCHAR "All Files (*.*)",0,"*.*",0,0
 typech          db "aqdcswn",0
 
-_UPPER          equ 01h     ; upper case letter
-_LOWER          equ 02h     ; lower case letter
-_DIGIT          equ 04h     ; digit[0-9]
-_SPACE          equ 08h     ; tab, carriage return, newline, vertical tab or form feed
-_PUNCT          equ 10h     ; punctuation character
-_CONTROL        equ 20h     ; control character
-_LABEL          equ 40h     ; _UPPER + _LOWER + '@' + '_' + '$' + '?'
-_HEX            equ 80h     ; hexadecimal digit
-
-_ltype label byte
-        db 0
-        db _CONTROL             ; 00 (NUL)
-        db _CONTROL             ; 01 (SOH)
-        db _CONTROL             ; 02 (STX)
-        db _CONTROL             ; 03 (ETX)
-        db _CONTROL             ; 04 (EOT)
-        db _CONTROL             ; 05 (ENQ)
-        db _CONTROL             ; 06 (ACK)
-        db _CONTROL             ; 07 (BEL)
-        db _CONTROL             ; 08 (BS)
-        db _SPACE+_CONTROL      ; 09 (HT)
-        db _SPACE+_CONTROL      ; 0A (LF)
-        db _SPACE+_CONTROL      ; 0B (VT)
-        db _SPACE+_CONTROL      ; 0C (FF)
-        db _SPACE+_CONTROL      ; 0D (CR)
-        db _CONTROL             ; 0E (SI)
-        db _CONTROL             ; 0F (SO)
-        db _CONTROL             ; 10 (DLE)
-        db _CONTROL             ; 11 (DC1)
-        db _CONTROL             ; 12 (DC2)
-        db _CONTROL             ; 13 (DC3)
-        db _CONTROL             ; 14 (DC4)
-        db _CONTROL             ; 15 (NAK)
-        db _CONTROL             ; 16 (SYN)
-        db _CONTROL             ; 17 (ETB)
-        db _CONTROL             ; 18 (CAN)
-        db _CONTROL             ; 19 (EM)
-        db _CONTROL             ; 1A (SUB)
-        db _CONTROL             ; 1B (ESC)
-        db _CONTROL             ; 1C (FS)
-        db _CONTROL             ; 1D (GS)
-        db _CONTROL             ; 1E (RS)
-        db _CONTROL             ; 1F (US)
-        db _SPACE               ; 20 SPACE
-        db _PUNCT               ; 21 !
-        db _PUNCT               ; 22 ""
-        db _PUNCT               ; 23 #
-        db _PUNCT+_LABEL        ; 24 $
-        db _PUNCT               ; 25 %
-        db _PUNCT               ; 26 &
-        db _PUNCT               ; 27 '
-        db _PUNCT               ; 28 (
-        db _PUNCT               ; 29 )
-        db _PUNCT               ; 2A *
-        db _PUNCT               ; 2B +
-        db _PUNCT               ; 2C
-        db _PUNCT               ; 2D -
-        db _PUNCT               ; 2E .
-        db _PUNCT               ; 2F /
-        db _DIGIT+_HEX          ; 30 0
-        db _DIGIT+_HEX          ; 31 1
-        db _DIGIT+_HEX          ; 32 2
-        db _DIGIT+_HEX          ; 33 3
-        db _DIGIT+_HEX          ; 34 4
-        db _DIGIT+_HEX          ; 35 5
-        db _DIGIT+_HEX          ; 36 6
-        db _DIGIT+_HEX          ; 37 7
-        db _DIGIT+_HEX          ; 38 8
-        db _DIGIT+_HEX          ; 39 9
-        db _PUNCT               ; 3A :
-        db _PUNCT               ; 3B ;
-        db _PUNCT               ; 3C <
-        db _PUNCT               ; 3D =
-        db _PUNCT               ; 3E >
-        db _PUNCT+_LABEL        ; 3F ?
-        db _PUNCT+_LABEL        ; 40 @
-        db _UPPER+_LABEL+_HEX   ; 41 A
-        db _UPPER+_LABEL+_HEX   ; 42 B
-        db _UPPER+_LABEL+_HEX   ; 43 C
-        db _UPPER+_LABEL+_HEX   ; 44 D
-        db _UPPER+_LABEL+_HEX   ; 45 E
-        db _UPPER+_LABEL+_HEX   ; 46 F
-        db _UPPER+_LABEL        ; 47 G
-        db _UPPER+_LABEL        ; 48 H
-        db _UPPER+_LABEL        ; 49 I
-        db _UPPER+_LABEL        ; 4A J
-        db _UPPER+_LABEL        ; 4B K
-        db _UPPER+_LABEL        ; 4C L
-        db _UPPER+_LABEL        ; 4D M
-        db _UPPER+_LABEL        ; 4E N
-        db _UPPER+_LABEL        ; 4F O
-        db _UPPER+_LABEL        ; 50 P
-        db _UPPER+_LABEL        ; 51 Q
-        db _UPPER+_LABEL        ; 52 R
-        db _UPPER+_LABEL        ; 53 S
-        db _UPPER+_LABEL        ; 54 T
-        db _UPPER+_LABEL        ; 55 U
-        db _UPPER+_LABEL        ; 56 V
-        db _UPPER+_LABEL        ; 57 W
-        db _UPPER+_LABEL        ; 58 X
-        db _UPPER+_LABEL        ; 59 Y
-        db _UPPER+_LABEL        ; 5A Z
-        db _PUNCT               ; 5B [
-        db _PUNCT               ; 5C \
-        db _PUNCT               ; 5D ]
-        db _PUNCT               ; 5E ^
-        db _PUNCT+_LABEL        ; 5F _
-        db _PUNCT               ; 60 `
-        db _LOWER+_LABEL+_HEX   ; 61 a
-        db _LOWER+_LABEL+_HEX   ; 62 b
-        db _LOWER+_LABEL+_HEX   ; 63 c
-        db _LOWER+_LABEL+_HEX   ; 64 d
-        db _LOWER+_LABEL+_HEX   ; 65 e
-        db _LOWER+_LABEL+_HEX   ; 66 f
-        db _LOWER+_LABEL        ; 67 g
-        db _LOWER+_LABEL        ; 68 h
-        db _LOWER+_LABEL        ; 69 i
-        db _LOWER+_LABEL        ; 6A j
-        db _LOWER+_LABEL        ; 6B k
-        db _LOWER+_LABEL        ; 6C l
-        db _LOWER+_LABEL        ; 6D m
-        db _LOWER+_LABEL        ; 6E n
-        db _LOWER+_LABEL        ; 6F o
-        db _LOWER+_LABEL        ; 70 p
-        db _LOWER+_LABEL        ; 71 q
-        db _LOWER+_LABEL        ; 72 r
-        db _LOWER+_LABEL        ; 73 s
-        db _LOWER+_LABEL        ; 74 t
-        db _LOWER+_LABEL        ; 75 u
-        db _LOWER+_LABEL        ; 76 v
-        db _LOWER+_LABEL        ; 77 w
-        db _LOWER+_LABEL        ; 78 x
-        db _LOWER+_LABEL        ; 79 y
-        db _LOWER+_LABEL        ; 7A z
-        db _PUNCT               ; 7B {
-        db _PUNCT               ; 7C |
-        db _PUNCT               ; 7D }
-        db _PUNCT               ; 7E ~
-        db _CONTROL             ; 7F (DEL)
-
-        ; and the rest are 0...
-
-        db 129 dup(0);257 - ($ - _ltype) dup(0)
-
 .code
 
-TOUPPER MACRO p
-        movzx eax,byte ptr p
-        sub al,'a'
-        cmp al,'z'-'a'+1
-        sbb dl,dl
-        and dl,'a'-'A'
-        sub al,dl
-        add al,'a'
-        ENDM
-
-TOLOWER MACRO p
-        movzx eax,byte ptr p
-        sub al,'A'
-        cmp al,'Z'-'A'+1
-        sbb dl,dl
-        and dl,'a'-'A'
-        add al,dl
-        add al,'A'
-        ENDM
-
-;
 ; Read style
-;
-GetEntry proc file, section, entry, buffer
 
+GetEntry proc file:LPTSTR, section:LPTSTR, entry:LPTSTR, buffer:LPTSTR
     .if GetPrivateProfileString(section, entry, 0, buffer, MAX_ENTRY, file)
-
-        mov ecx,eax
-        mov eax,buffer
+        mov rcx,rax
+        mov rax,buffer
     .endif
     ret
+    endp
 
-GetEntry endp
-
-GetEntryID proc file, section, ID, buffer
-
+GetEntryID proc file:LPTSTR, section:LPTSTR, ID:SINT, buffer:LPTSTR
   local entry[2]
-
     xor edx,edx
     mov eax,ID ; 0..99
     .while  al > 9
@@ -312,42 +78,41 @@ GetEntryID proc file, section, ID, buffer
     mov entry[4],0
     GetEntry(file, section, &entry, buffer)
     ret
+    endp
 
-GetEntryID endp
-
-ReadLabel PROC USES esi edi ebx file, section, buffer, endbuf
+ReadLabel PROC USES rsi rdi rbx file:LPTSTR, section:LPTSTR, buffer:LPTSTR, endbuf:LPTSTR
 
   local entry[MAX_ENTRY]:byte
-  local st_type,i,p,q
+  local st_type,i,p:LPTSTR,q:LPTSTR
 
-    .return .if !GetEntryID( file, section, 0, &entry )
+    .return .if !GetEntryID( ldr(file), ldr(section), 0, &entry )
 
-    mov p,eax
-    mov al,[eax]
+    mov p,rax
+    mov al,[rax]
     or  al,0x20
-    lea edi,typech
+    lea rdx,typech
     mov ecx,sizeof(typech)
+    mov rdi,rdx
     repnz scasb
-
     .return .ifnz
 
-    mov eax,edi
-    sub eax,offset typech
+    mov rax,rdi
+    sub rax,rdx
     mov st_type,eax
 
-    mov edi,buffer
-    mov edi,[edi]
+    mov rdi,buffer
+    mov rdi,[rdi]
 
-    .return .if edi >= endbuf
+    .return .if rdi >= endbuf
 
     stosb           ; store type
-    mov esi,p
+    mov rsi,p
     xor eax,eax
     mov i,eax
 
     .repeat
-        add esi,TCHAR
-        mov al,[esi]
+        add rsi,TCHAR
+        mov al,[rsi]
     .until (al == 9 || al == ' ' || al == '_')
 
     .repeat
@@ -355,8 +120,8 @@ ReadLabel PROC USES esi edi ebx file, section, buffer, endbuf
         lodsw
         .switch
         .case al == ' '
-            mov eax,esi
-            .endc
+            mov rax,rsi
+           .endc
         .case al
             .continue
         .default
@@ -364,238 +129,210 @@ ReadLabel PROC USES esi edi ebx file, section, buffer, endbuf
             .break .if !GetEntryID( file, section, 1, &entry)
         .endsw
 
-        mov esi,eax
-        add eax,2
-        mov p,eax
-        mov al,[esi]
+        mov rsi,rax
+        add rax,2
+        mov p,rax
+        mov al,[rsi]
         sub al,'0'
         .if al > 9
             sub al,7
         .endif
         stosb ; store attrib
 
-        mov esi,p
-        .while TCHAR PTR [esi] == ' '
-            add esi,TCHAR
+        mov rsi,p
+        .while TCHAR PTR [rsi] == ' '
+            add rsi,TCHAR
         .endw
-
         .while 1
-
             .while 1
-
                 lodsw
                 .break .if !ax
-                .break .if edi >= endbuf
+                .break .if rdi >= endbuf
                 cmp  al,' '
                 sete dl
                 dec  dl
                 and  al,dl
                 stosb
             .endw
-
             .break .if al
             stosb
             inc i
             .break .if i == 100
             .break .if !GetEntryID( file, section, i, &entry)
-
-            mov esi,eax
+            mov rsi,rax
         .endw
     .until 1
 
     xor eax,eax
-    .if [edi-1] != al
+    .if [rdi-1] != al
         stosb
     .endif
     stosb
-    mov ecx,buffer
-    mov [ecx],edi
+    mov rcx,buffer
+    mov [rcx],rdi
     inc eax
     ret
+    endp
 
-ReadLabel endp
-
-ReadStyle proc uses esi edi file:ptr
+ReadStyle proc uses rsi rdi file:ptr
 
   local buffer:ptr
   local endbuf:ptr
   local entry[MAX_ENTRY]:byte
 
-    lea eax,style
-    mov buffer,eax
-    mov edi,eax
-    add eax,STYLESIZE-4
-    mov endbuf,eax
+    lea rax,style
+    mov buffer,rax
+    mov rdi,rax
+    add rax,STYLESIZE-4
+    mov endbuf,rax
     xor eax,eax
     mov ecx,STYLESIZE/4
     rep stosd
     xor esi,esi
-    lea edi,entry
+    lea rdi,entry
 
-    .while GetEntryID(file, "Style", esi, edi)
-
-        ReadLabel(file, edi, &buffer, endbuf)
+    .while GetEntryID(file, "Style", esi, rdi)
+        ReadLabel(file, rdi, &buffer, endbuf)
         inc esi
     .endw
-
-    mov edi,buffer
+    mov rdi,buffer
     xor eax,eax
     stosw
     inc eax
     ret
+    endp
 
-ReadStyle endp
 
-;
 ; Read Config
-;
+
 lxtol proc string:LPSTR
-
-    .for ( edx = string, eax = 0, ecx = 0 :: cl -= 0x10, eax <<= 4, eax += ecx )
-
-        mov cl,[edx]
-        add edx,2
+    .for ( rdx = ldr(string), eax = 0, ecx = 0 :: cl -= 0x10, eax <<= 4, eax += ecx )
+        mov cl,[rdx]
+        add rdx,2
         and cl,0xDF
-
         .break .if cl < 0x10
         .break .if cl > 'F'
-
         .if cl > 0x19
             .break .if cl < 'A'
             sub cl,'A' - 0x1A
         .endif
     .endf
     ret
+    endp
 
-lxtol endp
 
 latol proc string:LPSTR
-
-    mov edx,string
-    movzx ecx,byte ptr [edx]
+    mov rdx,string
+    movzx ecx,byte ptr [rdx]
     xor eax,eax
     .while 1
         sub ecx,'0'
         .break .ifc
         .break .if ecx > 9
-        lea ecx,[eax*8+ecx]
-        lea eax,[eax*2+ecx]
-        add edx,2
-        movzx ecx,byte ptr [edx]
+        lea rcx,[rax*8+rcx]
+        lea rax,[rax*2+rcx]
+        add rdx,2
+        movzx ecx,byte ptr [rdx]
     .endw
     ret
+    endp
 
-latol endp
 
-ReadConfig proc uses esi edi file:ptr
+ReadConfig proc uses rsi rdi file:LPTSTR
 
-  local entry[MAX_ENTRY]:byte
+  local entry[MAX_ENTRY]:char_t
 
-    lea edi,entry
-    .if GetEntry(file, "Colors", "Text", edi)
-
-        mov TextColor,lxtol(edi)
-
-        .if GetEntry(file, "Colors", "Back", edi)
-
-            mov BackColor,lxtol(edi)
+    lea rdi,entry
+    .if GetEntry(file, "Colors", "Text", rdi)
+        mov TextColor,lxtol(rdi)
+        .if GetEntry(file, "Colors", "Back", rdi)
+            mov BackColor,lxtol(rdi)
         .endif
-
         xor esi,esi
-        .while GetEntryID(file, "Colors", esi, edi)
-
-            mov SyntaxColors[esi*4],lxtol(edi)
+        .while GetEntryID(file, "Colors", esi, rdi)
+            lxtol(rdi)
+            lea rcx,SyntaxColors
+            mov [rcx+rsi*4],eax
             inc esi
         .endw
     .endif
-
     mov AppFont.lfHeight,24
     mov AppFont.lfWeight,FW_NORMAL
     mov AppFont.lfCharSet,DEFAULT_CHARSET
-
     lstrcpy(&AppFont.lfFaceName, "Courier New")
-
-    .if GetEntry(file, "Font", "Face", edi)
-
-        lstrcpy(&AppFont.lfFaceName, edi)
+    .if GetEntry(file, "Font", "Face", rdi)
+        lstrcpy(&AppFont.lfFaceName, rdi)
     .endif
-
-    .if GetEntry(file, "Font", "Height", edi)
-        latol(edi)
+    .if GetEntry(file, "Font", "Height", rdi)
+        latol(rdi)
         shl eax,1
         mov AppFont.lfHeight,eax
     .endif
     ret
+    endp
 
-ReadConfig endp
 
-SetColor proc
+SetColor proc uses rbx
 
   local cfm:CHARFORMAT2
 
-    SendMessage(hEdit, EM_GETMODIFY, 0, 0)
-    push eax
-    mov edx,edi
-    lea edi,cfm
+    mov rbx,SendMessage(hEdit, EM_GETMODIFY, 0, 0)
+    mov rdx,rdi
+    lea rdi,cfm
     mov ecx,sizeof(cfm)
     xor eax,eax
     rep stosb
-    mov edi,edx
+    mov rdi,rdx
     mov cfm.cbSize,sizeof(cfm)
     mov eax,TextColor
     mov cfm.crTextColor,eax
     mov cfm.dwMask,CFM_COLOR; or CFM_BACKCOLOR
     SendMessage(hEdit, EM_SETCHARFORMAT, SCF_ALL, &cfm)
     SendMessage(hEdit, EM_SETBKGNDCOLOR, 0, BackColor)
-    pop eax
-    SendMessage(hEdit, EM_SETMODIFY, eax, 0)
+    SendMessage(hEdit, EM_SETMODIFY, rbx, 0)
     ret
+    endp
 
-SetColor endp
-
-DLGSelectFont proc uses edi hWnd:HWND
+DLGSelectFont proc uses rdi hWnd:HWND
 
   local cfm:CHARFORMAT
   local Font:CHOOSEFONT
 
-    lea edi,Font
+    lea rdi,Font
     xor eax,eax
     mov ecx,sizeof(CHOOSEFONT)
     rep stosb
-
     mov Font.lStructSize,sizeof(CHOOSEFONT)
-    mov eax,hWnd
-    mov Font.hwndOwner,eax
-    lea eax,AppFont
-    mov Font.lpLogFont,eax
-    mov eax,TextColor
-    mov Font.rgbColors,eax
+    mov Font.hwndOwner,hWnd
+    mov Font.lpLogFont,&AppFont
+    mov Font.rgbColors,TextColor
     mov Font.Flags,CF_SCREENFONTS or CF_NOVERTFONTS or CF_INITTOLOGFONTSTRUCT
-
     .if ChooseFont(&Font)
-
-        mov edi,hFont
+        mov rdi,hFont
         mov hFont,CreateFontIndirect(&AppFont)
-        SendMessage(hEdit, WM_SETFONT, eax, 1)
-        .if edi
-            DeleteObject(edi)
+        SendMessage(hEdit, WM_SETFONT, rax, 1)
+        .if rdi
+            DeleteObject(rdi)
         .endif
         SetColor()
     .endif
     ret
+    endp
 
-DLGSelectFont endp
-
-SetStyle PROC USES esi edi ebx hWnd:HWND
-
-  local endbuf, string
-  local ctype:byte, attrib:byte
-  local hdc:HDC
-  local firstchar
-  local rect:RECT
-  local txtrange:TEXTRANGE
-  local hRgn,hOldRgn
-  local buffer,bufsize
+ifdef _WIN64
+SetStyle PROC USES rsi rdi rbx r15 hWnd:HWND
+    lea r15,_ltype
+else
+SetStyle PROC USES rsi rdi rbx hWnd:HWND
+endif
+   .new endbuf:LPTSTR, string:LPTSTR
+   .new ctype:byte, attrib:byte
+   .new hdc:HDC
+   .new firstchar:DWORD, bufsize
+   .new rect:RECT
+   .new txtrange:TEXTRANGE
+   .new hRgn:HANDLE,hOldRgn:HANDLE
+   .new buffer:LPTSTR
 
     mov hdc,GetDC(hWnd)
     SetBkMode(hdc, TRANSPARENT)
@@ -611,150 +348,128 @@ SetStyle PROC USES esi edi ebx hWnd:HWND
     mov hOldRgn,SelectObject(hdc, hRgn)
     SelectObject(hdc, hFont)
 
-    ;
     ; Get the visible text into buffer
-    ;
-    lea eax,TextBuffer
-    mov buffer,eax
-    mov txtrange.lpstrText,eax
+
+    lea rax,TextBuffer
+    mov buffer,rax
+    mov txtrange.lpstrText,rax
 
     .repeat
 
         .break .if !SendMessage(hWnd, EM_GETTEXTRANGE, 0, &txtrange)
 
         mov bufsize,eax
-        mov ecx,buffer
-        add ecx,eax
-        add ecx,eax
-        mov endbuf,ecx
-        lea esi,style
+        mov rcx,buffer
+        add rcx,rax
+        add rcx,rax
+        mov endbuf,rcx
+        lea rsi,style
 
         .while 1
 
-            movzx eax,BYTE PTR [esi]
-            movzx ebx,BYTE PTR [esi+1]
-            add   esi,2
-            mov   ctype,al
-            mov   attrib,bl
+            movzx eax,BYTE PTR [rsi]
+            movzx ebx,BYTE PTR [rsi+1]
+            add rsi,2
+            mov ctype,al
+            mov attrib,bl
 
             .break .if !eax
             .break .if eax > ST_COUNT
 
-            mov string,esi
-            mov edx,endbuf
-            .break .if edx <= buffer
+            mov string,rsi
+            mov rdx,endbuf
+            .break .if rdx <= buffer
 
+            lea rcx,SyntaxColors
             .switch al
-              .case ST_ATTRIB
-                ;
-                ; 1. A Attrib <at>
-                ;
-                mov eax,SyntaxColors[ebx*4]
+            .case ST_ATTRIB ; 1. A Attrib <at>
+                mov eax,[rcx+rbx*4]
                 .if eax != TextColor
                     mov TextColor,eax
                     SetColor()
                 .endif
                 .endc
-
-              .case ST_QUOTE
-                ;
-                ; 2. Q Quote - match on '"' and "'"
-                ;
-                mov eax,SyntaxColors[ebx*4]
-                SetTextColor(hdc, eax)
-                .for ebx=0,esi=0,edi=buffer: edi < endbuf: edi+=TCHAR
-
-                    mov ax,[edi]
-                    .if ax == '"' || ax == "'"
+            .case ST_QUOTE; 2. Q Quote - match on '"' and "'"
+                SetTextColor(hdc, [rcx+rbx*4])
+                .for ebx=0,esi=0,rdi=buffer: rdi < endbuf: rdi+=TCHAR
+                    movzx eax,TCHAR ptr [rdi]
+                    .if ( eax == '"' || eax == "'" )
                         .if !ebx
-                            .if ax == '"'
-                                mov bx,ax
-                            .else
-                                .if edi > buffer
-                                    movzx ecx,byte ptr [edi-2]
-                                    .if !(_ltype[ecx+1] & _LABEL)
-                                        mov bx,ax
-                                    .endif
+                            .if ( eax == '"' )
+                                mov ebx,eax
+                            .elseif rdi > buffer
+                                .if !islabel0([rdi-2])
+                                    mov ebx,"'"
                                 .endif
                             .endif
-                            mov edx,edi
+                            mov rdx,rdi
                         .elseif bx == ax
                             xor ebx,ebx
-                            mov esi,edx
+                            mov rsi,rdx
                         .endif
                     .endif
-                    .if esi
-                        mov eax,esi
-                        sub eax,buffer
+                    .if rsi
+                        mov rax,rsi
+                        sub rax,buffer
                         shr eax,1
                         add eax,firstchar
                         SendMessage(hWnd, EM_POSFROMCHAR, &rect, eax)
-                        add edi,2
-                        mov ecx,edi
-                        sub ecx,esi
+                        add rdi,2
+                        mov rcx,rdi
+                        sub rcx,rsi
                         shr ecx,1
-                        DrawText(hdc, esi, ecx, &rect, DT_NOPREFIX)
-                        mov ecx,edi
-                        sub ecx,esi
-                        mov edi,esi
+                        DrawText(hdc, rsi, ecx, &rect, DT_EDITCONTROL or DT_NOPREFIX)
+                        mov rcx,rdi
+                        sub rcx,rsi
+                        mov rdi,rsi
                         xor eax,eax
                         rep stosb
                         xor esi,esi
                     .endif
                 .endf
                 .endc
-
-              .case ST_NUMBER
-                ;
-                ; 3. D Digit - match on 0x 0123456789ABCDEF and Xh
-                ;
-                mov eax,SyntaxColors[ebx*4]
-                SetTextColor(hdc, eax)
-
-                .for ebx=0,esi=0,edi=buffer: edi < endbuf: edi+=TCHAR
-
-                    movzx eax,word ptr [edi]
+              .case ST_NUMBER ; 3. D Digit - match on 0x 0123456789ABCDEF and Xh
+                SetTextColor(hdc, [rcx+rbx*4])
+                .for ebx=0,esi=0,rdi=buffer: rdi < endbuf: rdi+=TCHAR
+                    movzx eax,TCHAR ptr [rdi]
                     .switch
-                      .case ah
-                      .case !eax
-                      .case _ltype[eax+1] & _CONTROL or _SPACE or _PUNCT
-                        .endc .if !ebx
-                        mov esi,edi
+                    .case ah
+                    .case !eax
+                    .case _isltypeA(eax, _CONTROL or _SPACE or _PUNCT)
+                        .endc .if !rbx
+                        mov rsi,rdi
                         .endc
-                      .case _ltype[eax+1] & _DIGIT
-                        .endc .if ebx
-                        .if edi > buffer
-                            mov al,[edi-2]
-                            .endc .if _ltype[eax+1] & _LABEL
+                    .case _isldigitA(eax)
+                        .endc .if rbx
+                        .if rdi > buffer
+                            .endc .if islabel([rdi-2])
                         .endif
-                        mov ebx,edi
+                        mov rbx,rdi
                         .endc
-                      .case 'x'
-                      .case 'X'
-                      .case 'h'
-                      .case 'H'
-                      .case _ltype[eax+1] & _HEX
+                    .case eax == 'x'
+                    .case eax == 'X'
+                    .case eax == 'h'
+                    .case eax == 'H'
+                    .case _islxdigitA(eax)
                         .endc
-                      .default
-                        .endc .if !ebx
-                        mov esi,edi
+                    .default
+                        .endc .if !rbx
+                        mov rsi,rdi
                         .endc
                     .endsw
-
-                    .if esi
-                        mov eax,ebx
-                        sub eax,buffer
+                    .if rsi
+                        mov rax,rbx
+                        sub rax,buffer
                         shr eax,1
                         add eax,firstchar
                         SendMessage(hWnd, EM_POSFROMCHAR, &rect, eax)
-
-                        mov ecx,edi
-                        sub ecx,ebx
+                        mov rcx,rdi
+                        sub rcx,rbx
                         shr ecx,1
-                        DrawText(hdc, ebx, ecx, &rect, DT_NOPREFIX)
-                        mov ecx,edi
-                        sub ecx,ebx
-                        mov edi,ebx
+                        DrawText(hdc, rbx, ecx, &rect, DT_EDITCONTROL or DT_NOPREFIX)
+                        mov rcx,rdi
+                        sub rcx,rbx
+                        mov rdi,rbx
                         xor eax,eax
                         rep stosb
                         xor esi,esi
@@ -762,104 +477,89 @@ SetStyle PROC USES esi edi ebx hWnd:HWND
                     .endif
                 .endf
                 .endc
-
-              .case ST_CHAR
-                ;
-                ; 4. C Char <at> <chars>
-                ;
-                mov eax,SyntaxColors[ebx*4]
+            .case ST_CHAR ; 4. C Char <at> <chars>
+                mov eax,[rcx+rbx*4]
                 SetTextColor(hdc, eax)
-                .for edi=buffer: edi < endbuf: edi+=TCHAR
-                    mov ax,[edi]
+                .for rdi=buffer: rdi < endbuf: rdi+=TCHAR
+                    mov ax,[rdi]
                     .if ax && !ah
-                        mov ebx,esi
-                        .while byte ptr [ebx]
-                            .if al == [ebx]
-                                mov eax,edi
-                                sub eax,buffer
+                        mov rbx,rsi
+                        .while byte ptr [rbx]
+                            .if al == [rbx]
+                                mov rax,rdi
+                                sub rax,buffer
                                 shr eax,1
                                 add eax,firstchar
                                 SendMessage(hWnd, EM_POSFROMCHAR, &rect, eax)
-                                DrawText(hdc, edi, 1, &rect, DT_NOPREFIX)
+                                DrawText(hdc, rdi, 1, &rect, DT_EDITCONTROL or DT_NOPREFIX)
                                 .break
                             .endif
-                            inc ebx
+                            inc rbx
                         .endw
                     .endif
                 .endf
                 .endc
-
-              .case ST_START
-                ;
-                ; 5. S Start - X string
-                ;    set color X from string to end of line
-                ;
-                mov eax,SyntaxColors[ebx*4]
-                SetTextColor(hdc, eax)
-
-                .while byte ptr [esi]
-
-                    mov edi,buffer
-                    .while edi < endbuf
-
-                        TOLOWER [esi]
-                        mov ecx,endbuf
-                        sub ecx,edi
+            .case ST_START  ; 5. S Start - X string
+                            ;    set color X from string to end of line
+                SetTextColor(hdc, [rcx+rbx*4])
+                .while byte ptr [rsi]
+                    mov rdi,buffer
+                    .while rdi < endbuf
+                        _ltolowerA([rsi])
+                        mov rcx,endbuf
+                        sub rcx,rdi
                         shr ecx,1
                         .break .ifz
-                        mov ebx,edi
+                        mov rbx,rdi
                         mov edx,ecx
                         repne scasw
                         .ifnz
                             mov ecx,edx
-                            mov edi,ebx
-                            TOUPPER [esi]
+                            mov rdi,rbx
+                            _ltoupperA([rsi])
                             repne scasw
                         .endif
                         .break .ifnz
-
-                        mov edx,esi
-                        lea ecx,[edi-2]
-                        .if ecx > buffer
-                            movzx eax,BYTE PTR [ecx-2]
-                            .continue .if _ltype[eax+1] & _LABEL or _DIGIT
+                        lea rcx,[rdi-2]
+                        .if rcx > buffer
+                            .continue .if islabel([rcx-2])
                         .endif
-                        mov ebx,ecx
+                        mov rdx,rsi
+                        mov rbx,rcx
                         .repeat
-                            add edx,1
-                            add ecx,2
-                            mov al,[edx]
+                            add rdx,1
+                            add rcx,2
+                            mov al,[rdx]
                             .break .if !al
-                            .continue(0) .if al == [ecx]
-                            mov ah,[ecx]
+                            .continue(0) .if al == [rcx]
+                            mov ah,[rcx]
                             or  eax,0x2020
                             .continue(0) .if al == ah
                         .until 1
                         .continue .if al
-                        .if byte ptr [esi+1]
-                            movzx eax,BYTE PTR [ecx]
-                            .continue .if _ltype[eax+1] & _LABEL or _DIGIT
+                        .if byte ptr [rsi+1]
+                            .continue .if islabel([rcx])
                         .endif
 
-                        .while edi < endbuf
-                            mov ax,[edi]
+                        .while rdi < endbuf
+                            mov ax,[rdi]
                             .break .if !ax
                             .break .if ax == 0x0D
                             .break .if ax == 0x0A
-                            add edi,2
+                            add rdi,2
                         .endw
-                        mov eax,ebx
-                        sub eax,buffer
+                        mov rax,rbx
+                        sub rax,buffer
                         shr eax,1
                         add eax,firstchar
                         SendMessage(hWnd, EM_POSFROMCHAR, &rect, eax)
-                        mov ecx,edi
-                        sub ecx,ebx
+                        mov rcx,rdi
+                        sub rcx,rbx
                         shr ecx,1
-                        DrawText(hdc, ebx, ecx, &rect, DT_NOPREFIX)
-                        mov ecx,edi
-                        sub ecx,ebx
-                        mov edi,ebx
+                        DrawText(hdc, rbx, ecx, &rect, DT_EDITCONTROL or DT_NOPREFIX)
+                        mov rcx,rdi
+                        sub rcx,rbx
+                        mov rdi,rbx
                         xor eax,eax
                         rep stosb
                     .endw
@@ -868,61 +568,53 @@ SetStyle PROC USES esi edi ebx hWnd:HWND
                     .until !al
                 .endw
                 .endc
-
-              .case ST_WORD
-                ;
-                ; 6. W Word - match on all equal words
-                ;
-                mov eax,SyntaxColors[ebx*4]
-                SetTextColor(hdc, eax)
-
-                .while byte ptr [esi]
-                    mov edi,buffer
-                    .while edi < endbuf
-                        TOLOWER [esi]
-                        mov ecx,endbuf
-                        sub ecx,edi
+            .case ST_WORD   ; 6. W Word - match on all equal words
+                SetTextColor(hdc, [rcx+rbx*4])
+                .while byte ptr [rsi]
+                    mov rdi,buffer
+                    .while rdi < endbuf
+                        _ltolowerA([rsi])
+                        mov rcx,endbuf
+                        sub rcx,rdi
                         shr ecx,1
                         .break .ifz
-                        mov ebx,edi
+                        mov rbx,rdi
                         mov edx,ecx
                         repne scasw
                         .ifnz
                             mov ecx,edx
-                            mov edi,ebx
-                            TOUPPER [esi]
+                            mov rdi,rbx
+                            _ltoupperA([rsi])
                             repne scasw
                         .endif
                         .break .ifnz
-                        mov edx,esi
-                        lea ecx,[edi-2]
-                        .if ecx > buffer
-                            movzx eax,BYTE PTR [ecx-2]
-                            .continue .if _ltype[eax+1] & _LABEL or _DIGIT
+                        lea rcx,[rdi-2]
+                        .if rcx > buffer
+                            .continue .if islabel([rcx-2])
                         .endif
-                        mov ebx,ecx
+                        mov rdx,rsi
+                        mov rbx,rcx
                         .repeat
-                            add edx,1
-                            add ecx,2
-                            mov al,[edx]
+                            add rdx,1
+                            add rcx,2
+                            mov al,[rdx]
                             .break .if !al
-                            .continue(0) .if al == [ecx]
-                            mov ah,[ecx]
+                            .continue(0) .if al == [rcx]
+                            mov ah,[rcx]
                             or  eax,0x2020
                             .continue(0) .if al == ah
                         .until 1
                         .continue .if al
-                        movzx eax,BYTE PTR [ecx]
-                        .continue .if _ltype[eax+1] & _LABEL or _DIGIT
-                        mov edi,ebx
-                        mov ebx,edx
-                        sub ebx,esi
-                        mov eax,edi
-                        sub eax,buffer
+                        .continue .if islabel([rcx])
+                        mov rdi,rbx
+                        mov rbx,rdx
+                        sub rbx,rsi
+                        mov rax,rdi
+                        sub rax,buffer
                         shr eax,1
                         add eax,firstchar
                         SendMessage(hWnd, EM_POSFROMCHAR, &rect, eax)
-                        DrawText(hdc, edi, ebx, &rect, DT_NOPREFIX)
+                        DrawText(hdc, rdi, ebx, &rect, DT_EDITCONTROL or DT_NOPREFIX)
                         mov ecx,ebx
                         xor eax,eax
                         rep stosw
@@ -941,7 +633,7 @@ SetStyle PROC USES esi edi ebx hWnd:HWND
 
             .endsw
 
-            mov esi,string
+            mov rsi,string
             .repeat
                 lodsb
                 .continue .if al
@@ -949,46 +641,42 @@ SetStyle PROC USES esi edi ebx hWnd:HWND
             .until !al
         .endw
     .until 1
-
     SelectObject(hdc, hOldRgn)
     DeleteObject(hRgn)
     ReleaseDC(hWnd, hdc)
     ret
+    endp
 
-SetStyle endp
 
-InitProfile proc uses esi edi ebx
-
-    lea edi,Profile
-    GetModuleFileName(hInstance, edi, sizeof(Profile))
-    lea edi,[edi+eax*TCHAR-3*TCHAR]
-    lstrcpy(edi, "ini")
+InitProfile proc uses rsi rdi rbx
+    lea rdi,Profile
+    GetModuleFileName(hInstance, rdi, sizeof(Profile))
+    lea rdi,[rdi+rax*TCHAR-3*TCHAR]
+    lstrcpy(rdi, "ini")
     ret
+    endp
 
-InitProfile endp
 
-RichEditProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
-
+RichEditProc proc uses rbx hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
     .switch uMsg
     .case WM_PAINT
+        mov ebx,CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
         HideCaret(hWnd)
-        CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
-        push eax
         SetStyle(hWnd)
         ShowCaret(hWnd)
-        pop eax
-        .endc
+        mov eax,ebx
+       .endc
     .case WM_CLOSE
-        SetWindowLong(hWnd, GWL_WNDPROC, OldWndProc)
-        .endc
+        SetWindowLongPtr(hWnd, GWLP_WNDPROC, OldWndProc)
+       .endc
     .default
         CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
     .endsw
     ret
+    endp
 
-RichEditProc endp
 
-PrepareEditMenu proc hSubMenu:DWORD
+PrepareEditMenu proc hSubMenu:HANDLE
 
   local chrg:CHARRANGE
     ;
@@ -1032,30 +720,26 @@ PrepareEditMenu proc hSubMenu:DWORD
         EnableMenuItem(hSubMenu, IDM_DELETE, MF_ENABLED)
     .endif
     ret
+    endp
 
-PrepareEditMenu endp
 
 StreamInProc proc hFile:HANDLE, pBuffer:LPSTR, NumBytes:UINT, pBytesRead:LPDWORD
-
     ReadFile(hFile, pBuffer, NumBytes, pBytesRead, 0)
     xor eax,1
     ret
+    endp
 
-StreamInProc endp
 
 StreamOutProc proc hFile:HANDLE, pBuffer:LPSTR, NumBytes:UINT, pBytesWritten:LPDWORD
-
     WriteFile(hFile, pBuffer, NumBytes, pBytesWritten, 0)
     xor eax,1
     ret
+    endp
 
-StreamOutProc endp
 
-CheckModifyState proc uses esi hWnd:HWND
-
+CheckModifyState proc uses rsi hWnd:HWND
     mov esi,1
     .if SendMessage(hEdit, EM_GETMODIFY, 0, 0)
-
         .if MessageBox(hWnd,
                 "The data in the control is modified. Want to save it?",
                 &AppName, MB_YESNOCANCEL) == IDYES
@@ -1066,67 +750,49 @@ CheckModifyState proc uses esi hWnd:HWND
     .endif
     mov eax,esi
     ret
+    endp
 
-CheckModifyState endp
 
 OptionProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
   local clr:CHOOSECOLOR
 
-    mov eax,uMsg
+    ldr eax,uMsg
     .switch eax
-
     .case WM_INITDIALOG
         mov eax,TRUE
-        .endc
-
+       .endc
     .case WM_COMMAND
-
-        mov eax,wParam
+        mov rax,ldr(wParam)
         shr eax,16
-
         .if ax == BN_CLICKED
-
-            mov eax,wParam
-
+            mov rax,ldr(wParam)
             .if ax == IDCANCEL
-
                 SendMessage(hWnd, WM_CLOSE, 0, 0)
-
             .elseif ax == IDC_BACKCOLORBOX
-
                 RtlZeroMemory(&clr, sizeof(clr))
-
                 mov clr.lStructSize,sizeof(clr)
                 mov clr.hwndOwner,hWnd
                 mov clr.hInstance,hInstance
                 mov clr.rgbResult,BackColor
-                mov clr.lpCustColors,offset SyntaxColors
+                mov clr.lpCustColors,&SyntaxColors
                 mov clr.Flags,CC_ANYCOLOR or CC_RGBINIT
-
                 .if ChooseColor(&clr)
-
                     mov BackColor,clr.rgbResult
                     InvalidateRect(GetDlgItem(hWnd, IDC_BACKCOLORBOX), 0, TRUE)
                 .endif
-
             .elseif ax==IDC_TEXTCOLORBOX
-
                 RtlZeroMemory(&clr, sizeof(clr))
-
                 mov clr.lStructSize,sizeof(clr)
                 mov clr.hwndOwner,hWnd
                 mov clr.hInstance,hInstance
                 mov clr.rgbResult,TextColor
-                mov clr.lpCustColors,offset SyntaxColors
+                mov clr.lpCustColors,&SyntaxColors
                 mov clr.Flags,CC_ANYCOLOR or CC_RGBINIT
-
                 .if ChooseColor(&clr)
-
                     mov TextColor,clr.rgbResult
                     InvalidateRect(GetDlgItem(hWnd, IDC_TEXTCOLORBOX), 0, TRUE)
                 .endif
-
             .elseif ax==IDOK
                 ;
                 ; Save the modify state of the richedit control because changing
@@ -1141,8 +807,7 @@ OptionProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
             .endif
         .endif
         mov eax,TRUE
-        .endc
-
+       .endc
     .case WM_CTLCOLORSTATIC
         .if GetDlgItem(hWnd, IDC_BACKCOLORBOX) == lParam
             CreateSolidBrush(BackColor)
@@ -1152,27 +817,23 @@ OptionProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
             mov eax,FALSE
         .endif
         .endc
-
     .case WM_CLOSE
         EndDialog(hWnd, 0)
         mov eax,TRUE
-        .endc
-
+       .endc
     .default
         mov eax,FALSE
-        .endc
+       .endc
     .endsw
     ret
+    endp
 
-OptionProc endp
 
 SearchProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
-    mov eax,uMsg
+    ldr eax,uMsg
     .switch eax
-
     .case WM_INITDIALOG
-
         mov hSearch,hWnd
         ;
         ; Select the default search down option
@@ -1180,21 +841,16 @@ SearchProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
         CheckRadioButton(hWnd, IDC_DOWN, IDC_UP, IDC_DOWN)
         SendDlgItemMessage(hWnd, IDC_FINDEDIT, WM_SETTEXT, 0, &FindBuffer)
         mov eax,TRUE
-        .endc
-
+       .endc
       .case WM_COMMAND
-
-        mov eax,wParam
+        mov rax,ldr(wParam)
         shr eax,16
-
         .if ax==BN_CLICKED
-            mov eax,wParam
+            mov rax,ldr(wParam)
             .if ax == IDOK
                 mov uFlags,0
                 SendMessage(hEdit, EM_EXGETSEL, 0, &findtext.chrg)
-
                 .if GetDlgItemText(hWnd, IDC_FINDEDIT, &FindBuffer, sizeof(FindBuffer))
-
                     .if IsDlgButtonChecked(hWnd, IDC_DOWN) == BST_CHECKED
                         or uFlags,FR_DOWN
                         mov eax,findtext.chrg.cpMin
@@ -1205,16 +861,13 @@ SearchProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
                     .else
                         mov findtext.chrg.cpMax,0
                     .endif
-
                     .if IsDlgButtonChecked(hWnd, IDC_MATCHCASE) == BST_CHECKED
                         or uFlags,FR_MATCHCASE
                     .endif
-
                     .if IsDlgButtonChecked(hWnd, IDC_WHOLEWORD) == BST_CHECKED
                         or uFlags,FR_WHOLEWORD
                     .endif
-                    mov findtext.lpstrText,offset FindBuffer
-
+                    mov findtext.lpstrText,&FindBuffer
                     .if SendMessage(hEdit, EM_FINDTEXTEX, uFlags, &findtext) != -1
                         SendMessage(hEdit, EM_EXSETSEL, 0, &findtext.chrgText)
                     .endif
@@ -1223,112 +876,91 @@ SearchProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
                 SendMessage(hWnd, WM_CLOSE, 0, 0)
             .else
                 mov eax,FALSE
-                .endc
+               .endc
             .endif
         .endif
         mov eax,TRUE
-        .endc
-
+       .endc
       .case WM_CLOSE
         mov hSearch,0
         EndDialog(hWnd, 0)
         mov eax,TRUE    ; yes..
-        .endc
-
+       .endc
       .default
         mov eax,FALSE
-        .endc
+       .endc
     .endsw
     ret
-
-SearchProc endp
+    endp
 
 ReplaceProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
   local settext:SETTEXTEX
 
-    mov eax,uMsg
+    ldr eax,uMsg
     .switch eax
-
-      .case WM_INITDIALOG
+    .case WM_INITDIALOG
         mov hSearch,hWnd
         SetDlgItemText(hWnd, IDC_FINDEDIT,    &FindBuffer)
         SetDlgItemText(hWnd, IDC_REPLACEEDIT, &ReplBuffer)
         mov eax,TRUE
-        .endc
-
-      .case WM_COMMAND
-
-        mov eax,wParam
+       .endc
+    .case WM_COMMAND
+        ldr rax,wParam
         shr eax,16
-
         .if ax == BN_CLICKED
-
-            mov eax,wParam
+            ldr rax,wParam
             .if ax == IDCANCEL
-
                 SendMessage(hWnd, WM_CLOSE, 0, 0)
-
             .elseif ax==IDOK
-
                 GetDlgItemText(hWnd, IDC_FINDEDIT,    &FindBuffer, sizeof(FindBuffer))
                 GetDlgItemText(hWnd, IDC_REPLACEEDIT, &ReplBuffer, sizeof(ReplBuffer))
                 mov findtext.chrg.cpMin,0
                 mov findtext.chrg.cpMax,-1
-                mov findtext.lpstrText,offset FindBuffer
+                mov findtext.lpstrText,&FindBuffer
                 mov settext.flags,ST_SELECTION
                 mov settext.codepage,0;CP_ACP
-
                 .while 1
-
                     .break .if SendMessage(hEdit, EM_FINDTEXTEX, FR_DOWN, &findtext) == -1
                     SendMessage(hEdit, EM_EXSETSEL, 0, &findtext.chrgText)
                     SendMessage(hEdit, EM_SETTEXTEX, &settext, &ReplBuffer)
                 .endw
-
             .endif
         .endif
-
         mov eax,TRUE
-        .endc
-
+       .endc
       .case WM_CLOSE
         mov hSearch,0
         EndDialog(hWnd, 0)
         mov eax,TRUE    ; ...
-        .endc
-
+       .endc
       .default
         mov eax,FALSE
     .endsw
     ret
-ReplaceProc endp
+    endp
 
 GoToProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
     local LineNo:DWORD
     local chrg:CHARRANGE
 
-    mov eax,uMsg
+    ldr eax,uMsg
     .switch eax
-
-      .case WM_INITDIALOG
+    .case WM_INITDIALOG
         mov hSearch,hWnd
         mov eax,TRUE
-        .endc
-
-      .case WM_COMMAND
-
-        mov eax,wParam
+       .endc
+    .case WM_COMMAND
+        ldr rax,wParam
         shr eax,16
-
         .if ax == BN_CLICKED
-            mov eax,wParam
+            ldr rax,wParam
             .if ax == IDCANCEL
                 SendMessage(hWnd, WM_CLOSE, 0, 0)
             .elseif ax == IDOK
                 mov LineNo,GetDlgItemInt(hWnd, IDC_LINENO, NULL, FALSE)
-                .if SendMessage(hEdit, EM_GETLINECOUNT, 0, 0) > LineNo
+                .ifd SendMessage(hEdit, EM_GETLINECOUNT, 0, 0) > LineNo
                     SendMessage(hEdit, EM_LINEINDEX, LineNo, 0)
                     SendMessage(hEdit, EM_SETSEL, eax, eax)
                     SetFocus(hEdit)
@@ -1336,22 +968,19 @@ GoToProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
             .endif
         .endif
         mov eax,TRUE
-        .endc
-
-      .case WM_CLOSE
+       .endc
+    .case WM_CLOSE
         mov hSearch,0
         EndDialog(hWnd, 0)
         mov eax,TRUE    ; ...
-        .endc
-
-      .default
+       .endc
+    .default
         mov eax,FALSE
     .endsw
     ret
+    endp
 
-GoToProc endp
-
-WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc uses rsi hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
   local buffer[256]:sbyte
   local hPopup:HMENU
@@ -1361,56 +990,38 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
   local editstream:EDITSTREAM
   local chrg:CHARRANGE
 
-    .switch message
-
-      .case WM_CREATE
-
+    .switch ldr(message)
+    .case WM_CREATE
         .if !LoadLibrary("Msftedit.dll")
-
             PostQuitMessage(1)
             xor eax,eax
-            .endc
+           .endc
         .endif
-
-        mov hEdit,CreateWindowEx(
-                WS_EX_CLIENTEDGE,
-                MSFTEDIT_CLASS,
-                0,
+        mov hEdit,CreateWindowEx(WS_EX_CLIENTEDGE, MSFTEDIT_CLASS, 0,
                 ES_MULTILINE or WS_VISIBLE or WS_CHILD or WS_BORDER or WS_VSCROLL or WS_HSCROLL or ES_NOHIDESEL,
                 CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-                hWnd,
-                RichEditID,
-                hInstance,
-                NULL )
-
+                hWnd, RichEditID, hInstance, NULL)
         SendMessage(hEdit, EM_SETTYPOGRAPHYOPTIONS, TO_SIMPLELINEBREAK, TO_SIMPLELINEBREAK)
         SendMessage(hEdit, EM_GETTYPOGRAPHYOPTIONS, 1, 1)
         SendMessage(hEdit, EM_SETEDITSTYLE, SES_EMULATESYSEDIT, SES_EMULATESYSEDIT)
-        mov OldWndProc,SetWindowLong(hEdit, GWL_WNDPROC, &RichEditProc)
+        mov OldWndProc,SetWindowLongPtr(hEdit, GWLP_WNDPROC, &RichEditProc)
         SendMessage(hEdit, EM_LIMITTEXT, -1, 0)
         SendMessage(hEdit, EM_SETMODIFY, FALSE, 0)
         SendMessage(hEdit, EM_SETEVENTMASK, 0, ENM_MOUSEEVENTS)
         SendMessage(hEdit, EM_EMPTYUNDOBUFFER, 0, 0)
-        InitProfile()
-        ReadStyle(&Profile)
-        ReadConfig(&Profile)
         mov hFont,CreateFontIndirect(&AppFont)
-        SendMessage(hEdit, WM_SETFONT, eax, 1)
+        SendMessage(hEdit, WM_SETFONT, rax, 1)
         SetColor()
         xor eax,eax
-        .endc
+       .endc
 
-      .case WM_NOTIFY
-        push esi
-        mov esi,lParam
-        assume esi:ptr NMHDR
-        .if [esi].code == EN_MSGFILTER
-            assume esi:ptr MSGFILTER
-            .if [esi].msg == WM_RBUTTONDOWN
-
+    .case WM_NOTIFY
+        ldr rsi,lParam
+        .if [rsi].NMHDR.code == EN_MSGFILTER
+            .if [rsi].MSGFILTER.msg == WM_RBUTTONDOWN
                 mov hPopup,GetSubMenu(GetMenu(hWnd), 1)
-                PrepareEditMenu(eax)
-                mov edx,[esi].lParam
+                PrepareEditMenu(rax)
+                mov rdx,[rsi].MSGFILTER.lParam
                 mov ecx,edx
                 and edx,0xFFFF
                 shr ecx,16
@@ -1421,14 +1032,12 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                     pt.x, pt.y, NULL, hWnd, NULL)
             .endif
         .endif
-        pop esi
         xor eax,eax
-        .endc
-
-      .case WM_INITMENUPOPUP
+       .endc
+    .case WM_INITMENUPOPUP
         movzx eax,word ptr lParam
         .switch eax
-          .case 0       ; file menu
+        .case 0       ; file menu
             .if FileOpened == TRUE    ; a file is already opened
                 EnableMenuItem(wParam, IDM_OPEN, MF_GRAYED)
                 EnableMenuItem(wParam, IDM_CLOSE, MF_ENABLED)
@@ -1441,7 +1050,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                 EnableMenuItem(wParam, IDM_SAVEAS, MF_GRAYED)
             .endif
             .endc
-          .case 1   ; edit menu
+        .case 1   ; edit menu
             PrepareEditMenu(wParam)
             ; search menu bar
             .if FileOpened==TRUE
@@ -1460,64 +1069,43 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
             .endc
         .endsw
         xor eax,eax
-        .endc
-
-      .case WM_COMMAND
-
+       .endc
+    .case WM_COMMAND
         .if !lParam       ; menu commands
-
             movzx eax,word ptr wParam
             .switch eax
-
-              .case IDM_OPEN
-
+            .case IDM_OPEN
                 RtlZeroMemory(&ofn, sizeof(ofn))
-
                 mov ofn.lStructSize,sizeof(ofn)
                 mov ofn.hwndOwner,hWnd
                 mov ofn.hInstance,hInstance
-                mov ofn.lpstrFilter,offset ASMFilter
-                mov ofn.lpstrFile,offset FileName
+                mov ofn.lpstrFilter,&ASMFilter
+                mov ofn.lpstrFile,&FileName
                 mov byte ptr [FileName],0
                 mov ofn.nMaxFile,sizeof FileName
                 mov ofn.Flags,OFN_FILEMUSTEXIST or OFN_HIDEREADONLY or OFN_PATHMUSTEXIST
-
                 .if GetOpenFileName(&ofn)
-
-                    .if CreateFile(&FileName,
-                            GENERIC_READ,
-                            FILE_SHARE_READ,
-                            NULL,
-                            OPEN_EXISTING,
-                            FILE_ATTRIBUTE_NORMAL,
-                            0) != INVALID_HANDLE_VALUE
-
-                        mov hFile,eax
-                        mov editstream.dwCookie,eax
-                        mov editstream.pfnCallback,offset StreamInProc
-
+                    .if CreateFile(&FileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+                            FILE_ATTRIBUTE_NORMAL, 0) != INVALID_HANDLE_VALUE
+                        mov hFile,rax
+                        mov editstream.dwCookie,rax
+                        mov editstream.pfnCallback,&StreamInProc
                         SendMessage(hEdit, EM_STREAMIN, SF_TEXT, &editstream)
                         SendMessage(hEdit, EM_SETMODIFY, FALSE, 0)
                         CloseHandle(hFile)
                         mov FileOpened,TRUE
-
                     .else
-                        MessageBox(hWnd, "Cannot open the file",
-                            &AppName, MB_OK or MB_ICONERROR)
+                        MessageBox(hWnd, "Cannot open the file", &AppName, MB_OK or MB_ICONERROR)
                     .endif
                 .endif
                 .endc
-
-              .case IDM_CLOSE
-
+            .case IDM_CLOSE
                 .if CheckModifyState(hWnd)
                     SetWindowText(hEdit, 0)
                     mov FileOpened,FALSE
                 .endif
                 .endc
-
-              .case IDM_SAVE
-
+            .case IDM_SAVE
                 .if CreateFile(&FileName,
                         GENERIC_WRITE,
                         FILE_SHARE_READ,
@@ -1525,101 +1113,78 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                         CREATE_ALWAYS,
                         FILE_ATTRIBUTE_NORMAL,
                         0) != INVALID_HANDLE_VALUE
-
-                    mov hFile,eax
-                    mov editstream.dwCookie,eax
-                    mov editstream.pfnCallback,offset StreamOutProc
-
+                    mov hFile,rax
+                    mov editstream.dwCookie,rax
+                    mov editstream.pfnCallback,&StreamOutProc
                     SendMessage(hEdit, EM_STREAMOUT, SF_TEXT, &editstream)
                     SendMessage(hEdit, EM_SETMODIFY, FALSE, 0)
                     CloseHandle(hFile)
                 .else
-                    MessageBox(hWnd, "Cannot open the file",
-                            &AppName,  MB_OK or MB_ICONERROR)
+                    MessageBox(hWnd, "Cannot open the file", &AppName,  MB_OK or MB_ICONERROR)
                 .endif
                 .endc
-
-              .case IDM_COPY
+            .case IDM_COPY
                 SendMessage(hEdit, WM_COPY, 0, 0)
-                .endc
-
-              .case IDM_CUT
+               .endc
+            .case IDM_CUT
                 SendMessage(hEdit, WM_CUT, 0, 0)
-                .endc
-
-              .case IDM_PASTE
+               .endc
+            .case IDM_PASTE
                 SendMessage(hEdit, WM_PASTE, 0, 0)
-                .endc
-
-              .case IDM_DELETE
+               .endc
+            .case IDM_DELETE
                 SendMessage(hEdit, EM_REPLACESEL, TRUE, 0)
-                .endc
-
-              .case IDM_SELECTALL
+               .endc
+            .case IDM_SELECTALL
                 mov chrg.cpMin,0
                 mov chrg.cpMax,-1
                 SendMessage(hEdit, EM_EXSETSEL, 0, &chrg)
-                .endc
-
-              .case IDM_UNDO
+               .endc
+            .case IDM_UNDO
                 SendMessage(hEdit, EM_UNDO, 0, 0)
-                .endc
-
-              .case IDM_REDO
+               .endc
+            .case IDM_REDO
                 SendMessage(hEdit, EM_REDO, 0, 0)
-                .endc
-
-              .case IDM_SAVEAS
-
+               .endc
+            .case IDM_SAVEAS
                 RtlZeroMemory(&ofn, sizeof(ofn))
-
                 mov ofn.lStructSize,sizeof(ofn)
                 mov ofn.hwndOwner,hWnd
                 mov ofn.hInstance,hInstance
-                mov ofn.lpstrFilter,offset ASMFilter
-                mov ofn.lpstrFile,offset AltFileName
+                mov ofn.lpstrFilter,&ASMFilter
+                mov ofn.lpstrFile,&AltFileName
                 mov AltFileName,0
                 mov ofn.nMaxFile,sizeof AltFileName
                 mov ofn.Flags,OFN_FILEMUSTEXIST or OFN_HIDEREADONLY or OFN_PATHMUSTEXIST
-
                 .if GetSaveFileName(&ofn)
-                    .if CreateFile(&AltFileName,
-                        GENERIC_WRITE,
-                        FILE_SHARE_READ,
-                        NULL,
-                        CREATE_ALWAYS,
-                        FILE_ATTRIBUTE_NORMAL,
-                        0) != INVALID_HANDLE_VALUE
+                    .if CreateFile(&AltFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL,
+                        CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0) != INVALID_HANDLE_VALUE
 
-                        mov hFile,eax
-                        mov editstream.dwCookie,eax
-                        mov editstream.pfnCallback,offset StreamOutProc
+                        mov hFile,rax
+                        mov editstream.dwCookie,rax
+                        mov editstream.pfnCallback,&StreamOutProc
                         SendMessage(hEdit, EM_STREAMOUT, SF_TEXT, &editstream)
                         SendMessage(hEdit, EM_SETMODIFY, FALSE, 0)
                         CloseHandle(hFile)
                     .endif
                 .endif
                 .endc
-
-              .case IDM_FIND
+            .case IDM_FIND
                 .if !hSearch
                     CreateDialogParam(hInstance, IDD_FINDDLG, hWnd, &SearchProc, 0)
                 .endif
                 .endc
-
-              .case IDM_REPLACE
+            .case IDM_REPLACE
                 .if !hSearch
                     CreateDialogParam(hInstance, IDD_REPLACEDLG, hWnd, &ReplaceProc, 0)
                 .endif
                 .endc
-
-              .case IDM_GOTOLINE
+            .case IDM_GOTOLINE
                 .if !hSearch
                     CreateDialogParam(hInstance, IDD_GOTODLG, hWnd, &GoToProc, 0)
                 .endif
                 .endc
-
-              .case IDM_FINDNEXT
+            .case IDM_FINDNEXT
                 .if FindBuffer
                     SendMessage(hEdit, EM_EXGETSEL, 0, &findtext.chrg)
                     mov eax,findtext.chrg.cpMin
@@ -1627,85 +1192,69 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                         mov findtext.chrg.cpMin,findtext.chrg.cpMax
                     .endif
                     mov findtext.chrg.cpMax,-1
-                    mov findtext.lpstrText,offset FindBuffer
+                    mov findtext.lpstrText,&FindBuffer
 
                     .if SendMessage(hEdit, EM_FINDTEXTEX, FR_DOWN, &findtext) != -1
                         SendMessage(hEdit, EM_EXSETSEL, 0, &findtext.chrgText)
                     .endif
                 .endif
                 .endc
-
-              .case IDM_FINDPREV
+            .case IDM_FINDPREV
                 .if FindBuffer
                     SendMessage(hEdit, EM_EXGETSEL, 0, &findtext.chrg)
                     mov findtext.chrg.cpMax,0
-                    mov findtext.lpstrText,offset FindBuffer
+                    mov findtext.lpstrText,&FindBuffer
 
                     .if SendMessage(hEdit, EM_FINDTEXTEX, 0, &findtext) != -1
                         SendMessage(hEdit, EM_EXSETSEL, 0, &findtext.chrgText)
                     .endif
                 .endif
                 .endc
-
-              .case IDM_FONT
+            .case IDM_FONT
                 DLGSelectFont(hWnd)
-                .endc
-
-              .case IDM_COLOR
+               .endc
+            .case IDM_COLOR
                 DialogBoxParam(hInstance, IDD_OPTIONDLG, hWnd, &OptionProc, 0)
-                .endc
-
-              .case IDM_STATUSBAR
+               .endc
+            .case IDM_STATUSBAR
                 MessageBox(hEdit, "Status Bar", "View", MB_OK)
-                .endc
-
-              .case IDM_VIEWHELP
+               .endc
+            .case IDM_VIEWHELP
                 MessageBox(hEdit, "View Help", "Help", MB_OK)
-                .endc
-
-              .case IDM_ABOUT
+               .endc
+            .case IDM_ABOUT
                 MessageBox(hEdit, "About", "Help", MB_OK)
-                .endc
-
-              .case IDM_EXIT
+               .endc
+            .case IDM_EXIT
                 SendMessage(hWnd, WM_CLOSE, 0, 0)
-                .endc
+               .endc
             .endsw
         .endif
         xor eax,eax
-        .endc
-
-      .case WM_CLOSE
-
+       .endc
+    .case WM_CLOSE
         .if CheckModifyState(hWnd)
             DestroyWindow(hWnd)
         .endif
         .endc
-
-      .case WM_SIZE
-        mov eax,lParam
+    .case WM_SIZE
+        ldr rax,lParam
         mov edx,eax
         and eax,0xFFFF
         shr edx,16
         MoveWindow(hEdit, 0, 0, eax, edx, TRUE)
-        .endc
-
-      .case WM_DESTROY
+       .endc
+    .case WM_DESTROY
         PostQuitMessage(0)
         xor eax,eax
-        .endc
-
-      .default
+       .endc
+    .default
         DefWindowProc(hWnd, message, wParam, lParam)
     .endsw
     ret
+    endp
 
-WndProc endp
-
-WinMain proc WINAPI hInst: HINSTANCE,
-     hPrevInstance: HINSTANCE,
-         lpCmdLine: LPSTR,
-          nShowCmd: SINT
+_tWinMain proc WINAPI hInst:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
   local wc:WNDCLASSEX
   local msg:MSG
@@ -1722,36 +1271,31 @@ WinMain proc WINAPI hInst: HINSTANCE,
     mov wc.lpszMenuName,    IDR_MAINMENU
     mov wc.lpszClassName,   &@CStr("TestClass")
     mov wc.hIcon,           LoadIcon(0, IDI_APPLICATION)
-    mov wc.hIconSm,         eax
+    mov wc.hIconSm,         rax
     mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
-
     RegisterClassEx(&wc)
-
-    mov eax,CW_USEDEFAULT
+ifdef _WIN64
+    lea r15,_ltype
+endif
+    InitProfile()
+    ReadStyle(&Profile)
+    ReadConfig(&Profile)
+    mov ecx,CW_USEDEFAULT
     mov hwnd,CreateWindowEx(0, "TestClass", "Testpad", WS_OVERLAPPEDWINDOW,
-        eax, eax, eax, eax, 0, 0, hInstance, 0)
+        ecx, ecx, ecx, ecx, 0, 0, hInstance, 0)
 
     ShowWindow(hwnd, SW_SHOWNORMAL)
     UpdateWindow(hwnd)
     mov hAccel,LoadAccelerators(hInstance, IDR_MAINACCEL)
-
-    .while GetMessage(&msg, 0, 0, 0)
-
-        .if !TranslateAccelerator(hwnd, hAccel, &msg)
-
+    .whiled GetMessage(&msg, 0, 0, 0)
+        .ifd !TranslateAccelerator(hwnd, hAccel, &msg)
             TranslateMessage(&msg)
             DispatchMessage(&msg)
         .endif
     .endw
-    mov eax,msg.wParam
+    mov rax,msg.wParam
     ret
-
-WinMain endp
-
-WinStart proc
-    mov ebx,GetModuleHandle(0)
-    ExitProcess(WinMain(ebx, 0, GetCommandLine(), SW_SHOWDEFAULT))
-WinStart endp
+    endp
 
 RCBEGIN
 
@@ -1797,14 +1341,14 @@ RCBEGIN
         MENUITEM IDM_GOTOLINE, IDS_GOTO
         SEPARATOR
         MENUITEM IDM_SELECTALL, IDS_SELECTALL, MF_END
-      MENUNAME "Format"
-        MENUITEM IDM_FONT,     "Font..."
-        MENUITEM IDM_COLOR,    "Color...", MF_END
-      MENUNAME "View"
-        MENUITEM IDM_STATUSBAR,"Status Bar", MF_END
-      MENUNAME "Help", MF_END
-        MENUITEM IDM_VIEWHELP, "View Help"
-        MENUITEM IDM_ABOUT,    "About", MF_END
+      MENUNAME IDS_FORMAT
+        MENUITEM IDM_FONT,     IDS_FONT
+        MENUITEM IDM_COLOR,    IDS_COLOR, MF_END
+      MENUNAME IDS_VIEW
+        MENUITEM IDM_STATUSBAR,IDS_STATUSBAR, MF_END
+      MENUNAME IDS_HELP, MF_END
+        MENUITEM IDM_VIEWHELP, IDS_VIEWHELP
+        MENUITEM IDM_ABOUT,    IDS_ABOUT, MF_END
     MENUEND
 
     DLGFLAGS equ DS_MODALFRAME or DS_SETFONT or WS_POPUP or WS_VISIBLE or WS_CAPTION or WS_SYSMENU
@@ -1863,4 +1407,4 @@ RCBEGIN
 
 RCEND
 
-    end WinStart
+    end _tstart

@@ -1230,6 +1230,46 @@ GetMacroReturn proc __ccall private uses rsi rbx i:int_t, tokenarray:token_t
 GetMacroReturn endp
 
 
+; v2.37.74: The return value from RETM may include params
+
+fill_paramid proc __ccall private uses rsi rdi rbx dst:string_t, id:int_t, tokenarray:token_t
+
+    .for ( rdi = ldr(dst), rbx = ldr(tokenarray), ecx = 0, edx = ldr(id),
+           rsi = [rbx].tokpos : edx : rbx += asm_tok )
+        movzx eax,[rbx].token
+        .switch eax
+        .case T_FINAL
+            .break
+        .case T_OP_BRACKET
+            inc ecx
+           .endc
+        .case T_CL_BRACKET
+            .if ecx
+                dec ecx
+               .endc
+            .endif
+            mov rax,[rbx].tokpos
+            sub rax,rsi
+            mov ecx,eax
+            rep movsb
+           .return
+        .case T_COMMA
+            dec edx
+            .ifz
+                mov rax,[rbx].tokpos
+                sub rax,rsi
+                mov ecx,eax
+                rep movsb
+               .return
+            .endif
+            mov rsi,[rbx+asm_tok].tokpos
+        .endsw
+    .endf
+    xor eax,eax
+    ret
+    endp
+
+
 StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:token_t
 
    .new mac:string_t = NULL
@@ -1242,7 +1282,7 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:t
    .new size:int_t
    .new b[MAX_LINE_LEN]:char_t
 
-    .for ( rdi = &b, rbx = tokenarray, edx = 0 : edx < i : edx++, rbx += asm_tok )
+    .for ( rdi = &b, rbx = ldr(tokenarray), edx = 0 : edx < i : edx++, rbx += asm_tok )
 
         .if ( edx )
             .if ( [rbx].IsProc )
@@ -1250,13 +1290,13 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:t
                 mov parg_id,0
             .endif
             .switch [rbx].token
-              .case T_CL_BRACKET
+            .case T_CL_BRACKET
                 dec bracket
                 .endc
-              .case T_OP_BRACKET
+            .case T_OP_BRACKET
                 inc bracket
                 .endc
-              .case T_COMMA
+            .case T_COMMA
                 .if proc_id
                     inc parg_id
                 .endif
@@ -1503,7 +1543,13 @@ macro_args:
             .break .if !al
             .continue .if ax == '<!'
             .continue .if ax == '>!'
-            stosb
+            .if ( al == 10 ) ; set by replace_parm()
+                movzx edx,ah
+                inc rsi
+                add rdi,fill_paramid(rdi, edx, &[rbx+asm_tok*2])
+            .else
+                stosb
+            .endif
         .endw
         mov [rdi-1],al
         lea rsi,b

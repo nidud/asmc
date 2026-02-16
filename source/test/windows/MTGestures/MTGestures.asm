@@ -24,61 +24,52 @@ MyRegisterClass proc hInstance:HINSTANCE
     mov wcex.lpfnWndProc,   &WndProc
     mov wcex.cbClsExtra,    0
     mov wcex.cbWndExtra,    0
-    mov wcex.hInstance,     rcx
+    mov wcex.hInstance,     ldr(hInstance)
     mov wcex.hIcon,         LoadIcon(0, IDI_APPLICATION)
     mov wcex.hIconSm,       rax
     mov wcex.hCursor,       LoadCursor(NULL, IDC_ARROW)
     mov wcex.hbrBackground, COLOR_WINDOW+1
     mov wcex.lpszMenuName,  NULL
     mov wcex.lpszClassName, &@CStr(IDC_MTGESTURES)
-
     RegisterClassEx(&wcex)
     ret
-
-MyRegisterClass endp
+    endp
 
 InitInstance proc hInstance:HINSTANCE, nCmdShow:int_t
 
- local hWnd:HWND
+  local hWnd:HWND
 
-    mov g_hInst,rcx
+    mov g_hInst,ldr(hInstance)
     .if CreateWindowEx(0, IDC_MTGESTURES, IDS_APP_TITLE, WS_OVERLAPPEDWINDOW,
-                CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL)
-
+                CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, ldr(hInstance), NULL)
         mov hWnd,rax
         ShowWindow(hWnd, nCmdShow)
         UpdateWindow(hWnd)
         mov eax,TRUE
     .endif
     ret
+    endp
 
-InitInstance endp
 
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:int_t
 
   local msg:MSG
 
-    CMyGestureEngine::CMyGestureEngine( &g_cGestureEngine, &g_cRect)
+    mov g_cGestureEngine,CMyGestureEngine(&g_cRect)
     MyRegisterClass(hInstance)
-
     .repeat
-
         .break .if !InitInstance(hInstance, nCmdShow)
-
-        .while (GetMessage(&msg, NULL, 0, 0))
-
-            .if (!TranslateAccelerator(msg.hwnd, NULL, &msg))
-
+        .whiled GetMessage(&msg, NULL, 0, 0)
+            .ifd !TranslateAccelerator(msg.hwnd, NULL, &msg)
                 TranslateMessage(&msg)
                 DispatchMessage(&msg)
             .endif
         .endw
-
-        mov eax,dword ptr msg.wParam
+        mov rax,msg.wParam
     .until 1
     ret
+    endp
 
-wWinMain endp
 
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
@@ -87,59 +78,48 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
   local hdc:HDC
   local gc:GESTURECONFIG
 
-    .switch (edx)
-
+    .switch ldr(message)
     .case WM_GESTURENOTIFY
-
         mov gc.dwID,0
         mov gc.dwWant,GC_ALLGESTURES
         mov gc.dwBlock,0
-
-        .ifd !SetGestureConfig(hWnd, 0, 1, &gc, sizeof(GESTURECONFIG))
-
+        .ifd !SetGestureConfig(ldr(hWnd), 0, 1, &gc, sizeof(GESTURECONFIG))
             .assert("Error in execution of SetGestureConfig" && 0)
         .endif
         .endc
-
     .case WM_GESTURE
-        mov rdx,rcx
-        g_cGestureEngine.WndProc(rdx, r8, r9)
-        .return
-
+        g_cGestureEngine.WndProc(ldr(hWnd), ldr(wParam), ldr(lParam))
+       .return
     .case WM_SIZE
-        movzx edx,r9w
-        shr r9d,16
-        g_cRect.ResetObject(edx, r9d)
-        .endc
-
+        ldr rax,lParam
+        movzx edx,ax
+        shr eax,16
+        g_cRect.ResetObject(edx, eax)
+       .endc
     .case WM_COMMAND
-        movzx eax,r8w ; wParam
+        ldr rax,wParam
+        movzx eax,ax
         .switch eax
         .case IDM_EXIT
-            DestroyWindow(rcx)
+            DestroyWindow(ldr(hWnd))
             .endc
         .default
-            .return DefWindowProc(rcx, edx, r8, r9)
+            .return DefWindowProc(ldr(hWnd), ldr(message), ldr(wParam), ldr(lParam))
         .endsw
         .endc
-
     .case WM_PAINT
-        mov hdc,BeginPaint(hWnd, &ps)
+        mov hdc,BeginPaint(ldr(hWnd), &ps)
         g_cRect.Paint(hdc)
         EndPaint(hWnd, &ps)
-        .endc
-
+       .endc
     .case WM_DESTROY
         PostQuitMessage(0)
-        .endc
-
+       .endc
     .default
-        .return DefWindowProc(rcx, edx, r8, r9)
+        .return DefWindowProc(ldr(hWnd), ldr(message), ldr(wParam), ldr(lParam))
     .endsw
     xor eax,eax
     ret
-
-WndProc endp
+    endp
 
     end
-

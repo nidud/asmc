@@ -1,5 +1,8 @@
-test.exe:
-    asmc -pe -ws $*.asm
-    $@
-    del *.exe
+RichEditControl.exe:
+	asmc -peg -ws $*.asm
+	$@
+	del *.exe
+vs:
+	project -p -u -w RichEditControl
+
 

@@ -23,41 +23,31 @@ GetClipboardHistory proc p:ptr ptr Windows::ApplicationModel::DataTransfer::ICli
             wcslen(RuntimeClass_Windows_ApplicationModel_DataTransfer_Clipboard), &hsClipboard)
 
     .if (SUCCEEDED(hr))
-
         mov hr,RoGetActivationFactory(hsClipboard, &IID_IClipboardStatics2, &pClipboard)
     .endif
-
     .if (SUCCEEDED(hr))
 
        .new Enabled:BOOL = false
         mov hr,pClipboard.IsHistoryEnabled(&Enabled)
-
         .if (SUCCEEDED(hr) && !Enabled)
-
             mov hr,E_NOTIMPL
             wprintf("Windows 10 clipboard history not enabled: Use Win + V keyboard shortcut to enable.\n" )
         .endif
     .endif
-
     .if (SUCCEEDED(hr))
-
        .new pAsync:ptr __FIAsyncOperation_1_Windows__CApplicationModel__CDataTransfer__CClipboardHistoryItemsResult = NULL
         mov hr,pClipboard.GetHistoryItemsAsync(&pAsync)
     .endif
-
     .if (SUCCEEDED(hr))
-
         mov hr,pAsync.GetResults(p)
     .endif
-
     .if ( hsClipboard )
         WindowsDeleteString(hsClipboard)
     .endif
     SafeRelease(pAsync)
     SafeRelease(pClipboard)
    .return(hr)
-
-GetClipboardHistory endp
+    endp
 
 
 GetTextFormat proc format:ptr HSTRING
@@ -88,8 +78,7 @@ GetTextFormat proc format:ptr HSTRING
         pDataFormats.Release()
     .endif
     .return(hr)
-
-GetTextFormat endp
+    endp
 
 
 DumpClipboardHistoryAsync proc uses rbx
@@ -99,7 +88,6 @@ DumpClipboardHistoryAsync proc uses rbx
     .new hr:HRESULT = GetClipboardHistory(&result)
 
     .if (SUCCEEDED(hr))
-
         mov hr,GetTextFormat(&formatId)
     .endif
 
@@ -178,8 +166,7 @@ DumpClipboardHistoryAsync proc uses rbx
     SafeRelease(items)
     SafeRelease(result)
    .return(hr)
-
-DumpClipboardHistoryAsync endp
+    endp
 
 
 ErrorMessage proc hr:HRESULT
@@ -190,7 +177,6 @@ ErrorMessage proc hr:HRESULT
 
         mov hr,HRESULT_CODE(edx)
     .endif
-
     FormatMessage(
             FORMAT_MESSAGE_ALLOCATE_BUFFER or \
             FORMAT_MESSAGE_FROM_SYSTEM or \
@@ -205,15 +191,12 @@ ErrorMessage proc hr:HRESULT
     wprintf("Error code: %08X\n\n%s", hr, szMessage)
     LocalFree(szMessage)
    .return(hr)
-
-ErrorMessage endp
+    endp
 
 
 wmain proc
-
     .new hr:HRESULT = RoInitialize(RO_INIT_SINGLETHREADED)
     .if (SUCCEEDED(hr))
-
         mov hr,DumpClipboardHistoryAsync()
         RoUninitialize()
     .endif
@@ -221,7 +204,6 @@ wmain proc
         .return ErrorMessage(hr)
     .endif
     .return(0)
-
-wmain endp
+    endp
 
     end _tstart

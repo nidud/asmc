@@ -32,20 +32,15 @@ VariantFromString proc wszValue:PCWSTR, Variant:ptr VARIANT
     mov rcx,Variant
     mov [rcx].VARIANT.vt,VT_BSTR
     mov [rcx].VARIANT.bstrVal,rax
-   .return S_OK
-
-VariantFromString endp
+    .return( S_OK )
+    endp
 
 ; Helper function to create a DOM instance.
 
 CreateAndInitDOM proc ppDoc:ptr ptr IXMLDOMDocument
 
-    .new hr:HRESULT = CoCreateInstance(
-            &CLSID_DOMDocument60,
-            NULL,
-            CLSCTX_INPROC_SERVER,
-            &IID_IXMLDOMDocument,
-            ppDoc)
+    .new hr:HRESULT = CoCreateInstance(&CLSID_DOMDocument60, NULL,
+            CLSCTX_INPROC_SERVER, &IID_IXMLDOMDocument, ppDoc)
 
     .if (SUCCEEDED(hr))
 
@@ -58,9 +53,8 @@ CreateAndInitDOM proc ppDoc:ptr ptr IXMLDOMDocument
         p.put_resolveExternals(VARIANT_FALSE)
         p.put_preserveWhiteSpace(VARIANT_TRUE)
     .endif
-    .return hr
-
-CreateAndInitDOM endp
+    .return( hr )
+    endp
 
 ; Helper that allocates the BSTR param for the caller.
 
@@ -71,15 +65,13 @@ CreateElement proc pXMLDom:ptr IXMLDOMDocument, wszName:PCWSTR, ppElement:ptr pt
     xor eax,eax
     mov rcx,ppElement
     mov [rcx],rax
-
    .new bstrName:BSTR = SysAllocString(wszName)
     CHK_ALLOC(bstrName)
     CHK_HR(pXMLDom.createElement(bstrName, ppElement))
-
 CleanUp:
     SysFreeString(bstrName)
-   .return hr
-CreateElement endp
+    .return( hr )
+    endp
 
 ; Helper function to append a child to a parent node.
 
@@ -88,11 +80,10 @@ AppendChildToParent proc pChild:ptr IXMLDOMNode, pParent:ptr IXMLDOMNode
    .new hr:HRESULT = S_OK
    .new pChildOut:ptr IXMLDOMNode = NULL
     CHK_HR(pParent.appendChild(pChild, &pChildOut))
-
 CleanUp:
     SafeRelease(pChildOut)
-   .return hr
-AppendChildToParent endp
+    .return( hr )
+    endp
 
 ; Helper function to create and add a processing instruction to a document node.
 
@@ -100,12 +91,10 @@ CreateAndAddPINode proc pDom:ptr IXMLDOMDocument, wszTarget:PCWSTR, wszData:PCWS
 
    .new hr:HRESULT = S_OK
    .new pPI:ptr IXMLDOMProcessingInstruction = NULL
-
    .new bstrTarget:BSTR = SysAllocString(wszTarget)
    .new bstrData:BSTR = SysAllocString(wszData)
     CHK_ALLOC(bstrTarget)
     CHK_ALLOC(bstrData)
-
     CHK_HR(pDom.createProcessingInstruction(bstrTarget, bstrData, &pPI))
     CHK_HR(AppendChildToParent(pPI, pDom))
 
@@ -114,7 +103,7 @@ CleanUp:
     SysFreeString(bstrTarget)
     SysFreeString(bstrData)
    .return hr
-CreateAndAddPINode endp
+    endp
 
 ; Helper function to create and add a comment to a document node.
 
@@ -125,15 +114,13 @@ CreateAndAddCommentNode proc pDom:ptr IXMLDOMDocument, wszComment:PCWSTR
 
    .new bstrComment:BSTR = SysAllocString(wszComment)
     CHK_ALLOC(bstrComment)
-
     CHK_HR(pDom.createComment(bstrComment, &pComment))
     CHK_HR(AppendChildToParent(pComment, pDom))
-
 CleanUp:
     SafeRelease(pComment)
     SysFreeString(bstrComment)
-   .return hr
-CreateAndAddCommentNode endp
+    .return( hr )
+    endp
 
 ; Helper function to create and add an attribute to a parent node.
 
@@ -143,16 +130,13 @@ CreateAndAddAttributeNode proc pDom:ptr IXMLDOMDocument, wszName:PCWSTR,
    .new hr:HRESULT = S_OK
    .new pAttribute:ptr IXMLDOMAttribute = NULL
    .new pAttributeOut:ptr IXMLDOMAttribute = NULL ; Out param that is not used
-
    .new bstrName:BSTR = NULL
    .new varValue:VARIANT
 
     VariantInit(&varValue)
-
     mov bstrName,SysAllocString(wszName)
     CHK_ALLOC(bstrName)
     CHK_HR(VariantFromString(wszValue, &varValue))
-
     CHK_HR(pDom.createAttribute(bstrName, &pAttribute))
     CHK_HR(pAttribute.put_value(varValue))
     CHK_HR(pParent.setAttributeNode(pAttribute, &pAttributeOut))
@@ -162,8 +146,8 @@ CleanUp:
     SafeRelease(pAttributeOut)
     SysFreeString(bstrName)
     VariantClear(&varValue)
-   .return hr
-CreateAndAddAttributeNode endp
+    .return( hr )
+    endp
 
 ; Helper function to create and append a text node to a parent node.
 
@@ -174,15 +158,13 @@ CreateAndAddTextNode proc pDom:ptr IXMLDOMDocument, wszText:PCWSTR, pParent:ptr 
 
    .new bstrText:BSTR = SysAllocString(wszText)
     CHK_ALLOC(bstrText)
-
     CHK_HR(pDom.createTextNode(bstrText, &pText))
     CHK_HR(AppendChildToParent(pText, pParent))
-
 CleanUp:
     SafeRelease(pText)
     SysFreeString(bstrText)
-   .return hr
-CreateAndAddTextNode endp
+    .return( hr )
+    endp
 
 ; Helper function to create and append a CDATA node to a parent node.
 
@@ -193,15 +175,13 @@ CreateAndAddCDATANode proc pDom:ptr IXMLDOMDocument, wszCDATA:PCWSTR, pParent:pt
 
    .new bstrCDATA:BSTR = SysAllocString(wszCDATA)
     CHK_ALLOC(bstrCDATA)
-
     CHK_HR(pDom.createCDATASection(bstrCDATA, &pCDATA))
     CHK_HR(AppendChildToParent(pCDATA, pParent))
-
 CleanUp:
     SafeRelease(pCDATA)
     SysFreeString(bstrCDATA)
-   .return hr
-CreateAndAddCDATANode endp
+    .return( hr )
+    endp
 
 ; Helper function to create and append an element node to a parent node, and pass the newly created
 ; element node to caller if it wants.
@@ -225,8 +205,8 @@ CleanUp:
     .else
         SafeRelease(pElement) ; Caller is not interested on this element, so release it.
     .endif
-   .return hr
-CreateAndAddElementNode endp
+    .return( hr )
+    endp
 
 dynamDOM proc
 
@@ -303,18 +283,14 @@ CleanUp:
     SysFreeString(bstrXML)
     VariantClear(&varFileName)
     ret
-
-dynamDOM endp
+    endp
 
 wmain proc
-
     .if (SUCCEEDED(CoInitialize(NULL)))
-
         dynamDOM()
         CoUninitialize()
     .endif
     .return 0
-
-wmain endp
+    endp
 
     end _tstart

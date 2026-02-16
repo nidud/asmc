@@ -17,5 +17,4 @@ include DrawingObject.inc
     ProcessMove         proc :long_t, :long_t
     ProcessZoom         proc :double, :long_t, :long_t
     ProcessRotate       proc :double, :long_t, :long_t
-
-    .ends
+   .ends

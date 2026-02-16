@@ -36,8 +36,7 @@ VariantFromString proc wszValue:PCWSTR, Variant:ptr VARIANT
     mov [rcx].VARIANT.vt,VT_BSTR
     mov [rcx].VARIANT.bstrVal,rax
    .return S_OK
-
-VariantFromString endp
+    endp
 
 
 CreateAndInitDOM proc ppDoc:ptr ptr IXMLDOMDocument
@@ -60,8 +59,7 @@ CreateAndInitDOM proc ppDoc:ptr ptr IXMLDOMDocument
         p.put_resolveExternals(VARIANT_FALSE)
     .endif
     .return hr
-
-CreateAndInitDOM endp
+    endp
 
 
 loadDOM proc
@@ -103,19 +101,15 @@ CleanUp:
     SysFreeString(bstrErr)
     VariantClear(&varFileName)
     ret
-
-loadDOM endp
+    endp
 
 wmain proc
-
     .if(SUCCEEDED(CoInitialize(NULL)))
-
         loadDOM()
         CoUninitialize()
     .endif
     .return 0
-
-wmain endp
+    endp
 
     end _tstart
 

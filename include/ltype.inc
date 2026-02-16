@@ -46,7 +46,7 @@ DEFINE_LTYPE macro name
     128 dup(0)                  ; and the rest are 0...
     endm
 
-if defined(LTYPE_INLINE) or defined(__PE__)
+if defined(LTYPE_INLINE) or defined(_MSVCRT)
 .data
 DEFINE_LTYPE _ltype
 _DATA ends
@@ -56,81 +56,120 @@ endif
 
 .pragma warning(disable: 8019) ; assume byte..
 
-islascii    proto watcall :tchar_t { retm<(eax !< 128)> }
-islprint    proto watcall :tchar_t { retm<(eax !>= 0x20 && eax !<= 0x7e)> }
-islgraph    proto watcall :tchar_t { retm<(eax !>= 0x21 && eax !<= 0x7e)> }
+islascii proto watcall :tchar_t { retm<(eax !< 128)> }
+islprint proto watcall :tchar_t { retm<(eax !>= 0x20 && eax !<= 0x7e)> }
+islgraph proto watcall :tchar_t { retm<(eax !>= 0x21 && eax !<= 0x7e)> }
 
 ifdef _WIN64
-;
-; Use (global) r15 in 64-bit
-;
-_ltypeinit proto
-_ltypeexit proto
-
-ifndef _UNICODE
-
-getltype proto watcall :byte {
-    movzx ecx,byte ptr [r15+rax]
-    }
-
-islalnum    proto watcall :byte { retm<(byte ptr [r15+rax] & (_DIGIT or _UPPER or _LOWER))> }
-islalpha    proto watcall :byte { retm<(byte ptr [r15+rax] & (_UPPER or _LOWER))> }
-islcntrl    proto watcall :byte { retm<(byte ptr [r15+rax] & _CONTROL)> }
-isldigit    proto watcall :byte { retm<(byte ptr [r15+rax] & _DIGIT)> }
-isllower    proto watcall :byte { retm<(byte ptr [r15+rax] & _LOWER)> }
-islpunct    proto watcall :byte { retm<(byte ptr [r15+rax] & _PUNCT)> }
-islspace    proto watcall :byte { retm<(byte ptr [r15+rax] & _SPACE)> }
-islupper    proto watcall :byte { retm<(byte ptr [r15+rax] & _UPPER)> }
-islxdigit   proto watcall :byte { retm<(byte ptr [r15+rax] & _HEX)> }
-;
-; Valid first char and next (= first + digit)
-;
-islabel0    proto watcall :byte { retm<(byte ptr [r15+rax] & _LABEL)> }
-islabel     proto watcall :byte { retm<(byte ptr [r15+rax] & (_LABEL or _DIGIT))> }
-isdotlabel  proto watcall :byte, :byte { retm<((al == '.' && dl) || (byte ptr [r15+rax] & _LABEL))> }
-;
-; C label
-;
-isclabel0   proto watcall :byte { retm<(al == '_' || byte ptr [r15+rax] & (_UPPER or _LOWER))> }
-isclabel    proto watcall :byte { retm<(al == '_' || byte ptr [r15+rax] & (_UPPER or _LOWER or _DIGIT))> }
+define LTYPE <byte ptr [r15+rax]>
 else
-islalnum    proto watcall :word { retm<(!ah && byte ptr [r15+rax] & (_DIGIT or _UPPER or _LOWER))> }
-islalpha    proto watcall :word { retm<(!ah && byte ptr [r15+rax] & (_UPPER or _LOWER))> }
-islcntrl    proto watcall :word { retm<(!ah && byte ptr [r15+rax] & _CONTROL)> }
-isldigit    proto watcall :word { retm<(!ah && byte ptr [r15+rax] & _DIGIT)> }
-isllower    proto watcall :word { retm<(!ah && byte ptr [r15+rax] & _LOWER)> }
-islpunct    proto watcall :word { retm<(!ah && byte ptr [r15+rax] & _PUNCT)> }
-islspace    proto watcall :word { retm<(!ah && byte ptr [r15+rax] & _SPACE)> }
-islupper    proto watcall :word { retm<(!ah && byte ptr [r15+rax] & _UPPER)> }
-islxdigit   proto watcall :word { retm<(!ah && byte ptr [r15+rax] & _HEX)> }
-islabel0    proto watcall :word { retm<(!ah && byte ptr [r15+rax] & _LABEL)> }
-islabel     proto watcall :word { retm<(!ah && byte ptr [r15+rax] & (_LABEL or _DIGIT))> }
-isdotlabel  proto watcall :word, :word { retm<((eax == '.' && edx) || (!ah && byte ptr [r15+rax] & _LABEL))> }
-isclabel0   proto watcall :word { retm<(eax == '_' || (!ah && byte ptr [r15+rax] & (_UPPER or _LOWER)))> }
-isclabel    proto watcall :word { retm<(eax == '_' || (!ah && byte ptr [r15+rax] & (_UPPER or _LOWER or _DIGIT)))> }
+define LTYPE <_ltype[eax]>
 endif
 
-else
-
 getltype proto watcall :byte {
-    movzx ecx,_ltype[eax]
+    movzx ecx,LTYPE
     }
 
-islalnum    proto watcall :byte { retm<(_ltype[eax] & (_DIGIT or _UPPER or _LOWER))> }
-islalpha    proto watcall :byte { retm<(_ltype[eax] & (_UPPER or _LOWER))> }
-islcntrl    proto watcall :byte { retm<(_ltype[eax] & _CONTROL)> }
-isldigit    proto watcall :byte { retm<(_ltype[eax] & _DIGIT)> }
-isllower    proto watcall :byte { retm<(_ltype[eax] & _LOWER)> }
-islpunct    proto watcall :byte { retm<(_ltype[eax] & _PUNCT)> }
-islspace    proto watcall :byte { retm<(_ltype[eax] & _SPACE)> }
-islupper    proto watcall :byte { retm<(_ltype[eax] & _UPPER)> }
-islxdigit   proto watcall :byte { retm<(_ltype[eax] & _HEX)> }
-islabel0    proto watcall :byte { retm<(_ltype[eax] & _LABEL)> }
-islabel     proto watcall :byte { retm<(_ltype[eax] & (_LABEL or _DIGIT))> }
-isdotlabel  proto watcall :byte, :byte { retm<((al == '.' && edx) || (_ltype[eax] & _LABEL))> }
-isclabel0   proto watcall :byte { retm<(al == '_' || _ltype[eax] & (_UPPER or _LOWER))> }
-isclabel    proto watcall :byte { retm<(al == '_' || _ltype[eax] & (_UPPER or _LOWER or _DIGIT))> }
+ifdef _WIN64 ; Use (global) r15 in 64-bit
+_ltypeinit proto
+_ltypeexit proto
+endif
 
+%_isltypeA      proto watcall :byte, :abs { retm<(LTYPE & _2)> }
+%_islalnumA     proto watcall :byte { retm<(LTYPE & (_DIGIT or _UPPER or _LOWER))> }
+%_islalphaA     proto watcall :byte { retm<(LTYPE & (_UPPER or _LOWER))> }
+%_islcntrlA     proto watcall :byte { retm<(LTYPE & _CONTROL)> }
+%_isldigitA     proto watcall :byte { retm<(LTYPE & _DIGIT)> }
+%_isllowerA     proto watcall :byte { retm<(LTYPE & _LOWER)> }
+%_islpunctA     proto watcall :byte { retm<(LTYPE & _PUNCT)> }
+%_islspaceA     proto watcall :byte { retm<(LTYPE & _SPACE)> }
+%_islupperA     proto watcall :byte { retm<(LTYPE & _UPPER)> }
+%_islxdigitA    proto watcall :byte { retm<(LTYPE & _HEX)> }
+
+; Valid first char and next (= first + digit)
+
+%_islabel0A     proto watcall :byte { retm<(LTYPE & _LABEL)> }
+%_islabelA      proto watcall :byte { retm<(LTYPE & (_LABEL or _DIGIT))> }
+%_isdotlabelA   proto watcall :byte, :byte { retm<((al == '.' && dl) || (LTYPE & _LABEL))> }
+
+; C label
+
+%_isclabel0A    proto watcall :byte { retm<(al == '_' || LTYPE & (_UPPER or _LOWER))> }
+%_isclabelA     proto watcall :byte { retm<(al == '_' || LTYPE & (_UPPER or _LOWER or _DIGIT))> }
+
+%_isltypeW      proto watcall :byte, :abs { retm<(!ah && LTYPE & _2)> }
+%_islalnumW     proto watcall :word { retm<(!ah && LTYPE & (_DIGIT or _UPPER or _LOWER))> }
+%_islalphaW     proto watcall :word { retm<(!ah && LTYPE & (_UPPER or _LOWER))> }
+%_islcntrlW     proto watcall :word { retm<(!ah && LTYPE & _CONTROL)> }
+%_isldigitW     proto watcall :word { retm<(!ah && LTYPE & _DIGIT)> }
+%_isllowerW     proto watcall :word { retm<(!ah && LTYPE & _LOWER)> }
+%_islpunctW     proto watcall :word { retm<(!ah && LTYPE & _PUNCT)> }
+%_islspaceW     proto watcall :word { retm<(!ah && LTYPE & _SPACE)> }
+%_islupperW     proto watcall :word { retm<(!ah && LTYPE & _UPPER)> }
+%_islxdigitW    proto watcall :word { retm<(!ah && LTYPE & _HEX)> }
+%_islabel0W     proto watcall :word { retm<(!ah && LTYPE & _LABEL)> }
+%_islabelW      proto watcall :word { retm<(!ah && LTYPE & (_LABEL or _DIGIT))> }
+%_isdotlabelW   proto watcall :word, :word { retm<((eax == '.' && edx) || (!ah && LTYPE & _LABEL))> }
+%_isclabel0W    proto watcall :word { retm<(eax == '_' || (!ah && LTYPE & (_UPPER or _LOWER)))> }
+%_isclabelW     proto watcall :word { retm<(eax == '_' || (!ah && LTYPE & (_UPPER or _LOWER or _DIGIT)))> }
+
+_ltolowerA proto watcall :byte {
+    .if _islupperA(eax)
+        add eax,'a'-'A'
+    .endif
+    }
+_ltoupperA proto watcall :byte {
+    .if _isllowerA(eax)
+        sub eax,'a'-'A'
+    .endif
+    }
+_ltolowerW proto watcall :word {
+    .if _islupperW(eax)
+        add eax,'a'-'A'
+    .endif
+    }
+_ltoupperW proto watcall :word {
+    .if _isllowerW(eax)
+        sub eax,'a'-'A'
+    .endif
+    }
+
+ifdef _UNICODE
+define isltype          <_isltypeW>
+define islalnum         <_islalnumW>
+define islalpha         <_islalphaW>
+define islcntrl         <_islcntrlW>
+define isldigit         <_isldigitW>
+define isllower         <_isllowerW>
+define islpunct         <_islpunctW>
+define islspace         <_islspaceW>
+define islupper         <_islupperW>
+define islxdigit        <_islxdigitW>
+define islabel0         <_islabel0W>
+define islabel          <_islabelW>
+define isdotlabel       <_isdotlabelW>
+define isclabel0        <_isclabel0W>
+define isclabel         <_isclabelW>
+define ltolower         <_ltolowerW>
+define ltoupper         <_ltoupperW>
+else
+define isltype          <_isltypeA>
+define islalnum         <_islalnumA>
+define islalpha         <_islalphaA>
+define islcntrl         <_islcntrlA>
+define isldigit         <_isldigitA>
+define isllower         <_isllowerA>
+define islpunct         <_islpunctA>
+define islspace         <_islspaceA>
+define islupper         <_islupperA>
+define islxdigit        <_islxdigitA>
+define islabel0         <_islabel0A>
+define islabel          <_islabelA>
+define isdotlabel       <_isdotlabelA>
+define isclabel0        <_isclabel0A>
+define isclabel         <_isclabelA>
+define ltolower         <_ltolowerA>
+define ltoupper         <_ltoupperA>
 endif
 
 ltokstartc proto fastcall string:LPTSTR {
@@ -142,30 +181,6 @@ ltokstartc proto fastcall string:LPTSTR {
 ltokstart proto fastcall string:LPTSTR {
     ltokstartc(rcx)
     xchg rax,rcx
-    }
-
-lprevtokc proto fastcall string_pos:LPTSTR, start_pos:LPTSTR {
-    .while ( rcx > rdx && !islabel( [rcx] ) )
-        sub rcx,tchar_t
-    .endw
-    .while ( rcx > rdx && islabel( [rcx] ) )
-        sub rcx,tchar_t
-    .endw
-    .if ( !islabel( eax ) )
-        .if ( islabel( [rcx+tchar_t] ) )
-            add rcx,tchar_t
-        .endif
-        movzx eax,tchar_t ptr[rcx]
-    .endif
-    }
-
-lnexttokc proto fastcall string_pos:LPTSTR {
-    .while ( islabel( [rcx] ) )
-        add rcx,tchar_t
-    .endw
-    .while ( eax && !islabel( [rcx] ) )
-        add rcx,tchar_t
-    .endw
     }
 
 endif

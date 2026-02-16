@@ -1,26 +1,33 @@
-
 LANGUAGEID      equ LANGID_US
 
 IDS_FILE        equ <"&File">
-IDS_OPEN        equ <"&Open">
-IDS_CLOSE       equ <"&Close">
-IDS_SAVE        equ <"&Save">
-IDS_SAVEAS      equ <"Save &As">
-IDS_EXIT        equ <"E&xit">
+ IDS_OPEN       equ <"&Open">
+ IDS_CLOSE      equ <"&Close">
+ IDS_SAVE       equ <"&Save">
+ IDS_SAVEAS     equ <"Save &As">
+ IDS_EXIT       equ <"E&xit">
 IDS_EDIT        equ <"&Edit">
-IDS_UNDO        equ <"&Undo">
-IDS_REDO        equ <"&Redo">
-IDS_COPY        equ <"&Copy">
-IDS_CUT         equ <"C&ut">
-IDS_PASTE       equ <"&Paste">
-IDS_DELETE      equ <"&Delete">
-IDS_SELECTALL   equ <"Select &All">
+ IDS_UNDO       equ <"&Undo">
+ IDS_REDO       equ <"&Redo">
+ IDS_COPY       equ <"&Copy">
+ IDS_CUT        equ <"C&ut">
+ IDS_PASTE      equ <"&Paste">
+ IDS_DELETE     equ <"&Delete">
+ IDS_FIND       equ <"&Find...",9,"Ctrl+F">
+ IDS_FINDNEXT   equ <"Find &Next",9,"F3">
+ IDS_FINDPREV   equ <"Find &Prev.",9,"Ctrl+F3">
+ IDS_REPLACE    equ <"&Replace..",9,"Ctrl+R">
+ IDS_GOTO       equ <"&Go To Line",9,"Ctrl+G">
+ IDS_SELECTALL  equ <"Select &All">
+IDS_FORMAT      equ <"Format">
+ IDS_FONT       equ <"Font...">
+ IDS_COLOR      equ <"Color...">
+IDS_VIEW        equ <"View">
+ IDS_STATUSBAR  equ <"Status Bar">
+IDS_HELP        equ <"Help">
+ IDS_VIEWHELP   equ <"View Help">
+ IDS_ABOUT      equ <"About">
 IDS_SEARCH      equ <"&Search">
-IDS_FIND        equ <"&Find...",9,"Ctrl+F">
-IDS_FINDNEXT    equ <"Find &Next",9,"F3">
-IDS_FINDPREV    equ <"Find &Prev.",9,"Ctrl+F3">
-IDS_REPLACE     equ <"&Replace..",9,"Ctrl+R">
-IDS_GOTO        equ <"&Go To Line",9,"Ctrl+G">
 IDS_OPTIONS     equ <"Options">
 IDS_OK          equ <"OK">
 IDS_CANCEL      equ <"Cancel">
@@ -37,4 +44,3 @@ IDS_GOTO2       equ <"Go To Line">
 IDS_LINE        equ <"Line :">
 IDS_REPLACE2    equ <"Replace">
 IDS_REPLACEWITH equ <"Replace with">
-

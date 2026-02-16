@@ -3,52 +3,27 @@ include MyGestureEngine.inc
 
     .code
 
-    assume rcx:ptr CMyGestureEngine
-    assume rdx:ptr CMyGestureEngineVtbl
+    assume class:rbx
 
-CMyGestureEngine::CMyGestureEngine proc uses rsi rdi pcRect:ptr CDrawingObject
+CMyGestureEngine::CMyGestureEngine proc uses rsi pcRect:ptr CDrawingObject
 
-    mov rsi,rcx
-    mov rdi,rdx
-
-    .return .if !malloc( CMyGestureEngine + CMyGestureEngineVtbl )
-
-    mov rcx,rax
-    add rax,CMyGestureEngine
-    mov rdx,rax
-    mov [rcx].lpVtbl,rax
-
-
-    mov [rdx].Release,              &CMyGestureEngine_Release
-    mov [rdx].WndProc,              &CMyGestureEngine_WndProc
-    mov [rdx].ProcessPressAndTap,   &CMyGestureEngine_ProcessPressAndTap
-    mov [rdx].ProcessTwoFingerTap,  &CMyGestureEngine_ProcessTwoFingerTap
-    mov [rdx].ProcessMove,          &CMyGestureEngine_ProcessMove
-    mov [rdx].ProcessZoom,          &CMyGestureEngine_ProcessZoom
-    mov [rdx].ProcessRotate,        &CMyGestureEngine_ProcessRotate
-
-    .if rsi
-        mov [rsi],rcx
+    ldr rsi,pcRect
+    mov rbx,@ComAlloc(CMyGestureEngine)
+    .if ( rax )
+        mov _pcRect,CDrawingObject()
+        .if ( rsi )
+            mov [rsi],rax
+        .endif
+        mov rax,rbx
     .endif
-    mov rsi,rcx
-    CDrawingObject_CDrawingObject(rdi)
-
-    mov rcx,rsi
-    mov [rcx]._pcRect,rax
-    mov rax,rsi
     ret
     endp
 
-    assume r10:ptr CDrawingObject
-
 CMyGestureEngine::Release proc
-
-    mov r10,[rcx]._pcRect
-    .if (r10)
-
-        [r10].Release()
+    .if ( _pcRect )
+        _pcRect.Release()
     .endif
-    free(this)
+    free(rbx)
     ret
     endp
 
@@ -57,9 +32,7 @@ LODWORD macro ull
     exitm<eax>
     endm
 
-    assume rsi:ptr CMyGestureEngine
-
-CMyGestureEngine::WndProc proc uses rsi rdi hWnd:HWND, wParam:WPARAM, lParam:LPARAM
+CMyGestureEngine::WndProc proc hWnd:HWND, wParam:WPARAM, lParam:LPARAM
 
   local ptZoomCenter:POINT
   local k:double
@@ -68,65 +41,52 @@ CMyGestureEngine::WndProc proc uses rsi rdi hWnd:HWND, wParam:WPARAM, lParam:LPA
 
     ;; helper variables
 
-    mov rsi,rcx
-
     mov gi.cbSize,sizeof(gi)
     mov bResult,GetGestureInfo(lParam, &gi)
-
-    .if (!bResult)
-
+    .if ( !eax )
         .assert("Error in execution of GetGestureInfo" && 0)
         .return FALSE
     .endif
 
     .switch (gi.dwID)
-
     .case GID_BEGIN
         .endc
-
     .case GID_END
         .endc
-
     .case GID_ZOOM
         .switch (gi.dwFlags)
-
         .case GF_BEGIN
-            mov [rsi]._dwArguments,LODWORD(gi.ullArguments)
+            mov _dwArguments,LODWORD(gi.ullArguments)
             movzx eax,gi.ptsLocation.x
-            mov [rsi]._ptFirst.x,eax
+            mov _ptFirst.x,eax
             movzx eax,gi.ptsLocation.y
-            mov [rsi]._ptFirst.y,eax
-            ScreenToClient(hWnd, &[rsi]._ptFirst)
-            .endc
-
+            mov _ptFirst.y,eax
+            ScreenToClient(hWnd, &_ptFirst)
+           .endc
         .default
             movzx eax,gi.ptsLocation.x
-            mov [rsi]._ptSecond.x,eax
+            mov _ptSecond.x,eax
             movzx eax,gi.ptsLocation.y
-            mov [rsi]._ptSecond.y,eax
-            ScreenToClient(hWnd, &[rsi]._ptSecond)
-
-            mov eax,[rsi]._ptSecond.x
-            add eax,[rsi]._ptFirst.x
+            mov _ptSecond.y,eax
+            ScreenToClient(hWnd, &_ptSecond)
+            mov eax,_ptSecond.x
+            add eax,_ptFirst.x
             shr eax,1
             mov ptZoomCenter.x,eax
-            mov eax,[rsi]._ptSecond.y
-            add eax,[rsi]._ptFirst.y
+            mov eax,_ptSecond.y
+            add eax,_ptFirst.y
             shr eax,1
             mov ptZoomCenter.y,eax
-
             mov eax,dword ptr gi.ullArguments
             cvtsi2sd xmm0,rax
-            mov eax,[rsi]._dwArguments
+            mov eax,_dwArguments
             cvtsi2sd xmm1,rax
             divsd xmm0,xmm1
-
-            [rsi].ProcessZoom(xmm0, ptZoomCenter.x, ptZoomCenter.y)
+            ProcessZoom(xmm0, ptZoomCenter.x, ptZoomCenter.y)
             InvalidateRect(hWnd, NULL, TRUE)
-
-            mov rax,[rsi]._ptSecond
-            mov [rsi]._ptFirst,rax
-            mov [rsi]._dwArguments,LODWORD(gi.ullArguments)
+            mov rax,_ptSecond
+            mov _ptFirst,rax
+            mov _dwArguments,LODWORD(gi.ullArguments)
             .endc
         .endsw
         .endc
@@ -135,67 +95,60 @@ CMyGestureEngine::WndProc proc uses rsi rdi hWnd:HWND, wParam:WPARAM, lParam:LPA
         .switch (gi.dwFlags)
         .case GF_BEGIN
             movzx eax,gi.ptsLocation.x
-            mov [rsi]._ptFirst.x,eax
+            mov _ptFirst.x,eax
             movzx eax,gi.ptsLocation.y
-            mov [rsi]._ptFirst.y,eax
-            ScreenToClient(hWnd, &[rsi]._ptFirst)
+            mov _ptFirst.y,eax
+            ScreenToClient(hWnd, &_ptFirst)
             .endc
-
         .default
             movzx eax,gi.ptsLocation.x
-            mov [rsi]._ptSecond.x,eax
+            mov _ptSecond.x,eax
             movzx eax,gi.ptsLocation.y
-            mov [rsi]._ptSecond.y,eax
-            ScreenToClient(hWnd, &[rsi]._ptSecond)
-
-            mov edx,[rsi]._ptSecond.x
-            sub edx,[rsi]._ptFirst.x
-            mov r8d,[rsi]._ptSecond.y
-            sub r8d,[rsi]._ptFirst.y
-            [rsi].ProcessMove(edx, r8d)
+            mov _ptSecond.y,eax
+            ScreenToClient(hWnd, &_ptSecond)
+            mov edx,_ptSecond.x
+            sub edx,_ptFirst.x
+            mov eax,_ptSecond.y
+            sub eax,_ptFirst.y
+            ProcessMove(edx, eax)
             InvalidateRect(hWnd, NULL, TRUE)
-
-            mov rax,[rsi]._ptSecond
-            mov [rsi]._ptFirst,rax
+            mov _ptFirst,_ptSecond
             .endc
         .endsw
         .endc
-
     .case GID_ROTATE
         .switch (gi.dwFlags)
         .case GF_BEGIN
-            mov [rsi]._dwArguments,0
-            .endc
+            mov _dwArguments,0
+           .endc
         .default
             movzx eax,gi.ptsLocation.x
-            mov [rsi]._ptFirst.x,eax
+            mov _ptFirst.x,eax
             movzx eax,gi.ptsLocation.y
-            mov [rsi]._ptFirst.y,eax
-            ScreenToClient(hWnd, &[rsi]._ptFirst);
+            mov _ptFirst.y,eax
+            ScreenToClient(hWnd, &_ptFirst);
             mov eax,dword ptr gi.ullArguments
             cvtsi2sd xmm0,rax
             movsd xmm2,GID_ROTATE_ANGLE_FROM_ARGUMENT(xmm0)
-            mov eax,[rsi]._dwArguments
+            mov eax,_dwArguments
             cvtsi2sd xmm0,rax
             subsd xmm2,GID_ROTATE_ANGLE_FROM_ARGUMENT(xmm0)
-            [rsi].ProcessRotate(xmm2, [rsi]._ptFirst.x, [rsi]._ptFirst.y)
+            ProcessRotate(xmm2, _ptFirst.x, _ptFirst.y)
             InvalidateRect(hWnd, NULL, TRUE)
-            mov [rsi]._dwArguments,LODWORD(gi.ullArguments)
+            mov _dwArguments,LODWORD(gi.ullArguments)
             .endc
         .endsw
         .endc
-
     .case GID_TWOFINGERTAP
-        [rsi].ProcessTwoFingerTap()
+        ProcessTwoFingerTap()
         InvalidateRect(hWnd, NULL, TRUE)
         .endc
-
     .case GID_PRESSANDTAP
         .switch (gi.dwFlags)
         .case GF_BEGIN
-            [rsi].ProcessPressAndTap()
+            ProcessPressAndTap()
             InvalidateRect(hWnd, NULL, TRUE)
-            .endc
+           .endc
         .endsw
         .endc
     .endsw
@@ -204,43 +157,39 @@ CMyGestureEngine::WndProc proc uses rsi rdi hWnd:HWND, wParam:WPARAM, lParam:LPA
     ret
     endp
 
-CMyGestureEngine::ProcessPressAndTap proc
-    mov r10,[rcx]._pcRect
-    .if (r10)
+    assume class:rcx
 
-        [r10].ShiftColor()
+CMyGestureEngine::ProcessPressAndTap proc
+    .if ( _pcRect )
+        _pcRect.ShiftColor()
     .endif
     ret
     endp
 
 CMyGestureEngine::ProcessTwoFingerTap proc
-    mov r10,[rcx]._pcRect
-    .if (r10)
-        [r10].ToggleDrawDiagonals()
+    .if ( _pcRect )
+        _pcRect.ToggleDrawDiagonals()
     .endif
     ret
     endp
 
 CMyGestureEngine::ProcessZoom proc dZoomFactor:double, lZx:long_t, lZy:long_t
-    mov r10,[rcx]._pcRect
-    .if (r10)
-        [r10].Zoom(xmm1, r8d, r9d)
+    .if ( _pcRect )
+        _pcRect.Zoom(ldr(dZoomFactor), ldr(lZx), ldr(lZy))
     .endif
     ret
     endp
 
 CMyGestureEngine::ProcessMove proc ldx:long_t, ldy:long_t
-    mov r10,[rcx]._pcRect
-    .if (r10)
-        [r10].Move(edx, r8d)
+    .if ( _pcRect )
+        _pcRect.Move(ldr(ldx), ldr(ldy))
     .endif
     ret
     endp
 
 CMyGestureEngine::ProcessRotate proc dAngle:double, lOx:long_t, lOy:long_t
-    mov r10,[rcx]._pcRect
-    .if (r10)
-        [r10].Rotate(xmm1, r8d, r9d)
+    .if ( _pcRect )
+        _pcRect.Rotate(ldr(dAngle), ldr(lOx), ldr(lOy))
     .endif
     ret
     endp

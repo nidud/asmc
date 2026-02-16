@@ -1,5 +1,5 @@
-
 CreateFont.exe:
-    asmc -q -peg $*.asm
-    $@
-    pause
+	asmc -q -peg $*.asm
+	$@
+vs:
+	project -p -w CreateFont

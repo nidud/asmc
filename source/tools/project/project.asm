@@ -16,9 +16,12 @@ include time.inc
 include string.inc
 include tchar.inc
 
+.data
+ Project int_t 0
+
 .code
 
-CreateProject proc path:string_t, name:string_t, Unicode:int_t, Windows:int_t, iddc:int_t
+CreateProject proc uses rsi rdi rbx path:string_t, name:ptr string_t, Unicode:int_t, Windows:int_t, iddc:int_t, files:int_t
 
    .new lpWindows[2]:string_t = { "Console", "Windows" }
    .new lpUnicode[2]:string_t = { "false", "true" }
@@ -26,15 +29,15 @@ CreateProject proc path:string_t, name:string_t, Unicode:int_t, Windows:int_t, i
    .new iddc_props:string_t   = { "    <Import Project=\"$(AsmcDir)\\bin\\iddc.props\" />\n" }
    .new iddc_targets:string_t = { "    <Import Project=\"$(AsmcDir)\\bin\\iddc.targets\" />\n" }
 
+    ldr rbx,name
     .if ( iddc == 0 )
 
         mov iddc_props,&@CStr("")
         mov iddc_targets,rax
     .endif
 
-    sprintf(&file, "%s/%s.vcxproj", path, name)
+    sprintf(&file, "%s/%s.vcxproj", path, [rbx])
     .if ( fopen(&file, "wt") == NULL )
-
         perror(&file)
         exit(1)
     .endif
@@ -94,6 +97,7 @@ CreateProject proc path:string_t, name:string_t, Unicode:int_t, Windows:int_t, i
         "    <ASMC>\n"
         "      <UnicodeCharacterSet>%s</UnicodeCharacterSet>\n"
         "      <GenerateCStackFrame>true</GenerateCStackFrame>\n"
+        "      <GenerateUnwindInformation>true</GenerateUnwindInformation>\n"
         "    </ASMC>\n"
         "  </ItemDefinitionGroup>\n"
         "  <ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='Debug|win32'\">\n"
@@ -109,17 +113,28 @@ CreateProject proc path:string_t, name:string_t, Unicode:int_t, Windows:int_t, i
         "      <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>\n"
         "    </ASMC>\n"
         "  </ItemDefinitionGroup>\n"
-        "  <ItemGroup>\n"
-        "    <ASMC Include=\"%s.asm\" />\n"
+        "  <ItemGroup>\n", [rbx], iddc_props, rdx, rcx, rdx, rcx )
+
+    .for ( esi = 0 : esi < files : esi++ )
+        .if ( Project )
+            sprintf(&file, "%s.asm", [rbx+rsi*string_t])
+        .else
+            sprintf(&file, "%s/%s.asm", path, [rbx+rsi*string_t])
+        .endif
+        .ifd !_access(&file, 0)
+            fprintf(fp,
+                "    <ASMC Include=\"%s.asm\" />\n", [rbx+rsi*string_t])
+        .endif
+    .endf
+    fprintf(fp,
         "  </ItemGroup>\n"
         "  <Import Project=\"$(VCTargetsPath)\Microsoft.Cpp.targets\" />\n"
         "  <ImportGroup Label=\"ExtensionTargets\">\n"
         "    <Import Project=\"$(AsmcDir)\\bin\\asmc.targets\" />\n%s"
         "  </ImportGroup>\n"
-        "</Project>", name, iddc_props, rdx, rcx, rdx, rcx, name, iddc_targets )
+        "</Project>", iddc_targets )
     ret
-
-CreateProject endp
+    endp
 
 
 CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t, pe:int_t
@@ -199,8 +214,7 @@ CreateMakefile proc name:string_t, Unicode:int_t, Windows:int_t, Static:int_t, p
     .endif
     fprintf(fp, "%s\n", name)
     ret
-
-CreateMakefile endp
+    endp
 
 
 CreateSource proc name:string_t, Windows:int_t
@@ -311,24 +325,22 @@ CreateSource proc name:string_t, Windows:int_t
             "\n"
             "    end _tstart\n", &uname)
     .endif
-
     ret
-
-CreateSource endp
+    endp
 
 _tmain proc argc:int_t, argv:array_t
 
-   .new name:string_t = 0
+   .new name[20]:string_t = 0
+   .new files:int_t = 0
    .new Unicode:int_t = 0
    .new Windows:int_t = 0
    .new Static:int_t = 0
-   .new Project:int_t = 0
    .new iddc:int_t = 0
    .new pe:int_t = 0
 
-    .for ( rdx = argv, ecx = 1 : ecx < argc : ecx++ )
+    .for ( rbx = argv, ecx = 1 : ecx < argc : ecx++ )
 
-        mov rax,[rdx+rcx*string_t]
+        mov rax,[rbx+rcx*string_t]
         mov eax,[rax]
         .if ( al == '-' || al == '/' )
             .if ( ah == 'w' )
@@ -347,17 +359,20 @@ _tmain proc argc:int_t, argv:array_t
             .elseif ( ah == 'c' )
                 mov iddc,1
             .else
-                perror([rdx+rcx*string_t])
+                perror([rbx+rcx*string_t])
                 exit(1)
             .endif
         .else
-            mov name,[rdx+rcx*string_t]
+            mov rax,[rbx+rcx*string_t]
+            mov edx,files
+            mov name[rdx*string_t],rax
+            inc files
         .endif
     .endf
     .if ( name == NULL )
 
         printf(
-            "Usage: project [ options ] name\n"
+            "Usage: project [ options ] name [file(s)]\n"
             "\n"
             "-w     -- Windows (default is Console)\n"
             "-u     -- Unicode\n"
@@ -375,20 +390,18 @@ _tmain proc argc:int_t, argv:array_t
         exit(0)
     .endif
     .if ( Project )
-        CreateProject(".", name, Unicode, Windows, iddc)
+        CreateProject(".", &name, Unicode, Windows, iddc, files)
     .else
         .if ( _mkdir(name) )
-
             perror(name)
             exit(1)
         .endif
-        CreateProject(name, name, Unicode, Windows, iddc)
-        CreateMakefile(name, Unicode, Windows, Static, pe)
         CreateSource(name, Windows)
+        CreateProject(name, &name, Unicode, Windows, iddc, files)
+        CreateMakefile(name, Unicode, Windows, Static, pe)
     .endif
     xor eax,eax
     ret
-
-_tmain endp
+    endp
 
     end _tstart

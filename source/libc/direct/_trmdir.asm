@@ -17,15 +17,11 @@ include tchar.inc
 
 _trmdir proc directory:tstring_t
 ifdef __UNIX__
-ifdef _UNICODE
-    _set_errno( ENOSYS )
-else
     .ifsd ( sys_rmdir( ldr(directory) ) < 0 )
 
         neg eax
         _set_errno(eax)
     .endif
-endif
 else
     .if RemoveDirectory( ldr(directory) )
         xor eax,eax
@@ -34,7 +30,6 @@ else
     .endif
 endif
     ret
-
-_trmdir endp
+    endp
 
     end

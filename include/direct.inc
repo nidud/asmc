@@ -55,21 +55,24 @@ opendir		proto __cdecl :LPSTR
 readdir		proto __cdecl :LPDIR
 closedir	proto __cdecl :LPDIR
 fchdir		proto __cdecl :int_t
-
 mkdir		proto __cdecl :LPSTR, :int_t
+_mkdir macro directory
+    exitm<mkdir(directory, S_IRWXU or S_IRWXG or S_IROTH or S_IXOTH)>
+    endm
+
 define _rmdir	<rmdir>
 define _chdir	<chdir>
 define _getcwd	<getcwd>
-
 define _F_SUBDIR	_S_IFDIR
 else
 define _F_SUBDIR	_A_SUBDIR
+mkdir		proto __cdecl :LPSTR
+_mkdir		proto __cdecl :LPSTR
 endif
 
 _getdrive	proto __cdecl
 _chdrive	proto __cdecl :SINT
 _chdir		proto __cdecl :LPSTR
-_mkdir		proto __cdecl :LPSTR
 _rmdir		proto __cdecl :LPSTR
 _getcwd		proto __cdecl :LPSTR, :SINT
 _getdcwd	proto __cdecl :SINT, :LPSTR, :SINT

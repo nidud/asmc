@@ -67,31 +67,23 @@ _tmain proc argc:int_t, argv:array_t
         ;; Dispatch the events to the appropriate handler.
 
         assume rbx:ptr INPUT_RECORD
-
-        .for (rbx = &irInBuf, i = 0: i < cNumRead: i++, rbx += INPUT_RECORD)
-
+        .for ( rbx = &irInBuf, i = 0: i < cNumRead: i++, rbx += INPUT_RECORD )
             .switch ([rbx].EventType)
-
-                .case KEY_EVENT ;; keyboard input
-                    KeyEventProc( &[rbx].Event.KeyEvent )
-                   .endc
-
-                .case MOUSE_EVENT ; mouse input
-                    MouseEventProc( &[rbx].Event.MouseEvent )
-                   .endc
-
-                .case WINDOW_BUFFER_SIZE_EVENT ; scrn buf. resizing
-                    ResizeEventProc( &[rbx].Event.WindowBufferSizeEvent )
-                   .endc
-
-                .case FOCUS_EVENT    ; disregard focus events
-
-                .case MENU_EVENT     ; disregard menu events
-                   .endc
-
-                .default
-                    ErrorExit("Unknown event type")
-                   .endc
+            .case KEY_EVENT ;; keyboard input
+                KeyEventProc( &[rbx].Event.KeyEvent )
+               .endc
+            .case MOUSE_EVENT ; mouse input
+                MouseEventProc( &[rbx].Event.MouseEvent )
+               .endc
+            .case WINDOW_BUFFER_SIZE_EVENT ; scrn buf. resizing
+                ResizeEventProc( &[rbx].Event.WindowBufferSizeEvent )
+               .endc
+            .case FOCUS_EVENT    ; disregard focus events
+            .case MENU_EVENT     ; disregard menu events
+                .endc
+            .default
+                ErrorExit("Unknown event type")
+               .endc
             .endsw
         .endf
     .endw
@@ -99,10 +91,9 @@ _tmain proc argc:int_t, argv:array_t
     ;; Restore input mode on exit.
 
     SetConsoleMode(hStdin, fdwSaveOldMode)
-
     .return 0
+    endp
 
-_tmain endp
 
 ErrorExit proc lpszMessage:LPSTR
 
@@ -111,16 +102,12 @@ ErrorExit proc lpszMessage:LPSTR
     ;; Restore input mode on exit.
 
     SetConsoleMode(hStdin, fdwSaveOldMode)
-
     ExitProcess(0)
     ret
-
-ErrorExit endp
+    endp
 
 KeyEventProc proc ker:ptr KEY_EVENT_RECORD
-
     printf("Key event: ")
-
     mov rcx,ker
     .if ( [rcx].KEY_EVENT_RECORD.bKeyDown )
         printf("key pressed\n")
@@ -128,66 +115,55 @@ KeyEventProc proc ker:ptr KEY_EVENT_RECORD
         printf("key released\n")
     .endif
     ret
-KeyEventProc endp
-
-MouseEventProc proc uses rbx mer:ptr MOUSE_EVENT_RECORD
+    endp
 
 ifndef MOUSE_HWHEELED
 define MOUSE_HWHEELED 0x0008
 endif
-    printf("Mouse event: ")
 
-    mov rbx,mer
     assume rbx:ptr MOUSE_EVENT_RECORD
+
+MouseEventProc proc uses rbx mer:ptr MOUSE_EVENT_RECORD
+
+    printf("Mouse event: ")
+    mov rbx,mer
     .switch([rbx].dwEventFlags)
-
-        .case 0
-
-            .if ([rbx].dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-
-                printf("left button press \n")
-
-            .elseif ([rbx].dwButtonState == RIGHTMOST_BUTTON_PRESSED)
-
-                printf("right button press \n")
-
-            .elseif ([rbx].dwButtonState == FROM_LEFT_3RD_BUTTON_PRESSED)
-
-                printf("middle button press \n")
-
-            .else
-
-                printf("button press\n")
-            .endif
-            .endc
-        .case DOUBLE_CLICK
-            printf("double click\n")
-            .endc
-        .case MOUSE_HWHEELED
-            printf("horizontal mouse wheel\n")
-            .endc
-        .case MOUSE_MOVED
-            printf("mouse moved\n")
-            .endc
-        .case MOUSE_WHEELED
-            printf("vertical mouse wheel\n")
-            .endc
-        .default
-            printf("unknown\n")
-            .endc
+    .case 0
+        .if ( [rbx].dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED )
+            printf("left button press \n")
+        .elseif ( [rbx].dwButtonState == RIGHTMOST_BUTTON_PRESSED )
+            printf("right button press \n")
+        .elseif ( [rbx].dwButtonState == FROM_LEFT_3RD_BUTTON_PRESSED )
+            printf("middle button press \n")
+        .else
+            printf("button press\n")
+        .endif
+        .endc
+    .case DOUBLE_CLICK
+        printf("double click\n")
+       .endc
+    .case MOUSE_HWHEELED
+        printf("horizontal mouse wheel\n")
+       .endc
+    .case MOUSE_MOVED
+        printf("mouse moved\n")
+       .endc
+    .case MOUSE_WHEELED
+        printf("vertical mouse wheel\n")
+       .endc
+    .default
+        printf("unknown\n")
+       .endc
     .endsw
     ret
-
-MouseEventProc endp
+    endp
 
 ResizeEventProc proc wbsr:ptr WINDOW_BUFFER_SIZE_RECORD
-
     printf("Resize event\n")
     mov rcx,wbsr
     printf("Console screen buffer is %d columns by %d rows.\n",
             [rcx].WINDOW_BUFFER_SIZE_RECORD.dwSize.X, [rcx].WINDOW_BUFFER_SIZE_RECORD.dwSize.Y)
     ret
-
-ResizeEventProc endp
+    endp
 
     end _tstart

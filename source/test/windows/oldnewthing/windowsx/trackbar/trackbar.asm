@@ -3,11 +3,12 @@
 ; https://blogs.msdn.microsoft.com/oldnewthing/20181023-00/?p=100035
 ;
 
-STRICT equ 1
+define STRICT 1
 include windows.inc
 include windowsx.inc
 include commctrl.inc
 include strsafe.inc
+include tchar.inc
 
 .data
 g_hinst     HINSTANCE 0 ;; This application's HINSTANCE
@@ -22,53 +23,55 @@ g_hwndChild HWND 0      ;; Optional child window
 ;;
 
 OnSize proc hwnd:HWND, state:UINT, x:SINT, y:SINT
-
     .if (g_hwndChild)
-        MoveWindow(g_hwndChild, 0, 0, x, y, TRUE)
+        MoveWindow(g_hwndChild, 0, 0, ldr(x), ldr(y), TRUE)
     .endif
     ret
-
-OnSize endp
+    endp
 
 SwapKeys proc wParam:WPARAM, vk1:UINT, vk2:UINT
 
-    mov ecx,wParam
-    mov edx,vk1
-    mov eax,vk2
-    .return .if (ecx == edx)
-    .return edx .if (ecx == eax)
-    mov eax,ecx
+    ldr rcx,wParam
+    ldr edx,vk1
+    ldr eax,vk2
+    .if ( ecx != edx )
+        .if ( ecx == eax )
+            mov eax,edx
+        .else
+            mov eax,ecx
+        .endif
+    .endif
     ret
+    endp
 
-SwapKeys endp
-
-TrackbarKeyProc proc WINAPI hwnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM,
+TrackbarKeyProc proc WINAPI uses rsi hwnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM,
         uIdSubclass:UINT_PTR, dwRefData:DWORD_PTR
 
   local delta:SINT
   local pos:SINT
   local style:DWORD
 
+    ldr rsi,wParam
     mov delta,0
 
     .if (uMsg == WM_KEYDOWN && GetKeyState(VK_CONTROL) & 0x8000)
 
         .if (GetWindowExStyle(hwnd) & WS_EX_LAYOUTRTL)
-            mov wParam,SwapKeys(wParam, VK_LEFT, VK_RIGHT)
+            mov esi,SwapKeys(wParam, VK_LEFT, VK_RIGHT)
         .endif
 
         mov style,GetWindowStyle(hwnd)
         .if (eax & TBS_DOWNISLEFT)
             .if (eax & TBS_VERT)
-                mov wParam,SwapKeys(wParam, VK_LEFT, VK_RIGHT)
+                mov esi,SwapKeys(wParam, VK_LEFT, VK_RIGHT)
             .else
-                mov wParam,SwapKeys(wParam, VK_UP, VK_DOWN)
+                mov esi,SwapKeys(wParam, VK_UP, VK_DOWN)
             .endif
         .endif
 
-        .if (wParam == VK_LEFT || wParam == VK_UP)
+        .if ( esi == VK_LEFT || esi == VK_UP )
             mov delta,-1
-        .elseif (wParam == VK_RIGHT || wParam == VK_DOWN)
+        .elseif ( esi == VK_RIGHT || esi == VK_DOWN )
             mov delta,+1
         .endif
 
@@ -80,9 +83,9 @@ TrackbarKeyProc proc WINAPI hwnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM,
             SendMessage(hwnd, TBM_SETPOS, TRUE, eax)
             GetParent(hwnd)
             .if delta < 0
-                FORWARD_WM_HSCROLL(eax, hwnd, TB_LINEUP, 0, SendMessage)
+                FORWARD_WM_HSCROLL(rax, hwnd, TB_LINEUP, 0, SendMessage)
             .else
-                FORWARD_WM_HSCROLL(eax, hwnd, TB_LINEDOWN, 0, SendMessage)
+                FORWARD_WM_HSCROLL(rax, hwnd, TB_LINEDOWN, 0, SendMessage)
             .endif
             SendMessage(hwnd, WM_CHANGEUISTATE, MAKELONG(UIS_CLEAR, UISF_HIDEFOCUS), 0)
             .return 0
@@ -90,8 +93,7 @@ TrackbarKeyProc proc WINAPI hwnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM,
     .endif
     DefSubclassProc(hwnd, uMsg, wParam, lParam)
     ret
-
-TrackbarKeyProc endp
+    endp
 
 ;;
 ;;  OnCreate
@@ -101,17 +103,13 @@ TrackbarKeyProc endp
 
 OnCreate proc hwnd:HWND, lpcs:LPCREATESTRUCT
 
-    CreateWindow(TRACKBAR_CLASS, "", WS_CHILD or WS_VISIBLE, 0, 0, 100, 100, hwnd, 100, g_hinst, 0)
-    mov g_hwndChild,eax
-
+    mov g_hwndChild,CreateWindow(TRACKBAR_CLASS, "", WS_CHILD or WS_VISIBLE, 0, 0, 100, 100, ldr(hwnd), 100, g_hinst, 0)
     SendMessage(g_hwndChild, TBM_SETLINESIZE, 0, 5)
     SendMessage(g_hwndChild, TBM_SETPAGESIZE, 0, 20)
-
-    SetWindowSubclass(g_hwndChild, TrackbarKeyProc, 0, 0)
+    SetWindowSubclass(g_hwndChild, &TrackbarKeyProc, 0, 0)
     mov eax,TRUE
     ret
-
-OnCreate endp
+    endp
 
 ;;
 ;;  OnDestroy
@@ -120,12 +118,10 @@ OnCreate endp
 ;;
 
 OnDestroy proc hwnd:HWND
-
     RemoveWindowSubclass(g_hwndChild, TrackbarKeyProc, 0)
     PostQuitMessage(0)
     ret
-
-OnDestroy endp
+    endp
 
 ;;
 ;;  PaintContent
@@ -134,7 +130,7 @@ OnDestroy endp
 
 PaintContent proc hwnd:HWND, pps:ptr PAINTSTRUCT
     ret
-PaintContent endp
+    endp
 
 ;;
 ;;  OnPaint
@@ -149,8 +145,7 @@ OnPaint proc hwnd:HWND
     PaintContent(hwnd, &ps)
     EndPaint(hwnd, &ps)
     ret
-
-OnPaint endp
+    endp
 
 ;;
 ;;  OnPrintClient
@@ -161,29 +156,24 @@ OnPrintClient proc hwnd:HWND, hdc:HDC
 
   local ps:PAINTSTRUCT
 
-    mov eax,hdc
-    mov ps.hdc,eax
-    GetClientRect(hwnd, &ps.rcPaint)
+    mov ps.hdc,ldr(hdc)
+    GetClientRect(ldr(hwnd), &ps.rcPaint)
     PaintContent(hwnd, &ps)
     ret
-
-OnPrintClient endp
+    endp
 
 OnHScroll proc hwnd:HWND, hwndCtl:HWND, code:UINT, pos:SINT
 
   local buf[128]:TCHAR
 
-    mov eax,hwndCtl
-    .if (eax == g_hwndChild)
-
-        SendMessage(hwndCtl, TBM_GETPOS, 0, 0)
-
+    ldr rcx,hwndCtl
+    .if ( rcx == g_hwndChild )
+        SendMessage(rcx, TBM_GETPOS, 0, 0)
         StringCchPrintf(&buf, ARRAYSIZE(buf), "pos = %d", eax)
         SetWindowText(hwnd, &buf)
     .endif
     ret
-
-OnHScroll endp
+    endp
 
 ;;
 ;;  Window procedure
@@ -191,22 +181,20 @@ OnHScroll endp
 
 WndProc proc WINAPI hwnd:HWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
-    .switch (uiMsg)
-
-    HANDLE_MSG(hwnd, WM_CREATE, OnCreate)
-    HANDLE_MSG(hwnd, WM_SIZE, OnSize)
-    HANDLE_MSG(hwnd, WM_DESTROY, OnDestroy)
-    HANDLE_MSG(hwnd, WM_PAINT, OnPaint)
-    HANDLE_MSG(hwnd, WM_HSCROLL, OnHScroll)
-
+    .switch ldr(uiMsg)
+    HANDLE_MSG(ldr(hwnd), WM_CREATE, OnCreate)
+    HANDLE_MSG(ldr(hwnd), WM_SIZE, OnSize)
+    HANDLE_MSG(ldr(hwnd), WM_DESTROY, OnDestroy)
+    HANDLE_MSG(ldr(hwnd), WM_PAINT, OnPaint)
+    HANDLE_MSG(ldr(hwnd), WM_HSCROLL, OnHScroll)
     .case WM_PRINTCLIENT
-        OnPrintClient(hwnd, wParam)
+        OnPrintClient(ldr(hwnd), ldr(wParam))
         .return 0
     .endsw
-    DefWindowProc(hwnd, uiMsg, wParam, lParam)
+    DefWindowProc(ldr(hwnd), ldr(uiMsg), ldr(wParam), ldr(lParam))
     ret
+    endp
 
-WndProc endp
 
 InitApp proc
 
@@ -219,34 +207,31 @@ InitApp proc
     mov wc.style,           eax
     mov wc.cbClsExtra,      eax
     mov wc.cbWndExtra,      eax
-    mov wc.hIcon,           eax
-    mov wc.hIconSm,         eax
-    mov wc.lpszMenuName,    eax
+    mov wc.hIcon,           rax
+    mov wc.hIconSm,         rax
+    mov wc.lpszMenuName,    rax
     mov wc.hCursor,         LoadCursor(NULL, IDC_ARROW)
     mov wc.hbrBackground,   (COLOR_WINDOW + 1)
     mov wc.lpszClassName,   &@CStr("Scratch")
-
     .if RegisterClassEx(&wc)
-
         InitCommonControls()    ;; In case we use a common control
         mov eax,TRUE
     .endif
     ret
+    endp
 
-InitApp endp
 
-WinMain proc WINAPI hinst:HINSTANCE, hinstPrev:HINSTANCE, lpCmdLine:LPSTR, nShowCmd:SINT
+_tWinMain proc WINAPI hinst:HINSTANCE, hinstPrev:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
   local msg:MSG
   local hwnd:HWND
 
-    mov eax,hinst
-    mov g_hinst,eax
+    mov g_hinst,ldr(hinst)
 
     .return .if !InitApp()
     .return .ifsd !SUCCEEDED(CoInitialize(NULL)) ;; In case we use COM
 
-    CreateWindowEx(
+    mov hwnd,CreateWindowEx(
             0,
             "Scratch",                      ;; Class Name
             "Scratch",                      ;; Title
@@ -258,19 +243,14 @@ WinMain proc WINAPI hinst:HINSTANCE, hinstPrev:HINSTANCE, lpCmdLine:LPSTR, nShow
             hinst,                          ;; Instance
             0)                              ;; No special parameters
 
-    mov hwnd,eax
     ShowWindow(hwnd, nShowCmd)
-
     .while GetMessage(&msg, NULL, 0, 0)
-
         TranslateMessage(&msg)
         DispatchMessage(&msg)
     .endw
-
     CoUninitialize()
     xor eax,eax
     ret
+    endp
 
-WinMain endp
-
-    end
+    end _tstart

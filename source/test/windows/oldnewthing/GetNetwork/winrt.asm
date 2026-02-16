@@ -18,7 +18,6 @@ include tchar.inc
 
 _tmain proc
 
-
    .new hr:HRESULT = CoInitializeEx(nullptr, COINIT_MULTITHREADED)
 
     .if (SUCCEEDED(hr))
@@ -29,20 +28,14 @@ _tmain proc
         interfaceName.Release()
 
         .if (SUCCEEDED(hr))
-
            .new netStatics:ptr Windows::Networking::Connectivity::INetworkInformationStatics = NULL
             mov hr,classFactory.QueryInterface(&IID_INetworkInformationStatics, &netStatics)
-
             .if (SUCCEEDED(hr))
-
                .new connection:ptr Windows::Networking::Connectivity::IConnectionProfile = NULL
                 mov hr,netStatics.GetInternetConnectionProfile(&connection)
-
                 .if (SUCCEEDED(hr))
-
                    .new cost:ptr Windows::Networking::Connectivity::IConnectionCost
                     mov hr,connection.GetConnectionCost(&cost)
-
                     .if (SUCCEEDED(hr))
 
                        .new connectivityLevel:int_t = 0
@@ -52,12 +45,10 @@ _tmain proc
                        .new roaming:int_t = 0
 
                         connection.GetNetworkConnectivityLevel(&connectivityLevel)
-
                         cost.get_NetworkCostType(&connectivityCost)
                         cost.get_Roaming(&roaming)
                         cost.get_OverDataLimit(&overDataLimit)
                         cost.get_ApproachingDataLimit(&approachingDataLimit)
-
                          _tprintf(
                             " ConnectivityLevel:     %d\n"
                             " ConnectivityCost:      %d\n"
@@ -69,7 +60,6 @@ _tmain proc
                             approachingDataLimit,
                             overDataLimit,
                             roaming)
-
                         cost.Release()
                     .endif
                     connection.Release()
@@ -81,7 +71,6 @@ _tmain proc
         CoUninitialize()
     .endif
     .return(hr)
-
-_tmain endp
+    endp
 
     end _tstart

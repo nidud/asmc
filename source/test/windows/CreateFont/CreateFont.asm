@@ -81,7 +81,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         DefWindowProc(hWnd, message, wParam, lParam)
     .endsw
     ret
-WndProc endp
+    endp
 
 _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
@@ -112,7 +112,6 @@ _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LP
     .endw
     mov rax,msg.wParam
     ret
-
-_tWinMain endp
+    endp
 
     end _tstart

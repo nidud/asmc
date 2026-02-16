@@ -123,29 +123,21 @@ CheckExcusiveParameters proc uses rsi
     lea rsi,ExclusiveParams
 
     .for (i = 0: i < ARRAYSIZE(ExclusiveParams): i++)
-
         lodsq
         mov Param,rax
-
         .if (Param.Exists())
-
             inc dwCount
         .endif
     .endf
-
     .if (dwCount == 0)
-
         wcout << "Error: CSM operation parameter is expected!" << endl
         mov iRes,ERROR_INVALID_PARAMETER
-
     .elseif (dwCount > 1)
-
         wcout << "Error: Duplicated CSM operation parameters!" << endl
         mov iRes,ERROR_INVALID_PARAMETER
     .endif
     .return iRes
-
-CheckExcusiveParameters endp
+    endp
 
 
 wmain proc uses rsi argc:int_t, argv:ptr ptr wchar_t
@@ -176,80 +168,51 @@ wmain proc uses rsi argc:int_t, argv:ptr ptr wchar_t
                 g_AltHelpParam.Exists()
 
                 .if (eax || edx)
-
                     mov iRes,PrintHelp()
-
                 .elseif (g_EnumRootsParam.Exists())
-
                     mov iRes,EnumRoots()
-
                 .elseif (g_EnumRulesParam.Exists())
-
                     mov iRes,EnumRules()
-
                 .elseif (g_AddRootParam.Exists())
-
                     mov iRes,AddRoots(g_AddRootParam.Get())
-
                 .elseif (g_RemoveRootParam.Exists())
-
                     mov iRes,RemoveRoots(g_RemoveRootParam.Get())
-
                 .elseif (g_AddRuleParam.Exists())
-
                     mov esi,g_DefaultParam.Exists()
                     and esi,g_DefaultParam.Get()
                     mov edx,g_IncludeParam.Exists()
                     and edx,g_IncludeParam.Get()
                     mov r8d,g_OverrideParam.Exists()
                     mov iRes,AddRule(esi, edx, r8d, g_AddRuleParam.Get())
-
                 .elseif (g_RemoveRuleParam.Exists())
-
                     mov esi,g_DefaultParam.Exists()
                     and esi,g_DefaultParam.Get()
                     mov iRes,RemoveRule(esi, g_RemoveRuleParam.Get())
-
                 .elseif (g_RevertParam.Exists())
-
                     mov iRes,Revert()
-
                 .elseif (g_Reset.Exists())
-
                     mov iRes,Reset()
-
                 .elseif (g_Reindex.Exists())
-
                     mov iRes,Reindex()
                 .else
                     .assert(!"Required parameter is missing!")
                 .endif
             .else
-
                 mov iRes,PrintHelp()
             .endif
         .endif
-
         CoUninitialize()
     .endif
     .return 0
-
-wmain endp
+    endp
 
 
 ReportHRESULTError proc pszOpName:PCWSTR, hr:HRESULT
-
-  local iErr:int_t
-
-    mov iErr,0
-
+    .new iErr:int_t = 0
     .if (FAILED(hr))
-
         .if HRESULT_FACILITY(hr) == FACILITY_WIN32
-
             mov iErr,HRESULT_CODE(hr)
            .new pMsgBuf:PCWSTR
-
             FormatMessageW(
                 FORMAT_MESSAGE_ALLOCATE_BUFFER or FORMAT_MESSAGE_FROM_SYSTEM,
                 NULL,
@@ -258,21 +221,16 @@ ReportHRESULTError proc pszOpName:PCWSTR, hr:HRESULT
                 &pMsgBuf,
                 0,
                 NULL )
-
             wcout << endl << "Error: " << pszOpName << " failed with error " \
                   << iErr << ": " << pMsgBuf << endl
-
             LocalFree(pMsgBuf)
         .else
-
             wcout << endl << "Error: " << pszOpName << " failed with error " << hr << endl
             mov iErr,-1
         .endif
     .endif
-
     .return iErr
-
-ReportHRESULTError endp
+    endp
 
 
 CreateCatalogManager proc ppSearchCatalogManager:ptr ptr ISearchCatalogManager
@@ -284,15 +242,12 @@ CreateCatalogManager proc ppSearchCatalogManager:ptr ptr ISearchCatalogManager
     mov [rcx],rax
     mov hr,CoCreateInstance(&CLSID_CSearchManager, NULL, CLSCTX_SERVER,
             &IID_ISearchManager, &pSearchManager)
-
     .if (SUCCEEDED(hr))
-
         mov hr,pSearchManager.GetCatalog(L"SystemIndex", ppSearchCatalogManager)
         pSearchManager.Release()
     .endif
     .return hr
-
-CreateCatalogManager endp
+    endp
 
 
 CreateCrawlScopManager proc ppSearchCrawlScopeManager:ptr ptr ISearchCrawlScopeManager
@@ -302,17 +257,14 @@ CreateCrawlScopManager proc ppSearchCrawlScopeManager:ptr ptr ISearchCrawlScopeM
 
     xor eax,eax
     mov [rcx],rax
-
     mov hr,CreateCatalogManager(&pCatalogManager)
     .if (SUCCEEDED(hr))
-
         ;; Crawl scope manager for that catalog
         mov hr,pCatalogManager.GetCrawlScopeManager(ppSearchCrawlScopeManager)
         pCatalogManager.Release()
     .endif
     .return hr
-
-CreateCrawlScopManager endp
+    endp
 
 
 DisplayRootInfo proc pSearchRoot:ptr ISearchRoot
@@ -322,26 +274,19 @@ DisplayRootInfo proc pSearchRoot:ptr ISearchRoot
   local fProvidesNotifications:BOOL
 
     mov pszUrl,NULL
-
     mov hr,pSearchRoot.get_RootURL(&pszUrl)
     .if (SUCCEEDED(hr))
-
         wcout << "\t" << pszUrl
-
         mov fProvidesNotifications,FALSE
         mov hr,pSearchRoot.get_ProvidesNotifications(&fProvidesNotifications)
-
         .if (SUCCEEDED(hr) && fProvidesNotifications)
-
             wcout << " - Provides Notifications"
         .endif
         CoTaskMemFree(pszUrl)
     .endif
     wcout << endl
-
     .return hr
-
-DisplayRootInfo endp
+    endp
 
 
 EnumRoots proc
@@ -360,12 +305,9 @@ EnumRoots proc
 
         mov hr,pSearchCrawlScopeManager.EnumerateRoots(&pSearchRoots)
         .if (SUCCEEDED(hr))
-
             .while SUCCEEDED(hr)
-
                 mov hr,pSearchRoots.Next(1, &pSearchRoot, NULL)
                 .break .if hr != S_OK
-
                 mov hr,DisplayRootInfo(pSearchRoot)
                 pSearchRoot.Release()
             .endw
@@ -373,10 +315,8 @@ EnumRoots proc
         .endif
         pSearchCrawlScopeManager.Release()
     .endif
-
     .return ReportHRESULTError(L"EnumRoots()", hr)
-
-EnumRoots endp
+    endp
 
 
 AddRoots proc pszURL:PCWSTR
@@ -395,26 +335,18 @@ AddRoots proc pszURL:PCWSTR
 
        .new pSearchCrawlScopeManager:ptr ISearchCrawlScopeManager
         mov hr,pCatalogManager.GetCrawlScopeManager(&pSearchCrawlScopeManager)
-
         .if (SUCCEEDED(hr))
-
            .new pISearchRoot:ptr ISearchRoot
             mov hr,CoCreateInstance(&CLSID_CSearchRoot, NULL, CLSCTX_ALL, &IID_ISearchRoot, &pISearchRoot)
-
             .if (SUCCEEDED(hr))
-
                 mov hr,pISearchRoot.put_RootURL(pszURL)
                 .if (SUCCEEDED(hr))
-
                     mov hr,pSearchCrawlScopeManager.AddRoot(pISearchRoot)
                     .if (SUCCEEDED(hr))
-
                         mov hr,pSearchCrawlScopeManager.SaveAll()
                         .if (SUCCEEDED(hr))
-
                             mov hr,pCatalogManager.ReindexSearchRoot(pszURL)
                             .if (SUCCEEDED(hr))
-
                                 wcout << "Reindexing was started for root " << pszURL << endl
                             .endif
                         .endif
@@ -427,8 +359,7 @@ AddRoots proc pszURL:PCWSTR
         pCatalogManager.Release()
     .endif
     .return ReportHRESULTError(L"AddRoots()", hr)
-
-AddRoots endp
+    endp
 
 
 RemoveRoots proc pszURL:PCWSTR
@@ -441,19 +372,15 @@ RemoveRoots proc pszURL:PCWSTR
 
    .new pSearchCrawlScopeManager:ptr ISearchCrawlScopeManager
     mov hr,CreateCrawlScopManager(&pSearchCrawlScopeManager)
-
     .if (SUCCEEDED(hr))
-
         mov hr,pSearchCrawlScopeManager.RemoveRoot(pszURL)
         .if (SUCCEEDED(hr))
-
             mov hr,pSearchCrawlScopeManager.SaveAll()
         .endif
         pSearchCrawlScopeManager.Release();
     .endif
     .return ReportHRESULTError(L"AddRoots()", hr)
-
-RemoveRoots endp
+    endp
 
 
 DisplayRule proc pSearchScopeRule:ptr ISearchScopeRule
@@ -465,17 +392,14 @@ DisplayRule proc pSearchScopeRule:ptr ISearchScopeRule
 
     mov hr,pSearchScopeRule.get_PatternOrURL(&pszUrl)
     .if (SUCCEEDED(hr))
-
         wcout << "\t" << pszUrl
         mov fDefault,FALSE
         mov hr,pSearchScopeRule.get_IsDefault(&fDefault)
         .if (SUCCEEDED(hr))
-
             .if !fDefault
                 wcout << " NOT"
             .endif
             wcout << " DEFAULT"
-
             mov fIncluded,FALSE
             mov hr,pSearchScopeRule.get_IsIncluded(&fIncluded)
             .if (SUCCEEDED(hr))
@@ -491,8 +415,7 @@ DisplayRule proc pSearchScopeRule:ptr ISearchScopeRule
     .endif
     wcout << endl
    .return hr
-
-DisplayRule endp
+    endp
 
 
 EnumRules proc
@@ -511,12 +434,9 @@ EnumRules proc
 
         mov hr,pSearchCrawlScopeManager.EnumerateScopeRules(&pScopeRules)
         .if (SUCCEEDED(hr))
-
             .while SUCCEEDED(hr)
-
                 mov hr,pScopeRules.Next(1, &pSearchScopeRule, NULL)
                 .break .if hr != S_OK
-
                 mov hr,DisplayRule(pSearchScopeRule)
                 pSearchScopeRule.Release()
             .endw
@@ -524,9 +444,8 @@ EnumRules proc
         .endif
         pSearchCrawlScopeManager.Release()
     .endif
-
     .return ReportHRESULTError(L"EnumRules()", hr)
-EnumRules endp
+    endp
 
 
 AddRule proc fDefault:BOOL, fInclude:BOOL, fOverride:BOOL, pszURL:PCWSTR
@@ -550,31 +469,22 @@ AddRule proc fDefault:BOOL, fInclude:BOOL, fOverride:BOOL, pszURL:PCWSTR
 
     ;; Crawl scope manager for that catalog
 
-    .new hr:HRESULT
-    .new pSearchCrawlScopeManager:ptr ISearchCrawlScopeManager
-
+   .new hr:HRESULT
+   .new pSearchCrawlScopeManager:ptr ISearchCrawlScopeManager
     mov hr,CreateCrawlScopManager(&pSearchCrawlScopeManager)
     .if (SUCCEEDED(hr))
-
         .if (fDefault)
-
             mov hr,pSearchCrawlScopeManager.AddDefaultScopeRule(pszURL, fInclude, FF_INDEXCOMPLEXURLS)
-
         .else
-
-            mov hr,pSearchCrawlScopeManager.AddUserScopeRule(pszURL,
-                                                             fInclude,
-                                                             fOverride,
-                                                             FF_INDEXCOMPLEXURLS)
+            mov hr,pSearchCrawlScopeManager.AddUserScopeRule(pszURL, fInclude, fOverride, FF_INDEXCOMPLEXURLS)
         .endif
         .if (SUCCEEDED(hr))
-
             mov hr,pSearchCrawlScopeManager.SaveAll()
         .endif
         pSearchCrawlScopeManager.Release()
     .endif
     .return ReportHRESULTError(L"AddRules()", hr)
-AddRule endp
+    endp
 
 
 RemoveRule proc fDefault:BOOL, pszURL:PCWSTR
@@ -589,12 +499,10 @@ RemoveRule proc fDefault:BOOL, pszURL:PCWSTR
 
     ;; Crawl scope manager for that catalog
 
-    .new hr:HRESULT
-    .new pSearchCrawlScopeManager:ptr ISearchCrawlScopeManager
-
+   .new hr:HRESULT
+   .new pSearchCrawlScopeManager:ptr ISearchCrawlScopeManager
     mov hr,CreateCrawlScopManager(&pSearchCrawlScopeManager)
     .if (SUCCEEDED(hr))
-
         .if (fDefault)
             mov hr,pSearchCrawlScopeManager.RemoveDefaultScopeRule(pszURL)
         .else
@@ -606,8 +514,7 @@ RemoveRule proc fDefault:BOOL, pszURL:PCWSTR
         pSearchCrawlScopeManager.Release()
     .endif
     .return ReportHRESULTError(L"AddRules()", hr)
-
-RemoveRule endp
+    endp
 
 
 Revert proc
@@ -621,18 +528,14 @@ Revert proc
 
     mov hr,CreateCrawlScopManager(&pSearchCrawlScopeManager)
     .if (SUCCEEDED(hr))
-
         mov hr,pSearchCrawlScopeManager.RevertToDefaultScopes()
         .if (SUCCEEDED(hr))
-
             mov hr,pSearchCrawlScopeManager.SaveAll()
         .endif
         pSearchCrawlScopeManager.Release()
     .endif
-
     .return ReportHRESULTError(L"Revert()", hr)
-
-Revert endp
+    endp
 
 
 Reset proc
@@ -641,16 +544,13 @@ Reset proc
   local pCatalogManager:ptr ISearchCatalogManager
 
     wcout << "Resetting catalog." << endl
-
     mov hr,CreateCatalogManager(&pCatalogManager)
     .if (SUCCEEDED(hr))
-
         mov hr,pCatalogManager.Reset()
         pCatalogManager.Release()
     .endif
     .return ReportHRESULTError(L"Reset()", hr)
-
-Reset endp
+    endp
 
 
 Reindex proc
@@ -659,15 +559,12 @@ Reindex proc
   local pCatalogManager:ptr ISearchCatalogManager
 
     wcout << "Reindexing catalog." << endl
-
     mov hr,CreateCatalogManager(&pCatalogManager)
     .if (SUCCEEDED(hr))
-
         mov hr,pCatalogManager.Reset()
         pCatalogManager.Release()
     .endif
     .return ReportHRESULTError(L"Reindex()", hr)
-
-Reindex endp
+    endp
 
     end

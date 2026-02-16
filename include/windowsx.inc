@@ -534,7 +534,8 @@ FORWARD_WM_MOVE macro hwnd, x, y, fn
 ;; void Cls_OnSize(HWND hwnd, UINT state, int cx, int cy)
 HANDLE_WM_SIZE macro hwnd, wParam, lParam, fn
     ifdef _WIN64
-	mov r9d,r8d
+	mov edx,r8d
+	mov r8d,r9d
 	shr r9d,16
 	and r8d,0xFFFF
 	fn(rcx, edx, r8d, r9d)

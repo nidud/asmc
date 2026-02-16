@@ -1,9 +1,9 @@
-; TEST.ASM--
+; SCRATCH.ASM--
 ;
 ; https://blogs.msdn.microsoft.com/oldnewthing/20030723-00/?p=43073
 ;
 
-STRICT equ 1
+define STRICT 1
 include windows.inc
 include windowsx.inc
 include ole2.inc
@@ -23,13 +23,11 @@ g_hwndChild HWND 0      ;; Optional child window
 ;;
 
 OnSize proc hwnd:HWND, state:UINT, x:SINT, y:SINT
-
     .if (g_hwndChild)
         MoveWindow(g_hwndChild, 0, 0, x, y, TRUE)
     .endif
     ret
-
-OnSize endp
+    endp
 
 ;;
 ;;  OnCreate
@@ -38,11 +36,9 @@ OnSize endp
 ;;
 
 OnCreate proc hwnd:HWND, lpcs:LPCREATESTRUCT
-
     mov eax,TRUE
     ret
-
-OnCreate endp
+    endp
 
 ;;
 ;;  OnDestroy
@@ -51,11 +47,9 @@ OnCreate endp
 ;;
 
 OnDestroy proc hwnd:HWND
-
     PostQuitMessage(0)
     ret
-
-OnDestroy endp
+    endp
 
 ;;
 ;;  PaintContent
@@ -64,7 +58,7 @@ OnDestroy endp
 
 PaintContent proc hwnd:HWND, pps:ptr PAINTSTRUCT
     ret
-PaintContent endp
+    endp
 
 ;;
 ;;  OnPaint
@@ -79,8 +73,7 @@ OnPaint proc hwnd:HWND
     PaintContent(hwnd, &ps)
     EndPaint(hwnd, &ps)
     ret
-
-OnPaint endp
+    endp
 
 ;;
 ;;  OnPrintClient
@@ -91,12 +84,11 @@ OnPrintClient proc hwnd:HWND, hdc:HDC
 
   local ps:PAINTSTRUCT
 
-    mov ps.hdc,rdx; hdc;
-    GetClientRect(hwnd, &ps.rcPaint)
+    mov ps.hdc,ldr(hdc)
+    GetClientRect(ldr(hwnd), &ps.rcPaint)
     PaintContent(hwnd, &ps)
     ret
-
-OnPrintClient endp
+    endp
 
 ;;
 ;;  Window procedure
@@ -104,21 +96,19 @@ OnPrintClient endp
 
 WndProc proc hwnd:HWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
-    .switch (uiMsg)
-
-        HANDLE_MSG(hwnd, WM_CREATE, OnCreate)
-        HANDLE_MSG(hwnd, WM_SIZE, OnSize)
-        HANDLE_MSG(hwnd, WM_DESTROY, OnDestroy)
-        HANDLE_MSG(hwnd, WM_PAINT, OnPaint)
-
-        .case WM_PRINTCLIENT
-            OnPrintClient(hwnd, wParam)
-            .return 0
+    .switch ldr(uiMsg)
+    HANDLE_MSG(ldr(hwnd), WM_CREATE, OnCreate)
+    HANDLE_MSG(ldr(hwnd), WM_SIZE, OnSize)
+    HANDLE_MSG(ldr(hwnd), WM_DESTROY, OnDestroy)
+    HANDLE_MSG(ldr(hwnd), WM_PAINT, OnPaint)
+    .case WM_PRINTCLIENT
+        OnPrintClient(ldr(hwnd), ldr(wParam))
+       .return( 0 )
     .endsw
-    DefWindowProc(hwnd, uiMsg, wParam, lParam)
+    DefWindowProc(ldr(hwnd), ldr(uiMsg), ldr(wParam), ldr(lParam))
     ret
+    endp
 
-WndProc endp
 
 InitApp proc
 
@@ -136,23 +126,20 @@ InitApp proc
     mov wc.hCursor,         LoadCursor(NULL, IDC_ARROW)
     mov wc.hbrBackground,   (COLOR_WINDOW + 1)
     mov wc.lpszClassName,   &@CStr("Scratch")
-
     .if RegisterClassEx(&wc)
-
         InitCommonControls()    ;; In case we use a common control
         mov eax,TRUE
     .endif
     ret
+    endp
 
-InitApp endp
 
-WinMain proc hinst:HINSTANCE, hinstPrev:HINSTANCE,
-                   lpCmdLine:LPSTR, nShowCmd:SINT
+WinMain proc hinst:HINSTANCE, hinstPrev:HINSTANCE, lpCmdLine:LPSTR, nShowCmd:SINT
 
   local msg:MSG
   local hwnd:HWND
 
-    mov g_hinst,rcx ; hinst
+    mov g_hinst,ldr(hinst)
 
     .return .if !InitApp()
     CoInitialize(NULL)
@@ -172,17 +159,13 @@ WinMain proc hinst:HINSTANCE, hinstPrev:HINSTANCE,
 
     mov hwnd,rax
     ShowWindow(hwnd, nShowCmd)
-
     .while GetMessage(&msg, NULL, 0, 0)
-
         TranslateMessage(&msg)
         DispatchMessage(&msg)
     .endw
-
     CoUninitialize()
     xor eax,eax
     ret
-
-WinMain endp
+    endp
 
     end

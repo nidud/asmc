@@ -1,4 +1,8 @@
-csmcmd.exe:
-    asmc64 -c -ws cmdline.asm csmcmd.asm
-    linkw name $@ system con_64W file cmdline, csmcmd
-    $@  /enumerate_roots
+CrawlScopeCommandLine:
+	asmc64 -Fe$@ -ws *.asm
+	$@  /enumerate_roots
+	pause
+	del *.obj
+	del $@.exe
+vs:
+	project -p -u CrawlScopeCommandLine cmdline csmcmd

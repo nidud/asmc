@@ -22,29 +22,15 @@ wmain proc
   local pPersistFile:ptr IPersistFile
 
     CoInitialize(NULL)
-    .ifd CoCreateInstance(
-            &CLSID_ShellLink,
-            NULL,
-            CLSCTX_INPROC_SERVER,
-            &IID_IShellLink,
-            &pShellLink ) != S_OK
-
+    .ifd ( CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
+                &IID_IShellLink, &pShellLink) != S_OK )
         wprintf("error: %x\n", eax)
-
     .else
-
-        pShellLink.QueryInterface(
-            &IID_IPersistFile,
-            &pPersistFile )
-
+        pShellLink.QueryInterface(&IID_IPersistFile, &pPersistFile)
         pShellLink.SetPath("N:\\dir\\some file that doesn't exist.txt")
-
         pPersistFile.Save("test.lnk", TRUE)
-
     .endif
-
     .return 0
-
-wmain endp
+    endp
 
     end _tstart

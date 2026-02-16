@@ -13,7 +13,7 @@ _tmain proc argc:int_t, argv:ptr PTSTR
   local h:HANDLE, hRoot:HANDLE, desc:FILE_ID_DESCRIPTOR
   local b:BYTE, cb:DWORD
 
-    .if ( ecx == 2 )
+    .if ( ldr(argc) == 2 )
 
         .ifd CreateFile("D:\\", 0,
                 FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
@@ -25,15 +25,14 @@ _tmain proc argc:int_t, argv:ptr PTSTR
             mov desc.dwSize,sizeof(desc)
             mov desc.Type,ObjectIdType
 
-            .ifd (CLSIDFromString([rcx+8], &desc.ObjectId)) == S_OK
+            .ifd ( CLSIDFromString([rcx+size_t], &desc.ObjectId) == S_OK )
 
-                .ifd OpenFileById(hRoot, &desc, GENERIC_READ,
+                .ifd ( OpenFileById(hRoot, &desc, GENERIC_READ,
                         FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
-                        NULL, 0) != INVALID_HANDLE_VALUE
+                        NULL, 0) != INVALID_HANDLE_VALUE )
 
                     mov h,rax
-                    .if ReadFile(rax, &b, 1, &cb, NULL)
-
+                    .if ReadFile(h, &b, 1, &cb, NULL)
                         _tprintf("First byte of file is 0x%02x\n", b)
                     .endif
                     CloseHandle(h)
@@ -44,8 +43,7 @@ _tmain proc argc:int_t, argv:ptr PTSTR
     .endif
     xor eax,eax
     ret
-
-_tmain endp
+    endp
 
     end _tstart
 

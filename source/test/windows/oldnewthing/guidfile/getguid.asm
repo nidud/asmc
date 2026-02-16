@@ -14,10 +14,10 @@ _tmain proc argc:int_t, argv:ptr PTSTR
   local h:HANDLE, buf:FILE_OBJECTID_BUFFER, cbOut:DWORD
   local guid:GUID, szGuid[39]:WCHAR
 
-    .if ( ecx == 2 )
+    .if ( ldr(argc) == 2 )
 
-        mov rcx,[rdx+8]
-        .ifs CreateFile(rcx, 0,
+        ldr rcx,argv
+        .ifs CreateFile([rcx+size_t], 0,
                 FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
                 NULL, OPEN_EXISTING, 0, NULL) > 0
 
@@ -34,8 +34,7 @@ _tmain proc argc:int_t, argv:ptr PTSTR
     .endif
     xor eax,eax
     ret
-
-_tmain endp
+    endp
 
     end _tstart
 

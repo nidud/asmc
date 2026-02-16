@@ -12,29 +12,28 @@ _tmain proc argc:int_t, argv:ptr PTSTR
 
   local h:HANDLE, hRoot:HANDLE, desc:FILE_ID_DESCRIPTOR
   local buffer[MAX_PATH]:TCHAR
-  local result:DWORD
 
-    .if ( ecx == 2 )
+    .if ( ldr(argc) == 2 )
 
         mov hRoot,CreateFile("D:\\", 0,
                  FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
                  NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL)
 
-        .if (eax != INVALID_HANDLE_VALUE)
+        .if ( eax != INVALID_HANDLE_VALUE )
 
             mov desc.dwSize,sizeof(desc)
             mov desc.Type,ObjectIdType
 
             mov rcx,argv
-            .ifd (CLSIDFromString([rcx+8], &desc.ObjectId)) == S_OK
+            .ifd ( CLSIDFromString([rcx+size_t], &desc.ObjectId) == S_OK )
 
                 mov h,OpenFileById(hRoot, &desc, GENERIC_READ,
                     FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE, NULL, 0)
 
-                .if (eax != INVALID_HANDLE_VALUE)
+                .if ( eax != INVALID_HANDLE_VALUE )
 
-                    mov result,GetFinalPathNameByHandle(h, &buffer, ARRAYSIZE(buffer), VOLUME_NAME_NT)
-                    .if (result > 0 && result < ARRAYSIZE(buffer))
+                    GetFinalPathNameByHandle(h, &buffer, ARRAYSIZE(buffer), VOLUME_NAME_NT)
+                    .ifs ( eax > 0 && eax < ARRAYSIZE(buffer))
                          _tprintf("Final path is %s\n", &buffer)
                     .endif
                     CloseHandle(h)
@@ -45,8 +44,7 @@ _tmain proc argc:int_t, argv:ptr PTSTR
     .endif
     xor eax,eax
     ret
-
-_tmain endp
+    endp
 
     end _tstart
 

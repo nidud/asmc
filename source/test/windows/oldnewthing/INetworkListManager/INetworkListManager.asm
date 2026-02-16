@@ -79,7 +79,6 @@ _tmain proc
         CoUninitialize()
     .endif
     .return(hr)
-
-_tmain endp
+    endp
 
     end _tstart

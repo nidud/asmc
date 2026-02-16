@@ -34,7 +34,6 @@ _tmain proc
         connectivityHint.Roaming)
 
     .return(0)
-
-_tmain endp
+    endp
 
     end _tstart

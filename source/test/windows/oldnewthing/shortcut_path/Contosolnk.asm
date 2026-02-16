@@ -27,16 +27,12 @@ wmain proc
         mov hr,CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, &IID_IShellLink, &pShellLink )
 
         .if (SUCCEEDED(hr))
-
            .new pPersistFile:ptr IPersistFile = NULL
             mov hr,pShellLink.QueryInterface(&IID_IPersistFile, &pPersistFile)
         .endif
-
         .if (SUCCEEDED(hr))
-
             pShellLink.SetPath("%ProgramFiles%\\Contoso\\Contoso.exe")
             mov hr,pPersistFile.Save("Contoso.lnk", TRUE)
-
         .endif
 
         .if (FAILED(hr))
@@ -44,10 +40,8 @@ wmain proc
            .new szMessage:ptr wchar_t
             mov edx,hr
             .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
-
                 mov hr,HRESULT_CODE(edx)
             .endif
-
             FormatMessage(
                 FORMAT_MESSAGE_ALLOCATE_BUFFER or \
                 FORMAT_MESSAGE_FROM_SYSTEM or \
@@ -65,7 +59,6 @@ wmain proc
         CoUninitialize()
     .endif
     .return( 0 )
-
-wmain endp
+    endp
 
     end _tstart

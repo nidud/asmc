@@ -11,7 +11,7 @@ include tchar.inc
 
 .code
 
-ConsoleScreenBuffer proc uses rsi rdi rbx
+ConsoleScreenBuffer proc
 
    .new ci:CONSOLE_SCREEN_BUFFER_INFOEX = {CONSOLE_SCREEN_BUFFER_INFOEX}
 
@@ -78,14 +78,11 @@ ConsoleScreenBuffer proc uses rsi rdi rbx
             ci.ColorTable[0x0F*4])
     .endif
     ret
+    endp
 
-ConsoleScreenBuffer endp
-
-_tmain proc argc:int_t, argv:array_t
-
+_tmain proc
     ConsoleScreenBuffer()
    .return( 0 )
-
-_tmain endp
+    endp
 
     end _tstart

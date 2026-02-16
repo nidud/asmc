@@ -24,14 +24,12 @@ FreeDhcpPolicyMemory proc uses rsi rdi rbx pDhcpPolicy:LPDHCP_POLICY
         ;; Frees the policy name
 
         .if ( [rbx].PolicyName )
-
             DhcpRpcFreeMemory( [rbx].PolicyName )
         .endif
 
         ;; Frees the policy description
 
         .if ( [rbx].Description )
-
             DhcpRpcFreeMemory( [rbx].Description )
         .endif
 
@@ -98,8 +96,7 @@ FreeDhcpPolicyMemory proc uses rsi rdi rbx pDhcpPolicy:LPDHCP_POLICY
 
     .endif
     ret
-
-FreeDhcpPolicyMemory endp
+    endp
 
 wmain proc
 
@@ -126,7 +123,6 @@ wmain proc
 
     FreeDhcpPolicyMemory( pPolicy )
     .return 0
-
-wmain endp
+    endp
 
     end _tstart

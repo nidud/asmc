@@ -12,34 +12,21 @@ include sys/stat.inc
 include sys/syscall.inc
 else
 include winbase.inc
-endif
 include tchar.inc
+undef mkdir
+ALIAS <mkdir>=<_mkdir>
+endif
 
-    .code
+.code
 
-if defined(__UNIX__) and not defined(_UNICODE)
-
+ifdef __UNIX__
 mkdir proc directory:string_t, mode:int_t
-
     .ifsd ( sys_mkdir( ldr(directory), ldr(mode) ) < 0 )
-
         neg eax
         _set_errno(eax)
     .endif
-    ret
-
-mkdir endp
-
-endif
-
+else
 _tmkdir proc directory:tstring_t
-ifdef __UNIX__
-ifdef _UNICODE
-    _set_errno( ENOSYS )
-else
-    mkdir( ldr(directory), S_IRWXU or S_IRWXG or S_IROTH or S_IXOTH )
-endif
-else
     .ifd CreateDirectory( ldr(directory), 0 )
         xor eax,eax
     .else
@@ -47,7 +34,6 @@ else
     .endif
 endif
     ret
-
-_tmkdir endp
+    endp
 
     end

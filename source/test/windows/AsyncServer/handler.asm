@@ -54,12 +54,9 @@ g_szEntityTooLargeMessage equ <"Large buffer support is not implemented">
 
 PostNewReceive proc pServerContext:PSERVER_CONTEXT, Io:PTP_IO
 
-    local pIoRequest:PHTTP_IO_REQUEST
-    local Result:ULONG
-
-    mov pIoRequest,AllocateHttpIoRequest(pServerContext)
-
-    .return .if (pIoRequest == NULL)
+    .new pIoRequest:PHTTP_IO_REQUEST = AllocateHttpIoRequest(ldr(pServerContext))
+    .new Result:ULONG
+    .return .if ( rax == NULL )
 
     StartThreadpoolIo(Io)
 
@@ -76,23 +73,18 @@ PostNewReceive proc pServerContext:PSERVER_CONTEXT, Io:PTP_IO
         &[rdi].ioContext.Overlapped
         )
 
-    .if (Result != ERROR_IO_PENDING && \
-        Result != NO_ERROR)
+    .if ( Result != ERROR_IO_PENDING && Result != NO_ERROR )
 
         CancelThreadpoolIo(Io)
-
         fprintf(stderr, "HttpReceiveHttpRequest failed, error 0x%lx\n", Result)
 
         .if (Result == ERROR_MORE_DATA)
-
             ProcessReceiveAndPostResponse(pIoRequest, Io, ERROR_MORE_DATA)
         .endif
-
          CleanupHttpIoRequest(pIoRequest)
     .endif
     ret
-
-PostNewReceive endp
+    endp
 
 ;;
 ;; Routine Description:
@@ -113,21 +105,11 @@ PostNewReceive endp
 ;;     N/A
 ;;
 
-SendCompletionCallback proc \
-        pIoContext: PHTTP_IO_CONTEXT,
-        Io: PTP_IO,
-        IoResult: ULONG
-
-  local pIoResponse:PHTTP_IO_RESPONSE
-
-    mov pIoResponse,CONTAINING_RECORD(pIoContext,
-                                    HTTP_IO_RESPONSE,
-                                    ioContext)
-
-    CleanupHttpIoResponse(pIoResponse)
+SendCompletionCallback proc pIoContext:PHTTP_IO_CONTEXT, Io: PTP_IO, IoResult: ULONG
+   .new pIoResponse:PHTTP_IO_RESPONSE = CONTAINING_RECORD(ldr(pIoContext), HTTP_IO_RESPONSE, ioContext)
+    CleanupHttpIoResponse(rax)
     ret
-
-SendCompletionCallback endp
+    endp
 
 ;;
 ;; Routine Description:
@@ -149,32 +131,26 @@ SendCompletionCallback endp
     assume rbx:PHTTP_IO_RESPONSE
     assume rdi:PHTTP_DATA_CHUNK
 
-CreateFileResponse proc uses rdi rbx \
-        pServerContext: PSERVER_CONTEXT,
-        hFile: HANDLE
+CreateFileResponse proc uses rdi rbx pServerContext:PSERVER_CONTEXT, hFile:HANDLE
 
-  local pIoResponse:PHTTP_IO_RESPONSE
-  local pChunk:PHTTP_DATA_CHUNK
+   .new IoResponse:PHTTP_IO_RESPONSE = AllocateHttpIoResponse(ldr(pServerContext))
+   .new pChunk:PHTTP_DATA_CHUNK
 
-    mov pIoResponse,AllocateHttpIoResponse(pServerContext)
+    .if ( rax )
 
-    .return .if (pIoResponse == NULL)
-
-    mov rbx,rax
-    mov [rbx].HttpResponse.StatusCode,g_usOKCode
-    mov [rbx].HttpResponse.pReason,&@CStr(g_szOKReason)
-    mov [rbx].HttpResponse.ReasonLength,strlen(g_szOKReason)
-
-    mov pChunk,&[rbx].HttpResponse.pEntityChunks[0]
-    mov rdi,rax
-    mov [rdi].DataChunkType,HttpDataChunkFromFileHandle
-    mov [rdi].FromFileHandle.ByteRange.Length.QuadPart,HTTP_BYTE_RANGE_TO_EOF
-    mov [rdi].FromFileHandle.ByteRange.StartingOffset.QuadPart,0
-    mov [rdi].FromFileHandle.FileHandle,hFile
-
-    .return pIoResponse
-
-CreateFileResponse endp
+        mov rbx,rax
+        mov [rbx].HttpResponse.StatusCode,g_usOKCode
+        mov [rbx].HttpResponse.pReason,&@CStr(g_szOKReason)
+        mov [rbx].HttpResponse.ReasonLength,strlen(g_szOKReason)
+        lea rdi,[rbx].HttpResponse.pEntityChunks[0]
+        mov [rdi].DataChunkType,HttpDataChunkFromFileHandle
+        mov [rdi].FromFileHandle.ByteRange.Length.QuadPart,HTTP_BYTE_RANGE_TO_EOF
+        mov [rdi].FromFileHandle.ByteRange.StartingOffset.QuadPart,0
+        mov [rdi].FromFileHandle.FileHandle,hFile
+        mov rax,rbx
+    .endif
+    ret
+    endp
 
 ;;
 ;; Routine Description:
@@ -196,12 +172,8 @@ CreateFileResponse endp
 ;;     Return a pointer to the HTTP_IO_RESPONSE structure
 ;;
 
-CreateMessageResponse proc uses rdi rbx \
-        pServerContext: PSERVER_CONTEXT,
-        code: USHORT,
-        pReason: PCHAR,
-        pMessage: PCHAR
-
+CreateMessageResponse proc uses rdi rbx pServerContext:PSERVER_CONTEXT,
+        code:USHORT, pReason:PCHAR, pMessage:PCHAR
 
     local pIoResponse:PHTTP_IO_RESPONSE
     local pChunk:PHTTP_DATA_CHUNK
@@ -225,8 +197,7 @@ CreateMessageResponse proc uses rdi rbx \
     mov [rdi].FromMemory.BufferLength,strlen(pMessage)
 
     .return pIoResponse
-
-CreateMessageResponse endp
+    endp
 
 ;;
 ;; Routine Description:
@@ -356,43 +327,27 @@ ProcessReceiveAndPostResponse proc uses rsi rdi rbx \
             .return
     .endsw
 
-    .if (pIoResponse == NULL)
-
+    .if ( pIoResponse == NULL )
         .return
     .endif
 
     StartThreadpoolIo(Io)
-
     xor ecx,ecx
     .if (hFile != INVALID_HANDLE_VALUE)
         lea rcx,CachePolicy
     .endif
     mov rdx,pIoResponse
-    mov Result,HttpSendHttpResponse(
-        [rdi].hRequestQueue,
-        [rsi].HTTP_REQUEST.RequestId,
-        0,
-        &[rdx].HTTP_IO_RESPONSE.HttpResponse,
-        rcx,
-        NULL,
-        NULL,
-        0,
-        &[rbx].ioContext.Overlapped,
-        NULL
-        )
+    mov Result,HttpSendHttpResponse([rdi].hRequestQueue, [rsi].HTTP_REQUEST.RequestId, 0,
+            &[rdx].HTTP_IO_RESPONSE.HttpResponse, rcx, NULL, NULL, 0, &[rbx].ioContext.Overlapped, NULL)
 
-    .if (Result != NO_ERROR && \
-         Result != ERROR_IO_PENDING)
+    .if ( Result != NO_ERROR && Result != ERROR_IO_PENDING )
 
         CancelThreadpoolIo(Io)
-
         fprintf(stderr, "HttpSendHttpResponse failed, error 0x%lx\n", Result)
-
         CleanupHttpIoResponse(pIoResponse)
     .endif
     ret
-
-ProcessReceiveAndPostResponse endp
+    endp
 
 ;;
 ;; Routine Description:
@@ -416,32 +371,17 @@ ProcessReceiveAndPostResponse endp
 ;;     N/A
 ;;
 
-ReceiveCompletionCallback proc \
-        pIoContext: PHTTP_IO_CONTEXT,
-        Io: PTP_IO,
-        IoResult: ULONG
+ReceiveCompletionCallback proc  pIoContext:PHTTP_IO_CONTEXT, Io:PTP_IO, IoResult:ULONG
 
-
-    local pIoRequest:PHTTP_IO_REQUEST
-    local pServerContext:PSERVER_CONTEXT
-
-    mov pIoRequest,CONTAINING_RECORD(pIoContext,
-                                   HTTP_IO_REQUEST,
-                                   ioContext)
-
-    mov pServerContext,[rax].HTTP_IO_REQUEST.ioContext.pServerContext
-
-    .if ([rax].SERVER_CONTEXT.bStopServer == FALSE)
-
+    .new pIoRequest:PHTTP_IO_REQUEST = CONTAINING_RECORD(ldr(pIoContext), HTTP_IO_REQUEST, ioContext)
+    .new pServerContext:PSERVER_CONTEXT = [rax].HTTP_IO_REQUEST.ioContext.pServerContext
+    .if ( [rax].SERVER_CONTEXT.bStopServer == FALSE )
         ProcessReceiveAndPostResponse(pIoRequest, Io, IoResult)
-
         PostNewReceive(pServerContext, Io)
     .endif
-
     CleanupHttpIoRequest(pIoRequest)
     ret
-
-ReceiveCompletionCallback endp
+    endp
 
     end
 

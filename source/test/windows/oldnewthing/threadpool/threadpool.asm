@@ -11,36 +11,26 @@ include tchar.inc
 
     .data
      count LONG 0
-
     .code
 
 WaitCallback proc Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, PWait:PTP_WAIT, WaitResult:TP_WAIT_RESULT
-
     InterlockedIncrement(&count)
     SetEvent(Context)
     ret
+    endp
 
-WaitCallback endp
-
-main proc
-
+_tmain proc
     .new last:HANDLE = CreateEvent(nullptr, true, false, nullptr)
-    .new event:HANDLE = last
-    .new i:int_t = 0
-
-    .for (: i < 10000: i++)
-
-       .new pwait:PTP_WAIT = CreateThreadpoolWait(&WaitCallback, event, nullptr)
-        mov event,CreateEvent(nullptr, true, false, nullptr)
-        SetThreadpoolWait(pwait, event, nullptr)
+    .for ( rdi = rax, ebx = 0 : ebx < 10000 : ebx++ )
+        mov rsi,CreateThreadpoolWait(&WaitCallback, rdi, nullptr)
+        mov rdi,CreateEvent(nullptr, true, false, nullptr)
+        SetThreadpoolWait(rsi, rdi, nullptr)
     .endf
-
     Sleep(10000)
-    SetEvent(event)
+    SetEvent(rdi)
     WaitForSingleObject(last, INFINITE)
-    printf("%d events signaled\n", count)
-   .return 0
-
-main endp
-
+    _tprintf("%d events signaled\n", count)
+    xor eax,eax
+    ret
+    endp
     end _tstart

@@ -10,4 +10,4 @@ endif
 	$@
 
 vs:
-	project -p -w DesktopDuplication
+	project -p -w DesktopDuplication DisplayManager DuplicationManager OutputManager PixelShader ThreadManager VertexShader

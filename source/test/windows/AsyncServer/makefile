@@ -4,4 +4,4 @@ AsynchronousHTTPServerApp.exe:
 	del *.obj
 
 vs:
-	project -p -u AsynchronousHTTPServerApp
+	project -p -u AsynchronousHTTPServerApp main handler

@@ -62,19 +62,13 @@ GetTextFormat proc format:ptr HSTRING
        .new pDataFormats:ptr Windows::ApplicationModel::DataTransfer::IStandardDataFormatsStatics = NULL
         mov hr,RoGetActivationFactory(hsFormat, &IID_IStandardDataFormatsStatics, &pDataFormats)
     .endif
-
     .if (SUCCEEDED(hr))
-
         mov hr,pDataFormats.get_Text(format)
     .endif
-
     .if ( hsFormat )
-
         WindowsDeleteString(hsFormat)
     .endif
-
     .if ( pDataFormats )
-
         pDataFormats.Release()
     .endif
     .return(hr)
@@ -128,25 +122,18 @@ DumpClipboardHistoryAsync proc uses rbx
 
             mov hr,items.GetAt(ebx, &item)
             .if (SUCCEEDED(hr))
-
                 mov hr,item.get_Id(&hsId)
                 .if (SUCCEEDED(hr))
-
                     mov sId,WindowsGetStringRawBuffer(hsId, &length)
                     mov hr,item.get_Content(&content)
                     .if (SUCCEEDED(hr))
-
                         mov hr,content.Contains(formatId, &isText)
                         .if (SUCCEEDED(hr))
-
                             .if ( isText )
-
                                 mov hr,content.GetTextAsync(&pText)
                                 .if (SUCCEEDED(hr))
-
                                     mov hr,pText.GetResults(&hsText)
                                     .if (SUCCEEDED(hr))
-
                                         mov sText,WindowsGetStringRawBuffer(hsText, &length)
                                         wprintf("%s: %s\n", sId, sText)
                                     .endif
@@ -174,7 +161,6 @@ ErrorMessage proc hr:HRESULT
    .new szMessage:ptr wchar_t
     mov edx,hr
     .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
-
         mov hr,HRESULT_CODE(edx)
     .endif
     FormatMessage(
@@ -187,7 +173,6 @@ ErrorMessage proc hr:HRESULT
             &szMessage,
             0,
             NULL)
-
     wprintf("Error code: %08X\n\n%s", hr, szMessage)
     LocalFree(szMessage)
    .return(hr)

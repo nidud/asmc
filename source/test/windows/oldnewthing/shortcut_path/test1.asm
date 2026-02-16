@@ -26,7 +26,6 @@ endif
 
 wmain proc argc:int_t, argv:ptr wchar_t
 
-
     .new hr:HRESULT = CoInitialize(NULL)
 
     .if (SUCCEEDED(hr))
@@ -53,13 +52,10 @@ wmain proc argc:int_t, argv:ptr wchar_t
 
     .if (SUCCEEDED(hr))
 
-        .new buffer[MAX_PATH]:wchar_t
-        .new wfd:WIN32_FIND_DATA
-
+       .new buffer[MAX_PATH]:wchar_t
+       .new wfd:WIN32_FIND_DATA
         mov hr,pShellLink.GetPath(&buffer, MAX_PATH, &wfd, 0)
-
         .if (SUCCEEDED(hr))
-
             wprintf("TEST1" BITS ": Path is %s\n", &buffer)
         .endif
 
@@ -68,10 +64,8 @@ wmain proc argc:int_t, argv:ptr wchar_t
        .new szMessage:ptr wchar_t
         mov edx,hr
         .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
-
             mov hr,HRESULT_CODE(edx)
         .endif
-
         FormatMessage(
             FORMAT_MESSAGE_ALLOCATE_BUFFER or \
             FORMAT_MESSAGE_FROM_SYSTEM or \
@@ -87,7 +81,6 @@ wmain proc argc:int_t, argv:ptr wchar_t
         LocalFree(szMessage)
     .endif
     .return( 0 )
-
-wmain endp
+    endp
 
     end _tstart

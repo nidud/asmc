@@ -1,12 +1,6 @@
 include srcpath
 
-ifndef CC
-CC = LIBW
-crtpath = ..\..\source\libc\crt
-crtflag = -c -q -nolib -win64 -Cs -MT -MD
-endif
-
-all: import build
+all: import build libc
 
 .SUFFIXES: .lib
 .EXTENSIONS: .def .lib
@@ -206,17 +200,9 @@ targets = \
 	xpsprint.lib
 
 {$(lib_dir)\x64\def}.def.lib:
-	$(CC) /NOLOGO /MACHINE:X64 /OUT:$(lib_dir)\x64\$*.lib /DEF:$<
+	libw /NOLOGO /MACHINE:X64 /OUT:$(lib_dir)\x64\$*.lib /DEF:$<
 
 build: $(targets)
-ifeq LIBW $(CC)
-	asmc $(crtflag) -Fo crt0 $(crtpath)\_tcrt0.asm
-	asmc $(crtflag) -Fo WinStart $(crtpath)\_tWinStart.asm
-	asmc $(crtflag) -Fo wcrt0 -ws $(crtpath)\_tcrt0.asm
-	asmc $(crtflag) -Fo wWinStart -ws $(crtpath)\_tWinStart.asm
-	libw -q -b -c -fac msvcrt.lib crt0.obj wcrt0.obj WinStart.obj wWinStart.obj
-	del crt0.obj wcrt0.obj WinStart.obj wWinStart.obj
-endif
 
 import:
 	if not exist %AsmcDir%\bin\impdef64.exe (
@@ -224,3 +210,24 @@ import:
 	)
 	md $(lib_dir)\x64\def
 	impdef64 -p$(lib_dir)\x64\def $(targets)
+
+obj_src = \
+	crt/_tcrt0.obj	\
+	crt/_tWinStart.obj \
+	stdio/acrtiobfunc.obj
+
+obj_lib = \
+	_tcrt0.obj	\
+	_tcrt0W.obj	\
+	_tWinStart.obj	\
+	_tWinStartW.obj \
+	acrtiobfunc.obj
+
+{$(src_dir)\libc}.asm.obj:
+	asmc -c -nologo -nolib -win64 -Cs -MT -MD $<
+	asmc -c -nologo -nolib -win64 -Cs -MT -MD -ws -Fo*W $<
+
+libc: $(obj_src)
+	libw -q -b -c -fac msvcrt.lib $(obj_lib)
+	del $(obj_lib)
+	del *W.obj

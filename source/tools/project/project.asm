@@ -382,9 +382,9 @@ _tmain proc argc:int_t, argv:array_t
             "-pe    -- Generate PE binary file\n"
             "\n"
             "If the -p option is not given a directory is created:\n"
-            " - <name>\makefile\n"
-            " - <name>\<name>.asm\n"
-            " - <name>\<name>.vcxproj - Visual Studio 2022\n"
+            " - <name>/makefile\n"
+            " - <name>/<name>.asm\n"
+            " - <name>/<name>.vcxproj - Visual Studio 2022\n"
             "\n"
             )
         exit(0)

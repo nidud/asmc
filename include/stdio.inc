@@ -65,7 +65,9 @@ _flag		int_t ?
 _file		int_t ?
 _charbuf	int_t ?
 _bufsiz		int_t ?
-ifndef _M_IX86_16
+ifdef _MSVCRT
+_tmpfname	string_t ?
+elseifndef _M_IX86_16
 union
  struct
   _bitcnt	int_t ? ; bits in _charbuf
@@ -92,14 +94,14 @@ endif
 externdef	_commode:int_t
 externdef	_nstream:int_t
 externdef	_bufin:char_t
-elseifdef _LIBCMT
-stdin		equ <__acrt_iob_func(0)>
-stdout		equ <__acrt_iob_func(1)>
-stderr		equ <__acrt_iob_func(2)>
-else
+elseifdef __PE__
 stdin		equ <__iob_func()>
 stdout		equ <&[__iob_func()+sizeof(_iobuf)]>
 stderr		equ <&[__iob_func()+sizeof(_iobuf)*2]>
+else
+stdin		equ <__acrt_iob_func(0)>
+stdout		equ <__acrt_iob_func(1)>
+stderr		equ <__acrt_iob_func(2)>
 endif
 
 ifdef __UNIX__

@@ -13,21 +13,16 @@ include setjmp.inc
     .code
 
 abort proc
-
     longjmp(&jmp_exit, 1)
     ret
-
-abort endp
+    endp
 
 __initabort proc private
-
     .ifd _setjmp(&jmp_exit)
-
         exit(eax)
     .endif
     ret
-
-__initabort endp
+    endp
 
 .pragma init(__initabort, 2)
 

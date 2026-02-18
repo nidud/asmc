@@ -519,7 +519,7 @@ endif
                 dec rax
             .endif
             mov byte ptr [rax],0
-            mov rdx,GetFNamePart( path )
+            mov rdx,GetFNamePart( rbx )
             mov rc,AssembleSubdir( path, rdx, &newo)
         .else
             mov rcx,GetFNamePart( rbx )

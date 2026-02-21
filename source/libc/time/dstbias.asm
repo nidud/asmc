@@ -9,10 +9,8 @@ include time.inc
 .code
 
 __dstbias proc
-
     lea rax,_dstbias
     ret
-
-__dstbias endp
+    endp
 
     end

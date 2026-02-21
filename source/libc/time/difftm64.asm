@@ -13,9 +13,7 @@ difftm64 proc b:__time64_t, a:__time64_t
 ifdef _WIN64
     ldr rax,b
     ldr rdx,a
-
     .ifs ( rax < 0 || rdx < 0 )
-
         _set_errno( EINVAL )
         xorps xmm0,xmm0
        .return( 0 )
@@ -30,7 +28,6 @@ endif
     xor eax,eax
 endif
     ret
-
-difftm64 endp
+    endp
 
     end

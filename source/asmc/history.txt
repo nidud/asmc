@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.38 - xx xxx 2026
+- added IMPORT for EXTERNDEF and PROTO
 - allow IFDEF rax -- sync with Masm/JWasm
 - added option -no-pie to gcc - used in conjunction with -fplt
 - added missing error to C-type RECORD fields - to many bits

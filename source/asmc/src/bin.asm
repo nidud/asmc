@@ -309,8 +309,7 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:asym_t, cp:ptr calc_param
     .endif
     mov [rbx].first,FALSE
     ret
-
-CalcOffset endp
+    endp
 
 
 ; if pDst==NULL: count the number of segment related fixups
@@ -378,13 +377,10 @@ GetSegRelocs proc __ccall uses rsi rdi rbx pDst:ptr uint_16
                     .endif
 
                     ; offset may be > 64 kB
-
                     .while ecx >= 0x10000
-
                         sub ecx,16
                         inc eax
                     .endw
-
                     mov rdx,pDst
                     mov [rdx],cx
                     mov [rdx+2],ax
@@ -395,8 +391,7 @@ GetSegRelocs proc __ccall uses rsi rdi rbx pDst:ptr uint_16
         .endf
     .endf
     .return( count )
-
-GetSegRelocs endp
+    endp
 
 
 ; get image size.
@@ -413,20 +408,15 @@ GetImageSize proc __ccall uses rsi rdi memimage:int_t
         .if ( [rdi].segtype == SEGTYPE_ABS || [rdi].information )
             .continue
         .endif
-
         .if ( memimage == FALSE )
-
             .if ( [rdi].bytes_written == 0 )
-
                 .for ( rcx = [rsi].asym.next : rcx : rcx = [rcx].asym.next )
-
                     mov rdx,[rcx].asym.seginfo
                    .break .if ( [rdx].seg_info.bytes_written )
                 .endf
                 .break .if !rcx ; done, skip rest of segments!
             .endif
         .endif
-
         mov eax,[rsi].asym.max_offset
         add eax,[rdi].fileoffset
 
@@ -438,8 +428,7 @@ GetImageSize proc __ccall uses rsi rdi memimage:int_t
         mov first,FALSE
     .endf
     ret
-
-GetImageSize endp
+    endp
 
 
 ; micro-linker. resolve internal fixups.
@@ -474,10 +463,8 @@ DoFixup proc __ccall uses rsi rdi rbx curr:asym_t, cp:ptr calc_param
             ; v2.07: moved inside if-block, using new local var "offset"
 
             .if ( [rcx].asym.isvariable )
-
                 mov rsi,[rbx].segment_var
                 mov offs,0
-
             .else
                 mov rsi,[rcx].asym.segm
                 mov offs,[rcx].asym.offs
@@ -494,9 +481,7 @@ DoFixup proc __ccall uses rsi rdi rbx curr:asym_t, cp:ptr calc_param
 
             mov al,[rbx].type
             .switch al
-
             .case FIX_OFF32_IMGREL
-
                 mov eax,[rbx].offs
                 add eax,offs
                 add eax,[rsi].start_offset
@@ -517,14 +502,10 @@ DoFixup proc __ccall uses rsi rdi rbx curr:asym_t, cp:ptr calc_param
 
                 mov rcx,segm
                 .if ( tstrchr( [rcx].asym.name, '$' ) )
-
                     mov rcx,segm
                     sub rax,[rcx].asym.name
-
                     .for ( rdx = SymTables[TAB_SEG].head : rdx : rdx = [rdx].asym.next )
-
                         .if ( eax == [rdx].asym.name_size )
-
                             push    rsi
                             push    rdi
                             mov     rcx,segm
@@ -574,19 +555,15 @@ DoFixup proc __ccall uses rsi rdi rbx curr:asym_t, cp:ptr calc_param
                         mov [rbx].frame_type,FRAME_GRP
                     .endif
                 .endif
-
                 mov rcx,[rsi].sgroup
                 .if ( rcx && [rbx].frame_type != FRAME_SEG )
-
                     mov eax,[rcx].asym.offs
                     and eax,0x0F
                     add eax,[rsi].start_offset
                     add eax,[rbx].offs
                     add eax,offs
                     mov value,eax
-
                     .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
-
                         mov rcx,cp
                         .if ( [rdi].Ofssize == USE64 )
 ifdef _WIN64
@@ -612,11 +589,8 @@ endif
                     mov eax,[rbx].offs
                     add eax,offs
                     .if ( [rbx].frame_type == FRAME_GRP )
-
                         add eax,[rsi].start_offset
-
                     .else ; v2.13: use lower 4 bits of group offset
-
                         xor edx,edx
                         .if ( rcx )
                             mov edx,[rcx].asym.offs
@@ -648,15 +622,12 @@ endif
             .if ( [rbx].frame_type == FRAME_SEG )
 
                 .for ( rcx = SymTables[TAB_SEG].head : rcx : rcx = [rcx].asym.next )
-
                     mov rdx,[rcx].asym.seginfo
-
                     .if ( [rdx].seg_info.seg_idx == [rbx].frame_datum )
 
                         ; if the segment is in a group, add the segment's start offset
 
                         .if ( [rdx].seg_info.sgroup )
-
                             add value,[rdx].seg_info.start_offset
 
                             ; v2.15: add imagebase. see lea3.asm
@@ -686,11 +657,9 @@ endif
                 .endf
             .endif
         .endif
-
-        mov   rcx,codeptr
-        mov   eax,value
+        mov rcx,codeptr
+        mov eax,value
         movzx edx,[rbx].type
-
         .switch edx
         .case FIX_RELOFF8
             sub eax,[rbx].locofs
@@ -777,19 +746,14 @@ endif
                    .endc
                 .endif
             .endif
-
             .if ( MODULE.sub_format == SFORMAT_MZ )
-
                 .if ( [rax].asym.state == SYM_GRP )
-
                     mov segm,rax
                     mov rsi,[rax].asym.seginfo
                     mov edx,[rax].asym.offs
                     shr edx,4
                     mov [rcx],dx
-
                 .elseif ( [rax].asym.state == SYM_SEG )
-
                     mov segm,rax
                     mov rsi,[rax].asym.seginfo
                     mov edx,[rsi].start_offset
@@ -799,9 +763,7 @@ endif
                     .endif
                     shr edx,4
                     mov [rcx],dx
-
                 .elseif ( [rbx].frame_type == FRAME_GRP )
-
                     mov rax,[rsi].sgroup
                     mov eax,[rax].asym.offs
                     shr eax,4
@@ -850,27 +812,21 @@ endif
             ; v2.10: absolute segments are ok
 
             .if ( segm && [rsi].segtype == SEGTYPE_ABS )
-
                 mov [rcx],eax
                 mov eax,[rsi].abs_frame
                 mov [rcx+4],ax
                .endc
             .endif
-
             .if ( MODULE.sub_format == SFORMAT_MZ )
-
                 mov [rcx],eax
                 .if ( [rbx].frame_type == FRAME_GRP )
-
                     mov rax,[rsi].sgroup
                     mov eax,[rax].asym.offs
                     shr eax,4
                     mov [rcx+4],ax
                 .else
-
                     mov eax,[rsi].start_offset
                     .if ( [rsi].sgroup)
-
                         mov rdx,[rsi].sgroup
                         add eax,[rdx].asym.offs
                     .endif
@@ -887,8 +843,7 @@ endif
         .endsw
     .endf
     .return( NOT_ERROR )
-
-DoFixup endp
+    endp
 
 
     assume rbx:nothing, rdi:nothing, rsi:nothing
@@ -896,7 +851,6 @@ DoFixup endp
 pe_create_MZ_header proc
 
     .if ( Parse_Pass == PASS_1 )
-
         .if ( SymFind( hdrname "1" ) == NULL )
             or MODULE.pe_flags,PEF_MZHDR
         .endif
@@ -941,44 +895,34 @@ pe_create_MZ_header proc
             "%s1 ends", hdrname, hdrattr, hdrname )
 
         RunLineQueue()
-
         .if SymFind( hdrname "1" )
-
             .if ( [rax].asym.state == SYM_SEG )
-
                 mov rcx,[rax].asym.seginfo
                 mov [rcx].seg_info.segtype,SEGTYPE_HDR
             .endif
         .endif
     .endif
     ret
-
-pe_create_MZ_header endp
+    endp
 
 
 ; get/set value of @pe_file_flags variable
 
 set_file_flags proc fastcall uses rsi rdi sym:asym_t, opnd:ptr expr
-
     mov rsi,rcx
     mov rdi,rdx
-
     .if SymFind( hdrname "2" )
-
         mov rcx,[rax].asym.seginfo
         mov rdx,[rcx].seg_info.CodeBuffer
         movzx eax,[rdx].IMAGE_PE_HEADER32.FileHeader.Characteristics
-
         .if ( rdi ) ; set the value?
-
             mov eax,[rdi].expr.value
             mov [rdx].IMAGE_PE_HEADER32.FileHeader.Characteristics,ax
         .endif
         mov [rsi].asym.value,eax
     .endif
     ret
-
-set_file_flags endp
+    endp
 
 
     assume rsi:segment_t
@@ -986,11 +930,9 @@ set_file_flags endp
 pe_create_PE_header proc public uses rsi rdi rbx
 
     .if ( Parse_Pass == PASS_1 )
-
         .if ( MODULE._model != MODEL_FLAT )
             asmerr( 3002 )
         .endif
-
         movzx eax,Options.pe_subsystem
 ifndef ASMC64
         .if ( MODULE.defOfssize == USE64 )
@@ -1008,11 +950,8 @@ endif
         .if ( Options.pe_dll )
             or [rdi].IMAGE_PE_HEADER32.FileHeader.Characteristics,IMAGE_FILE_DLL
         .endif
-
         .if !SymFind( hdrname "2" )
-
             CreateIntSegment( hdrname "2", "HDR", 2, MODULE.defOfssize, TRUE )
-
             mov [rax].asym.max_offset,ebx
             mov rsi,[rax].asym.seginfo
             mov rcx,MODULE.flat_grp
@@ -1021,37 +960,29 @@ endif
             mov [rsi].characteristics,(IMAGE_SCN_MEM_READ shr 24)
             mov [rsi].readonly,1
             mov [rsi].bytes_written,ebx ; ensure that ORG won't set start_loc (assemble.c, SetCurrOffset)
-
         .else
-
             .if ( [rax].asym.max_offset < ebx )
                 mov [rax].asym.max_offset,ebx
             .endif
-
             mov rsi,[rax].asym.seginfo
             mov [rsi].internal,1
             mov [rsi].start_loc,0
         .endif
-
         mov [rsi].segtype,SEGTYPE_HDR
         mov [rsi].CodeBuffer,LclAlloc( ebx )
         mov rbx,tmemcpy( rax, rdi, ebx )
         lea rcx,[rbx].IMAGE_PE_HEADER32.FileHeader.TimeDateStamp
         movzx ebx,[rdi].IMAGE_PE_HEADER32.FileHeader.Characteristics
-
         time( rcx )
         CreateVariable( "@pe_file_flags", ebx )
-
         .if ( rax )
-
             mov [rax].asym.predefined,1
             lea rcx,set_file_flags
             mov [rax].asym.sfunc_ptr,rcx
         .endif
     .endif
     ret
-
-pe_create_PE_header endp
+    endp
 
 
 define CHAR_READONLY ( IMAGE_SCN_MEM_READ shr 24 )
@@ -1062,9 +993,7 @@ IsStdCodeName proc fastcall segm:string_t
 
     xor eax,eax
     .if ( byte ptr [rcx] == '_' || byte ptr [rcx] == '.' )
-
         .if ( byte ptr [rcx+5] == '$' )
-
             mov  ecx,[rcx+1]
             or   ecx,0x20202020
             cmp  ecx,'txet'
@@ -1072,8 +1001,7 @@ IsStdCodeName proc fastcall segm:string_t
         .endif
     .endif
     ret
-
-IsStdCodeName endp
+    endp
 
 pe_create_section_table proc __ccall uses rsi rdi rbx
 
@@ -1081,13 +1009,10 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
    .new bCreated:int_t = FALSE
 
     .if ( Parse_Pass == PASS_1 )
-
         .if SymFind( hdrname "3" )
-
             mov rdi,rax
             mov rsi,[rdi].asym.seginfo
         .else
-
             mov bCreated,TRUE
             mov rdi,CreateIntSegment( hdrname "3", "HDR", 2, MODULE.defOfssize, TRUE )
             mov rsi,[rdi].asym.seginfo
@@ -1095,7 +1020,6 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
             mov [rsi].combine,COMB_ADDOFF ;; PUBLIC
         .endif
         mov [rsi].segtype,SEGTYPE_HDR
-
         .if ( !bCreated )
             .return
         .endif
@@ -1108,35 +1032,24 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
         ; must be set  - also, init lname_idx field
 
         .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
-
             mov rsi,[rdi].asym.seginfo
             mov [rsi].lname_idx,SEGTYPE_ERROR ; use the highest index possible
-
             .if ( [rsi].segtype == SEGTYPE_DATA )
-
                 .if ( [rsi].readonly || [rsi].characteristics == CHAR_READONLY )
-
                     mov [rsi].segtype,SEGTYPE_CDATA
-
                 .elseif ( [rsi].clsym )
-
                     mov rcx,[rsi].clsym
                     .ifd ( tstrcmp( [rcx].asym.name, "CONST" ) == 0 )
                         mov [rsi].segtype,SEGTYPE_CDATA
                     .endif
                 .endif
-
             .elseif ( [rsi].segtype == SEGTYPE_UNDEF )
-
                 mov rbx,[rdi].asym.name
                 .ifd ( tmemcmp( rbx, ".rsrc", 5 ) == 0 )
-
                     .if ( B[rbx+5] == 0 || B[rbx+5] == '$' )
                         mov [rsi].segtype,SEGTYPE_RSRC
                     .endif
-
                 .elseifd ( tstrcmp( rbx, ".reloc" ) == 0 )
-
                     mov [rsi].segtype,SEGTYPE_RELOC
                 .endif
             .endif
@@ -1145,9 +1058,7 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
         ; count objects ( without header types )
 
         .for ( ebx = 1, esi = 0 : ebx < SIZE_PEFLAT : ebx++ )
-
             .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
-
                 mov rdx,[rdi].asym.seginfo
 
                 ; v2.19: skip info sections
@@ -1159,11 +1070,9 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
                 ;        if segment name contains a '$', allow mixing!
 
                 IsStdCodeName( [rdi].asym.name )
-
                 lea rcx,flat_order
                 mov ecx,[rcx+rbx*4]
                 mov ah,ModuleInfo.defOfssize
-
                 .if ( ecx == SEGTYPE_CODE16 && [rdx].seg_info.segtype == SEGTYPE_CODE &&
                       [rdx].seg_info.Ofssize != ah && !al )
                     ;nop
@@ -1175,7 +1084,6 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
         .endf
 
         .if ( esi )
-
             mov rdi,objtab
             imul ebx,esi,IMAGE_SECTION_HEADER
             mov [rdi].asym.max_offset,ebx
@@ -1187,8 +1095,7 @@ pe_create_section_table proc __ccall uses rsi rdi rbx
         .endif
     .endif
     ret
-
-pe_create_section_table endp
+    endp
 
 
 expitem struct
@@ -1197,11 +1104,9 @@ idx     dd ?
 expitem ends
 
 compare_exp proc fastcall p1:ptr expitem, p2:ptr expitem
-
     tstrcmp( [rcx].expitem.name, [rdx].expitem.name )
     ret
-
-compare_exp endp
+    endp
 
 
 pe_emit_export_data proc __ccall uses rsi rdi rbx
@@ -1317,8 +1222,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
     AddLineQueueX( "%s %r", edataname, T_ENDS )
     RunLineQueue()
     ret
-
-pe_emit_export_data endp
+    endp
 
 
 ; write import data.
@@ -1334,7 +1238,6 @@ pe_emit_import_data proc __ccall uses rsi rdi rbx
     .new type:int_t = 0
     .new ptrtype:int_t = T_QWORD
     .new cpalign:string_t = "ALIGN(8)"
-
 ifndef ASMC64
     .if ( MODULE.defOfssize != USE64 )
         mov ptrtype,T_DWORD
@@ -1343,20 +1246,26 @@ ifndef ASMC64
 endif
 
     assume rbx:ptr dll_desc
-
     .for ( rbx = MODULE.DllQueue: rbx: rbx = [rbx].next )
+
+        ; v2.37.77: externdef import ...
+
+        .for ( rdi = SymTables[TAB_EXT].head : rdi : rdi = [rdi].asym.next )
+            .if ( [rdi].asym.isimport && [rdi].asym.used && rbx == [rdi].asym.dll )
+                mov [rdi].asym.iat_used,1
+                inc [rbx].cnt
+            .endif
+        .endf
 
         .if ( [rbx].cnt )
 
             .if ( !type )
-
                 mov type,1
                 AddLineQueueX(
                     "@LPPROC %r %r %r\n"
                     "%r dotname", T_TYPEDEF, T_PTR, T_PROC, T_OPTION )
             .endif
-
-           .new name[256]:char_t
+            .new name[256]:char_t
             mov rsi,tstrcpy(&name, &[rbx].name)
 
             ; avoid '.' and '-' in IDs
@@ -1379,11 +1288,14 @@ endif
                 "%s" IMPDIRSUF " %r\n"
                 "%s" IMPILTSUF " %r %s %s\n"
                 "@%s_ilt %r %r",
-                rcx, T_SEGMENT, T_DWORD, rdx, edi, rsi, edi, rsi, edi, rsi, rcx, T_ENDS,
-                rcx, T_SEGMENT, cpalign, rdx, rsi, T_LABEL, ptrtype )
+                rcx, T_SEGMENT, T_DWORD, rdx,
+                edi, rsi, edi, rsi, edi, rsi,
+                rcx, T_ENDS,
+                rcx, T_SEGMENT, cpalign, rdx,
+                rsi, T_LABEL, ptrtype )
 
             .for ( rdi = SymTables[TAB_EXT].head : rdi : rdi = [rdi].asym.next )
-                .if ( [rdi].asym.iat_used && [rdi].asym.dll == rbx )
+                .if ( [rdi].asym.iat_used && rbx == [rdi].asym.dll )
                     AddLineQueueX( "@LPPROC %r @%s_name", T_IMAGEREL, [rdi].asym.name )
                 .endif
             .endf
@@ -1397,7 +1309,7 @@ endif
                 "@%s_iat %r %r", idataname, T_ENDS, idataname, T_SEGMENT, cpalign, idataattr, rsi, T_LABEL, ptrtype )
 
             .for ( rdi = SymTables[TAB_EXT].head : rdi : rdi = [rdi].asym.next )
-                .if ( [rdi].asym.iat_used && [rdi].asym.dll == rbx )
+                .if ( [rdi].asym.iat_used && rbx == [rdi].asym.dll )
                     Mangle( rdi, StringBufferEnd )
                     AddLineQueueX( "%s%s @LPPROC %r @%s_name",
                         MODULE.imp_prefix, StringBufferEnd, T_IMAGEREL, [rdi].asym.name )
@@ -1412,7 +1324,7 @@ endif
                 "%s" IMPSTRSUF " %r %r %s", idataname, T_ENDS, idataname, T_SEGMENT, T_WORD, idataattr )
 
             .for ( rdi = SymTables[TAB_EXT].head : rdi : rdi = [rdi].asym.next )
-                .if ( [rdi].asym.iat_used && [rdi].asym.dll == rbx )
+                .if ( [rdi].asym.iat_used && rbx == [rdi].asym.dll )
                     AddLineQueueX(
                         "@%s_name dw 0\n"
                         "db '%s',0\n"
@@ -1426,13 +1338,10 @@ endif
                 "@%s_name db '%s',0\n"
                 "even\n"
                 "%s" IMPSTRSUF " %r", rsi, &[rbx].name, idataname, T_ENDS )
-
         .endif
     .endf
     .if ( is_linequeue_populated() )
-
         ; import directory NULL entry
-
         AddLineQueueX(
             "%s" IMPNDIRSUF " %r %r %s\n"
             "DD 0, 0, 0, 0, 0\n"
@@ -1440,28 +1349,22 @@ endif
         RunLineQueue()
     .endif
     ret
-
-pe_emit_import_data endp
+    endp
 
 
 get_bit proc fastcall value:int_t
-
     mov eax,-1
     .while( ecx )
-
         shr ecx,1
         inc eax
     .endw
     ret
-
-get_bit endp
+    endp
 
 
 pe_get_characteristics proc fastcall segp:asym_t
-
     mov rcx,[rcx].asym.seginfo
     mov eax,IMAGE_SCN_CNT_INITIALIZED_DATA or IMAGE_SCN_MEM_READ or IMAGE_SCN_MEM_WRITE
-
     .switch
     .case ( [rcx].seg_info.segtype == SEGTYPE_CODE )
         mov eax,IMAGE_SCN_CNT_CODE or IMAGE_SCN_MEM_EXECUTE or IMAGE_SCN_MEM_READ
@@ -1482,11 +1385,8 @@ pe_get_characteristics proc fastcall segp:asym_t
             mov eax,IMAGE_SCN_CNT_INITIALIZED_DATA or IMAGE_SCN_MEM_READ
         .endif
     .endsw
-
     ; manual characteristics set?
-
     .if ( [rcx].seg_info.characteristics )
-
         and eax,0x1FFFFFF ;; clear the IMAGE_SCN_MEM flags
         mov dl,[rcx].seg_info.characteristics
         and edx,0xFE
@@ -1514,12 +1414,9 @@ pe_set_base_relocs proc __ccall uses rsi rdi rbx reloc:asym_t
   .new prel:ptr uint_16
 
     .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
-
         mov rsi,[rdi].asym.seginfo
         .continue .if ( [rsi].segtype == SEGTYPE_HDR )
-
         .for ( rbx = [rsi].head: rbx: rbx = [rbx].nextrlc )
-
             .switch ( [rbx].type )
             .case FIX_OFF16
             .case FIX_OFF32
@@ -1705,8 +1602,7 @@ AddManifestdependency proc __ccall uses rsi rdi rbx dependency:string_t
     .endif
     mov rax,rbx
     ret
-
-AddManifestdependency endp
+    endp
 endif
 
 pe_scan_linker_directives proc __ccall uses rsi rdi rbx pe:ptr, cmd:string_t, size:int_t
@@ -2354,26 +2250,21 @@ ifndef ASMC64
     .endif
 endif
     ret
-
-pe_set_values endp
+    endp
 
 
 ; v2.11: this function is called when the END directive has been found.
 ; Previously the code was run inside EndDirective() directly.
 
 pe_enddirhook proc
-
     pe_create_MZ_header()
     pe_emit_export_data()
-
     .if ( MODULE.DllQueue )
         pe_emit_import_data()
     .endif
-
     pe_create_section_table()
-   .return( NOT_ERROR )
-
-pe_enddirhook endp
+    .return( NOT_ERROR )
+    endp
 
 
 ; write section contents
@@ -2748,7 +2639,6 @@ endif
     .endf
 
     .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
-
         mov ecx,ftell( CurrFile[TOBJ] )
         mov eax,cp.rawpagesize
         dec eax
@@ -2770,7 +2660,6 @@ endif
     LstNL()
 
     .if ( MODULE.sub_format == SFORMAT_MZ )
-
         mov eax,sizetotal
         sub eax,cp.sizehdr
         add sizeheap,eax
@@ -2779,40 +2668,39 @@ endif
     .else
         mov sizeheap,GetImageSize( TRUE )
     .endif
-
     LstPrintf( szTotal, " ", sizetotal, sizeheap )
     LstNL()
-   .return( NOT_ERROR )
-
-bin_write_module endp
+    .return( NOT_ERROR )
+    endp
 
 
 bin_check_external proc
-
     .for ( rdx = SymTables[TAB_EXT].head : rdx : rdx = [rdx].asym.next )
         .if ( !( [rdx].asym.weak ) || [rdx].asym.used )
-            .if ( !( [rdx].asym.isinline ) )
+            .if ( ![rdx].asym.isinline && ![rdx].asym.isimport )
                 .return( asmerr( 2014, [rdx].asym.name ) )
             .endif
         .endif
     .endf
     .return( NOT_ERROR )
+    endp
 
-bin_check_external endp
 
-
-bin_init proc public uses rsi rdi rbx
-
+bin_init proc public
     mov MODULE.WriteModule,&bin_write_module
     mov MODULE.Pass1Checks,&bin_check_external
     mov al,MODULE.sub_format
     .switch al
 ifndef ASMC64
     .case SFORMAT_MZ
-        lea rdi,MODULE.mz_ofs_fixups
-        lea rsi,mzdata
-        mov ecx,sizeof( MZDATA )
-        rep movsb
+        lea  rdx,MODULE.mz_ofs_fixups
+        lea  rax,mzdata
+        mov  ecx,sizeof( MZDATA )
+        xchg rdx,rdi
+        xchg rax,rsi
+        rep  movsb
+        mov  rsi,rax
+        mov  rdi,rdx
        .endc
 endif
     .case SFORMAT_PE
@@ -2821,7 +2709,6 @@ endif
        .endc
     .endsw
     ret
-
-bin_init endp
+    endp
 
     end

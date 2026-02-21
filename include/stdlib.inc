@@ -626,6 +626,7 @@ endif
 __getmainargs	proto __cdecl :ptr, :ptr, :ptr, :int_t, :ptr _startupinfo
 __wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :int_t, :ptr _startupinfo
 __iob_func	proto __cdecl
+_initterm	proto __cdecl :ptr, :ptr
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
 
@@ -652,7 +653,6 @@ _asetenvp	proto __cdecl :array_t
 _wsetenvp	proto __cdecl :warray_t
 _asetargv	proto __cdecl :ptr int_t, :string_t
 _wsetargv	proto __cdecl :ptr int_t, :wstring_t
-_initterm	proto __cdecl :ptr, :ptr
 _cenvarg	proto __cdecl :array_t, :array_t, :array_t, :array_t, :string_t
 _atoi128	proto __cdecl :string_t, :ptr int128_t
 _wtoi128	proto __cdecl :wstring_t, :ptr int128_t

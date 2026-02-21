@@ -41,7 +41,29 @@ extern SegOverride:asym_t
 
 CreateFixup proc __ccall uses rsi rdi rbx sym:asym_t, type:fixup_types, options:fixup_options
 
+   .new name[128]:char_t
     ldr rsi,sym
+
+    ; v2.37.77 hack: relocate import and flip id to MT_TYPE
+
+    .if ( rsi && [rsi].asym.isimport )
+        .if ( [rsi].asym.mem_type == MT_TYPE )
+            mov rsi,[rsi].asym.type
+        .elseif ( Parse_Pass > PASS_1 && MODULE.imp_prefix )
+            .ifd tmemcmp([rsi].asym.name, MODULE.imp_prefix, 5)
+                mov rdi,tstrcpy( &name, MODULE.imp_prefix )
+                lea rcx,[rdi+tstrlen(rdi)]
+                Mangle( rsi, rcx )
+                .if SymFind( rdi )
+                    mov [rsi].asym.mem_type,MT_TYPE
+                    mov [rsi].asym.type,rax
+                    mov rcx,[rsi].asym.procinfo
+                    mov [rax].asym.procinfo,rcx
+                    mov rsi,rax
+                .endif
+            .endif
+        .endif
+    .endif
 
     mov rbx,LclAlloc( sizeof( fixup ) )
 
@@ -81,9 +103,8 @@ CreateFixup proc __ccall uses rsi rdi rbx sym:asym_t, type:fixup_types, options:
     mov [rbx].frame_datum,Frame_Datum
     mov [rbx].def_seg,CurrSeg           ; may be NULL (END directive)
     mov [rbx].sym,rsi
-   .return( rbx )
-
-CreateFixup endp
+    .return( rbx )
+    endp
 
 
 ;
@@ -94,10 +115,8 @@ CreateFixup endp
 ;
 
 SetFixupFrame proc __ccall uses rsi rdi sym:asym_t, ign_grp:char_t
-
     ldr rsi,sym
     .if ( rsi )
-
         movzx eax,[rsi].asym.state
         .switch eax
         .case SYM_INTERNAL
@@ -125,8 +144,7 @@ SetFixupFrame proc __ccall uses rsi rdi sym:asym_t, ign_grp:char_t
         .endsw
     .endif
     ret
-
-SetFixupFrame endp
+    endp
 
 
 ;
@@ -201,7 +219,6 @@ endif
             mov [rbx].segment_var,[rcx].asym.segm
         .endif
     .endif
-
     mov rsi,s
     mov rsi,[rsi].asym.seginfo
     .if ( [rsi].seg_info.head == NULL )
@@ -213,7 +230,6 @@ endif
         mov [rsi].seg_info.tail,rbx
     .endif
     ret
-
-store_fixup endp
+    endp
 
     end

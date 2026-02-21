@@ -43,45 +43,33 @@ externdef SegOverride:asym_t
     assume rsi:ptr code_info
 
 jumpExtend proc fastcall private uses rsi rbx CodeInfo:ptr code_info, far_flag:int_t
-
     mov rsi,rcx
     mov ebx,edx
-
     .if( Parse_Pass == PASS_2 )
         asmerr( 6003 )
     .endif
-
     mov al,[rsi].Ofssize
-
     .if ( ebx )
-
         .if ( [rsi].opsiz )
-
             ; it's 66 EA OOOO SSSS or 66 EA OOOOOOOO SSSS
-
             mov ebx,8
             .if al
                 mov ebx,6
             .endif
         .else
-
             ; it's EA OOOOOOOO SSSS or EA OOOO SSSS
-
             mov ebx,5
             .if al
                 mov ebx,7
             .endif
         .endif
     .else
-
         ; it's E9 OOOOOOOO or E9 OOOO
-
         mov ebx,3
         .if al
             mov ebx,5
         .endif
     .endif
-
     mov rdx,[rsi].pinstr
     movzx eax,[rdx].instr_item.opcode
     xor eax,1
@@ -93,24 +81,20 @@ jumpExtend proc fastcall private uses rsi rbx CodeInfo:ptr code_info, far_flag:i
     lea rax,[rdx+rax*instr_item]
     mov [rsi].pinstr,rax
     ret
-
-jumpExtend endp
+    endp
 
 ; "far call optimisation": a far call is done to a near label
 ; optimize (call SSSS:OOOO -> PUSH CS, CALL OOOO)
 
 FarCallToNear proc __ccall private CodeInfo:ptr code_info
-
     .if ( Parse_Pass == PASS_2 )
         asmerr( 7003 )
     .endif
-
     OutputByte( 0x0E ) ; 0x0E is "PUSH CS" opcode
     mov rcx,CodeInfo
     mov [rcx].code_info.mem_type,MT_NEAR
     ret
-
-FarCallToNear endp
+    endp
 
 
 ;
@@ -137,7 +121,6 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
 
     ldr rsi,CodeInfo
     ldr rbx,opndx
-
     movzx eax,[rsi].token
     movzx eax,IndexFromToken(eax)
     mov opidx,eax
@@ -145,7 +128,6 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
     ; v2.05: just 1 operand possible
 
     .return( asmerr( 2070 ) ) .if ( CurrOpnd != OPND1 )
-
     .if ( [rbx].explicit && [rbx].inst != T_SHORT )
         mov [rsi].mem_type,[rbx].mem_type
     .endif
@@ -155,28 +137,20 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
     ; It might cause the call/jmp to become FAR, though.
 
     .if ( [rbx].override != NULL )
-
         segm_override( rbx, NULL )
         mov rcx,[rbx].sym
         mov rax,SegOverride
-
         .if ( rax && rcx && [rcx].asym.segm )
-
             mov rdx,[rcx].asym.segm
             mov rdx,[rdx].asym.seginfo
             mov rdx,[rdx].seg_info.sgroup
-
             .if ( rax != [rcx].asym.segm &&  rax != rdx )
-
                 .return( asmerr( 2074, [rcx].asym.name ) )
             .endif
-
             ; v2.05: switch to far jmp/call
-
             mov rcx,CurrSeg
             mov rdx,[rcx].asym.seginfo
             mov rdx,[rdx].seg_info.sgroup
-
             .if ( rax != rcx && rax != rdx )
                 mov [rsi].mem_type,MT_FAR
             .endif
@@ -184,22 +158,15 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
     .endif
 
     mov [rsi].opnd[OPND1].data32l,[rbx].value
-
     ; v2.06: make sure, that next bytes are cleared (for OP_I48)!
-
     mov [rsi].opnd[OPND1].data32h,0
-
     mov rdi,[rbx].sym
     .if ( rdi == NULL ) ; no symbolic label specified?
-
         ; Masm rejects: "jump dest must specify a label
-
         .return( asmerr( 2076 ) )
     .endif
-
     mov state,[rdi].state
     mov adr,GetCurrOffset() ; for SYM_UNDEFINED, will force distance to SHORT
-
     ; v2.02: if symbol is GLOBAL and it isn't clear yet were
     ; it's located, then assume it is a forward reference (=SYM_UNDEFINED)!
     ; This applies to PROTOs and EXTERNDEFs in Pass 1.
@@ -250,14 +217,10 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                     .return( asmerr( 2107 ) )
                 .endif
             .endif
-
             ; jumps to another segment are just like to another file
-
             mov state,SYM_EXTERNAL
         .endif
-
     .elseif ( state != SYM_UNDEFINED )
-
         .return( asmerr( 2076 ) )
     .endif
 
@@ -302,18 +265,13 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
 
                 dec edx ; 1 extra byte for ADRSIZ (0x67)
             .endif
-
             mov ecx,OP_I8
             .ifs ( edx < SCHAR_MIN || edx > SCHAR_MAX || [rsi].mem_type == MT_NEAR || [rsi].token == T_CALL )
-
                 .if ( [rbx].inst == T_SHORT || ( IS_XCX_BRANCH( [rsi].token ) ) )
-
                     ; v2.06: added
-
                     .if( [rsi].token == T_CALL )
                         .return( asmerr( 2008, "short" ) )
                     .endif
-
                     .ifs ( edx < 0 )
                         sub edx,SCHAR_MIN
                         xor eax,eax
@@ -356,7 +314,6 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                 .endif
 if 0
                 ; displacement now in range?
-
                 .ifs ( ecx == OP_I32 && edx >= SCHAR_MIN && edx <= SCHAR_MAX &&
                        eax != T_CALL && [rsi].mem_type != MT_NEAR )
                     mov ecx,OP_I8
@@ -377,24 +334,16 @@ endif
 
             mov ecx,MODULE.curr_cpu
             and ecx,P_CPU_MASK
-
             .if ( ecx < P_386 && IS_JCC( [rsi].token ) )
-
                 ; look into jump extension
-
                 .if ( [rsi].opnd[OPND1].type != OP_I8 )
-
                     .if( [rsi].mem_type == MT_EMPTY && MODULE.ljmp == TRUE )
-
                         jumpExtend( rsi, FALSE )
                         sub adr,1
                         mov [rsi].opnd[OPND1].data32l,adr
-
                     .else
-
                         ; v2.11: don't emit "out of range" if OP_I16 was forced
                         ; by type coercion ( jmp near ptr xxx )
-
                         mov eax,2079
                         .if ( [rsi].mem_type == MT_EMPTY )
                             mov eax,2075
@@ -421,7 +370,6 @@ endif
 
     mov fixup_option,OPTJ_NONE
     mov fixup_type,FIX_RELOFF8
-
     mov mem_type,[rbx].mem_type
 
     ; v2.04: far call optimization possible if destination is in
@@ -434,7 +382,6 @@ endif
         mov rax,[rdi].segm
         mov symseg,rax
         xor ecx,ecx
-
         .if rax
             mov rcx,[rax].asym.seginfo
             .if rcx
@@ -443,10 +390,8 @@ endif
         .endif
         mov rdx,CurrSeg
         mov rdx,[rdx].asym.seginfo
-
         .if ( rax == CurrSeg ||
              ( rax != NULL && rcx != NULL && rcx == [rdx].seg_info.sgroup ) )
-
             FarCallToNear(rsi) ; switch mem_type to NEAR
         .endif
     .endif
@@ -477,31 +422,22 @@ endif
     ; handle far JMP + CALL?
 
     mov al,[rsi].mem_type
-
     .if ( IS_JMPCALL( [rsi].token ) && ( [rsi].isfar || al == MT_FAR ) )
-
         mov [rsi].isfar,1 ; flag isn't set if explicit is true
-
         .switch al
         .case MT_NEAR
-
             .if( [rbx].explicit || [rbx].inst == T_SHORT )
                 .return( asmerr( 2077 ) )
             .endif
-
             ; fall through
-
         .case MT_FAR
         .case MT_EMPTY
-
             .if ( [rbx].Ofssize != USE_EMPTY )
                 mov [rsi].opsiz,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
             .else
                 mov [rsi].opsiz,OPSIZE( GetSymOfssize(rdi), [rsi].Ofssize )
             .endif
-
             ; set fixup frame variables Frame + Frame_Datum
-
             set_frame( rdi )
             .if( IS_OPER_32( rsi ) )
                 mov fixup_type,FIX_PTR32
@@ -512,10 +448,8 @@ endif
             .endif
             .endc
         .endsw
-
         mov [rsi].opnd[OPND1].InsFixup,CreateFixup( rdi, fixup_type, fixup_option )
         .return( NOT_ERROR )
-
     .endif
 
     movzx eax,[rsi].token
@@ -524,7 +458,6 @@ endif
         .if ( [rbx].inst == T_SHORT )
             .return( asmerr( 2077 ) )
         .endif
-
         .if ( [rsi].mem_type == MT_EMPTY )
             mov fixup_option,OPTJ_CALL
             .if ( [rsi].Ofssize > USE16 )
@@ -536,19 +469,13 @@ endif
             .endif
             .endc
         .endif
-
         ; fall through
-
     .case T_JMP
-
         mov al,[rsi].mem_type
         .switch al
-
         .case MT_EMPTY
-
             ; forward reference
             ; default distance is short, we will expand later if needed
-
             mov [rsi].opnd[OPND1].type,OP_I8
             mov fixup_type,FIX_RELOFF8
             mov eax,OPTJ_NONE
@@ -557,9 +484,7 @@ endif
             .endif
             mov fixup_option,eax
             .endc
-
         .case MT_NEAR
-
             mov fixup_option,OPTJ_EXPLICIT
             .if( [rbx].Ofssize != USE_EMPTY )
                 .if ( [rbx].Ofssize == USE16 )
@@ -583,94 +508,62 @@ endif
             .endc
          .endsw
         .endc
-
     .default
-
         ; JxCXZ, LOOPxx, Jxx
         ; JxCXZ and LOOPxx always require SHORT label
-
         .if ( IS_XCX_BRANCH( eax ) )
-
             .if ( [rsi].mem_type != MT_EMPTY && [rbx].inst != T_SHORT )
                 .return( asmerr( 2080 ) )
             .endif
-
             mov [rsi].opnd[OPND1].type,OP_I8
             mov fixup_option,OPTJ_EXPLICIT
             mov fixup_type,FIX_RELOFF8
-
-            .endc
-
+           .endc
         .endif
-
         ; just Jxx remaining
-
         mov eax,MODULE.curr_cpu
         and eax,P_CPU_MASK
-
-        .if( eax >= P_386 )
-
+        .if ( eax >= P_386 )
             mov al,[rsi].mem_type
-
             .switch ( al )
-
             .case MT_EMPTY
-
                 ; forward reference
-
                 mov eax,OPTJ_JXX
                 .if ( [rbx].inst == T_SHORT )
                     mov eax,OPTJ_EXPLICIT
                 .endif
-
                 mov fixup_option,eax
                 mov fixup_type,FIX_RELOFF8
                 mov [rsi].opnd[OPND1].type,OP_I8
-
-                .endc
-
+               .endc
             .case MT_NEAR
-
                 mov fixup_option,OPTJ_EXPLICIT
-
                 ; v1.95: explicit flag to be removed!
-
                 .if ( [rbx].Ofssize != USE_EMPTY )
-
                     mov [rsi].opsiz,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
-
                     mov eax,OP_I16
                     .if ( [rbx].Ofssize >= USE32 )
                         mov eax,OP_I32
                     .endif
                     mov [rsi].opnd[OPND1].type,eax
-
                 .elseif ( [rsi].Ofssize > USE16 )
-
                     mov fixup_type,FIX_RELOFF32
                     mov [rsi].opnd[OPND1].type,OP_I32
                 .else
-
                     mov fixup_type,FIX_RELOFF16
                     mov [rsi].opnd[OPND1].type,OP_I16
                 .endif
                 .endc
-
             .case MT_FAR
-
                 .if ( MODULE.ljmp ) ; OPTION LJMP set?
-
                     .if ( [rbx].Ofssize != USE_EMPTY )
                         mov [rsi].opsiz,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
                     .else
                         mov [rsi].opsiz,OPSIZE( GetSymOfssize(rdi), [rsi].Ofssize )
                     .endif
-
                     ; destination is FAR (externdef <dest>:far
-
                     jumpExtend( rsi, TRUE )
                     mov [rsi].isfar,1
-
                     .if( IS_OPER_32( rsi ) )
                         mov fixup_type,FIX_PTR32
                         mov [rsi].opnd[OPND1].type,OP_I48
@@ -679,73 +572,51 @@ endif
                         mov [rsi].opnd[OPND1].type,OP_I32
                     .endif
                     .endc
-
                 .endif
-
                 ; fall through
-
             .default
-
                 ; is another memtype possible at all?
-
                 .return( asmerr( 2080 ) )
             .endsw
         .else
-
             ; the only mode in 8086, 80186, 80286 is
             ; Jxx SHORT
             ; Masm allows "Jxx near" if LJMP is on (default)
-
             mov al,[rsi].mem_type
             .switch al
             .case MT_EMPTY
-
                 .if ( [rbx].inst == T_SHORT )
                     mov fixup_option,OPTJ_EXPLICIT
                 .else
                     mov fixup_option,OPTJ_EXTEND
                 .endif
-
                 mov fixup_type,FIX_RELOFF8
                 mov [rsi].opnd[OPND1].type,OP_I8
-                .endc
-
+               .endc
             .case MT_NEAR ; allow Jxx NEAR if LJMP on
             .case MT_FAR
-
                 .if ( MODULE.ljmp )
-
                     .if ( al == MT_FAR )
-
                         jumpExtend( rsi, TRUE )
                         mov fixup_type,FIX_PTR16
                         mov [rsi].isfar,1
                         mov [rsi].opnd[OPND1].type,OP_I32
-
                     .else
-
                         jumpExtend( rsi, FALSE )
                         mov fixup_type,FIX_RELOFF16
                         mov [rsi].opnd[OPND1].type,OP_I16
                     .endif
                     .endc
                 .endif
-
                 ; fall through
-
             .default
-
                 .return( asmerr( 2080 ) )
             .endsw
-
         .endif
-
     .endsw
-
     mov [rsi].opnd[OPND1].InsFixup,CreateFixup( rdi, fixup_type, fixup_option )
     mov eax,NOT_ERROR
     ret
-
-process_branch endp
+    endp
 
     end

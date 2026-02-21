@@ -17,9 +17,7 @@ endif
 .code
 
 _tzset proc uses rbx
-
 ifdef __UNIX__
-
    .new zone[128]:char_t
    .new rbuf[2048]:char_t
    .new size:int_t
@@ -165,8 +163,7 @@ else
     .endif
 endif
     ret
-
-_tzset endp
+    endp
 
 
 _isindst proc uses rsi rdi rbx tb:ptr tm

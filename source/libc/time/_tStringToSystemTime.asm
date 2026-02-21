@@ -8,9 +8,7 @@ include time.inc
 include stdlib.inc
 include tchar.inc
 
-    .code
-
-    assume rbx:ptr SYSTEMTIME
+.code
 
 StringToSystemTime proc uses rbx string:tstring_t, lpSystemTime:ptr SYSTEMTIME
 
@@ -23,20 +21,19 @@ StringToSystemTime proc uses rbx string:tstring_t, lpSystemTime:ptr SYSTEMTIME
     .until ( eax > '9' || eax < '0' )
     mov string,rdx
     _tstol(rcx)
-    mov [rbx].wHour,ax
+    mov [rbx].SYSTEMTIME.wHour,ax
     _tstol(string)
-    mov [rbx].wMinute,ax
+    mov [rbx].SYSTEMTIME.wMinute,ax
     mov rcx,string
     .repeat
         movzx eax,tchar_t ptr [rcx]
         add rcx,tchar_t
     .until ( eax > '9' || eax < '0' )
     _tstol(rcx)
-    mov [rbx].wSecond,ax
-    mov [rbx].wMilliseconds,0
+    mov [rbx].SYSTEMTIME.wSecond,ax
+    mov [rbx].SYSTEMTIME.wMilliseconds,0
     mov rax,rbx
     ret
-
-StringToSystemTime endp
+    endp
 
     end

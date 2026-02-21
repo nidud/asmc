@@ -141,6 +141,7 @@ IS_SIGNED proto watcall :byte {
      regparam       dd : 1 ?        ; register param
      regpair        dd : 1 ?        ; reg::reg param
      isexport       dd : 1 ?        ; v2.19: symbol exported ( SYM_INTERNAL )
+     isimport       dd : 1 ?        ; v2.37: symbol imported ( SYM_EXTERNAL )
      crecord        dd : 1 ?        ; v2.36.37: use bitf_* in records
      bitexpr        dd : 1 ?        ; v2.36.44: set by GetSimpleExpression() - rec.field == 1
      EndpOccured    dd : 1 ?        ; v2.37.15: set by EndpDir() - .return without RET

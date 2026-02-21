@@ -173,22 +173,22 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, n
 CreateProto endp
 
 
-; externdef [ attr ] [EXPORT] symbol :type [, symbol:type,...]
+; externdef [ attr ] [IMPORT|EXPORT] symbol :type [, symbol:type,...]
 
 ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
-  local token:string_t
-  local langtype:byte
-  local isnew:char_t
-  local ti:qualified_type
-  local isexport:byte
+   .new token:string_t
+   .new langtype:byte
+   .new isnew:char_t
+   .new ti:qualified_type
+   .new isexport:byte = 0
+   .new isimport:byte = 0
 
     inc i ; skip EXTERNDEF token
 
     .repeat
 
         mov ti.Ofssize,MODULE.Ofssize
-        mov isexport,0
 
         ; get the symbol language type if present
 
@@ -199,12 +199,17 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         add rbx,tokenarray
 
         ; v2.37.56: allow EXPORT
+        ; v2.37.77: allow IMPORT
 
         .if ( [rbx].token == T_ID )
 
             .ifd ( tstricmp([rbx].string_ptr, "EXPORT") == 0 )
 
                 mov isexport,1
+                inc i
+                add rbx,asm_tok
+            .elseifd ( tstricmp([rbx].string_ptr, "IMPORT") == 0 )
+                mov isimport,1
                 inc i
                 add rbx,asm_tok
             .endif
@@ -216,6 +221,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .return( asmerr( 2008, [rbx].string_ptr ) )
         .endif
         mov token,[rbx].string_ptr
+        mov rdi,rax
         inc i
         add rbx,asm_tok
 
@@ -226,7 +232,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         inc i
         add rbx,asm_tok
-        mov rsi,SymFind( token )
+        mov rsi,SymFind( rdi )
 
         mov ti.mem_type,MT_EMPTY
         mov ti.size,0
@@ -253,7 +259,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             mov ecx,i
             inc ecx
-            .if CreateProto( ecx, tokenarray, token, langtype )
+            .if CreateProto( ecx, tokenarray, rdi, langtype )
                 .return( NOT_ERROR )
             .endif
             .return( ERROR )
@@ -269,7 +275,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov isnew,FALSE
         .if ( rsi == NULL || [rsi].asym.state == SYM_UNDEFINED )
 
-            mov rsi,CreateExternal( rsi, token, TRUE )
+            mov rsi,CreateExternal( rsi, rdi, TRUE )
             mov isnew,TRUE
 
         .elseif ( [rsi].asym.state != SYM_INTERNAL && [rsi].asym.state != SYM_EXTERNAL )
@@ -314,7 +320,7 @@ endif
             .endsw
 
             mov [rsi].asym.Ofssize,ti.Ofssize
-            mov al,ti.Ofssize
+;           mov al,ti.Ofssize
 
             .if ( ti.is_ptr == 0 && al != MODULE.Ofssize )
 
@@ -403,9 +409,13 @@ if 1
 endif
         .endif
         mov [rsi].asym.isdefined,1
-
         .if ( isexport && Options.output_format == OFORMAT_ELF )
             mov [rsi].asym.isexport,1
+        .elseif ( isimport && Options.output_format != OFORMAT_ELF )
+            mov [rsi].asym.isimport,1 ; v2.37.77: added
+            .if ( Parse_Pass == PASS_1 )
+                mov [rsi].asym.dll,MODULE.CurrDll
+            .endif
         .endif
 
 if 0
@@ -419,9 +429,7 @@ if 0
         ; been triggered yet ( that is, no code or data definition BEFORE the EXTERNDEF ).
         ; 3. the EXTERNDEF directive running in pass 2 surely cannot know better than
         ; the PROC directive what the visibility status of the procedure is supposed to be.
-
         .if ( [rsi].asym.state == SYM_INTERNAL && !( [rsi].asym.ispublic ) )
-
             mov [rsi].asym.ispublic,1
             AddPublicData(rsi)
         .endif
@@ -440,8 +448,7 @@ endif
         .endif
     .until ( i >= TokenCount )
     .return( NOT_ERROR )
-
-ExterndefDirective endp
+    endp
 
 
 ; PROTO directive.
@@ -1004,11 +1011,11 @@ CommDirective endp
 
 PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
-  local token:string_t
-  local sym:asym_t
-  local skipitem:sbyte
-  local langtype:byte
-  local isexport:byte
+   .new token:string_t
+   .new sym:asym_t
+   .new skipitem:sbyte
+   .new langtype:byte
+   .new isexport:byte = 0
 
     inc i ; skip PUBLIC directive
 
@@ -1028,7 +1035,6 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         ; v2.19: syntax extension: scan for optional EXPORT attribute
 
-        mov isexport,FALSE
         .if ( Options.strict_masm_compat == FALSE )
             .ifd ( tstricmp( [rbx].string_ptr, "EXPORT" ) == 0 )
                 mov isexport,TRUE

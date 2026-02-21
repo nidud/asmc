@@ -3726,23 +3726,29 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     add p,6
 
     .if ( !pmacro && [rsi].state == SYM_EXTERNAL && [rsi].dll )
-
-       .new iatname:ptr = p
-        tstrcpy( p, MODULE.imp_prefix )
-        add p,tstrlen( p )
-        add p,Mangle( rsi, p )
-        inc namepos
-        .if ( !( [rsi].iat_used ) )
-            mov [rsi].iat_used,1
-            mov rcx,[rsi].dll
-            inc [rcx].dll_desc.cnt
+        .if ( !Options.pe_exe ) ; option -Fd
+            mov rbx,p
+            add p,tstrlen(tstrcpy(rbx, MODULE.imp_prefix))
+            add p,Mangle(rsi, p)
+            inc namepos
+            xor ecx,ecx
             .if ( [rsi].langtype != LANG_NONE && [rsi].langtype != MODULE.langtype )
-                movzx eax,[rsi].langtype
-                add eax,T_CCALL - 1
-                AddLineQueueX( " externdef %r %s: ptr proc", eax, iatname )
-            .else
-                AddLineQueueX( " externdef %s: ptr proc", iatname )
+                movzx ecx,[rsi].langtype
+                add ecx,T_CCALL - 1
             .endif
+            AddLineQueueX(" externdef %r %s: ptr proc", ecx, rbx)
+        .else ; v2.37.77: removed import prefix
+            mov ecx,T_DWORD
+            .if ( MODULE.Ofssize == USE64 )
+                mov ecx,T_QWORD
+            .endif
+            add p,tsprintf(p, "%r %r ", ecx, T_PTR)
+            mov [rsi].isimport,1
+        .endif
+        .if ( ![rsi].iat_used )
+            mov [rsi].iat_used,1
+            mov rax,[rsi].dll
+            inc [rax].dll_desc.cnt
         .endif
     .endif
 
@@ -3856,9 +3862,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     .endif
                 .endf
                 mov rsi,sym
-
                 assume rsi:asym_t
-
             .endif
             tstrcat( p, ")" )
         .endif
@@ -3909,9 +3913,7 @@ endif
 
             imul ebx,parmpos,asm_tok
             add rbx,tokenarray
-
             .if ( MODULE.Ofssize == USE64 )
-
                 .if ( [rsi].langtype == LANG_SYSCALL )
                     AddLineQueue( " mov r10, [rdi]" )
                 .else
@@ -3919,21 +3921,13 @@ endif
                 .endif
 ifndef ASMC64
             .elseif ( MODULE.Ofssize == USE32 )
-
                 .new reg:int_t = T_EAX ; v2.31 - skip mov eax,reg
-
                 .if ( [rsi].langtype == LANG_WATCALL || [rsi].langtype == LANG_ASMCALL )
-
                     ; do nothing: class in eax
-
                 .elseif ( [rsi].langtype == LANG_FASTCALL )
-
                     ; class in ecx
-
                     mov reg,T_ECX
-
                 .elseif ( [rbx+asm_tok].tokval != T_EAX )
-
                     .if ( [rbx+asm_tok].token == T_REG && [rbx+asm_tok].tokval > T_EAX &&
                           [rbx+asm_tok].tokval <= T_EDI )
                         mov reg,[rbx+asm_tok].tokval
@@ -3952,24 +3946,18 @@ endif
     mov rbx,tokenarray
     imul edx,parmpos,asm_tok
     imul ecx,namepos,asm_tok
-
     .if ( pmacro == NULL )
-
         mov rax,[rbx+rdx].tokpos
         sub rax,[rbx+rcx].tokpos
         mov size,eax
-
         tmemcpy( p, [rbx+rcx].tokpos, size )
-
         mov edx,size
         mov byte ptr [rax+rdx],0
     .endif
-
     AddLineQueue( StringBufferEnd )
 
     mov rdi,info
     mov rsi,sym
-
     assume rdi:proc_t
 
     .if ( ( [rsi].langtype == LANG_C || ( [rsi].langtype == LANG_SYSCALL && !( flags & _P_FASTCALL ) ) ) &&
@@ -3984,33 +3972,24 @@ endif
         .endif
         lea rdx,stackreg
         mov eax,[rdx+rax*4]
-
         .if ( [rdi].has_vararg )
-
             mov ecx,[rdi].parasize
             add ecx,size_vararg
-
             AddLineQueueX( " add %r, %u", eax, ecx )
         .else
             AddLineQueueX( " add %r, %u", eax, [rdi].parasize )
         .endif
-
     .elseif ( flags & _P_FASTCALL )
-
         fast_fcend( pproc, numParam, value )
     .endif
-
     LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL )
     RunLineQueue()
-
     mov rcx,pmacro
     .if ( rcx && [rcx].asym.altname )
-
         mov rdx,[rcx].asym.altname
         mov [rdx],rsi
     .endif
     .return( NOT_ERROR )
-
-InvokeDirective endp
+    endp
 
     end

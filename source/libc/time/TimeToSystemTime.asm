@@ -12,7 +12,6 @@ TimeToSystemTime proc Time:time_t, lpSystemTime:ptr SYSTEMTIME
 
     ldr     rcx,Time
     ldr     rdx,lpSystemTime
-
     mov     [rdx].SYSTEMTIME.wDayOfWeek,0
     mov     [rdx].SYSTEMTIME.wMilliseconds,0
     mov     eax,ecx
@@ -42,7 +41,6 @@ TimeToSystemTime proc Time:time_t, lpSystemTime:ptr SYSTEMTIME
     mov     [rdx].SYSTEMTIME.wSecond,ax
     mov     rax,rdx
     ret
-
-TimeToSystemTime endp
+    endp
 
     end

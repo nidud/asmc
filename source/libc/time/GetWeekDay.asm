@@ -9,23 +9,16 @@ include time.inc
     .code
 
 DaysInFebruary proc year:uint_t
-
     ldr eax,year
-
     .while 1
-
         .break .if !eax
-
         .if !( eax & 3 )
-
             mov ecx,100
             xor edx,edx
             div ecx
             .break .if edx
-
             mov eax,year
         .endif
-
         mov ecx,400
         xor edx,edx
         div ecx
@@ -33,12 +26,10 @@ DaysInFebruary proc year:uint_t
         .return( 28 )
     .endw
     .return( 29 )
-
-DaysInFebruary endp
+    endp
 
 
 DaysInMonth proc year:uint_t, month:uint_t
-
     ldr ecx,year
     ldr edx,month
     mov eax,31
@@ -51,8 +42,7 @@ DaysInMonth proc year:uint_t, month:uint_t
        .endc
     .endsw
     ret
-
-DaysInMonth endp
+    endp
 
 
 GetWeekDay proc uses rbx year:uint_t, month:uint_t, day:uint_t
@@ -66,31 +56,24 @@ GetWeekDay proc uses rbx year:uint_t, month:uint_t, day:uint_t
     mov ecx,365 * 4 + 1
     mul ecx
     mov y,eax
-
     .while ( ebx & 3 )
-
         DaysInFebruary(ebx)
         add eax,365-28
         add y,eax
         sub ebx,1
     .endw
-
     mov ebx,year
     .if ebx
-
         DaysInFebruary(ebx)
         add eax,365-28
         sub y,eax
     .endif
-
     mov m,month
     .while ( m > 1 )
-
         sub m,1
         DaysInMonth(ebx, m)
         add y,eax
     .endw
-
     mov eax,day
     add eax,y
     dec eax
@@ -99,7 +82,6 @@ GetWeekDay proc uses rbx year:uint_t, month:uint_t, day:uint_t
     div ecx
     mov eax,edx
     ret
-
-GetWeekDay endp
+    endp
 
     end

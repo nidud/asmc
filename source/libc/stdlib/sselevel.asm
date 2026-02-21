@@ -138,8 +138,7 @@ endif
     .endif
     mov eax,sselevel
     ret
-
-setsselevel endp
+    endp
 
 .pragma init(setsselevel, 30)
 

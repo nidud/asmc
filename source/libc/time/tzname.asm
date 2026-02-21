@@ -9,10 +9,8 @@ include time.inc
 .code
 
 __tzname proc
-
     lea rax,_tzname
     ret
-
-__tzname endp
+    endp
 
     end

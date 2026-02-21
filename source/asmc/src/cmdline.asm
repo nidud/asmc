@@ -791,6 +791,7 @@ endif
         mov Options.output_format,OFORMAT_BIN
         define_name( "__PE__", "1" )
         mov Options.no_linking,1
+        mov Options.pe_exe,1
         .return
     .case 'gep'             ; -peg - subsystem:windows
         mov Options.pe_subsystem,2

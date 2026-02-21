@@ -10,18 +10,14 @@ include errno.inc
 .code
 
 _get_daylight proc pdaylight:ptr int_t
-
     ldr rcx,pdaylight
-
     mov eax,EINVAL
     .if ( rcx )
-
         mov eax,_daylight
         mov [rcx],eax
         xor eax,eax
     .endif
     ret
-
-_get_daylight endp
+    endp
 
     end

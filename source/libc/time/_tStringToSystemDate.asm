@@ -14,11 +14,7 @@ include tchar.inc
 
 StringToSystemDate proc uses rbx string:tstring_t, lpSystemTime:ptr SYSTEMTIME
 
-   .new v0:int_t
-   .new v1:int_t
-   .new wc:int_t
-   .new yc:int_t
-
+   .new v0:int_t,v1,wc,yc
     ldr rbx,lpSystemTime
     ldr rcx,string
     movzx eax,tchar_t ptr [rdx+tchar_t*2]
@@ -40,7 +36,6 @@ StringToSystemDate proc uses rbx string:tstring_t, lpSystemTime:ptr SYSTEMTIME
     _tstol(rcx)
     mov ecx,v0
     mov edx,v1
-
     .if ( yc <= '9' && yc >= '0' )  ; YMD
         mov [rbx].wYear,cx
         mov [rbx].wMonth,dx
@@ -57,7 +52,6 @@ StringToSystemDate proc uses rbx string:tstring_t, lpSystemTime:ptr SYSTEMTIME
     mov [rbx].wDayOfWeek,0
     mov rax,rbx
     ret
-
-StringToSystemDate endp
+    endp
 
     end

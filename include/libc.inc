@@ -36,11 +36,18 @@ endif
 
 ifdef _MT
 define _CRTBLD
+elseifdef __PE__ ; -pe option used
+define _DLL
+ifndef _MSVCRT	 ; msvcrt.lib
+define _MSVCRT
+endif
 endif
 
 ifndef _CRTIMP
 if defined(__DLL__) or ( defined(CRTDLL) and defined(_CRTBLD) )
 define _CRTIMP <export>
+elseifdef _DLL
+define _CRTIMP <import>
 else
 define _CRTIMP <>
 endif
@@ -54,12 +61,6 @@ elseifdef _STDCALL_SUPPORTED
 define __Ctype	<stdcall>
 define __cdecl	<stdcall>
 define WINAPI	<stdcall>
-endif
-
-ifdef __PE__	; asmc /pe
-ifndef _MSVCRT	; msvcrt.lib
-define _MSVCRT
-endif
 endif
 
 ifndef __fastcall

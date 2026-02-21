@@ -9,16 +9,13 @@ include winbase.inc
     .code
 
 FileTimeToString proc string:tstring_t, ft:ptr FILETIME
-
   local ftime:FILETIME, stime:SYSTEMTIME
-
 ifndef __UNIX__
     FileTimeToLocalFileTime(ft, &ftime)
     FileTimeToSystemTime(&ftime, &stime)
     SystemTimeToString(string, &stime)
 endif
     ret
-
-FileTimeToString endp
+    endp
 
     END

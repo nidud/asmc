@@ -652,21 +652,18 @@ endif
     mov MODULE.proc_usescnt,0
     mov MODULE.class_reg,0
 
-    ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
-    ;
+
     .if ( MODULE.DllQueue )
-
-        mov rax,SymTables[TAB_EXT].head
-        .while rax
-
+        .for ( rax = MODULE.DllQueue : rax : rax = [rax].dll_desc.next )
+            mov [rax].dll_desc.cnt,0 ; v2.37.77: added
+        .endf
+        .for ( rax = SymTables[TAB_EXT].head : rax : rax = [rax].asym.next )
             mov [rax].asym.iat_used,0
-            mov rax,[rax].asym.next
-        .endw
+        .endf
     .endif
     ret
-
-ModulePassInit endp
+    endp
 
     assume rdi:nothing
 

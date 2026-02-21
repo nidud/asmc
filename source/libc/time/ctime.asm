@@ -9,13 +9,10 @@ include time.inc
     .code
 
 ctime proc timp:ptr time_t
-
     .if localtime( ldr(timp) )
-
         asctime( rax )
     .endif
     ret
-
-ctime endp
+    endp
 
     end

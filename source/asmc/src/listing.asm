@@ -1085,10 +1085,14 @@ log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
         .endif
         .if ( [rdi].asym.state == SYM_EXTERNAL )
             lea rcx,@CStr("*%r ")
-            .if ( ![rdi].asym.weak )
+            .if ( ![rdi].asym.weak && ![rdi].asym.isimport )
                  inc rcx
             .endif
             LstPrintf( rcx, T_EXTERN )
+            mov rcx,[rdi].asym.dll
+            .if ( rcx )
+                LstPrintf( "(%.8s) ", &[rcx].dll_desc.name )
+            .endif
         .elseif ( [rdi].asym.state == SYM_UNDEFINED )
             LstPrintf( "un%r ", T_DEFINED )
         .endif

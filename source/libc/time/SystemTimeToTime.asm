@@ -18,7 +18,6 @@ include time.inc
 SystemTimeToTime proc uses rbx lpSystemTime:ptr SYSTEMTIME
 
     ldr     rcx,lpSystemTime
-
     movzx   eax,[rcx].SYSTEMTIME.wYear
     sub     eax,DT_BASEYEAR
     shl     eax,9
@@ -42,7 +41,6 @@ SystemTimeToTime proc uses rbx lpSystemTime:ptr SYSTEMTIME
     or      eax,edx ; <date>:<time>
     shr     edx,16
     ret
-
-SystemTimeToTime endp
+    endp
 
     END

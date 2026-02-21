@@ -7,7 +7,7 @@
 include time.inc
 include winbase.inc
 
-    .code
+.code
 
 FileTimeToTime proc ft:LPFILETIME
 ifdef __UNIX__
@@ -15,13 +15,11 @@ ifdef __UNIX__
 else
   local ftime:FILETIME
   local stime:SYSTEMTIME
-
     FileTimeToLocalFileTime(ldr(ft), &ftime)
     FileTimeToSystemTime(&ftime, &stime)
     SystemTimeToTime(&stime)
 endif
     ret
+    endp
 
-FileTimeToTime endp
-
-    END
+    end

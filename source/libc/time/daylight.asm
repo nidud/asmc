@@ -9,10 +9,8 @@ include time.inc
 .code
 
 __daylight proc
-
     lea rax,_daylight
     ret
-
-__daylight endp
+    endp
 
     end

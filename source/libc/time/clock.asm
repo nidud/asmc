@@ -9,10 +9,10 @@ ifndef __UNIX__
 include winbase.inc
 endif
 
-    .data
-     __stime uint_t 0
+.data
+ __stime uint_t 0
 
-    .code
+.code
 
 clock proc
 ifdef __UNIX__
@@ -22,7 +22,7 @@ else
 endif
     sub eax,__stime
     ret
-clock endp
+    endp
 
 __inittime proc
 ifdef __UNIX__
@@ -32,7 +32,7 @@ else
 endif
     mov __stime,eax
     ret
-__inittime endp
+    endp
 
 .pragma init(__inittime, 20)
 

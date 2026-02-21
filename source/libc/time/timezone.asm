@@ -9,10 +9,8 @@ include time.inc
 .code
 
 __timezone proc
-
     lea rax,_timezone
     ret
-
-__timezone endp
+    endp
 
     end

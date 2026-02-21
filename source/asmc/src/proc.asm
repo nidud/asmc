@@ -573,24 +573,19 @@ UpdateProcStatus endp
 ;
 
 ParseInline proc __ccall private uses rsi rbx sym:asym_t, curr:token_t, tokenarray:token_t
-
     .if ( Parse_Pass == PASS_1 )
-
         ldr rcx,sym
         mov [rcx].asym.isinline,1
-
         xor esi,esi
         xor eax,eax
         mov rbx,curr
         mov rcx,tokenarray
         add rcx,2*asm_tok
-
         .if ( [rcx].asm_tok.token == T_RES_ID &&
               [rcx].asm_tok.tokval >= T_CCALL &&
               [rcx].asm_tok.tokval <= T_ASMCALL )
             add rcx,asm_tok
         .endif
-
         .for ( rdx = rcx: rdx < rbx: rdx += asm_tok )
             .if ( [rdx].asm_tok.token == T_COLON )
                 inc esi
@@ -598,28 +593,23 @@ ParseInline proc __ccall private uses rsi rbx sym:asym_t, curr:token_t, tokenarr
                 inc eax
             .endif
         .endf
-
         .if ( eax > esi )
             inc eax
             mov esi,eax
         .endif
-
         mov [rbx].token,T_FINAL
         mov rax,[rbx].tokpos
         mov byte ptr [rax],0
-
         .if ( [rdx-asm_tok].asm_tok.token == T_RES_ID && [rdx-asm_tok].asm_tok.tokval == T_VARARG )
             mov edx,1
         .else
             xor edx,edx
         .endif
-
         mov rax,tokenarray
         MacroInline([rax].asm_tok.string_ptr, esi, [rcx].asm_tok.tokpos, [rbx].string_ptr, edx )
     .endif
     ret
-
-ParseInline endp
+    endp
 
 
 ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:token_t, IsPROC:int_t, flags:byte
@@ -669,9 +659,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:
                 mov name,&@CStr("")
             .endif
         .else
-
             ; PROC needs a parameter name, PROTO accepts <void> also
-
             .return( asmerr( 2008, [rbx].string_ptr ) )
         .endif
 
@@ -698,7 +686,6 @@ ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:
 
 
         .if ( [rbx].token != T_COLON )
-
             .if ( IsPROC == FALSE )
                 .return( asmerr( 2065, ":" ) )
             .endif
@@ -706,17 +693,12 @@ ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:
             .if ( ti.Ofssize != USE16 )
                 mov ti.mem_type,MT_DWORD
             .endif
-
         .else
-
             inc i
             add rbx,asm_tok
-
             .if ( ( [rbx].token == T_RES_ID ) && ( [rbx].tokval == T_VARARG ) )
-
                 mov rcx,p
                 movzx eax,[rcx].asym.langtype
-
                 .switch eax
                 .case LANG_NONE
                 .case LANG_BASIC
@@ -725,22 +707,17 @@ ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:
                 .case LANG_STDCALL
                     .return( asmerr( 2131 ) )
                 .endsw
-
                 ; v2.05: added check
-
                 .if ( ( [rbx+asm_tok].token == T_FINAL ) ||
                      ( [rbx+asm_tok].token == T_STRING && [rbx+asm_tok].string_delim == '{' ) )
                     mov is_vararg,TRUE
                 .else
                     asmerr( 2129 )
                 .endif
-
                 mov ti.mem_type,MT_EMPTY
                 mov ti.size,0
                 inc i
-
             .else
-
                 xor eax,eax
                 .if ( [rbx].token == T_ID )
                     mov rcx,[rbx].string_ptr
@@ -873,7 +850,6 @@ ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:
             .if ( is_vararg )
                 mov [rdi].asym.is_vararg,1
             .endif
-
             movzx eax,flags
             and eax,_P_REGPARAM or _P_RESSTACK or _P_SYSTEMV
             .if eax
@@ -882,10 +858,8 @@ ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:
             .if ( eax == 0 )
                 mov [rdi].asym.state,SYM_STACK
             .endif
-
             mov [rdi].asym.total_length,1 ; v2.04: added
             mov [rdi].asym.total_size,ti.size
-
             .if ( !( [rdi].asym.is_vararg ) )
 
                 ; v2.11: CurrWordSize does reflect the default parameter size only for PROCs.
@@ -1123,7 +1097,6 @@ endif
     tokptr(i)
     .if ( [rbx].token == T_STYPE &&
           [rbx].tokval >= T_NEAR && [rbx].tokval <= T_FAR32 )
-
         mov Ofssize,GetSflagsSp( [rbx].tokval )
         .if ( IsPROC )
             .if ( ( MODULE.Ofssize >= USE32 && al == USE16 ) ||
@@ -1131,7 +1104,6 @@ endif
                 asmerr( 2011 )
             .endif
         .endif
-
         mov newmemtype,GetMemtypeSp( [rbx].tokval )
         mov al,Ofssize
         .if ( al == USE_EMPTY )
@@ -1139,9 +1111,7 @@ endif
         .endif
         mov newofssize,al
         inc i
-
     .else
-
         mov eax,1
         mov cl,MODULE._model
         shl eax,cl
@@ -1167,7 +1137,6 @@ endif
     mov cl,newmemtype
     mov dl,newofssize
     .if ( [rdi].asym.mem_type != MT_EMPTY && ( cl != [rdi].asym.mem_type || al != dl ) )
-
         .if ( [rdi].asym.mem_type == MT_NEAR || [rdi].asym.mem_type == MT_FAR )
             asmerr( 2112 )
         .else
@@ -1202,19 +1171,12 @@ endif
     ; PROTO accepts PRIVATE and EXPORT, but these attributes are just ignored!
 
     tokptr(i)
-
     .if ( [rbx].token == T_ID || [rbx].token == T_DIRECTIVE )
-
         mov token,[rbx].string_ptr
-
         .ifd ( tstricmp( rax, "PRIVATE") == 0 )
-
             .if ( IsPROC )  ; v2.11: ignore PRIVATE for PROTO
-
                 mov [rdi].asym.ispublic,0
-
                 ; error if there was a PUBLIC directive!
-
                 mov [rdi].asym.scoped,1
                 .if ( oldpublic )
                     SkipSavedState() ; do a full pass-2 scan
@@ -1222,9 +1184,7 @@ endif
                 mov [rdi].asym.isexport,0
             .endif
             inc i
-
         .elseifd ( tstricmp( token, "PUBLIC" ) == 0 )
-
             .if ( IsPROC )
                 mov [rdi].asym.ispublic,1
 if 0 ; allow PROTO export
@@ -1232,20 +1192,20 @@ if 0 ; allow PROTO export
 endif
             .endif
             inc i
-
         .elseifd ( tstricmp(token, "EXPORT") == 0 )
-
             mov [rdi].asym.isexport,1 ; v2.37.56: allow PROTO export
-
             .if ( IsPROC )  ; v2.11: ignore EXPORT for PROTO
-
                 mov [rdi].asym.ispublic,1
-
                 ; v2.11: no export for 16-bit near
-
                 .if ( MODULE.Ofssize == USE16 && [rdi].asym.mem_type == MT_NEAR )
                     asmerr( 2145, [rdi].asym.name )
                 .endif
+            .endif
+            inc i
+        .elseifd ( tstricmp(token, "IMPORT") == 0 )
+            mov [rdi].asym.isimport,1 ; v2.37.77: allow PROTO import
+            .if ( Parse_Pass == PASS_1 )
+                mov [rdi].asym.dll,MODULE.CurrDll
             .endif
             inc i
         .endif
@@ -1260,15 +1220,10 @@ endif
         inc edi
 
         .new max:int_t
-
         .if ( MODULE.prologuemode == PEM_NONE )
-
             ; no prologue at all
-
         .elseif ( MODULE.prologuemode == PEM_MACRO )
-
             mov [rsi].prologuearg,LclDup( [rbx].string_ptr )
-
         .else
 
             ; check the argument. The default prologue
@@ -1276,21 +1231,13 @@ endif
             ; understands FORCEFRAME and LOADDS only
 
             mov max,Tokenize( [rbx].string_ptr, edi, tokenarray, TOK_RESCAN )
-
             .for ( : edi < max: edi++ )
-
                 tokptr(edi)
-
                 .if ( [rbx].token == T_ID )
-
                     .ifd ( tstricmp( [rbx].string_ptr, "FORCEFRAME") == 0 )
-
                         mov [rsi].forceframe,1
-
                     .else
-
                         .if ( MODULE.Ofssize != USE64 )
-
                             .ifd ( tstricmp( [rbx].string_ptr, "LOADDS") == 0 )
                                 mov eax,1
                             .elseifd ( tstricmp( [rbx].string_ptr, "uSESDS") == 0 )
@@ -1299,7 +1246,6 @@ endif
                                 xor eax,eax
                             .endif
                             .if ( eax )
-
                                 .if ( MODULE._model == MODEL_FLAT )
                                     asmerr( 8014 )
                                 .else
@@ -1346,39 +1292,28 @@ endif
 
                 .return( asmerr( 3006, GetResWName( T_FRAME, NULL ) ) )
             .endif
-
             inc i
             add rbx,asm_tok
-
             .if ( [rbx].token == T_COLON )
-
                 inc i
                 add rbx,asm_tok
-
                 .if ( [rbx].token != T_ID )
                     .return( asmerr(2008, [rbx].string_ptr ) )
                 .endif
-
                 mov rdi,SymFind( [rbx].string_ptr )
-
                 .if ( rax == NULL )
-
                     mov rdi,SymCreate( [rbx].string_ptr )
                     mov [rax].asym.state,SYM_UNDEFINED
                     mov [rax].asym.used,1
                     sym_add_table( &SymTables[TAB_UNDEF], rax ) ; add UNDEFINED
-
                 .elseif ( [rax].asym.state != SYM_UNDEFINED &&
                        [rax].asym.state != SYM_INTERNAL && [rax].asym.state != SYM_EXTERNAL )
-
                     .return( asmerr( 2005, [rax].asym.name ) )
                 .endif
-
                 mov [rsi].exc_handler,rdi
                 inc i
                 add rbx,asm_tok
             .endif
-
             mov [rsi].isframe,1
         .elseif ( MODULE.frame_auto == 3 && ( cl == LANG_FASTCALL || cl == LANG_VECTORCALL ) )
             mov [rsi].isframe,1
@@ -1388,63 +1323,46 @@ endif
     ; check for USES
 
     .new uses_cnt:int_t = 0
-
     .if ( [rbx].token == T_ID )
-
         mov rcx,[rbx].string_ptr
         mov eax,[rcx]
         or  eax,0x20202020
-
         .if ( eax == 'sesu' && byte ptr [rcx+4] == 0 )
-
             .new j:int_t
             .new index:int_t
             .new sym:asym_t
-
             .if ( !IsPROC ) ; not for PROTO!
                 asmerr( 2008, [rbx].string_ptr )
             .endif
             inc i
             add rbx,asm_tok
-
             ; count register names which follow
-
             .for ( :: uses_cnt++, rbx += asm_tok )
-
-
                 .if ( [rbx].token != T_REG )
-
                     ; the register may be a text macro here
-
                     .break .if ( [rbx].token != T_ID )
                     .break .if ( ( SymFind( [rbx].string_ptr ) ) == NULL )
-
                     .break .if ( [rax].asym.state != SYM_TMACRO )
                      mov rdi,rax
                      mov ecx,FindResWord( [rdi].asym.string_ptr, [rdi].asym.name_size )
                      imul eax,ecx,special_item
                      lea rdx,SpecialTable
                     .break .if ( [rdx+rax].special_item.type != RWT_REG )
-
                      mov [rbx].token,T_REG
                      mov [rbx].tokval,ecx
                      mov [rbx].string_ptr,[rdi].asym.string_ptr
                 .endif
             .endf
             tokptr(i)
-
             .if ( uses_cnt == 0 )
-
                 asmerr( 2008, [rbx-asm_tok].tokpos )
             .endif
         .endif
     .endif
 
     add uses_cnt,MODULE.proc_usescnt
-
     .new classreg:int_t = 0
     .if ( [rdi].asym.ClassProc )
-
         mov ecx,MODULE.class_reg
         movzx eax,GetRegNo(ecx)
         .switch eax
@@ -1462,7 +1380,6 @@ endif
     .endif
 
     .if ( uses_cnt )
-
         mov     ecx,uses_cnt
         inc     ecx
         imul    ecx,ecx,sizeof( uint_16 )
@@ -1470,26 +1387,19 @@ endif
         mov     [rsi].regslist,rdi
         mov     eax,uses_cnt
         stosw
-
         ; read in registers
-
         .for ( : [rbx].token == T_REG: i++, rbx += asm_tok )
-
             .if ( SizeFromRegister( [rbx].tokval ) == 1 )
-
                 asmerr( 2032 )
             .endif
             mov eax,[rbx].tokval
             stosw
         .endf
-
         .for ( ecx = 0 : ecx < MODULE.proc_usescnt : ecx++ )
-
             lea rdx,MODULE.proc_usesregs
             mov eax,[rdx+rcx*4]
             stosw
         .endf
-
         mov eax,classreg
         .if ( eax )
             .for ( rdx = [rsi].regslist, ecx = 1 : ecx < uses_cnt : ecx++ )
@@ -1517,28 +1427,20 @@ endif
 
     mov rdi,p
     .if ( i >= TokenCount || ( [rbx].token == T_STRING && [rbx].string_delim == '{' ) )
-
         ; procedure has no parameters at all
-
         .if ( [rsi].paralist != NULL )
             asmerr( 2111, "" )
         .endif
         .if ( [rbx].token == T_STRING && [rbx].string_delim == '{' )
             ParseInline(rdi, rbx, tokenarray)
         .endif
-
     .elseif ( [rdi].asym.langtype == LANG_NONE )
-
         asmerr( 2119 )
-
     .else
-
         ; v2.05: set PROC's vararg flag BEFORE params are scanned!
-
         mov ebx,TokenCount ; v2.31: proto :vararg {
         dec ebx
         tokptr(ebx)
-
         .if ( [rbx].token == T_STRING && [rbx].string_delim == '{' )
             sub rbx,asm_tok
         .endif
@@ -1546,13 +1448,10 @@ endif
             mov [rsi].has_vararg,1
         .endif
         .ifd ( ParseParams( rdi, i, tokenarray, IsPROC, flags ) == ERROR )
-
             ; do proceed if the parameter scan returns an error
         .endif
     .endif
-
     ; v2.11: isdefined and isproc now set here
-
     mov [rdi].asym.isdefined,1
     mov [rdi].asym.isproc,1
    .return( NOT_ERROR )

@@ -45,17 +45,13 @@ endif
     mov     rax,rcx
 
 ifdef __AVX__
-
     cmp     reg,64
     ja      .64
     test    rdb,0x60
     jnz     .32
-
 else
-
     cmp     reg,32
     ja      .32
-
 endif
 
     test    rdb,0x30
@@ -232,17 +228,14 @@ else
     pop     esi
 endif
     ret
-
 endif
-memcpy endp
+    endp
 
 ifdef __UNIX__
 memmove proc dst:ptr, src:ptr, size:size_t
-
     memcpy( ldr(dst), ldr(src), ldr(size) )
     ret
-
-memmove endp
+    endp
 endif
 
     end

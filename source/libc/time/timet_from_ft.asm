@@ -7,7 +7,7 @@
 include time.inc
 include winbase.inc
 
-    .code
+.code
 
 __timet_from_ft proc ft:LPFILETIME
 ifdef __UNIX__
@@ -15,7 +15,6 @@ ifdef __UNIX__
 else
     .new s:SYSTEMTIME
     .new u:SYSTEMTIME
-
     .ifd FileTimeToSystemTime(ldr(ft), &u)
         .ifd SystemTimeToTzSpecificLocalTime(NULL, &u, &s)
             .return _loctotime_t( s.wYear, s.wMonth, s.wDay, s.wHour, s.wMinute, s.wSecond, -1 )
@@ -24,7 +23,6 @@ else
 endif
     dec rax
     ret
-
-__timet_from_ft endp
+    endp
 
     end

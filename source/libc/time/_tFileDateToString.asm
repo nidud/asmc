@@ -6,19 +6,16 @@
 include time.inc
 include winbase.inc
 
-    .code
+.code
 
 FileDateToString proc string:tstring_t, ft:ptr FILETIME
-
   local ftime:FILETIME, stime:SYSTEMTIME
-
 ifndef __UNIX__
     FileTimeToLocalFileTime(ft, &ftime)
     FileTimeToSystemTime(&ftime, &stime)
     SystemDateToString(string, &stime)
 endif
     ret
+    endp
 
-FileDateToString endp
-
-    END
+    end

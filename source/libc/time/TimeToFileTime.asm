@@ -15,12 +15,10 @@ ifdef __UNIX__
     ret
 else
   local SystemTime:SYSTEMTIME
-
     SystemTimeToFileTime(TimeToSystemTime(Time, &SystemTime), lpFileTime)
     LocalFileTimeToFileTime(lpFileTime, lpFileTime)
    .return(lpFileTime)
 endif
-
-TimeToFileTime endp
+    endp
 
     END

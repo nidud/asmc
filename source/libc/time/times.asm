@@ -15,11 +15,8 @@ endif
 .code
 
 times proc pt:ptr tms
-
 ifdef __UNIX__
-
     .ifsd ( sys_times( ldr(pt) ) < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
@@ -27,7 +24,6 @@ else
     GetTickCount()
 endif
     ret
-
-times endp
+    endp
 
     end

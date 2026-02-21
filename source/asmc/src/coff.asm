@@ -1466,8 +1466,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
             .for ( rdi = imp : rdi : rdi = [rdi].asym.next )
 
                 .if ( [rdi].asym.isproc &&
-                     ( !( [rdi].asym.weak ) || [rdi].asym.iat_used ) &&
-                      [rdi].asym.dll )
+                     ( ![rdi].asym.weak || [rdi].asym.iat_used ) && [rdi].asym.dll )
 
                     mov rdx,[rdi].asym.dll
                     .if ( [rdx].dll_desc.name )

@@ -275,12 +275,13 @@ _get_dstbias	proto __cdecl :ptr int_t
 _get_timezone	proto __cdecl :ptr int_t
 _get_tzname	proto __cdecl :ptr size_t, :string_t, :size_t, :int_t
 
+externdef	__cdecl _CRTIMP _daylight:int_t
+externdef	__cdecl _CRTIMP _dstbias:int_t
+
 if not defined(_MSVCRT) or defined(_CRTBLD)
 
 externdef	_days:DWORD
 externdef	_lpdays:DWORD
-externdef	_daylight:int_t
-externdef	_dstbias:int_t
 externdef	_timezone:int_t
 externdef	_tzname:LPSTR
 externdef	__dnames:char_t

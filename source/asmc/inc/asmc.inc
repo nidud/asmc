@@ -358,7 +358,6 @@ define FCT_VEC64    5
     OPTN_OBJ_FN,          ; -Fo option
     OPTN_LST_FN,          ; -Fl option
     OPTN_ERR_FN,          ; -Fr option
-    OPTN_LNKDEF_FN,       ; -Fd option
     OPTN_MODULE_NAME,     ; -nm option
     OPTN_TEXT_SEG,        ; -nt option
     OPTN_DATA_SEG,        ; -nd option
@@ -635,7 +634,6 @@ define PE_DLL               0x04
      no_cdecl_decoration    dd: 1 ? ; -zcw & -zcm option
      no_export_decoration   dd: 1 ? ; -zze option
      entry_decorated        dd: 1 ? ; -zzs option
-     write_impdef           dd: 1 ? ; -Fd option
      preprocessor_stdout    dd: 1 ? ; -EP option
      masm51_compat          dd: 1 ? ; -Zm option
      masm8_proc_visibility  dd: 1 ? ; -Zv8 option

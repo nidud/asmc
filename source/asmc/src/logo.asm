@@ -68,8 +68,8 @@ endif
  char_t "-e<number> Set error limit number         -elf[64] Generate ELF object file",10
  char_t "-endbr Insert ENDBR at function entry     -EP Preprocess listing to stdout",10
  char_t "-eq Don't display error messages          -Fe<file> Name executable",10
- char_t "-Fd[file] Write import definition file    -Fi<file> Force <file> to be included",10
- char_t "-Fl[file] Generate listing                -Fo<file> Name object file",10
+ char_t "-Fi<file> Force <file> to be included     -Fl[file] Generate listing",10
+ char_t "-Fo<file> Name object file",10
 ifndef ASMC64
  char_t "-FPi Generate 80x87 emulator encoding     -FPi87 80x87 instructions (default)",10
  char_t "-fpc Disallow floating-point instructions -fp<n> FPU: 0=8087, 2=80287, 3=80387",10

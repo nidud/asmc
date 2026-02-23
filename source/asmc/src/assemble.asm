@@ -305,68 +305,19 @@ SetCurrOffset endp
 ; write object module
 ;
 WriteModule proc private uses rsi rdi rbx
-
     mov rbx,SymTables[TAB_SEG].head
-
     .while rbx
-
         mov rax,[rbx].asym.seginfo
-
         .if ( [rax].seg_info.Ofssize == USE16 && [rbx].asym.max_offset > 0x10000 )
-
             .if Options.output_format == OFORMAT_OMF
-
                 asmerr( 2103, [rbx].asym.name )
             .endif
         .endif
         mov rbx,[rbx].asym.next
     .endw
-
     MODULE.WriteModule()
-
-    mov rbx,Options.names[OPTN_LNKDEF_FN*string_t]
-    .if rbx
-
-        .if !fopen( rbx, "w" )
-
-            asmerr( 3020, rbx )
-
-        .else
-
-           .new fp:ptr FILE = rax
-
-            mov rbx,SymTables[TAB_EXT].head
-
-            .while rbx
-
-                mov rcx,[rbx].asym.dll
-                .if ( [rbx].asym.isproc && rcx && [rcx].dll_desc.name &&
-                      ( !( [rbx].asym.weak ) || [rbx].asym.iat_used ) )
-
-                    Mangle(rbx, StringBufferEnd)
-
-                    mov rcx,[rbx].asym.dll
-                    tsprintf(CurrSource, "import '%s'  %s.%s\n",
-                        StringBufferEnd,
-                        &[rcx].dll_desc.name, [rbx].asym.name)
-
-                    .new len:uint_t = eax
-
-                    fwrite( CurrSource, 1, len, fp )
-
-                    .if ( len != eax )
-
-                        WriteError()
-                    .endif
-                .endif
-                mov rbx,[rbx].asym.next
-            .endw
-            fclose(fp)
-        .endif
-    .endif
     .return( NOT_ERROR )
-
-WriteModule endp
+    endp
 
 
 is_valid_first_char proto watcall c:byte {

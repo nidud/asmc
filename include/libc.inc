@@ -37,10 +37,12 @@ endif
 ifdef _MT
 define _CRTBLD
 elseifdef __PE__ ; -pe option used
-define _DLL
 ifndef _MSVCRT	 ; msvcrt.lib
 define _MSVCRT
 endif
+endif
+ifdef _MSVCRT
+define _DLL
 endif
 
 ifndef _CRTIMP

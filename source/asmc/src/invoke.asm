@@ -3725,26 +3725,8 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     tstrcpy( p, " call " )
     add p,6
 
-    .if ( !pmacro && [rsi].state == SYM_EXTERNAL && [rsi].dll )
-        .if ( !Options.pe_exe ) ; option -Fd
-            mov rbx,p
-            add p,tstrlen(tstrcpy(rbx, MODULE.imp_prefix))
-            add p,Mangle(rsi, p)
-            inc namepos
-            xor ecx,ecx
-            .if ( [rsi].langtype != LANG_NONE && [rsi].langtype != MODULE.langtype )
-                movzx ecx,[rsi].langtype
-                add ecx,T_CCALL - 1
-            .endif
-            AddLineQueueX(" externdef %r %s: ptr proc", ecx, rbx)
-        .else ; v2.37.77: removed import prefix
-            mov ecx,T_DWORD
-            .if ( MODULE.Ofssize == USE64 )
-                mov ecx,T_QWORD
-            .endif
-            add p,tsprintf(p, "%r %r ", ecx, T_PTR)
-            mov [rsi].isimport,1
-        .endif
+    .if ( !pmacro && [rsi].dll && ( [rsi].isimport || [rsi].state == SYM_EXTERNAL ) )
+        mov [rsi].isimport,1
         .if ( ![rsi].iat_used )
             mov [rsi].iat_used,1
             mov rax,[rsi].dll

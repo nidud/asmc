@@ -58,56 +58,6 @@ define _MAX_YEAR	1100			; 3000 is the max year
 else
 define _MAX_YEAR	138			; 2038 is the max year
 endif
-
-;
-; Macro to determine if a given year, expressed as the number of years since
-; 1900, is a leap year.
-;
-_IS_LEAP_YEAR proto asmcall :uint_t {
-    xor edx,edx
-    .if ( eax & 3 )
-	add	eax,1900
-	mov	ecx,400
-	div	ecx
-	xor	eax,eax
-	test	edx,edx
-	setz	al
-    .else
-	mov	ecx,100
-	div	ecx
-	xor	eax,eax
-	test	edx,edx
-	setnz	al
-    .endif
-    }
-
-;
-; Number of leap years from 1970 up to, but not including, the specified year
-; (expressed as the number of years since 1900).
-;
-_ELAPSED_LEAP_YEARS proto fastcall :uint_t {
-	lea	eax,[rcx+299]
-	dec	ecx
-ifdef _WIN64
-	imul	rax,rax,1374389535
-	imul	rdx,rcx,1374389535
-	shr	rax,39
-	shr	rdx,37
-else
-	mov	edx,1374389535
-	mul	edx
-	shr	edx,7
-	push	edx
-	mov	eax,1374389535
-	mul	ecx
-	shr	edx,5
-	pop	eax
-endif
-	shr	ecx,2
-	lea	rax,[rax+rcx-_LEAP_YEAR_ADJUST]
-	sub	rax,rdx
-	}
-
 ifndef _TZ_STRINGS_SIZE
 define _TZ_STRINGS_SIZE 64
 endif
@@ -275,43 +225,44 @@ _get_dstbias	proto __cdecl :ptr int_t
 _get_timezone	proto __cdecl :ptr int_t
 _get_tzname	proto __cdecl :ptr size_t, :string_t, :size_t, :int_t
 
-externdef	__cdecl _CRTIMP _daylight:int_t
-externdef	__cdecl _CRTIMP _dstbias:int_t
+externdef __cdecl _CRTIMP _timezone:int_t
+externdef __cdecl _CRTIMP _tzname:string_t
+if not defined(_DLL) or defined(_CRTBLD)
+externdef __cdecl _CRTIMP _daylight:int_t
+externdef __cdecl _CRTIMP _dstbias:int_t
+else
+define _daylight <int_t ptr [__daylight()]>
+define _dstbias	 <int_t ptr [__dstbias()]>
+endif
 
-if not defined(_MSVCRT) or defined(_CRTBLD)
+ifdef _CRTBLD
+externdef __cdecl _days:uint_t
+externdef __cdecl _lpdays:uint_t
+externdef __cdecl __dnames:char_t
+externdef __cdecl __mnames:char_t
+endif
 
-externdef	_days:DWORD
-externdef	_lpdays:DWORD
-externdef	_timezone:int_t
-externdef	_tzname:LPSTR
-externdef	__dnames:char_t
-externdef	__mnames:char_t
-
-DaysInFebruary	proto __cdecl :uint_t
-DaysInMonth	proto __cdecl :uint_t, :uint_t
-GetDayCount	proto __cdecl :uint_t, :uint_t, :uint_t
-GetWeekDay	proto __cdecl :uint_t, :uint_t, :uint_t
-
-FileTimeToTime		proto __cdecl :ptr FILETIME
-__timet_from_ft		proto __cdecl :ptr FILETIME
-SystemTimeToTime	proto __cdecl :ptr SYSTEMTIME
-TimeToFileTime		proto __cdecl :time_t, :ptr FILETIME
-TimeToSystemTime	proto __cdecl :time_t, :ptr SYSTEMTIME
-
-StringToSystemTimeA	proto __cdecl :ptr char_t,  :ptr SYSTEMTIME
-StringToSystemTimeW	proto __cdecl :ptr wchar_t, :ptr SYSTEMTIME
-StringToSystemDateA	proto __cdecl :ptr char_t,  :ptr SYSTEMTIME
-StringToSystemDateW	proto __cdecl :ptr wchar_t, :ptr SYSTEMTIME
-
-SystemTimeToStringA	proto __cdecl :ptr char_t,  :ptr SYSTEMTIME
-SystemTimeToStringW	proto __cdecl :ptr wchar_t, :ptr SYSTEMTIME
-SystemDateToStringA	proto __cdecl :ptr char_t,  :ptr SYSTEMTIME
-SystemDateToStringW	proto __cdecl :ptr wchar_t, :ptr SYSTEMTIME
-
-FileTimeToStringA	proto __cdecl :ptr char_t,  :ptr FILETIME
-FileTimeToStringW	proto __cdecl :ptr wchar_t, :ptr FILETIME
-FileDateToStringA	proto __cdecl :ptr char_t,  :ptr FILETIME
-FileDateToStringW	proto __cdecl :ptr wchar_t, :ptr FILETIME
+DaysInFebruary		proto __cdecl :uint_t
+DaysInMonth		proto __cdecl :uint_t, :uint_t
+GetDayCount		proto __cdecl :uint_t, :uint_t, :uint_t
+GetWeekDay		proto __cdecl :uint_t, :uint_t, :uint_t
+__timet_from_ft		proto __cdecl :LPFILETIME
+FileTimeToTime		proto __cdecl :LPFILETIME
+SystemTimeToTime	proto __cdecl :LPSYSTEMTIME
+TimeToFileTime		proto __cdecl :time_t, :LPFILETIME
+TimeToSystemTime	proto __cdecl :time_t, :LPSYSTEMTIME
+StringToSystemTimeA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
+StringToSystemTimeW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
+StringToSystemDateA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
+StringToSystemDateW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
+SystemTimeToStringA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
+SystemTimeToStringW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
+SystemDateToStringA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
+SystemDateToStringW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
+FileTimeToStringA	proto __cdecl :LPSTR,  :LPFILETIME
+FileTimeToStringW	proto __cdecl :LPWSTR, :LPFILETIME
+FileDateToStringA	proto __cdecl :LPSTR,  :LPFILETIME
+FileDateToStringW	proto __cdecl :LPWSTR, :LPFILETIME
 
 ifdef _UNICODE
 define StringToSystemTime <StringToSystemTimeW>
@@ -329,8 +280,55 @@ define FileTimeToString	  <FileTimeToStringA>
 define FileDateToString	  <FileDateToStringA>
 endif
 
+ifdef _CRTBLD
+;
+; Macro to determine if a given year, expressed as the number of years since
+; 1900, is a leap year.
+;
+_IS_LEAP_YEAR proto asmcall :uint_t {
+    xor edx,edx
+    .if ( eax & 3 )
+	add	eax,1900
+	mov	ecx,400
+	div	ecx
+	xor	eax,eax
+	test	edx,edx
+	setz	al
+    .else
+	mov	ecx,100
+	div	ecx
+	xor	eax,eax
+	test	edx,edx
+	setnz	al
+    .endif
+    }
+;
+; Number of leap years from 1970 up to, but not including, the specified year
+; (expressed as the number of years since 1900).
+;
+_ELAPSED_LEAP_YEARS proto fastcall :uint_t {
+	lea	eax,[rcx+299]
+	dec	ecx
+ifdef _WIN64
+	imul	rax,rax,1374389535
+	imul	rdx,rcx,1374389535
+	shr	rax,39
+	shr	rdx,37
+else
+	mov	edx,1374389535
+	mul	edx
+	shr	edx,7
+	push	edx
+	mov	eax,1374389535
+	mul	ecx
+	shr	edx,5
+	pop	eax
 endif
-
+	shr	ecx,2
+	lea	rax,[rax+rcx-_LEAP_YEAR_ADJUST]
+	sub	rax,rdx
+	}
+endif
 .pragma pack(pop)
 .pragma list(pop)
 endif

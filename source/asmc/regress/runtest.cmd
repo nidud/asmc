@@ -39,7 +39,7 @@ for %%f in (src\got32\*.asm) do call :got32 %%f
 for %%f in (src\got64\*.asm) do call :got64 %%f
 
 call :safeseh
-call :dllimp
+call :extern
 
 exit
 
@@ -134,15 +134,6 @@ if errorlevel 1 goto end
 del %~n1.OBJ
 goto end
 
-:dllimp
-if (%OWLINK%) == () goto extern
-%ASMX% -c -q -coff -Fd src\dllimp\dllimp.asm
-if errorlevel 1 exit
-%OWLINK% format win pe f dllimp.obj op q,noreloc
-fcmp -pe DLLIMP.EXE exp\DLLIMP.EXE
-if errorlevel 1 goto end
-del DLLIMP.EXE
-del DLLIMP.OBJ
 :extern
 if (%MSLINK%) == () goto end
 %ASMX% -c -q -coff src\extern\extern4.asm

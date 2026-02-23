@@ -41,7 +41,6 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-endbr</b></td><td>Insert ENDBR instruction at function entry.</td></tr>
 <tr><td><b>-EP</b></td><td>Generates a preprocessed source listing (sent to STDOUT). See <b>-Sf</b>.</td></tr>
 <tr><td><b>-eq</b></td><td>Don't display error messages.</td></tr>
-<tr><td><b>-Fd</b>[<i>filename</i>]</td><td>Write import definition file.</td></tr>
 <tr><td><b>-Fe</b> <i>filename</i></td><td>Names the executable file.</td></tr>
 <tr><td><b>-Fi</b> <i>filename</i></td><td>Force <i>file</i> to be included.</td></tr>
 <tr><td><b>-Fl</b>[<i>filename</i>]</td><td>Generates an assembled code listing. See <b>-Sf</b>.</td></tr>

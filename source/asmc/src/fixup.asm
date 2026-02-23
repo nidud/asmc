@@ -41,29 +41,7 @@ extern SegOverride:asym_t
 
 CreateFixup proc __ccall uses rsi rdi rbx sym:asym_t, type:fixup_types, options:fixup_options
 
-   .new name[128]:char_t
     ldr rsi,sym
-
-    ; v2.37.77 hack: relocate import and flip id to MT_TYPE
-
-    .if ( rsi && [rsi].asym.isimport )
-        .if ( [rsi].asym.mem_type == MT_TYPE )
-            mov rsi,[rsi].asym.type
-        .elseif ( Parse_Pass > PASS_1 && MODULE.imp_prefix )
-            .ifd tmemcmp([rsi].asym.name, MODULE.imp_prefix, 5)
-                mov rdi,tstrcpy( &name, MODULE.imp_prefix )
-                lea rcx,[rdi+tstrlen(rdi)]
-                Mangle( rsi, rcx )
-                .if SymFind( rdi )
-                    mov [rsi].asym.mem_type,MT_TYPE
-                    mov [rsi].asym.type,rax
-                    mov rcx,[rsi].asym.procinfo
-                    mov [rax].asym.procinfo,rcx
-                    mov rsi,rax
-                .endif
-            .endif
-        .endif
-    .endif
 
     mov rbx,LclAlloc( sizeof( fixup ) )
 

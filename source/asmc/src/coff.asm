@@ -1371,7 +1371,6 @@ coff_write_data endp
 coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
   .new exp:asym_t
-  .new imp:asym_t = NULL
   .new buffer[MAX_ID_LEN+MANGLE_BYTES+1]:char_t
 
     ; does a proc exist with the EXPORT attribute?
@@ -1383,33 +1382,14 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
     .endf
     mov exp,rdi
 
-    ; check if an impdef record is there
-
-    .if ( Options.write_impdef && !Options.names[OPTN_LNKDEF_FN*string_t] )
-
-        .for ( rdi = ExtTable: rdi: rdi = [rdi].asym.next )
-
-            .if ( [rdi].asym.isproc &&
-                 ( !( [rdi].asym.weak ) || [rdi].asym.iat_used ) )
-
-                mov rdx,[rdi].asym.dll
-                .if ( rdx )
-                    .break .if [rdx].dll_desc.name
-                .endif
-            .endif
-        .endf
-        mov imp,rdi
-    .endif
-
     ; add a .drectve section if
     ; - a start_label is defined    and/or
     ; - a library is included       and/or
     ; - a proc is exported          and/or
-    ; - impdefs are to be written (-Zd)
 
     .if ( MODULE.start_label != NULL ||
           MODULE.LibQueue.head != NULL ||
-          imp != NULL || exp != NULL || MODULE.LinkQueue.head != NULL )
+          exp != NULL || MODULE.LinkQueue.head != NULL )
 
          mov rbx,cm
          mov [rbx].directives,CreateIntSegment( szdrectve, "", MAX_SEGALIGNMENT, MODULE.Ofssize, FALSE )
@@ -1461,30 +1441,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             add ebx,GetStartLabel( &buffer, TRUE )
 
-            ; 4. impdefs
-
-            .for ( rdi = imp : rdi : rdi = [rdi].asym.next )
-
-                .if ( [rdi].asym.isproc &&
-                     ( ![rdi].asym.weak || [rdi].asym.iat_used ) && [rdi].asym.dll )
-
-                    mov rdx,[rdi].asym.dll
-                    .if ( [rdx].dll_desc.name )
-
-                        ; format is:
-                        ; "-import:<mangled_name>=<module_name>.<unmangled_name>" or
-                        ; "-import:<mangled_name>=<module_name>"
-
-                        tstrlen( &[rdx].dll_desc.name )
-                        lea rbx,[rbx+rax+9+1]
-                        add ebx,Mangle( rdi, &buffer )
-                        add ebx,[rdi].asym.name_size
-                        inc ebx
-                    .endif
-                .endif
-            .endf
-
-            ; 5. pragma comment(linker,"/..")
+            ; 4. pragma comment(linker,"/..")
 
             .for ( rdi = MODULE.LinkQueue.head: rdi: rdi = [rdi].qitem.next )
 
@@ -1536,44 +1493,13 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
             ; 3. entry
 
             .if ( MODULE.start_label )
-
                 GetStartLabel( &buffer, FALSE )
                 add rbx,tsprintf( rbx, "-entry:%s ", &buffer )
             .endif
 
-            ; 4. impdefs
-
-            .for ( rdi = imp : rdi : rdi = [rdi].asym.next )
-
-                .if ( [rdi].asym.isproc &&
-                     ( !( [rdi].asym.weak ) || [rdi].asym.iat_used ) && [rdi].asym.dll )
-
-                    mov rdx,[rdi].asym.dll
-                    .if ( [rdx].dll_desc.name )
-
-                        tstrcpy( rbx, "-import:" )
-                        add rbx,8
-                        add rbx,Mangle( rdi, rbx )
-                        mov byte ptr [rbx],'='
-                        inc rbx
-                        mov rcx,[rdi].asym.dll
-                        tstrcpy( rbx, &[rcx].dll_desc.name )
-                        add rbx,tstrlen( rbx )
-                        mov byte ptr [rbx],'.'
-                        inc rbx
-                        tmemcpy( rbx, [rdi].asym.name, [rdi].asym.name_size )
-                        mov edx,[rdi].asym.name_size
-                        add rbx,rdx
-                        mov byte ptr [rbx],' '
-                        inc rbx
-                    .endif
-                .endif
-            .endf
-
-            ; 5. pragma comment(linker,"/..")
+            ; 4. pragma comment(linker,"/..")
 
             .for ( rdi = MODULE.LinkQueue.head : rdi : rdi = [rdi].qitem.next )
-
                 add rbx,tsprintf( rbx, "%s ", &[rdi].qitem.value )
             .endf
         .endif

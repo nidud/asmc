@@ -1260,12 +1260,15 @@ endif
         .if ( [rbx].cnt )
 
             .if ( !type )
-                mov type,1
-                AddLineQueueX(
-                    "@LPPROC %r %r %r\n"
-                    "%r dotname", T_TYPEDEF, T_PTR, T_PROC, T_OPTION )
+                mov type,T_DQ
+ifndef ASMC64
+                .if ( MODULE.defOfssize != USE64 )
+                    mov type,T_DD
+                .endif
+endif
+                AddLineQueueX("%r dotname", T_OPTION)
             .endif
-            .new name[256]:char_t
+            .new name[128]:char_t
             mov rsi,tstrcpy(&name, &[rbx].name)
 
             ; avoid '.' and '-' in IDs
@@ -1296,32 +1299,41 @@ endif
 
             .for ( rdi = SymTables[TAB_EXT].head : rdi : rdi = [rdi].asym.next )
                 .if ( [rdi].asym.iat_used && rbx == [rdi].asym.dll )
-                    AddLineQueueX( "@LPPROC %r @%s_name", T_IMAGEREL, [rdi].asym.name )
+                    AddLineQueueX( "%r %r @%s_name", type, T_IMAGEREL, [rdi].asym.name )
                 .endif
             .endf
 
             ; ILT termination entry + IAT
 
             AddLineQueueX(
-                "@LPPROC 0\n"
+                "%r 0\n"
                 "%s" IMPILTSUF " %r\n"
                 "%s" IMPIATSUF " %r %s %s\n"
-                "@%s_iat %r %r", idataname, T_ENDS, idataname, T_SEGMENT, cpalign, idataattr, rsi, T_LABEL, ptrtype )
+                "@%s_iat %r %r", type, idataname, T_ENDS, idataname, T_SEGMENT, cpalign, idataattr, rsi, T_LABEL, ptrtype )
 
+            .new iatname[128]:char_t
             .for ( rdi = SymTables[TAB_EXT].head : rdi : rdi = [rdi].asym.next )
                 .if ( [rdi].asym.iat_used && rbx == [rdi].asym.dll )
-                    Mangle( rdi, StringBufferEnd )
-                    AddLineQueueX( "%s%s @LPPROC %r @%s_name",
-                        MODULE.imp_prefix, StringBufferEnd, T_IMAGEREL, [rdi].asym.name )
+                    Mangle(rdi, &iatname[tstrlen(tstrcpy(&iatname, MODULE.imp_prefix))])
+                    AddLineQueueX( "%s %r %r @%s_name", &iatname, type, T_IMAGEREL, [rdi].asym.name )
+                    .if ( [rdi].asym.state != SYM_INTERNAL )
+                        RunLineQueue()
+                        mov rcx,SymFind(&iatname)
+                        mov [rdi].asym.state,SYM_INTERNAL
+                        mov [rdi].asym.mem_type,[rcx].asym.mem_type
+                        mov [rdi].asym.segm,[rcx].asym.segm
+                        mov [rdi].asym.offs,[rcx].asym.offs
+                        mov [rdi].asym.isdata,1
+                    .endif
                 .endif
             .endf
 
             ; IAT termination entry + name table
 
             AddLineQueueX(
-                "@LPPROC 0\n"
+                "%r 0\n"
                 "%s" IMPIATSUF " %r\n"
-                "%s" IMPSTRSUF " %r %r %s", idataname, T_ENDS, idataname, T_SEGMENT, T_WORD, idataattr )
+                "%s" IMPSTRSUF " %r %r %s", type, idataname, T_ENDS, idataname, T_SEGMENT, T_WORD, idataattr )
 
             .for ( rdi = SymTables[TAB_EXT].head : rdi : rdi = [rdi].asym.next )
                 .if ( [rdi].asym.iat_used && rbx == [rdi].asym.dll )
@@ -1344,7 +1356,7 @@ endif
         ; import directory NULL entry
         AddLineQueueX(
             "%s" IMPNDIRSUF " %r %r %s\n"
-            "DD 0, 0, 0, 0, 0\n"
+            "dd 0, 0, 0, 0, 0\n"
             "%s" IMPNDIRSUF " %r", idataname, T_SEGMENT, T_DWORD, idataattr, idataname, T_ENDS )
         RunLineQueue()
     .endif

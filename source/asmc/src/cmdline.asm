@@ -18,7 +18,7 @@ Options global_options {
         { 0 },                  ; .flags(2)
         FPO_NO_EMULATION,       ; .floating_point
         50,                     ; .error_limit
-        {0,0,0,0,0,0,0,0,0},    ; .names
+        {0,0,0,0,0,0,0,0},      ; .names
         {0,0,0},                ; .queues
         0,                      ; .link_exename
         0,                      ; .link_linker
@@ -312,7 +312,7 @@ ReadParamFile endp
 
 ;
 ; get a "name"
-; type=@ : filename ( -Fd, -Fi, -Fl, -Fo, -Fw, -I )
+; type=@ : filename ( -Fi, -Fl, -Fo, -Fw, -I )
 ; type=$ : (macro) identifier [=value] ( -D, -nc, -nd, -nm, -nt )
 ; type=0 : something else ( -0..-10 )
 ;
@@ -1021,15 +1021,10 @@ endif
     .endsw
 
     mov [rsi],GetNameToken( rdi, &[rbx+2], 256, '@' )
-    mov eax,j
-    .switch eax
-    .case 'dF'          ; -Fd[file]
-        mov Options.write_impdef,1
-        .return get_fname(OPTN_LNKDEF_FN, rdi)
-    .case 'lF'          ; -Fl[file]
+    .if ( j == 'lF' )           ; -Fl[file]
         mov Options.write_listing,1
         .return get_fname(OPTN_LST_FN, rdi)
-    .endsw
+    .endif
 
     .if getfilearg(cmdline, &[rbx+2])
 

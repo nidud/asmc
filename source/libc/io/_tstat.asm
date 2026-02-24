@@ -24,15 +24,12 @@ include tchar.inc
 ifdef __UNIX__
 
 _stat proc file:string_t, buf:PSTAT
-
     .ifsd ( sys_newstat( ldr(file), ldr(buf) ) < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
     ret
-
-_stat endp
+    endp
 
 _stat64 proc file:string_t, buf:PSTAT64
 ifdef _WIN64
@@ -44,18 +41,14 @@ endif
         _set_errno( eax )
     .endif
     ret
-
-_stat64 endp
-
+    endp
 else
 
 define A_D 0x10
 
 _lk_getltime proc private ft:PVOID
-
   local SystemTime:SYSTEMTIME
   local LocalFTime:FILETIME
-
     .if FileTimeToLocalFileTime(ft, &LocalFTime)
         .if FileTimeToSystemTime(&LocalFTime, &SystemTime)
             _loctotime_t(
@@ -69,8 +62,7 @@ _lk_getltime proc private ft:PVOID
         .endif
     .endif
     ret
-
-_lk_getltime endp
+    endp
 
 _lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
 
@@ -84,16 +76,11 @@ _lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
 
     ldr rsi,file
     ldr rdi,buf
-
     .repeat
-
         .break .if _tcschr( rsi, '?' )
         .break .if _tcschr( rsi, '*' )
-
         .if ( tchar_t ptr [rsi+tchar_t] == ':' )
-
             .break .if ( tchar_t ptr [rsi+tchar_t*2] == 0 )
-
             movzx eax,tchar_t ptr [rsi]
             or    al,0x20
             sub   al,'a' - 1
@@ -101,32 +88,24 @@ _lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
             _getdrive()
         .endif
         mov drive,eax
-
         .ifd ( FindFirstFile( rsi, &ff ) == -1 )
-
             .if !_tcschr( rsi, '.' )
                 .if !_tcschr( rsi, BSLASH )
                     .break .if !_tcschr( rsi, '/' )
                 .endif
             .endif
-
             .break .if !_tgetcwd( &pathbuf, _MAX_PATH )
             mov path,rax
-
             .break .ifd ( _tcslen( rax ) != 3 )
             .break .if ( GetDriveType( path ) < 2 )
-
             mov ff.dwFileAttributes,A_D
             mov ff.nFileSizeLow,0
             mov ff.cFileName,0
-
             _loctotime_t( 80, 1, 1, 0, 0, 0, -1 )
             mov m_time,eax
             mov a_time,eax
             mov c_time,eax
-
         .else
-
             FindClose( rax )
             .ifd !_lk_getltime( &ff.ftLastWriteTime )
                 .return _dosmaperr( GetLastError() )
@@ -141,32 +120,26 @@ _lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
             .endif
             mov c_time,eax
         .endif
-
         movzx eax,tchar_t ptr [rsi]
         mov edx,ff.dwFileAttributes
         mov ecx,_S_IFDIR or _S_IEXEC
         mov ebx,_S_IREAD
-
         .if ( tchar_t ptr [rsi+tchar_t] == ':' )
             add rsi,2*tchar_t
             movzx eax,tchar_t ptr [rsi]
         .endif
-
         .if ( eax && !( dl & A_D ) )
             .if ( tchar_t ptr [rsi+tchar_t] || eax != BSLASH && eax != '/' )
                 mov ecx,_S_IFREG
             .endif
         .endif
-
         .if !( dl & A_D )
             mov ebx,_S_IREAD or _S_IWRITE
         .endif
-
         or  ebx,ecx
         .if _tisexec( rsi )
             or ebx,_S_IEXEC
         .endif
-
         mov ecx,ebx
         and ecx,0x01C0
         mov eax,ecx
@@ -180,7 +153,6 @@ _lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
         mov [rdi]._stat32.st_dev,eax
         mov [rdi]._stat32.st_rdev,eax
         mov [rdi]._stat32.st_nlink,1
-
         mov eax,ff.nFileSizeLow
 ifdef _WIN64
         .if ( b64 == 0 )
@@ -201,15 +173,12 @@ ifdef _WIN64
 endif
        .return( 0 )
     .until 1
-
     _set_errno( ENOENT )
     mov _doserrno,ERROR_PATH_NOT_FOUND
     .return( -1 )
-
-_lk_stat endp
+    endp
 
 _tstat proc uses rsi rdi rbx file:tstring_t, buf:PSTAT
-
     ldr rcx,file
     ldr rdx,buf
     mov rbx,rcx
@@ -220,13 +189,10 @@ _tstat proc uses rsi rdi rbx file:tstring_t, buf:PSTAT
     rep stosb
     _lk_stat(rbx, rsi, 0)
     ret
-
-_tstat endp
+    endp
 
 ifdef _WIN64
-
 _tstat64 proc uses rsi rdi rbx file:tstring_t, buf:PSTAT64
-
     ldr rcx,file
     ldr rdx,buf
     mov rbx,rcx
@@ -237,9 +203,7 @@ _tstat64 proc uses rsi rdi rbx file:tstring_t, buf:PSTAT64
     rep stosb
     _lk_stat(rbx, rsi, 1)
     ret
-
-_tstat64 endp
-
+    endp
 endif
 endif
     end

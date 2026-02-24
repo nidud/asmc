@@ -12,14 +12,11 @@ include sys/syscall.inc
 .code
 
 kill proc pid:pid_t, sig:int_t
-
     .ifs ( sys_kill( ldr(pid), ldr(sig) ) < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
     ret
-
-kill endp
+    endp
 
     end

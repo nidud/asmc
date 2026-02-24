@@ -15,17 +15,13 @@ else
     ldr ecx,handle
     mov rdx,_pioinfo(ecx)
     mov rax,-1
-
     .if ( ecx < _nfile )
-
         .if ( [rdx].ioinfo.osfile & FOPEN )
-
             mov rax,[rdx].ioinfo.osfhnd
         .endif
     .endif
 endif
     ret
-
-_get_osfhandle endp
+    endp
 
     end

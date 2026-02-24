@@ -17,7 +17,6 @@ endif
     .code
 
 ifdef __UNIX__
-
 _fstat proc fd:int_t, buf:PSTAT
 ifdef _WIN64
     .ifs ( sys_newfstat(edi, rsi) < 0 )
@@ -28,8 +27,7 @@ endif
         _set_errno( eax )
     .endif
     ret
-
-_fstat endp
+    endp
 
 else
 
@@ -50,8 +48,7 @@ _lk_getltime proc private ft:LPFILETIME
         .endif
     .endif
     ret
-
-_lk_getltime endp
+    endp
 
     assume rdi:PSTAT
 
@@ -67,26 +64,19 @@ _fstat proc uses rsi rdi rbx fd:int_t, buf:PSTAT
     ldr rdx,buf
 
     .if ( rdx == NULL )
-
         .return( _set_errno( EINVAL ) )
     .endif
-
     mov rdi,rdx
     xor eax,eax
     mov ecx,_stat32
     rep stosb
     mov rdi,rdx
-
     .ifs ( esi < 0 || esi >= _nfile )
-
         .return( _set_errno( EBADF ) )
     .endif
-
     mov rcx,_pioinfo(esi)
     mov osfhnd,[rcx].ioinfo.osfhnd
-
     .if !( [rcx].ioinfo.osfile & FOPEN )
-
         .return( _set_errno( EBADF ) )
     .endif
 
@@ -94,7 +84,6 @@ _fstat proc uses rsi rdi rbx fd:int_t, buf:PSTAT
 
     GetFileType(osfhnd)
     and eax,not FILE_TYPE_REMOTE
-
     .if ( eax != FILE_TYPE_DISK )
 
         ; not a disk file. probably a device or pipe
@@ -113,25 +102,17 @@ _fstat proc uses rsi rdi rbx fd:int_t, buf:PSTAT
             mov [rdi].st_rdev,esi
             mov [rdi].st_dev,esi
             mov [rdi].st_nlink,1
-
             .if ( eax != FILE_TYPE_CHAR )
-
                 .ifd PeekNamedPipe(osfhnd, NULL, 0, NULL, &ulAvail, NULL)
-
                     mov [rdi].st_size,ulAvail
                 .endif
             .endif
             .return( 0 )
-
         .elseif ( eax == FILE_TYPE_UNKNOWN )
-
             .return( _set_errno( EBADF ) )
-
         .else
-
             ; according to the documentation, this cannot happen, but
             ; play it safe anyway.
-
             .return( _dosmaperr( GetLastError() ) )
         .endif
     .endif
@@ -145,7 +126,6 @@ _fstat proc uses rsi rdi rbx fd:int_t, buf:PSTAT
     ; use the file handle to get basic info about the file
 
     .if ( !GetFileInformationByHandle(osfhnd, &bhfi) )
-
         .return( _dosmaperr( GetLastError() ) )
     .endif
     .if ( bhfi.dwFileAttributes & FILE_ATTRIBUTE_READONLY )
@@ -166,8 +146,7 @@ _fstat proc uses rsi rdi rbx fd:int_t, buf:PSTAT
     mov [rdi].st_ctime,rcx
     xor eax,eax
     ret
-
-_fstat endp
+    endp
 endif
 
     end

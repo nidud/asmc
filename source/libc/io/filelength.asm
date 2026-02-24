@@ -16,27 +16,19 @@ endif
     .code
 
 _filelength proc fd:int_t
-
 ifdef __UNIX__
-
    .new offs:size_t
    .new size:size_t
-
     .ifd ( _lseek(fd, 0, SEEK_CUR) != -1 )
-
         mov offs,rax
         mov size,_lseek(fd, 0, SEEK_END)
         _lseek(fd, offs, SEEK_SET)
         mov rax,size
     .endif
-
 else
-
   local FileSize:QWORD
-
     ldr ecx,fd
     mov rcx,_osfhnd(ecx)
-
     .ifd GetFileSizeEx( rcx, &FileSize )
 ifdef _WIN64
         mov rax,FileSize
@@ -49,7 +41,6 @@ endif
     .endif
 endif
     ret
-
-_filelength endp
+    endp
 
     end

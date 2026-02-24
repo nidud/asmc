@@ -15,26 +15,21 @@ _aligned_offset_malloc proc uses rbx size:size_t, alignment:size_t, offs:size_t
     ldr rbx,alignment
     ldr rcx,size
     ldr rdx,offs
-
     lea rax,[rbx-1]
     .if ( !rbx || rbx & rax || ( rdx && rdx >= rcx ) )
-
         _set_errno(EINVAL)
         .return( NULL )
     .endif
-
     .if ( ebx < HEAP )
         mov eax,HEAP-1
     .endif
     mov rbx,rax
-
     neg rdx
     and edx,HEAP-1
     lea rax,[rax+rdx+HEAP]
     mov size,rax
     add rax,rcx
     .if ( rcx > rax )
-
         _set_errno(ENOMEM)
         .return( NULL )
     .endif
@@ -50,7 +45,6 @@ _aligned_offset_malloc proc uses rbx size:size_t, alignment:size_t, offs:size_t
     mov [rax-HEAP].HEAP.type,_HEAP_ALIGNED
     mov [rax-HEAP].HEAP.prev,rcx
     ret
-
-_aligned_offset_malloc endp
+    endp
 
     end

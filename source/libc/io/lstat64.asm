@@ -27,6 +27,6 @@ ifdef __UNIX__
     .endif
 endif
     ret
-lstat64 endp
+    endp
 
     end

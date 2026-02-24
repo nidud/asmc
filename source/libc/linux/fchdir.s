@@ -11,14 +11,11 @@ include sys/syscall.inc
     .code
 
 fchdir proc fd:int_t
-
     .ifsd ( sys_fchdir( ldr(fd) ) < 0 )
-
         neg eax
         _set_errno(eax)
     .endif
     ret
-
-fchdir endp
+    endp
 
     end

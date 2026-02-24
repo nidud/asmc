@@ -1,11 +1,5 @@
-#
-# Note: needs Open Watcom
-#
-ifndef RC
-RC = WRC
-endif
 DPITutorial.exe: resource
-	$(RC) -r $*.rc
+	rc $*.rc
 	asmc64 -q -Fe$@	 -ws -Cs -Zp8 $*.asm -link -res:$*.res
 	$@
 	del *.res
@@ -25,4 +19,4 @@ imgconv:
 	)
 
 vs:
-	project -p -w -u DPITutorial
+	project -p -w -u -rDPITutorial DPITutorial

@@ -16,18 +16,13 @@ include tchar.inc
     .code
 
 _trename proc Oldname:tstring_t, Newname:tstring_t
-
     ldr rcx,Oldname
     ldr rdx,Newname
-
 ifdef __UNIX__
-
     .if ( !rcx || !rdx )
-
         .return( _set_errno( EINVAL ) )
     .endif
     .ifs ( sys_rename(rcx, rdx) < 0 )
-
         neg eax
         .return( _set_errno( eax ) )
     .endif
@@ -40,7 +35,6 @@ else
     .endif
 endif
     ret
-
-_trename endp
+    endp
 
     end

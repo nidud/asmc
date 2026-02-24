@@ -11,7 +11,6 @@ include tchar.inc
 .code
 
 _tfilexist proc file:tstring_t
-
     .ifd ( _tgetfattr( ldr(file) ) == -1 )
         xor eax,eax
     .elseif ( eax & _F_SUBDIR )
@@ -20,7 +19,6 @@ _tfilexist proc file:tstring_t
         mov eax,1 ; 1 = file
     .endif
     ret
-
-_tfilexist endp
+    endp
 
     end

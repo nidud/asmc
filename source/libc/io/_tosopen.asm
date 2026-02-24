@@ -18,20 +18,16 @@ include tchar.inc
 .code
 
 _tosopen proc uses rsi rbx file:tstring_t, attrib:uint_t, mode:uint_t, action:uint_t
-
 ifdef __UNIX__
     mov eax,-1
 else
-
    .new fd:int_t
    .new share:int_t = 0
     ldr rbx,file
-
     .if ( mode == M_RDONLY )
         mov share,FILE_SHARE_READ
     .endif
     .ifd ( _alloc_osfhnd() == -1 )
-
         .return( _set_errno( EMFILE ) )
     .endif
     mov fd,eax
@@ -39,14 +35,10 @@ else
 ifndef _UNICODE
     mov rbx,_utftows(rbx)
 endif
-
     .ifd ( CreateFileW(rbx, mode, share, 0, action, attrib, 0) == -1 )
-
         .ifd ( GetLastError() != ERROR_FILENAME_EXCED_RANGE )
-
             .return( _dosmaperr( eax ) )
         .endif
-
 ifndef _UNICODE
         sub rbx,8
 else
@@ -58,19 +50,15 @@ endif
         mov [rbx],eax
         mov eax,(('?' shl 16) or BSLASH)
         mov [rbx+4],eax
-
         .ifd ( CreateFileW(rbx, mode, share, 0, action, attrib, 0) == -1 )
-
             .return( _dosmaperr( GetLastError() ) )
         .endif
     .endif
-
     mov [rsi].ioinfo.osfhnd,rax
     or  [rsi].ioinfo.osfile,FOPEN
     mov eax,fd
 endif
     ret
-
-_tosopen endp
+    endp
 
     end

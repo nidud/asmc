@@ -11,14 +11,11 @@ include errno.inc
 .code
 
 fork proc
-
     .ifsd ( sys_fork() < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
     ret
-
-fork endp
+    endp
 
     end

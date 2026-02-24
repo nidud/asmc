@@ -40,30 +40,23 @@ OpenSession proc ppCreateCommand:ptr ptr IDBCreateCommand
                 L"provider=Search.CollatorDSO.1", &IID_IDBInitialize, &spUnknownDBInitialize)
     .endif
     .if (SUCCEEDED(hr))
-
         mov hr,spUnknownDBInitialize.QueryInterface(&IID_IDBInitialize, &spDBInitialize)
     .endif
     .if (SUCCEEDED(hr))
-
         mov hr,spDBInitialize.Initialize()
     .endif
     .if (SUCCEEDED(hr))
-
         mov hr,spDBInitialize.QueryInterface(&IID_IDBCreateSession, &spDBCreateSession)
     .endif
     .if (SUCCEEDED(hr))
-
-        .new spUnknownCreateCommand:ptr IUnknown
+       .new spUnknownCreateCommand:ptr IUnknown
         mov hr,spDBCreateSession.CreateSession(0, &IID_IDBCreateCommand, &spUnknownCreateCommand)
         .if (SUCCEEDED(hr))
-
             mov hr,spUnknownCreateCommand.QueryInterface(&IID_IDBCreateCommand, ppCreateCommand)
         .endif
     .endif
-
     .return hr
-
-OpenSession endp
+    endp
 
 ;;*****************************************************************************
 ;; Run a query against the database, optionally enabling eventing...
@@ -83,7 +76,6 @@ ExecuteQuery proc pDBCreateCommand:ptr IDBCreateCommand, pwszQuerySQL:PCWSTR,
 
     mov hr,pDBCreateCommand.CreateCommand(0, &IID_ICommand, &spUnknownCommand)
     .if (SUCCEEDED(hr))
-
         mov hr,spUnknownCommand.QueryInterface(&IID_ICommandProperties, &spCommandProperties)
     .endif
 
@@ -101,37 +93,29 @@ ExecuteQuery proc pDBCreateCommand:ptr IDBCreateCommand, pwszQuerySQL:PCWSTR,
         mov rgProps.vValue.vt,      VT_BOOL
         mov rgProps.vValue.boolVal, VARIANT_TRUE
         mov propSet.cProperties,1
-
         .if (fEnableEventing)
-
             mov rgProps[DBPROP].dwPropertyID,   DBPROP_ENABLEROWSETEVENTS
             mov rgProps[DBPROP].dwOptions,      DBPROPOPTIONS_OPTIONAL
             mov rgProps[DBPROP].vValue.vt,      VT_BOOL
             mov rgProps[DBPROP].vValue.boolVal, VARIANT_TRUE
             inc propSet.cProperties
         .endif
-
         mov propSet.rgProperties,&rgProps
         mov propSet.guidPropertySet,guidQueryExt
         mov hr,spCommandProperties.SetProperties(1, &propSet)
     .endif
     .if (SUCCEEDED(hr))
-
         mov hr,spUnknownCommand.QueryInterface(&IID_ICommandText, &spCommandText)
     .endif
     .if (SUCCEEDED(hr))
-
         mov hr,spCommandText.SetCommandText(&DBGUID_DEFAULT, pwszQuerySQL)
     .endif
     .if (SUCCEEDED(hr))
-
        .new cRows:DBROWCOUNT
         mov hr,spCommandText.Execute(NULL, riid, NULL, &cRows, ppv)
     .endif
-
     .return hr
-
-ExecuteQuery endp
+    endp
 
 
 ;;*****************************************************************************
@@ -147,21 +131,15 @@ RetrieveURL proc pDBCreateCommand:ptr IDBCreateCommand, itemID:REFPROPVARIANT,
     mov spRowset,NULL
     mov wszQuery,0
     mov hr,E_INVALIDARG
-
     .if ([rdx].PROPVARIANT.vt == VT_UI4)
         mov hr,S_OK
     .endif
-
     .if (SUCCEEDED(hr))
-        mov hr,StringCchPrintf(
-                &wszQuery,
-                lengthof wszQuery,
-                L"SELECT TOP 1 System.ItemUrl FROM SystemIndex WHERE workid=%u",
-                [rdx].PROPVARIANT.ulVal)
+        mov hr,StringCchPrintf(&wszQuery, lengthof(wszQuery),
+                L"SELECT TOP 1 System.ItemUrl FROM SystemIndex WHERE workid=%u", [rdx].PROPVARIANT.ulVal)
     .endif
 
     .if (SUCCEEDED(hr))
-
         mov hr,ExecuteQuery(pDBCreateCommand, &wszQuery, FALSE,
                 &IID_IRowset, &spRowset)
     .endif
@@ -179,29 +157,21 @@ RetrieveURL proc pDBCreateCommand:ptr IDBCreateCommand, itemID:REFPROPVARIANT,
 
         mov hr,spRowset.GetNextRows( DB_NULL_HCHAPTER, 0, 1, &ciRowsRetrieved, &phRow )
         .if (SUCCEEDED(hr))
-
             mov hr,spRowset.QueryInterface(&IID_IGetRow, &spGetRow)
             .if (SUCCEEDED(hr))
-
                .new spUnknownPropertyStore:ptr IUnknown
                 mov hr,spGetRow.GetRowFromHROW( NULL, hRow, &IID_IPropertyStore, &spUnknownPropertyStore )
                 .if (SUCCEEDED(hr))
-
                     mov hr,spUnknownPropertyStore.QueryInterface(&IID_IPropertyStore, &spPropertyStore)
                 .endif
             .endif
             .if (SUCCEEDED(hr))
-
                .new var:PROPVARIANT
                 mov hr,spPropertyStore.GetValue( &PKEY_ItemUrl, &var )
                 .if (SUCCEEDED(hr))
-
                     .if (var.vt == VT_LPWSTR)
-
                         mov hr,StringCchCopy( pwszURL, cchURL, var.pwszVal )
-
                     .else
-
                         mov hr,E_INVALIDARG
                     .endif
                     PropVariantClear( &var )
@@ -210,16 +180,13 @@ RetrieveURL proc pDBCreateCommand:ptr IDBCreateCommand, itemID:REFPROPVARIANT,
             spRowset.ReleaseRows( ciRowsRetrieved, phRow, NULL, NULL, NULL )
         .endif
     .endif
-
     .return hr
-
-RetrieveURL endp
+    endp
 
 ;;*****************************************************************************
 
 ItemStateToString proc itemState:ROWSETEVENT_ITEMSTATE
-
-    .switch (itemState)
+    .switch ldr(itemState)
     .case ROWSETEVENT_ITEMSTATE_NOTINROWSET
         .return &@CStr(L"NotInRowset")
     .case ROWSETEVENT_ITEMSTATE_INROWSET
@@ -228,14 +195,12 @@ ItemStateToString proc itemState:ROWSETEVENT_ITEMSTATE
         .return &@CStr(L"Unknown")
     .endsw
     .return &@CStr(L"")
-
-ItemStateToString endp
+    endp
 
 ;;*****************************************************************************
 
 PriorityLevelToString proc priority:PRIORITY_LEVEL
-
-    .switch priority
+    .switch ldr(priority)
     .case PRIORITY_LEVEL_FOREGROUND
         .return &@CStr(L"Foreground")
     .case PRIORITY_LEVEL_HIGH
@@ -246,8 +211,7 @@ PriorityLevelToString proc priority:PRIORITY_LEVEL
         .return &@CStr(L"Default")
     .endsw
     .return &@CStr(L"")
-
-PriorityLevelToString endp
+    endp
 
 
 
@@ -256,24 +220,18 @@ PriorityLevelToString endp
 ;; as they arrive...
 
 .class CRowsetEventListener : public IRowsetEvents
-
     spDBCreateCommand LPIDBCreateCommand ?
-
     PrintURL proc itemID:REFPROPVARIANT
-    .ENDS
+   .ENDS
 
 
 CRowsetEventListener::Release proc
-
     HeapFree(GetProcessHeap(), 0, this)
     ret
-
-CRowsetEventListener::Release endp
+    endp
 
 CreateComObject proc pp:ptr ptr CRowsetEventListener
-
     @ComAlloc(CRowsetEventListener)
-
     mov rcx,pp
     mov [rcx],rax
     mov edx,S_OK
@@ -281,18 +239,17 @@ CreateComObject proc pp:ptr ptr CRowsetEventListener
     mov eax,E_OUTOFMEMORY
     cmovnz eax,edx
     ret
-
-CreateComObject endp
+    endp
 
 CRowsetEventListener::AddRef proc
     ret
-CRowsetEventListener::AddRef endp
+    endp
 
 CRowsetEventListener::QueryInterface proc riid:REFIID, ppv:ptr ptr
     mov [r8],rcx
     mov eax,NOERROR
     ret
-CRowsetEventListener::QueryInterface endp
+    endp
 
 CRowsetEventListener::PrintURL proc itemID:REFPROPVARIANT
 
@@ -304,7 +261,6 @@ CRowsetEventListener::PrintURL proc itemID:REFPROPVARIANT
         mov hr,S_OK
     .endif
     .if (SUCCEEDED(hr))
-
         mov rcx,[rcx].CRowsetEventListener.spDBCreateCommand
         mov hr,RetrieveURL( rcx, itemID, &wszURL, ARRAYSIZE(wszURL) )
         .if (FAILED(hr))
@@ -317,14 +273,12 @@ CRowsetEventListener::PrintURL proc itemID:REFPROPVARIANT
         .endif
     .endif
     .if (SUCCEEDED(hr))
-
         mov rcx,itemID
         mov edx,[rcx].PROPVARIANT.ulVal
         _tprintf( "workid: %u;  URL: %S\n", edx, &wszURL )
     .endif
     .return hr
-
-CRowsetEventListener::PrintURL endp
+    endp
 
 CRowsetEventListener::OnNewItem proc itemID:REFPROPVARIANT, newItemState:ROWSETEVENT_ITEMSTATE
 
@@ -334,8 +288,7 @@ CRowsetEventListener::OnNewItem proc itemID:REFPROPVARIANT, newItemState:ROWSETE
 
     _tprintf( "OnNewItem( newItemState: %S )\n\t\t", ItemStateToString(newItemState) )
     .return this.PrintURL( itemID )
-
-CRowsetEventListener::OnNewItem endp
+    endp
 
 CRowsetEventListener::OnChangedItem proc itemID:REFPROPVARIANT,
         rowsetItemState:ROWSETEVENT_ITEMSTATE, changedItemState:ROWSETEVENT_ITEMSTATE
@@ -347,8 +300,7 @@ CRowsetEventListener::OnChangedItem proc itemID:REFPROPVARIANT,
 
     _tprintf( "OnChangedItem( rowsetItemState: %S changedItemState: %S )\n\t\t", ItemStateToString(rowsetItemState), ItemStateToString(changedItemState) )
     .return this.PrintURL( itemID )
-
-CRowsetEventListener::OnChangedItem endp
+    endp
 
 
 CRowsetEventListener::OnDeletedItem proc itemID:REFPROPVARIANT, deletedItemState:ROWSETEVENT_ITEMSTATE
@@ -360,8 +312,7 @@ CRowsetEventListener::OnDeletedItem proc itemID:REFPROPVARIANT, deletedItemState
 
     _tprintf( "OnDeletedItem( deletedItemState: %S )\n\t\t", ItemStateToString(deletedItemState) )
     .return this.PrintURL( itemID )
-
-CRowsetEventListener::OnDeletedItem endp
+    endp
 
 
 CRowsetEventListener::OnRowsetEvent proc eventType:ROWSETEVENT_TYPE, eventData:REFPROPVARIANT
@@ -401,8 +352,7 @@ CRowsetEventListener::OnRowsetEvent proc eventType:ROWSETEVENT_TYPE, eventData:R
         .endc
     .endsw
     .return S_OK
-
-CRowsetEventListener::OnRowsetEvent endp
+    endp
 
 
 ;;*****************************************************************************
@@ -425,23 +375,17 @@ WatchEvents proc pwszQuerySQL:PCWSTR, priority:PRIORITY_LEVEL, dwTimeout:DWORD
 
     mov hr,OpenSession( &spDBCreateCommand )
     .if (SUCCEEDED(hr))
-
-        mov hr,ExecuteQuery( spDBCreateCommand, pwszQuerySQL,
-                TRUE, &IID_IRowset, &spRowset)
+        mov hr,ExecuteQuery( spDBCreateCommand, pwszQuerySQL, TRUE, &IID_IRowset, &spRowset)
     .endif
     .if (SUCCEEDED(hr))
-
         mov hr,spRowset.QueryInterface(&IID_IRowsetPrioritization, &spRowsetPrioritization)
     .endif
     .if (SUCCEEDED(hr))
-
         mov hr,CreateComObject( &spListener )
     .endif
     .if (SUCCEEDED(hr))
-
         mov rcx,spListener
         mov [rcx].CRowsetEventListener.spDBCreateCommand,spDBCreateCommand
-
        .new dwAdviseID:DWORD
         mov hr,ConnectToConnectionPoint( spListener, ; .GetUnknown()
                 &IID_IRowsetEvents, TRUE, spRowset, &dwAdviseID, NULL )
@@ -465,32 +409,23 @@ WatchEvents proc pwszQuerySQL:PCWSTR, priority:PRIORITY_LEVEL, dwTimeout:DWORD
             _tprintf( "Now monitoring events for this query...\n\n" )
 
             spRowsetPrioritization.SetScopePriority( priority, 1000 )
-
             .if (dwTimeout == 0)
-
                 .while (SUCCEEDED(hr) && ((oustandingAddCount > 0) || (oustandingModifyCount > 0)))
-
                     Sleep( 1000 )
                     mov hr,spRowsetPrioritization.GetScopeStatistics( &indexedDocumentCount, &oustandingAddCount, &oustandingModifyCount )
                 .endw
-
             .else
-
                 Sleep( dwTimeout )
             .endif
-
             ConnectToConnectionPoint( spListener,;.GetUnknown(),
                 &IID_IRowsetEvents, FALSE, spRowset, &dwAdviseID, NULL )
         .endif
     .endif
-
     .if (FAILED(hr))
-
         _tprintf( "Failure: %08X\n", hr )
     .endif
     ret
-
-WatchEvents endp
+    endp
 
 
 wmain proc uses rsi rdi rbx argc:int_t, argv:ptr wchar_t
@@ -505,19 +440,13 @@ wmain proc uses rsi rdi rbx argc:int_t, argv:ptr wchar_t
     mov rsi,rdx
 
     .if (argc <= 1)
-
         inc ebx
-
     .elseif (argc == 2)
-
         mov rdx,[rsi+8]
         mov eax,[rdx]
         .if ( ax == '-' || ax == '/' )
-
             shr eax,16
-
             .if ( ax == '?' )
-
                 inc ebx
             .endif
         .endif
@@ -547,15 +476,13 @@ wmain proc uses rsi rdi rbx argc:int_t, argv:ptr wchar_t
         mov priority,PRIORITY_LEVEL_DEFAULT
         mov wszURL,0
 
-        .for (ebx = 1: ((ebx < argc) && SUCCEEDED(hr)): ebx++)
+        .for ( ebx = 1 : ( ( ebx < argc ) && SUCCEEDED(hr) ) : ebx++)
 
             mov rcx,[rsi+rbx*8]
             .if (word ptr [rcx] == '/')
-
                 movzx eax,word ptr [rcx+2]
                 or eax,0x20
                 .if (eax == 'p')
-
                     add rcx,4
                     mov ax,[rcx]
                     .if (ax == ':')
@@ -563,9 +490,7 @@ wmain proc uses rsi rdi rbx argc:int_t, argv:ptr wchar_t
                     .endif
                     mov ax,[rcx]
                     or eax,0x20
-
                     .switch eax
-
                     .case 'f'
                         mov priority,PRIORITY_LEVEL_FOREGROUND
                         .endc
@@ -581,9 +506,7 @@ wmain proc uses rsi rdi rbx argc:int_t, argv:ptr wchar_t
                     .default
                         mov hr,E_INVALIDARG
                     .endsw
-
                 .elseif (eax == 't')
-
                     add rcx,4
                     mov ax,[rcx]
                     .if (ax == ':')
@@ -591,41 +514,30 @@ wmain proc uses rsi rdi rbx argc:int_t, argv:ptr wchar_t
                     .endif
                     mov dwTimeout,_wtol(rcx)
                     mov fHandled,TRUE
-
                 .else
-
                     mov hr,E_INVALIDARG
                 .endif
-
             .else
-
                 mov hr,StringCchCopy( &wszURL, ARRAYSIZE(wszURL), rcx )
             .endif
         .endf
 
         .if (SUCCEEDED(hr))
-
             .new wszQuerySQL[INTERNET_MAX_URL_LENGTH]:WCHAR
             .if (wszURL)
-
                 mov hr,StringCchPrintf( &wszQuerySQL,
                     ARRAYSIZE(wszQuerySQL), L"SELECT workid FROM SystemIndex WHERE SCOPE='%s'", &wszURL )
-
             .else
-
                 mov hr,StringCchCopy( &wszQuerySQL,
                     ARRAYSIZE(wszQuerySQL), L"SELECT workid FROM SystemIndex" )
             .endif
             .if (SUCCEEDED(hr))
-
                 WatchEvents( &wszQuerySQL, priority, dwTimeout )
             .endif
         .endif
-
         CoUninitialize()
     .endif
     .return 0
-
-wmain endp
+    endp
 
     end

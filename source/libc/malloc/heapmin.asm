@@ -21,6 +21,6 @@ else
     .endif
     .return( -1 )
 endif
-_heapmin endp
+    endp
 
     end

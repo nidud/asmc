@@ -12,10 +12,8 @@ include tchar.inc
     .code
 
 _tcreat proc path:tstring_t, mode:int_t
-
     _tsopen( ldr(path), O_CREAT or O_TRUNC or O_RDWR, SH_DENYNO, ldr(mode) )
     ret
-
-_tcreat endp
+    endp
 
     end

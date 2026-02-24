@@ -11,14 +11,11 @@ include errno.inc
 .code
 
 vfork proc
-
     .ifs ( sys_vfork() < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
     ret
-
-vfork endp
+    endp
 
     end

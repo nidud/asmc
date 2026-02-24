@@ -16,11 +16,8 @@ include tchar.inc
     .code
 
 _tgetfattr proc file:tstring_t
-
 ifdef __UNIX__
-
     .new s:_stat32
-
     .ifd ( _stat( ldr(file), &s ) == 0 )
  ifdef _WIN64
         mov eax,s.st_mode
@@ -29,13 +26,11 @@ ifdef __UNIX__
  endif
 else
     .ifd ( GetFileAttributes( ldr(file) ) == -1 )
-
         _dosmaperr( GetLastError() )
 endif
     .endif
     ret
-
-_tgetfattr endp
+    endp
 
     end
 

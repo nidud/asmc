@@ -21,7 +21,6 @@ ifdef __UNIX__
 else
     ldr ecx,fd
     mov rdx,_pioinfo( ecx )
-
     .ifs ( ecx < 0 || edx >= _nfile || !( [rdx].ioinfo.osfile & FOPEN ) )
         .return( _set_errno( EBADF ) )
     .endif
@@ -30,6 +29,6 @@ else
     .endif
     .return( 0 )
 endif
-_commit endp
+    endp
 
     end

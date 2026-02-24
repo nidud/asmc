@@ -182,127 +182,105 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:asym_t, cp:ptr calc_param
     mov rsi,rcx
     mov rbx,rdx
     mov rdi,[rsi].asym.seginfo
-
     .if ( [rdi].segtype == SEGTYPE_ABS )
-
         imul eax,[rdi].abs_frame,16
         mov [rdi].start_offset,eax
        .return
     .elseif ( [rdi].information )
        .return
     .endif
-
+    ;
     ; v2.19: mz format and org in first segment (org1.asm).
-
+    ;
     .if ( [rbx].first && MODULE.sub_format != SFORMAT_NONE )
         mov [rbx].start_loc,[rdi].start_loc
     .elseif ( [rbx].first == FALSE && [rbx].start_loc )
         add [rbx].fileoffset,[rbx].start_loc
         mov [rbx].start_loc,0
     .endif
-
-    mov eax,1
+    mov edx,1
     mov cl,[rbx].alignment
     .if ( cl < [rdi].alignment )
         mov cl,[rdi].alignment
     .endif
-    shl eax,cl
-    mov ecx,eax
-    neg ecx
-    dec eax
+    shl edx,cl
+    lea eax,[rdx-1]
+    neg edx
     add eax,[rbx].fileoffset
-    and eax,ecx
+    and eax,edx
     sub eax,[rbx].fileoffset
-
+    ;
     ; v2.19, format -bin: don't align fileoffset for segments with RVA alignment [ALIGN(x,v)]
-
-    .if ( !( [rdi].align_rva ) )
-
+    ;
+    .if ( ![rdi].align_rva )
         add [rbx].fileoffset,eax
     .endif
-
     mov rdx,[rdi].sgroup
-
     .if ( MODULE.sub_format == SFORMAT_PE || MODULE.sub_format == SFORMAT_64BIT )
-
-        ; v2.24
-
-        mov ecx,[rbx].rva
+        mov ecx,[rbx].rva ; v2.24
         add [rbx].rva,[rsi].asym.max_offset
-
     .elseif ( rdx == NULL )
-
         mov ecx,[rbx].fileoffset
         sub ecx,[rbx].sizehdr
-
     .elseif ( [rdx].asym.total_size == 0 )
-
         mov ecx,[rbx].fileoffset
         sub ecx,[rbx].sizehdr
         mov [rdx].asym.offs,ecx
         mov [rdx].asym.included,1
         xor ecx,ecx
-
     .else
-
+        ;
         ; v2.12: the old way wasn't correct. if there's a segment between the
         ; segments of a group, it affects the offset as well ( if it
         ; occupies space in the file )! the value stored in grp->sym.total_size
         ; is no longer used (or, more exactly, used as a flag only).
-
+        ;
         mov ecx,[rdx].asym.total_size
         add ecx,eax
     .endif
     mov [rdi].start_offset,ecx
-
+    ;
     ; v2.04: added
     ; v2.05: this addition did mess sample Win32_5.asm, because the
     ; "empty" alignment sections are now added to <fileoffset>.
     ; todo: VA in binary map is displayed wrong.
-
+    ;
     .if ( [rbx].first == FALSE )
-
+        ;
         ; v2.05: do the reset more carefully.
         ; Do reset start_loc only if
         ; - segment is in a group and
         ; - group isn't FLAT or segment's name contains '$'
-
+        ;
         .if ( rdx && rdx != MODULE.flat_grp )
             mov [rdi].start_loc,0
         .endif
     .endif
-
     mov [rdi].fileoffset,[rbx].fileoffset
     mov eax,[rsi].asym.max_offset
     sub eax,[rdi].start_loc
-
     .if ( MODULE.sub_format == SFORMAT_NONE )
-
         add [rbx].fileoffset,eax
         .if ( [rbx].first )
             mov [rbx].imagestart,[rdi].start_loc
         .endif
-
+        ;
         ; there's no real entry address for BIN, therefore the
         ; start label must be at the very beginning of the file
-
+        ;
         .if ( [rbx].entryoffset == -1 )
-
             mov [rbx].entryoffset,ecx
             mov [rbx].entryseg,rsi
         .endif
-
     .elseif ( [rdi].segtype != SEGTYPE_BSS )
         add [rbx].fileoffset,eax
     .endif
-
     .if rdx
-
         add ecx,[rsi].asym.max_offset
         mov [rdx].asym.total_size,ecx
-
+        ;
         ; v2.07: for 16-bit groups, ensure that it fits in 64 kB
-
+        ;
         .if ( ecx > 0x10000 && [rdx].asym.Ofssize == USE16 )
             asmerr( 8003, [rdx].asym.name )
         .endif
@@ -1760,26 +1738,26 @@ endif
 
 pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
 
-    .new i:int_t
-    .new falign:int_t
-    .new malign:int_t
-    .new characteristics:uint_t
-    .new codebase:uint_32 = 0
-    .new database:uint_32 = 0
-    .new codesize:uint_32 = 0
-    .new datasize:uint_32 = 0
-    .new sizehdr:uint_32  = 0
-    .new sizeimg:uint_32  = 0
-    .new mzhdr:asym_t
-    .new pehdr:asym_t
-    .new objtab:asym_t
-    .new reloc:asym_t = NULL
-    .new pe:ptr IMAGE_PE_HEADER64
-    .new fh:ptr IMAGE_FILE_HEADER
-    .new section:ptr IMAGE_SECTION_HEADER
-    .new datadir:ptr IMAGE_DATA_DIRECTORY
-    .new secname:string_t
-    .new buffer[MAX_ID_LEN+1]:char_t
+   .new i:int_t
+   .new falign:int_t
+   .new malign:int_t
+   .new characteristics:uint_t
+   .new codebase:uint_32 = 0
+   .new database:uint_32 = 0
+   .new codesize:uint_32 = 0
+   .new datasize:uint_32 = 0
+   .new sizehdr:uint_32  = 0
+   .new sizeimg:uint_32  = 0
+   .new mzhdr:asym_t
+   .new pehdr:asym_t
+   .new objtab:asym_t
+   .new reloc:asym_t = NULL
+   .new pe:ptr IMAGE_PE_HEADER64
+   .new fh:ptr IMAGE_FILE_HEADER
+   .new section:ptr IMAGE_SECTION_HEADER
+   .new datadir:ptr IMAGE_DATA_DIRECTORY
+   .new secname:string_t
+   .new buffer[MAX_ID_LEN+1]:char_t
 
     mov mzhdr,  SymFind( hdrname "1" )
     mov rsi,    [rax].asym.seginfo
@@ -1817,8 +1795,14 @@ pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
     mov rcx,pe
     movzx eax,[rcx].IMAGE_PE_HEADER32.FileHeader.Characteristics
     mov characteristics,eax
+    ;
+    ; IMAGE_FILE_RELOCS_STRIPPED is removed from the 64-bit header.
+    ;
+    .if ( MODULE.defOfssize == USE64 )
+        or eax,IMAGE_FILE_RELOCS_STRIPPED
+    .endif
 
-    .if ( !( characteristics & IMAGE_FILE_RELOCS_STRIPPED ) )
+    .if ( !( eax & IMAGE_FILE_RELOCS_STRIPPED ) )
 
         mov reloc,CreateIntSegment( ".reloc", "RELOC", 2, MODULE.defOfssize, TRUE )
         .if ( rax )
@@ -1862,7 +1846,6 @@ if 1
                 IsStdCodeName( [rdi].asym.name )
                 mov ecx,ebx
                 mov ah,ModuleInfo.defOfssize
-
                 .if ( [rsi].segtype == SEGTYPE_CODE && [rsi].Ofssize != ah && !al )
 
                     ; v2.19: use newly introduced SEGTYPE_CODE16 (so 16-bit code is behind .text
@@ -1887,43 +1870,35 @@ endif
 
         mov rsi,[rdi].asym.seginfo
         mov rdx,cp
-
         .if ( [rsi].lname_idx == SEGTYPE_ERROR || [rsi].lname_idx != ebx )
-
             mov ebx,[rsi].lname_idx
             mov [rdx].calc_param.alignment,falign
             mov eax,malign
-
         .else
             mov eax,1
             mov cl,[rsi].alignment
             shl eax,cl
             mov [rdx].calc_param.alignment,0
         .endif
-        dec eax
-        mov ecx,eax
-        not ecx
-        add eax,[rdx].calc_param.rva
+        lea ecx,[rax-1]
+        neg eax
+        add ecx,[rdx].calc_param.rva
         and eax,ecx
         mov [rdx].calc_param.rva,eax
         CalcOffset( rdi, rdx )
     .endf
-
     mov rbx,cp
     mov rcx,reloc
-
     .if ( rcx )
-
         pe_set_base_relocs( rcx )
-
+        ;
         ; v2.13: if no relocs exist, remove the .reloc section that was just created.
         ; v2.16: this didn't work because reloc->sym.max_offset was initialized
         ;        with size of IMAGE_BASE_RELOCATION
-
+        ;
         mov rcx,reloc
         mov eax,[rcx].asym.max_offset
         .ifs ( eax > IMAGE_BASE_RELOCATION )
-
             mov rsi,[rcx].asym.seginfo
             add eax,[rsi].start_offset
             mov [rbx].calc_param.rva,eax

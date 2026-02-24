@@ -99,55 +99,38 @@ malloc proc byte_count:size_t
         .endif
     .until 1
     ret
-
-malloc endp
+    endp
 
 free proc memblock:ptr
-
     ldr rcx,memblock
-
     sub rcx,HEAP
     .ifns
-
+        ;
         ; If memblock is NULL, the pointer is ignored. Attempting to free an
         ; invalid pointer not allocated by malloc() may cause errors.
-
+        ;
         .if ( [rcx].HEAP.type == _HEAP_ALIGNED )
-
             mov rcx,[rcx].HEAP.prev
         .endif
-
         .if ( [rcx].HEAP.type == _HEAP_LOCAL )
-
             xor edx,edx
             mov [rcx].HEAP.type,_HEAP_FREE ; Delete this block.
-
             .for ( rax = [rcx].HEAP.size : dl == [rcx+rax].HEAP.type : )
-
                 ; Extend size of block if next block is free.
-
                 add rax,[rcx+rax].HEAP.size
                 mov [rcx].HEAP.size,rax
             .endf
             mov _heap_free,rcx
-
             .if ( rdx == [rcx+rax].HEAP.size )
-
                 ; This is the last bloc in this chain.
-
                 mov rcx,[rcx+rax].HEAP.prev ; <= first bloc
                 .if ( dl == [rcx].HEAP.type )
-
                     .for ( rax = [rcx].HEAP.size : dl == [rcx+rax].HEAP.type : )
-
                         add rax,[rcx+rax].HEAP.size
                         mov [rcx].HEAP.size,rax
                     .endf
-
                     .if ( rdx == [rcx+rax].HEAP.size )
-
                         ; unlink the node
-
                         mov rdx,[rcx].HEAP.prev
                         mov rax,[rcx].HEAP.next
                         .if rdx
@@ -178,14 +161,12 @@ endif
         .endif
     .endif
     ret
-
-free endp
+    endp
 
 
 CreateHeap proc private uses rbx size:size_t
 
     ldr rcx,size
-
     mov ebx,_amblksiz
     lea eax,[rbx+rbx]
     .if ( eax <= _HEAP_MAXREGSIZE_S )
@@ -205,10 +186,8 @@ endif
         _set_errno( ENOMEM )
        .return( NULL )
     .endif
-
     lea rdx,[rbx-HEAP]
     xor ecx,ecx
-
     mov [rax].HEAP.size,rdx
     mov [rax].HEAP.type,_HEAP_FREE
     mov [rax].HEAP.next,rcx
@@ -216,7 +195,6 @@ endif
     mov [rax+rdx].HEAP.size,rcx
     mov [rax+rdx].HEAP.type,_HEAP_LOCAL
     mov [rax+rdx].HEAP.prev,rax
-
     mov rdx,_heap_base
     .if ( rdx )
         .while ( [rdx].HEAP.next != rcx )
@@ -228,7 +206,6 @@ endif
         mov _heap_base,rax
     .endif
     mov _heap_free,rax
-
     mov rcx,size
     mov rdx,rax
     mov rax,[rdx].HEAP.size
@@ -237,7 +214,6 @@ endif
         xor eax,eax
     .endif
     ret
-
-CreateHeap endp
+    endp
 
     end

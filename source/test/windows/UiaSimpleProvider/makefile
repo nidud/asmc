@@ -1,10 +1,9 @@
-#
-# Note: needs Open Watcom
-#
 UiaSimpleProvider.exe:
-	wrc -r -I\watcom\h\nt UiaSimpleProvider.rc
-	asmc -coff -ws -Cs -Fe$* *.asm -link -res:UiaSimpleProvider.res
-	asmc -win6 -ws -Cs -Fe$*64 *.asm -link -res:UiaSimpleProvider.res
+	rc UiaSimpleProvider.rc
+	asmc -coff -ws -Cs -Fe$* *.asm -link -res:$*.res
+	asmc -win6 -ws -Cs -Fe$*64 *.asm -link -res:$*.res
 	$@
 	del *.res
 	del *.obj
+vs:
+	project -p -w -u -rUiaSimpleProvider UiaSimpleProvider

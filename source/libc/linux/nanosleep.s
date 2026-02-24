@@ -11,14 +11,11 @@ include sys/syscall.inc
 .code
 
 nanosleep proc req:ptr timespec, rem:ptr timespec
-
     .ifsd ( sys_nanosleep( ldr(req), ldr(rem) ) < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
     ret
-
-nanosleep endp
+    endp
 
     end

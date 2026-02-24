@@ -13,24 +13,18 @@ endif
     .code
 
 _lseek proc fd:int_t, offs:size_t, pos:uint_t
-
 ifdef __UNIX__
-
     .ifs ( sys_lseek(ldr(fd), ldr(offs), ldr(pos)) < 0 )
-
         neg eax
         _set_errno(eax)
     .endif
 ifndef _WIN64
     cdq
 endif
-
 else
-
     ldr ecx,fd
     ldr rax,offs
     ldr edx,pos
-
 ifdef _WIN64
     .if ( edx == SEEK_SET )
         mov eax,eax
@@ -46,7 +40,6 @@ else
 endif
 endif
     ret
-
-_lseek endp
+    endp
 
     end

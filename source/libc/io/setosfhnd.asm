@@ -14,14 +14,10 @@ endif
 
 _set_osfhnd proc fh:int_t, value:intptr_t
 ifndef __UNIX__
-
     ldr ecx,fh
     ldr rdx,value
-
     _pioinfo(ecx)
-
     .if ( sdword ptr ecx >= 0 && ecx < _nfile && [rax].ioinfo.osfhnd == INVALID_HANDLE_VALUE )
-
         mov [rax].ioinfo.osfhnd,rdx
 ;       .if ( __app_type == _CONSOLE_APP )
             .switch ecx
@@ -45,7 +41,6 @@ ifndef __UNIX__
     .endif
 endif
     ret
-
-_set_osfhnd endp
+    endp
 
     end

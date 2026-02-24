@@ -19,7 +19,6 @@ _dup2 proc uses rbx fd:int_t, newfd:int_t
 
     ldr ecx,fd
     ldr edx,newfd
-
     mov rbx,_pioinfo( ecx )
     .if ( !( [rbx].ioinfo.osfile & FOPEN ) )
         .return( _set_errno( EBADF ) )
@@ -39,19 +38,15 @@ _dup2 proc uses rbx fd:int_t, newfd:int_t
         ;
         _close( edx )
     .endif
-
 ifdef __UNIX__
     .ifsd ( sys_dup2( fd, newfd ) < 0 )
-
         neg eax
        .return( _set_errno( eax ) )
     .endif
     imul ecx,eax,ioinfo
     add rcx,__pioinfo
 else
-
    .new new_osfhandle:intptr_t
-
     mov rcx,GetCurrentProcess()
     .ifd ( DuplicateHandle(rcx, [rbx].ioinfo.osfhnd, rcx, &new_osfhandle, 0, TRUE, DUPLICATE_SAME_ACCESS) == 0 )
         .return( _dosmaperr( GetLastError() ) )
@@ -66,7 +61,6 @@ endif
     mov [rcx].ioinfo.osfile,al
     xor eax,eax
     ret
-
-_dup2 endp
+    endp
 
     end

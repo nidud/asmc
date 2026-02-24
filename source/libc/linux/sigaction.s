@@ -21,7 +21,6 @@ sig_restore proto
 sigaction proc sig:int_t, act:ptr sigaction_t, oact:ptr sigaction_t
 
    .new a:compat_sigaction = {0}
-
     mov eax,-1
     .switch edi
     .case SIGABRT   : inc eax
@@ -32,9 +31,7 @@ sigaction proc sig:int_t, act:ptr sigaction_t, oact:ptr sigaction_t
     .case SIGILL    : inc eax
     .case SIGINT    : inc eax
     .endsw
-
     .if ( rsi == 0 || eax == -1 )
-
         .return( _set_errno( EINVAL ) )
     .endif
 
@@ -44,19 +41,15 @@ sigaction proc sig:int_t, act:ptr sigaction_t, oact:ptr sigaction_t
     mov a.sa_mask,      [rsi].sigaction_t.sa_mask
 
     .if ( !( a.sa_flags & SA_RESTORER ) || a.sa_restorer == NULL )
-
         or  a.sa_flags,SA_RESTORER
         mov a.sa_restorer,&sig_restore
     .endif
-
     .ifsd ( sys_rt_sigaction(edi, rsi, rdx, compat_sigset_t) < 0 )
-
         neg eax
         _set_errno(eax)
     .endif
     ret
-
-sigaction endp
+    endp
 
 endif
     end

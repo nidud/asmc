@@ -13,12 +13,9 @@ _aligned_malloc proc uses rbx dwSize:size_t, Alignment:size_t
     ldr rbx,Alignment
     ldr rcx,dwSize
     lea rcx,[rcx+rbx+HEAP]
-
     .if malloc( rcx )
-
         dec rbx
         .if ( rax & rbx )
-
             lea rdx,[rax-HEAP]
             lea rax,[rax+rbx+HEAP]
             not rbx
@@ -29,16 +26,13 @@ _aligned_malloc proc uses rbx dwSize:size_t, Alignment:size_t
         .endif
     .endif
     ret
-
-_aligned_malloc endp
+    endp
 
 ifdef __UNIX__
 _aligned_free proc p:ptr
-
     free( ldr(p) )
     ret
-
-_aligned_free endp
+    endp
 endif
 
     end

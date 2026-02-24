@@ -10,7 +10,6 @@ include sys/syscall.inc
 .code
 
 pread proc fd:int_t, buf:ptr, count:size_t, off:off_t
-
 ifdef _WIN64
     .ifs ( sys_pread64(edi, rsi, rdx, rcx) < 0 )
 else
@@ -20,7 +19,6 @@ endif
         _set_errno( eax )
     .endif
     ret
-
-pread endp
+    endp
 
     end

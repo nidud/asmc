@@ -24,10 +24,8 @@ ifdef __UNIX__
     mov eax,-1
 else
     .ifd ( _get_osfhandle(ecx) != -1 )
-
         mov rbx,rax
         .ifd !SetFileTime(rbx, TimeToFileTime(ftime, &FileTime), 0, 0)
-
             _dosmaperr( GetLastError() )
         .else
             xor eax,eax
@@ -35,7 +33,6 @@ else
     .endif
 endif
     ret
-
-setftime_create endp
+    endp
 
     end

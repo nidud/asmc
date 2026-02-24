@@ -13,15 +13,12 @@ ifndef __UNIX__
 .code
 
 _heap_init proc
-
     .if ( GetProcessHeap() != NULL )
-
         mov _crtheap,rax
         mov eax,1
     .endif
     ret
-
-_heap_init endp
+    endp
 
 .pragma init(_heap_init, 1)
 endif

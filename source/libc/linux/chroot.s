@@ -11,14 +11,11 @@ include sys/syscall.inc
 .code
 
 chroot proc path:string_t
-
     .ifsd ( sys_chroot( ldr(path) ) < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
     ret
-
-chroot endp
+    endp
 
     end

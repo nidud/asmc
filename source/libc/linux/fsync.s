@@ -10,14 +10,11 @@ include sys/syscall.inc
 .code
 
 fsync proc fd:int_t
-
     .ifsd ( sys_fsync( ldr(fd) ) < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
     ret
-
-fsync endp
+    endp
 
     end

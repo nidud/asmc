@@ -17,15 +17,11 @@ endif
 ifdef __UNIX__
 
 _chsize proc fd:int_t, size:size_t
-
     .ifsd ( sys_ftruncate( ldr(fd), ldr(size) ) < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
-
 else
-
 _chsize proc uses rbx handle:int_t, new_size:size_t
 
   local buffer[512]:char_t
@@ -36,19 +32,14 @@ _chsize proc uses rbx handle:int_t, new_size:size_t
         .return
     .endif
     mov current_offset,rax
-
     .repeat
-
         .if ( _lseek( handle, 0, SEEK_END ) == -1 )
             .return
         .endif
-
         .if ( rax > new_size )
-
             .if ( _lseek( handle, new_size, SEEK_SET ) == -1 )
                 .return
             .endif
-
             ;
             ; Write zero byte at current file position
             ;
@@ -56,7 +47,6 @@ _chsize proc uses rbx handle:int_t, new_size:size_t
            .break
         .endif
         .break .ifz ; All done..
-
         mov rbx,rdi
         mov rdx,rax
         lea rdi,buffer
@@ -64,19 +54,14 @@ _chsize proc uses rbx handle:int_t, new_size:size_t
         mov ecx,512/4
         rep stosd
         mov rdi,rbx
-
         mov rbx,new_size
         sub rbx,rdx
-
         .repeat
-
             mov extend,512
             .if ( rbx < extend )
-
                 mov extend,rbx
                 .break( 1 ) .if !rbx
             .endif
-
             sub rbx,extend
             oswrite( handle, &buffer, dword ptr extend )
         .until ( rax != extend )
@@ -87,7 +72,6 @@ _chsize proc uses rbx handle:int_t, new_size:size_t
     .endif
 endif
     ret
-
-_chsize endp
+    endp
 
     end

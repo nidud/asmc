@@ -10,14 +10,11 @@ include sys/syscall.inc
 .code
 
 clock_gettime proc which_clock:int_t, tp:ptr timespec
-
     .ifsd ( sys_clock_gettime( ldr(which_clock), ldr(tp) ) < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
     ret
-
-clock_gettime endp
+    endp
 
     end

@@ -16,37 +16,26 @@ endif
     .code
 
 _lseeki64 proc fd:int_t, offs:uint64_t, pos:uint_t
-
 if defined(__UNIX__) and defined(_WIN64)
-
     .ifs ( sys_lseek(edi, rsi, edx) < 0 )
-
         neg eax
         _set_errno(eax)
     .endif
-
 else
-
     .new new_offs:uint64_t
-
 ifdef __UNIX__
-
     lea eax,new_offs
     .ifs ( sys_llseek(fd, uint_t ptr offs, uint_t ptr offs[4], eax, pos) < 0 )
-
         neg eax
         mov edx,_set_errno(eax)
     .else
         mov eax,uint_t ptr new_offs
         mov edx,uint_t ptr new_offs[4]
     .endif
-
 else
     .ifd ( _get_osfhandle( fd ) != -1 )
-
         mov rcx,rax
         .ifd !SetFilePointerEx( rcx, offs, &new_offs, pos )
-
             _dosmaperr( GetLastError() )
 ifdef _WIN64
         .else
@@ -62,7 +51,6 @@ endif
 endif
 endif
     ret
-
-_lseeki64 endp
+    endp
 
     end

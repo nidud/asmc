@@ -13,4 +13,4 @@ CommonControls.exe:
 	del $*.exe
 	del $*.exe.manifest
 vs:
-	project -p -w -u CommonControls
+	project -p -w -u -rCommonControls CommonControls

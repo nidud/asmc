@@ -13,6 +13,6 @@ ifndef __UNIX__
     mov rax,_crtheap
 endif
     ret
-_get_heap_handle endp
+    endp
 
     end

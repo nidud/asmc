@@ -17,7 +17,8 @@ include string.inc
 include tchar.inc
 
 .data
- Project int_t 0
+ Resource string_t 0
+ Project  int_t 0
 
 .code
 
@@ -126,8 +127,14 @@ CreateProject proc uses rsi rdi rbx path:string_t, name:ptr string_t, Unicode:in
                 "    <ASMC Include=\"%s.asm\" />\n", [rbx+rsi*string_t])
         .endif
     .endf
+    fprintf(fp, "  </ItemGroup>\n")
+    .if ( Resource )
+        fprintf(fp,
+            "  <ItemGroup>\n"
+            "    <ResourceCompile Include=\"%s.rc\" />\n"
+            "  </ItemGroup>\n", Resource)
+    .endif
     fprintf(fp,
-        "  </ItemGroup>\n"
         "  <Import Project=\"$(VCTargetsPath)\Microsoft.Cpp.targets\" />\n"
         "  <ImportGroup Label=\"ExtensionTargets\">\n"
         "    <Import Project=\"$(AsmcDir)\\bin\\asmc.targets\" />\n%s"
@@ -340,8 +347,8 @@ _tmain proc argc:int_t, argv:array_t
 
     .for ( rbx = argv, ecx = 1 : ecx < argc : ecx++ )
 
-        mov rax,[rbx+rcx*string_t]
-        mov eax,[rax]
+        mov rdx,[rbx+rcx*string_t]
+        mov eax,[rdx]
         .if ( al == '-' || al == '/' )
             .if ( ah == 'w' )
                 mov Windows,1
@@ -358,14 +365,16 @@ _tmain proc argc:int_t, argv:array_t
                 .endif
             .elseif ( ah == 'c' )
                 mov iddc,1
+            .elseif ( ah == 'r' )
+                add rdx,2
+                mov Resource,rdx
             .else
-                perror([rbx+rcx*string_t])
+                perror(rdx)
                 exit(1)
             .endif
         .else
-            mov rax,[rbx+rcx*string_t]
-            mov edx,files
-            mov name[rdx*string_t],rax
+            mov eax,files
+            mov name[rax*string_t],rdx
             inc files
         .endif
     .endf
@@ -380,6 +389,7 @@ _tmain proc argc:int_t, argv:array_t
             "-c     -- Add iddc.targets\n"
             "-p     -- Create <name>.vcxproj\n"
             "-pe    -- Generate PE binary file\n"
+            "-r#    -- Add #.rc file\n"
             "\n"
             "If the -p option is not given a directory is created:\n"
             " - <name>/makefile\n"

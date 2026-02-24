@@ -11,14 +11,10 @@ include errno.inc
 .code
 
 _msize proc memblock:ptr
-
     ldr rcx,memblock
-
     .if ( rcx == NULL )
-
         _set_errno(EINVAL)
     .else
-
         lea rdx,[rcx-HEAP]
         .if ( [rdx].HEAP.type == _HEAP_ALIGNED )
             mov rdx,[rdx].HEAP.prev
@@ -28,7 +24,6 @@ _msize proc memblock:ptr
         sub rax,rcx
     .endif
     ret
-
-_msize endp
+    endp
 
     end

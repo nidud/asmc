@@ -9,18 +9,13 @@ include io.inc
 .code
 
 _alloc_osfhnd proc
-
     assume rcx:pioinfo
-
     .for ( rcx = __pioinfo, eax = 0: [rcx].osfile & FOPEN: rcx += ioinfo )
-
         inc eax
         .if ( eax == _nfile  )
-
             .return( -1 )
         .endif
     .endf
-
     mov [rcx].osfile,0
 ifndef __UNIX__
     mov [rcx].pipech,10
@@ -28,7 +23,6 @@ ifndef __UNIX__
     mov [rcx].pipech2[1],10
 endif
     ret
-
-_alloc_osfhnd endp
+    endp
 
     end

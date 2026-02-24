@@ -18,9 +18,7 @@ endif
     assume rax:pioinfo
 
 _close proc handle:int_t
-
     ldr ecx,handle
-
     .if ( ecx < 3 || ecx >= _nfile )
 @@:
         _set_errno( EBADF )
@@ -29,7 +27,6 @@ ifndef __UNIX__
 endif
         .return( 0 )
     .endif
-
     _pioinfo(ecx)
     test [rax].osfile,FOPEN
     jz @B
@@ -37,7 +34,6 @@ endif
     mov [rax].textmode,__IOINFO_TM_ANSI
 ifdef __UNIX__
     .ifsd ( sys_close(ecx) < 0 )
-
         neg eax
         _set_errno( eax )
 else
@@ -49,7 +45,6 @@ endif
         xor eax,eax
     .endif
     ret
-
-_close endp
+    endp
 
     end

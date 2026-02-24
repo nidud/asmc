@@ -18,14 +18,12 @@ ifdef __UNIX__
     mov eax,-1
 else
     .ifd ( SetFileAttributes( ldr(file), ldr(attrib) ) == 0 )
-
         .return( _dosmaperr( GetLastError() ) )
     .endif
     xor eax,eax
 endif
     ret
-
-_tsetfattr endp
+    endp
 
     end
 

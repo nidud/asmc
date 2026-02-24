@@ -17,7 +17,6 @@ endif
     .code
 
 ifdef __UNIX__
-
 _fstat64 proc fd:int_t, buf:PSTAT64
 ifdef _WIN64
     .ifs ( sys_newfstat(edi, rsi) < 0 )
@@ -28,16 +27,12 @@ endif
         _set_errno( eax )
     .endif
     ret
-
-_fstat64 endp
-
+    endp
 else
 
 _lk_getltime proc private ft:LPFILETIME
-
   local SystemTime:SYSTEMTIME
   local LocalFTime:FILETIME
-
     .if FileTimeToLocalFileTime( ldr(ft), &LocalFTime )
         .if FileTimeToSystemTime(&LocalFTime, &SystemTime)
             _loctotime_t(
@@ -51,8 +46,7 @@ _lk_getltime proc private ft:LPFILETIME
         .endif
     .endif
     ret
-
-_lk_getltime endp
+    endp
 
     assume rdi:PSTAT64
 
@@ -68,26 +62,19 @@ _fstat64 proc uses rsi rdi rbx fd:int_t, buf:PSTAT64
     ldr rdx,buf
 
     .if ( rdx == NULL )
-
         .return( _set_errno( EINVAL ) )
     .endif
-
     mov rdi,rdx
     xor eax,eax
     mov ecx,_stati64
     rep stosb
     mov rdi,rdx
-
     .ifs ( esi < 0 || esi >= _nfile )
-
         .return( _set_errno( EBADF ) )
     .endif
-
     mov rcx,_pioinfo(esi)
     mov osfhnd,[rcx].ioinfo.osfhnd
-
     .if !( [rcx].ioinfo.osfile & FOPEN )
-
         .return( _set_errno( EBADF ) )
     .endif
 
@@ -95,7 +82,6 @@ _fstat64 proc uses rsi rdi rbx fd:int_t, buf:PSTAT64
 
     GetFileType(osfhnd)
     and eax,not FILE_TYPE_REMOTE
-
     .if ( eax != FILE_TYPE_DISK )
 
         ; not a disk file. probably a device or pipe
@@ -114,20 +100,15 @@ _fstat64 proc uses rsi rdi rbx fd:int_t, buf:PSTAT64
             mov [rdi].st_rdev,esi
             mov [rdi].st_dev,esi
             mov [rdi].st_nlink,1
-
             .if ( eax != FILE_TYPE_CHAR )
-
                 .ifd PeekNamedPipe(osfhnd, NULL, 0, NULL, &ulAvail, NULL)
-
                     mov uint_t ptr [rdi].st_size,ulAvail
                 .endif
             .endif
             .return( 0 )
 
         .elseif ( eax == FILE_TYPE_UNKNOWN )
-
             .return( _set_errno( EBADF ) )
-
         .else
 
             ; according to the documentation, this cannot happen, but
@@ -145,7 +126,6 @@ _fstat64 proc uses rsi rdi rbx fd:int_t, buf:PSTAT64
     ; use the file handle to get basic info about the file
 
     .if ( !GetFileInformationByHandle(osfhnd, &bhfi) )
-
         .return( _dosmaperr( GetLastError() ) )
     .endif
     .if ( bhfi.dwFileAttributes & FILE_ATTRIBUTE_READONLY )
@@ -176,8 +156,7 @@ else
     mov dword ptr [rdi].st_ctime[4],eax
 endif
     ret
-
-_fstat64 endp
+    endp
 endif
 
     end

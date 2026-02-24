@@ -11,12 +11,9 @@ include sys/ioctl.inc
     .code
 
 tcsetattr proc fd:int_t, cmd:int_t, termios_p:ptr termios
-
     ldr eax,cmd
     ldr rdx,termios_p
-
     .if ( rdx == NULL )
-
         .return( _set_errno( EINVAL ) )
     .endif
     .switch eax
@@ -34,7 +31,6 @@ tcsetattr proc fd:int_t, cmd:int_t, termios_p:ptr termios
     .endsw
     ioctl( ldr(fd), eax, rdx )
     ret
-
-tcsetattr endp
+    endp
 
     end

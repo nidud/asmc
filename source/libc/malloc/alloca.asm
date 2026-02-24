@@ -13,7 +13,6 @@ ifndef _WIN64
     option stackbase:esp
 
 alloca proc byte_count:uint_t
-
     mov     ecx,[esp]   ; return address
     mov     eax,[esp+4] ; size to probe
     add     esp,8
@@ -31,9 +30,6 @@ alloca proc byte_count:uint_t
     sub     esp,4
     or      dword ptr [esp],0
     jmp     ecx
-
-alloca endp
-
+    endp
 endif
-
     end

@@ -11,7 +11,6 @@ include sys/syscall.inc
 .code
 
 waitpid proc pid:pid_t, wstatus:ptr int_t, options:int_t
-
 ifdef _WIN64
     .ifsd ( sys_wait4(edi, rsi, edx, NULL) < 0 )
 else
@@ -21,7 +20,6 @@ endif
         _set_errno( eax )
     .endif
     ret
-
-waitpid endp
+    endp
 
     end

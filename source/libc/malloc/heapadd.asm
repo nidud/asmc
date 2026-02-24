@@ -11,6 +11,6 @@ include errno.inc
 
 _heapadd proc block:ptr, size:size_t
     .return( _set_errno( ENOSYS ) )
-_heapadd endp
+    endp
 
     end

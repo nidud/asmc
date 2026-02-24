@@ -23,13 +23,10 @@ else
     .endif
     .return( _HEAPOK )
 endif
-_heapchk endp
-
+    endp
 
 _heapset proc _fill:uint_t
-
     .return( _heapchk() )
-
-_heapset endp
+    endp
 
     end

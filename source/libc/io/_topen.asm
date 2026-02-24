@@ -24,7 +24,6 @@ else
     _tsopen( path, oflag, SH_DENYNO, args )
 endif
     ret
-
-_topen endp
+    endp
 
     end

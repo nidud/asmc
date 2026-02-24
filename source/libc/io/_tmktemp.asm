@@ -26,12 +26,9 @@ _tmktemp_s proc uses rsi rdi rbx template:tstring_t, sizeInChars:size_t
 
     ldr rbx,template
     ldr rdx,sizeInChars
-
     .if ( rbx == NULL || rdx == 0 )
-
         .return( EINVAL )
     .endif
-
     mov xcount,_tcsnlen(rbx, rdx)
 ifdef __UNIX__
     rand()
@@ -40,7 +37,6 @@ else
 endif
     mov rcx,xcount
     .if ( rcx >= sizeInChars || rcx < 6 )
-
         mov [rbx],0
        .return( EINVAL )
     .endif
@@ -48,16 +44,13 @@ ifdef _UNICODE
     add rcx,rcx
 endif
     lea rsi,[rbx+rcx-tchar_t]
-
     .for ( ecx = 10, edi = 0 : rsi > rbx && [rsi] == 'X' && edi < 5 : rsi-=tchar_t, edi++ )
-
         xor edx,edx
         div ecx
         add dl,'0'
         mov [rsi],_tdl
     .endf
     .if ( [rsi] != 'X' || edi < 5 )
-
         mov [rbx],0
        .return( EINVAL )
     .endif
@@ -65,18 +58,14 @@ endif
     inc letter
     mov [rsi],_tal
     mov string,rsi
-
     mov eax,errno
     mov save_errno,eax
     _set_errno( 0 )
-
     .while 1
-
         .ifd _taccess(rbx, 0)
             .break .ifd ( errno != EACCES )
         .endif
         .if ( letter == 'z' + 1 )
-
             _set_errno( EEXIST )
             mov [rbx],0
            .return( EEXIST )
@@ -90,14 +79,11 @@ endif
     _set_errno( save_errno )
     xor eax,eax
     ret
-
-_tmktemp_s endp
+    endp
 
 
 _tmktemp proc uses rbx template:tstring_t
-
     ldr rbx,template
-
     .if ( rbx == NULL )
         _set_errno( EINVAL )
         .return( 0 )
@@ -107,7 +93,6 @@ _tmktemp proc uses rbx template:tstring_t
     .endif
     mov rax,rbx
     ret
-
-_tmktemp endp
+    endp
 
     end

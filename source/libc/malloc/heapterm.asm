@@ -13,6 +13,6 @@ ifndef __UNIX__
     mov _crtheap,NULL
 endif
     ret
-_heap_term endp
+    endp
 
     end

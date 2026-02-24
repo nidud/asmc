@@ -16,19 +16,14 @@ include errno.inc
 .code
 
 getftime proc fd:int_t
-
   local FileTime:FILETIME
-
     ldr ecx,fd
-
 ifdef __UNIX__
     mov eax,-1
 else
     .ifd ( _get_osfhandle(ecx) != -1 )
-
         mov rcx,rax
         .ifd !GetFileTime(rcx, 0, 0, &FileTime)
-
             _dosmaperr( GetLastError() )
         .else
             FileTimeToTime(&FileTime)
@@ -36,7 +31,6 @@ else
     .endif
 endif
     ret
-
-getftime endp
+    endp
 
     end

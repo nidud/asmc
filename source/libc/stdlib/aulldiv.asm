@@ -119,7 +119,7 @@ else
     pop     ebp
     jmp     .1
 endif
-aulldiv endp
+    endp
 
 ifndef _WIN64
 _aulldiv::
@@ -132,5 +132,4 @@ _aulldiv::
     pop     ebx
     ret     16
 endif
-
     end

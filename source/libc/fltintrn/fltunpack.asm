@@ -50,7 +50,6 @@ else
     pop     esi
 endif
     ret
-
-_fltunpack endp
+    endp
 
     end

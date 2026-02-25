@@ -42,7 +42,6 @@ XMVectorTanEst proc XM_CALLCONV V:FXMVECTOR
 
     XMVectorMultiply(N, D)
     ret
-
-XMVectorTanEst endp
+    endp
 
     end

@@ -11,9 +11,7 @@ doexit proto :int_t, :int_t, :int_t
     .code
 
 _c_exit proc
-
     doexit(0, 1, 1) ; quick term, return to caller
-
-_c_exit endp
+    endp
 
     end

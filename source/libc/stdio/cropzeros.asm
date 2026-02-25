@@ -14,13 +14,10 @@ _cropzeros proc uses rbx buffer:string_t
     ldr rbx,buffer
 
     .for ( rax = rbx, cl = [rbx] : cl && cl != '.' : )
-
         inc rbx
         mov cl,[rbx]
     .endf
-
     .if ( cl )
-
         .for ( rbx++, cl = [rbx] : cl && cl != 'e' && cl != 'E' : )
             inc rbx
             mov cl,[rbx]
@@ -42,7 +39,6 @@ _cropzeros proc uses rbx buffer:string_t
         mov [rbx],cl
     .endif
     ret
-
-_cropzeros endp
+    endp
 
     end

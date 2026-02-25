@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorSplatInfinity proc XM_CALLCONV
-
     _mm_store_ps(xmm0, g_XMInfinity)
     ret
-
-XMVectorSplatInfinity endp
+    endp
 
     end

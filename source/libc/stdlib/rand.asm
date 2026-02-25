@@ -12,15 +12,12 @@ include stdlib.inc
     .code
 
 srand proc seed:uint_t
-
     ldr ecx,seed
     mov holdrand,ecx
     ret
-
-srand endp
+    endp
 
 rand proc
-
     mov eax,214013
     mul holdrand
     add eax,2531011
@@ -28,7 +25,6 @@ rand proc
     shr eax,16
     and eax,0x7fff
     ret
-
-rand endp
+    endp
 
     end

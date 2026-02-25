@@ -12,7 +12,6 @@ include tchar.inc
     .code
 
 _i64tot proc val:int64_t, buffer:tstring_t, radix:int_t
-
 ifdef _WIN64
 ifdef __UNIX__
     xor ecx,ecx
@@ -36,7 +35,6 @@ else
     _txtoa( val, buffer, radix, eax )
 endif
     ret
-
-_i64tot endp
+    endp
 
     end

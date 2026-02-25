@@ -12,14 +12,10 @@ include tchar.inc
 .code
 
 _vsctprintf proc format:tstring_t, argptr:ptr
-
   local o:_iobuf
-
     ldr rcx,format
     ldr rdx,argptr
-
     .if ( rcx == NULL )
-
         .return( _set_errno( EINVAL ) )
     .endif
     xor eax,eax
@@ -29,7 +25,6 @@ _vsctprintf proc format:tstring_t, argptr:ptr
     mov o._base,rax
     _toutput(&o, rcx, rdx)
     ret
-
-_vsctprintf endp
+    endp
 
     end

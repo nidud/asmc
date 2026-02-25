@@ -53,15 +53,13 @@ OutputDataBytes macro x, y
 
 
 AsmerrSymName proc fastcall error:int_t, sym:asym_t
-
     lea rax,@CStr("")
     .if rdx
         mov rax,[rdx].asym.name
     .endif
     asmerr( ecx, rax )
     ret
-
-AsmerrSymName endp
+    endp
 
 
     assume rbx:token_t, rdi:asym_t
@@ -196,8 +194,7 @@ InitializeArray proc __ccall uses rsi rdi rbx f:asym_t, pi:ptr int_t, tokenarray
         .endif
     .endif
     .return( rc )
-
-InitializeArray endp
+    endp
 
 
 ; initialize a STRUCT/UNION/RECORD data item
@@ -440,9 +437,7 @@ endif
             .endif
         .endif
     .endf
-
     .if ( [rsi].asym.typekind == TYPE_RECORD )
-
         mov al,[rsi].asym.mem_type
         mov ecx,4
         .switch pascal al
@@ -456,7 +451,6 @@ endif
             SetCurrOffset( CurrSeg, ecx, TRUE, TRUE )
         .endif
     .endif
-
     .if ( [rbx].token != T_FINAL )
         asmerr( 2036, [rbx].tokpos )
     .endif
@@ -467,9 +461,8 @@ endif
     mov rax,oldend
     add rax,StringBuffer
     mov StringBufferEnd,rax
-   .return( NOT_ERROR )
-
-InitStructuredVar endp
+    .return( NOT_ERROR )
+    endp
 
 
 ;
@@ -494,8 +487,7 @@ little_endian proc fastcall uses rbx src:string_t, len:dword
         mov [rbx],al
     .endif
     .return( StringBufferEnd )
-
-little_endian endp
+    endp
 
 
 output_float proc __ccall uses rsi opnd:ptr expr, size:dword
@@ -505,12 +497,9 @@ output_float proc __ccall uses rsi opnd:ptr expr, size:dword
 
   local i:int_t
   local buffer[32]:char_t
-
     assume rsi:ptr expr
     ldr rsi,opnd
-
     .if ( [rsi].mem_type != MT_REAL16 )
-
         tmemset( &buffer, 0, sizeof( buffer ) )
         SizeFromMemtype( [rsi].mem_type, USE_EMPTY, NULL )
         .if ( eax > size )
@@ -526,8 +515,7 @@ output_float proc __ccall uses rsi opnd:ptr expr, size:dword
         OutputDataBytes( &[rsi].chararray, size )
     .endif
     ret
-
-output_float endp
+    endp
 
     assume rsi:nothing, rdi:nothing
 
@@ -1368,7 +1356,6 @@ item_done:
             .endif
         .endif
     .endf
-
     mov rcx,sym
     .if ( rcx && Parse_Pass == PASS_1 )
         mov eax,total
@@ -1376,12 +1363,10 @@ item_done:
         mul no_of_bytes
         add [rcx].asym.total_size,eax
     .endif
-
     mov rcx,start_pos
     mov [rcx],i
-   .return( NOT_ERROR )
-
-data_item endp
+    .return( NOT_ERROR )
+    endp
 
 
 checktypes proc __ccall sym:asym_t, mem_type:byte, type_sym:asym_t
@@ -1410,8 +1395,7 @@ checktypes proc __ccall sym:asym_t, mem_type:byte, type_sym:asym_t
         .endif
     .endif
     .return( NOT_ERROR )
-
-checktypes endp
+    endp
 
 
 ;
@@ -1705,7 +1689,6 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t, type_sym:asy
             is_float, TRUE, TokenCount ) == ERROR )
         .return
     .endif
-
     imul ebx,i,asm_tok
     add rbx,tokenarray
     .if ( [rbx].token != T_FINAL )
@@ -1717,7 +1700,6 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t, type_sym:asy
     .if ( CurrStruct )
         UpdateStructSize( rsi )
     .endif
-
     .if ( MODULE.list )
         mov ecx,LSTTYPE_DATA
         .if ( CurrStruct )
@@ -1726,7 +1708,6 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t, type_sym:asy
         LstWrite( ecx, currofs, rsi )
     .endif
     .return( NOT_ERROR )
-
-data_dir endp
+    endp
 
     end

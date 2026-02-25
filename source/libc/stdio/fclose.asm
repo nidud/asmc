@@ -10,9 +10,7 @@ include stdio.inc
     .code
 
 fclose proc uses rbx fp:LPFILE
-
    .new retval:size_t
-
     ldr rcx,fp
     mov eax,[rcx]._iobuf._flag
     and eax,_IOREAD or _IOWRT or _IORW
@@ -20,23 +18,18 @@ fclose proc uses rbx fp:LPFILE
         dec rax
        .return
     .endif
-
     mov rbx,rcx
     mov retval,fflush( rcx )
     _freebuf( rbx )
-
     xor eax,eax
     mov [rbx]._iobuf._flag,eax
     mov ecx,[rbx]._iobuf._file
     dec eax
     mov [rbx]._iobuf._file,eax
-
     .ifd ( _close( ecx ) == 0 )
-
         mov rax,retval
     .endif
     ret
-
-fclose endp
+    endp
 
     end

@@ -74,7 +74,6 @@ XMScalarSinCos proc XM_CALLCONV pSin:ptr float, pCos:ptr float, Value:float
         _mm_store_ss([rdx], xmm1)
     .endif
     ret
-
-XMScalarSinCos endp
+    endp
 
     end

@@ -14,7 +14,6 @@ XMStoreFloat4 proc XM_CALLCONV pDestination:ptr XMFLOAT4, V:FXMVECTOR
 
     _mm_storeu_ps([rcx], xmm1)
     ret
-
-XMStoreFloat4 endp
+    endp
 
     end

@@ -36,7 +36,6 @@ XMLoadDec4 proc XM_CALLCONV pSource:ptr XMDEC4
 
     _mm_mul_ps(xmm0, g_XMMulDec4)
     ret
-
-XMLoadDec4 endp
+    endp
 
     end

@@ -17,7 +17,6 @@ XMVectorSaturate proc XM_CALLCONV V:FXMVECTOR
     ;;
     _mm_min_ps(xmm0, g_XMOne)
     ret
-
-XMVectorSaturate endp
+    endp
 
     end

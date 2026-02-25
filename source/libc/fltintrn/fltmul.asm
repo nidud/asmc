@@ -11,7 +11,6 @@ include fltintrn.inc
     option dotname
 
 _fltmul proc __ccall uses rsi rdi rbx a:ptr STRFLT, b:ptr STRFLT
-
 ifdef _WIN64
     mov     r10,rcx
     mov     rbx,[rdx].STRFLT.mantissa.l
@@ -50,7 +49,6 @@ ifndef _WIN64
     or      ecx,edi
 endif
     jz      .zero_a
-
 .if_zero_b:
 ifdef _WIN64
     mov     rcx,rbx
@@ -65,9 +63,7 @@ else
     pop     eax
 endif
     jz      .zero_b
-
 .calculate_exponent:
-
     mov     ecx,esi
     rol     ecx,16
     sar     ecx,16
@@ -82,7 +78,6 @@ endif
 .too_small:
     cmp     si,-65
     jl      .underflow
-
 ifdef _WIN64
     mov     rcx,rbx
     mov     r11,rdi
@@ -108,10 +103,8 @@ ifdef _WIN64
     adc     r11,0
     mov     rax,rcx
     mov     rdx,r11
-
     test    rdx,rdx
     js      .rounding
-
     add     rbx,rbx
     adc     rax,rax
     adc     rdx,rdx
@@ -120,7 +113,6 @@ else
     mov     multiplier[0x4],edx
     mov     multiplier[0x8],ebx
     mov     multiplier[0xC],edi
-
     mov     ecx,b
     mul     dword ptr [ecx+0x0]
     mov     result[0x0],eax
@@ -197,11 +189,8 @@ else
     adc     ebx,ebx
     adc     edi,edi
 endif
-
     dec     si
-
 .rounding:
-
 ifdef _WIN64
     add     rbx,rbx
     adc     rax,0
@@ -213,16 +202,12 @@ else
     adc     ebx,0
     adc     edi,0
 endif
-
 .validate:
-
     test    si,si
     jng     .zero
     add     esi,esi
     rcr     si,1
-
 .done:
-
 ifdef _WIN64
     mov     [r10].STRFLT.mantissa.l,rax
     mov     [r10].STRFLT.mantissa.h,rdx
@@ -238,7 +223,6 @@ else
     mov     eax,ecx
 endif
     ret
-
 .zero_a:
     add     si,si
     jz      .is_zero_a
@@ -250,7 +234,6 @@ endif
     jz      .zero
     mov     esi,0x8000
     jmp     .done
-
 .zero_b:
     test    esi,0x7FFF0000
     jnz     .calculate_exponent
@@ -258,7 +241,6 @@ endif
     jz      .zero
     mov     esi,0x80000000
     jmp     .b
-
 .nan:
     mov     esi,0xFFFF
 ifdef _WIN64
@@ -271,9 +253,7 @@ else
 endif
     xor     eax,eax
     jmp     .done
-
 .overflow:
-
 .infinity:
     mov     esi,0x7FFF
 .0:
@@ -284,19 +264,15 @@ ifndef _WIN64
     xor     edi,edi
 endif
     jmp     .done
-
 .underflow:
-
 .zero:
     xor     esi,esi
     jmp     .0
-
 .b:
     mov     rax,rbx
     mov     rdx,rdi
     shr     esi,16
     jmp     .done
-
 .nan_a:
     dec     si
     add     esi,0x10000
@@ -337,7 +313,6 @@ endif
     xor     esi,ecx
     and     esi,0x80000000
     jmp     .b
-
-_fltmul endp
+    endp
 
     end

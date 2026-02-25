@@ -26,7 +26,6 @@ XMLoadU565 proc XM_CALLCONV pSource:ptr XMU565
     cvtsi2ss xmm1,edx
     shufps   xmm0,xmm1,01000100B
     ret
-
-XMLoadU565 endp
+    endp
 
     end

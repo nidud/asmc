@@ -25,7 +25,6 @@ XMVectorGreaterOrEqualR proc XM_CALLCONV pCR:ptr uint32_t, V1:FXMVECTOR, V2:FXMV
     .endif
     mov [rcx],edx
     ret
-
-XMVectorGreaterOrEqualR endp
+    endp
 
     end

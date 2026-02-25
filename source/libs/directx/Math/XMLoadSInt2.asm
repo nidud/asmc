@@ -16,7 +16,6 @@ XMLoadSInt2 proc XM_CALLCONV pSource:ptr XMINT2
     _mm_unpacklo_ps(xmm0, xmm1)
     _mm_cvtepi32_ps(xmm0)
     ret
-
-XMLoadSInt2 endp
+    endp
 
     end

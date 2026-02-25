@@ -11,16 +11,13 @@ include tchar.inc
     .code
 
 _tcsupr proc uses rbx string:tstring_t
-
     ldr rbx,string
     .for ( : tchar_t ptr [rbx] : rbx+=tchar_t )
-
         movzx ecx,tchar_t ptr [rbx]
         _totupper(ecx)
         mov [rbx],_tal
     .endf
     .return( string )
-
-_tcsupr endp
+    endp
 
     end

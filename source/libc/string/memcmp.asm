@@ -40,7 +40,6 @@ else
     pop     esi
 endif
     ret
-
-memcmp endp
+    endp
 
     end

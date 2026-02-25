@@ -11,9 +11,7 @@ include tchar.inc
     .code
 
 _stprintf proc string:tstring_t, format:tstring_t, argptr:VARARG
-
   local o:_iobuf
-
     ldr rcx,string
     mov o._flag,_IOWRT or _IOSTRG
     mov o._cnt,INT_MAX
@@ -23,7 +21,6 @@ _stprintf proc string:tstring_t, format:tstring_t, argptr:VARARG
     mov rcx,o._ptr
     mov tchar_t ptr [rcx],0
     ret
-
-_stprintf endp
+    endp
 
     end

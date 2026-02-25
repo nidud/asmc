@@ -16,7 +16,6 @@ XMVector3Transform proc XM_CALLCONV V:FXMVECTOR, V0:XMVECTOR, V1:XMVECTOR, V2:XM
     _mm_add_ps(xmm0, xmm5)
     _mm_add_ps(xmm0, xmm4)
     ret
-
-XMVector3Transform endp
+    endp
 
     end

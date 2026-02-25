@@ -15,19 +15,15 @@ include tchar.inc
     .code
 
 _tcsfn proc path:tstring_t
-
     ldr rcx,path
     movzx edx,tchar_t ptr [rcx]
-
     .for ( rax = rcx : edx : )
 ifdef __UNIX__
         .if ( edx == '/' )
 else
         .if ( edx == BSLASH || edx == '/' )
 endif
-
             .if ( tchar_t ptr [rcx+tchar_t] )
-
                 lea rax,[rcx+tchar_t]
             .endif
         .endif
@@ -35,7 +31,6 @@ endif
         movzx edx,tchar_t ptr [rcx]
     .endf
     ret
-
-_tcsfn endp
+    endp
 
     end

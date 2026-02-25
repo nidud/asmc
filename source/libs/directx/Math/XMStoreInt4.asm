@@ -14,7 +14,6 @@ XMStoreInt4 proc XM_CALLCONV pDestination:ptr uint32_t, V:FXMVECTOR
 
     _mm_storeu_si128([rcx], xmm1)
     ret
-
-XMStoreInt4 endp
+    endp
 
     end

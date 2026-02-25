@@ -18,11 +18,8 @@ include tchar.inc
     .code
 
 _tcsstart proc string:tstring_t
-
     ldr rax,string
-
     .for ( rdx = _pctype : : rax+=tchar_t )
-
         movzx ecx,tchar_t ptr [rax]
 ifdef _UNICODE
        .break .if ( ecx > ' ' )
@@ -30,7 +27,6 @@ endif
        .break .if !( byte ptr [rdx+rcx*2] & _SPACE )
     .endf
     ret
-
-_tcsstart endp
+    endp
 
     end

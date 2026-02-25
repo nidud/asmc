@@ -15,20 +15,17 @@ include asmc.inc
 ; VoidMangler: no change to symbol name
 
 VoidMangler proc fastcall sym:asym_t, buffer:string_t
-
     mov rdi,rdx
     mov rsi,[rcx].name
     mov eax,[rcx].name_size
     lea ecx,[rax+1]
     rep movsb
     ret
-
-VoidMangler endp
+    endp
 
 ; UCaseMangler: convert symbol name to upper case
 
 UCaseMangler proc fastcall sym:asym_t, buffer:string_t
-
     mov rdi,rdx
     mov rsi,[rcx].name
     mov eax,[rcx].name_size
@@ -38,13 +35,11 @@ UCaseMangler proc fastcall sym:asym_t, buffer:string_t
     tstrupr( rdx )
     mov rax,rsi
     ret
-
-UCaseMangler endp
+    endp
 
 ; UScoreMangler: add '_' prefix to symbol name
 
 UScoreMangler proc fastcall sym:asym_t, buffer:string_t
-
     lea rdi,[rdx+1]
     mov rsi,[rcx].name
     mov eax,[rcx].name_size
@@ -53,34 +48,28 @@ UScoreMangler proc fastcall sym:asym_t, buffer:string_t
     rep movsb
     mov byte ptr [rdx],'_'
     ret
-
-UScoreMangler endp
+    endp
 
 ; StdcallMangler: add '_' prefix and '@size' suffix to proc names
 ;                 add '_' prefix to other symbols */
 
 StdcallMangler proc fastcall sym:asym_t, buffer:string_t
-
     .if ( Options.stdcall_decoration == STDCALL_FULL && [rcx].isproc )
-
         mov rax,rdx
         mov rdx,[rcx].asym.procinfo
         .if rdx
             mov edx,[rdx].proc_info.parasize
         .endif
-
         tsprintf( rax, "_%s@%d", [rcx].name, edx )
     .else
         UScoreMangler(rcx, rdx)
     .endif
     ret
-
-StdcallMangler endp
+    endp
 
 ; MS FASTCALL 32bit
 
 ms32_decorate proc fastcall sym:asym_t, buffer:string_t
-
     .if ( [rcx].isproc )
 
         ; v2.18: don't assume all symbols are PROCs
@@ -95,8 +84,7 @@ ms32_decorate proc fastcall sym:asym_t, buffer:string_t
         UScoreMangler(rcx, rdx)
     .endif
     ret
-
-ms32_decorate endp
+    endp
 
 ; flag values used by the OW fastcall name mangler ( changes )
 .enum changes
@@ -109,7 +97,6 @@ ms32_decorate endp
 ;  add '_' prefix to other symbols
 
 ow_decorate proc fastcall sym:asym_t, buffer:string_t
-
     mov eax,NORMAL
     .if [rcx].isproc
         or eax,USCORE_BACK
@@ -141,24 +128,20 @@ ow_decorate proc fastcall sym:asym_t, buffer:string_t
     sub rdi,rdx
     mov rax,rdi
     ret
-
-ow_decorate endp
+    endp
 
 ; MS FASTCALL 64bit
 
 ms64_decorate proc fastcall sym:asym_t, buffer:string_t
-
     mov rdi,rdx
     mov rsi,[rcx].name
     mov eax,[rcx].name_size
     lea ecx,[rax+1]
     rep movsb
     ret
-
-ms64_decorate endp
+    endp
 
 vect_decorate proc fastcall sym:asym_t, buffer:string_t
-
     mov rdi,rdx
     mov rsi,rcx
     mov eax,1
@@ -179,8 +162,7 @@ vect_decorate proc fastcall sym:asym_t, buffer:string_t
         tsprintf( rdi, "%s@@%u", [rcx].name, edx )
     .endif
     ret
-
-vect_decorate endp
+    endp
 
     option proc:public
 
@@ -188,7 +170,6 @@ Mangle proc __ccall uses rsi rdi sym:asym_t, buffer:string_t
 
     ldr rcx,sym
     ldr rdx,buffer
-
     mov al,[rcx].langtype
     and eax,0x0F
     .switch eax
@@ -220,22 +201,18 @@ Mangle proc __ccall uses rsi rdi sym:asym_t, buffer:string_t
         .return( vect_decorate( rcx, rdx ) )
     .endsw
     .return( VoidMangler( rcx, rdx ) )
-
-Mangle endp
+    endp
 
 ; the "mangle_type" is an extension inherited from OW Wasm
 ; accepted are "C" and "N". It's NULL if MANGLESUPP == 0 (standard)
 
 SetMangler proc __ccall sym:asym_t, langtype:int_t, mangle_type:string_t
-
     ldr edx,langtype
     .if ( edx != LANG_NONE )
-
         ldr rcx,sym
         mov [rcx].langtype,dl
     .endif
     ret
-
-SetMangler endp
+    endp
 
     end

@@ -16,7 +16,6 @@ endif
     option dotname
 
 wmemcpy proc dst:ptr, src:ptr, size:size_t
-
 ifdef _WIN64
 ifdef __UNIX__
     mov     rax,rdi
@@ -58,16 +57,12 @@ else
     pop     esi
 endif
     ret
-
-wmemcpy endp
+    endp
 
 ifdef __UNIX__
 wmemmove proc dst:ptr, src:ptr, size:size_t
-
     wmemcpy( ldr(dst), ldr(src), ldr(size) )
     ret
-
-wmemmove endp
+    endp
 endif
-
     end

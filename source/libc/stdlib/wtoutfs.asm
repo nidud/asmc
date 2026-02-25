@@ -12,10 +12,8 @@ include stdlib.inc
     option dotname
 
 _wtoutfs proc uses rsi rdi rbx buffer:string_t, wstring:wstring_t
-
     ldr     rdi,buffer
     ldr     rsi,wstring
-
     xor     eax,eax
 .0:
     lodsw
@@ -57,7 +55,6 @@ _wtoutfs proc uses rsi rdi rbx buffer:string_t, wstring:wstring_t
     jz      .0
     stosb
     jmp     .0
-
-_wtoutfs endp
+    endp
 
     end

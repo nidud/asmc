@@ -94,8 +94,7 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
         BackPatch(rcx)
     .endif
     ret
-
-SetValue endp
+    endp
 
 ; the '=' directive defines an assembly time variable.
 ; this can only be a number (constant or relocatable).
@@ -273,8 +272,7 @@ check_float:
         SetValue( rdi, &opnd )
     .endif
     .return( rdi )
-
-CreateAssemblyTimeVariable endp
+    endp
 
 
 ; '=' directive.
@@ -294,8 +292,7 @@ EqualSgnDirective proc __ccall i:int_t, tokenarray:token_t
         .return NOT_ERROR
     .endif
     .return( ERROR )
-
-EqualSgnDirective endp
+    endp
 
 
 ; CreateVariable().
@@ -339,9 +336,8 @@ CreateVariable proc __ccall uses rdi name:string_t, value:int_t
     mov [rdi].isequate,1
     mov [rdi].state,SYM_INTERNAL
     mov [rdi].value,value
-   .return(rdi)
-
-CreateVariable endp
+    .return(rdi)
+    endp
 
 
 ; CreateConstant()
@@ -599,8 +595,7 @@ endif
     .endif
     SetTextMacro(rbx, rdi, name, &argbuffer)
     ret
-
-CreateConstant endp
+    endp
 
     assume rsi:nothing
 
@@ -630,7 +625,6 @@ EquDirective proc __ccall i:int_t, tokenarray:token_t
         .return NOT_ERROR
     .endif
     .return( ERROR )
-
-EquDirective endp
+    endp
 
     end

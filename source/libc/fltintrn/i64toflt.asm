@@ -9,9 +9,7 @@ include fltintrn.inc
     .code
 
 _i64toflt proc __ccall p:ptr STRFLT, ll:int64_t
-
 ifdef _WIN64
-
     mov rax,rdx
     mov rdx,rcx
     mov r8d,Q_EXPBIAS   ; set exponent
@@ -33,15 +31,11 @@ ifdef _WIN64
     mov [rdx].STRFLT.mantissa.h,rax
     mov [rdx].STRFLT.mantissa.e,r9w
     mov rax,rdx
-
 else
-
     push ebx
-
     mov eax,dword ptr ll[0]
     mov edx,dword ptr ll[4]
     mov ebx,Q_EXPBIAS   ; set exponent
-
     test edx,edx        ; if number is negative
     .ifs
         neg edx         ; negate number
@@ -49,21 +43,17 @@ else
         sbb edx,0
         or  ebx,0x8000
     .endif
-
     xor ecx,ecx
     .if ( eax || edx )
-
         .if edx         ; find most significant non-zero bit
             bsr ecx,edx
             add ecx,32
         .else
             bsr ecx,eax
         .endif
-
         mov ch,cl
         mov cl,64
         sub cl,ch
-
         .if ( cl <= 64 ) ; shift bits into position
             dec cl
             .if ( cl >= 32 )
@@ -80,7 +70,6 @@ else
         shr ecx,8       ; get shift count
         add ecx,ebx     ; calculate exponent
     .endif
-
     mov     ebx,p
     xchg    eax,ebx
     mov     dword ptr [eax].STRFLT.mantissa.h[0],ebx
@@ -92,7 +81,6 @@ else
     pop     ebx
 endif
     ret
-
-_i64toflt endp
+    endp
 
     end

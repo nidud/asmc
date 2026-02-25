@@ -8,12 +8,10 @@ include DirectXMath.inc
     .code
 
 XMVectorReciprocal proc XM_CALLCONV V:FXMVECTOR
-
     _mm_store_ps(xmm1, xmm0)
     _mm_store_ps(xmm0, g_XMOne)
     _mm_div_ps(xmm0, xmm1)
     ret
-
-XMVectorReciprocal endp
+    endp
 
     end

@@ -16,7 +16,6 @@ XMMatrixScalingFromVector proc XM_CALLCONV Scale:FXMVECTOR
     _mm_and_ps(xmm2, g_XMMaskZ)
     _mm_store_ps(xmm3, g_XMIdentityR3.v)
     ret
-
-XMMatrixScalingFromVector endp
+    endp
 
     end

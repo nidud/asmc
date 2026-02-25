@@ -16,11 +16,9 @@ NameSpace proc watcall uses rsi rdi rbx Name:string_t, retval:string_t
 
     mov rsi,MODULE.NspStack
     .if ( rsi || rax != rdx )
-
        .new buffer[256]:char_t
         mov rdi,rdx ; retval
         mov rbx,rax ; name
-
         .if ( !rdi || rdi == rax )
             lea rdi,buffer
         .endif
@@ -40,9 +38,7 @@ NameSpace proc watcall uses rsi rdi rbx Name:string_t, retval:string_t
         .endif
     .endif
     ret
-
-NameSpace endp
-
+    endp
 
     assume rbx:token_t
 
@@ -50,18 +46,13 @@ NameSpaceDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
     ldr rbx,tokenarray
     mov rsi,MODULE.NspStack
-
     .if ( [rbx].tokval == T_DOT_ENDN )
-
         .if ( rsi == NULL )
             .return asmerr( 1011 )
         .endif
-
         mov rcx,[rsi].next
         .if ( rcx )
-
             .while ( [rcx].nsp_item.next )
-
                 mov rcx,[rcx].nsp_item.next
                 mov rsi,[rsi].next
             .endw
@@ -71,27 +62,20 @@ NameSpaceDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
         .endif
         .return NOT_ERROR
     .endif
-
     mov rsi,LclAlloc( &[tstrlen( [rbx+asm_tok].string_ptr ) + nsp_item + 1] )
     mov [rsi].name,&[rax+nsp_item]
     tstrcpy( [rsi].name, [rbx+asm_tok].string_ptr )
-
     .if ( MODULE.NspStack == NULL )
-
         mov MODULE.NspStack,rsi
-
     .else
-
         mov rax,rsi
         mov rsi,MODULE.NspStack
-
         .while ( [rsi].next )
             mov rsi,[rsi].next
         .endw
         mov [rsi].next,rax
     .endif
     .return NOT_ERROR
-
-NameSpaceDirective endp
+    endp
 
     end

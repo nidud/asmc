@@ -16,7 +16,6 @@ XMMatrixRotationY proc XM_CALLCONV Scale:float
     _mm_store_ps(xmm1, g_XMIdentityR1)
     _mm_store_ps(xmm3, g_XMIdentityR3)
     ret
-
-XMMatrixRotationY endp
+    endp
 
     end

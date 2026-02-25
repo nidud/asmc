@@ -18,10 +18,8 @@ include lqueue.inc
     .code
 
 tstrtrim proc fastcall private uses rbx string:string_t
-
     mov rbx,rcx
     .if tstrlen( rcx )
-
         mov ecx,eax
         add rcx,rbx
         .while 1
@@ -33,35 +31,27 @@ tstrtrim proc fastcall private uses rbx string:string_t
         .endw
     .endif
     ret
-
-tstrtrim endp
+    endp
 
 
 GetCondition proc fastcall private uses rbx string:ptr sbyte
-
     mov al,[rcx]
-
     .while al == ' ' || al == 9
         inc rcx
         mov al,[rcx]
     .endw
-
     mov rbx,rcx
     xor edx,edx
-
     .while 1
-
         mov al,[rcx]
         .switch al
           .case 0   : .break
           .case '(' : inc edx : .endc
           .case ')' : dec edx : .endc
           .case ',' : .endc .if edx
-
             mov [rcx],dl
             mov al,[rcx-1]
             .if ( al == ' ' || al == 9 )
-
                 mov [rcx-1],dl
             .endif
             inc rcx
@@ -72,23 +62,20 @@ GetCondition proc fastcall private uses rbx string:ptr sbyte
             .endw
             mov rdx,rbx
             .if ( BYTE PTR [rdx] == 0 && al )
-
                 mov rbx,rcx
                 xor edx,edx
                 .continue(0)
             .endif
             .break
         .endsw
-
         inc rcx
     .endw
-
     mov rdx,rbx
     movzx eax,BYTE PTR [rdx]
     ret
+    endp
 
-GetCondition ENDP
-
+    assume rbx:token_t, rsi:token_t
 
 ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarray:token_t
 
@@ -96,21 +83,15 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
 
     ldr rdi,buffer
     ldr rbx,tokenarray
-
-    assume rbx:token_t, rsi:token_t
-
     mov rdx,[rbx].string_ptr
     mov cl,[rbx].token
     mov ch,[rbx+asm_tok].token
     mov eax,[rdx]
-
     mov bracket,0
     .if ( cl == T_OP_SQ_BRACKET )
         inc bracket
     .endif
-
     .repeat
-
         xor esi,esi
         .switch
         .case ( al == '~' )
@@ -136,7 +117,6 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
             imul esi,ecx,asm_tok
             add rsi,rbx
             mov dl,[rsi].token
-
             .switch
             .case dl == T_OP_SQ_BRACKET
                 inc bracket
@@ -145,23 +125,18 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
                 dec bracket
             .case bracket
                .endc
-
             .case dl == '+'
             .case dl == '-'
             .case dl == '&'
             .case [rsi].tokval == T_EQU && [rsi].dirtype == DRT_EQUALSGN
-
                 mov rax,[rsi].tokpos
                 mov dl,[rax]
                 mov dh,[rsi+asm_tok].token
                 mov rcx,[rsi+asm_tok].tokpos
                .break
-
             .case dl == T_STRING
-
                 mov rdx,[rsi].string_ptr
                 mov edx,[rdx]
-
                 .switch dl
                 .case 0 ; <>
                     mov rax,[rsi].tokpos
@@ -187,15 +162,12 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
                 .endsw
             .endsw
         .endf
-
         .if ( !eax )
             asmerr( 2008, [rbx].tokpos )
             xor eax,eax
            .break
         .endif
-
         .switch dl
-
         .case 0 ; reg <> val
             mov eax,MODULE.curr_cpu
             and eax,P_CPU_MASK
@@ -206,7 +178,6 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
                 tsprintf( rdi, "%r %r\n%r %r, %s\n%r", T_DOT_IF, edx, T_MOV, edx, rcx, T_DOT_ENDIF )
             .endif
            .break
-
         .case '='
             mov byte ptr [rax],0
             .if dh == '&'
@@ -229,7 +200,6 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
                 .endif
             .endif
             .break
-
         .case '|'
             .endc .if dh != '='
             mov byte ptr [rax],0
@@ -262,7 +232,6 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
             mov byte ptr [rax],0
             tsprintf( rdi, "%r %s, %s", T_SHL, [rbx].tokpos, rcx )
            .break
-
         .case '+'
             .if dh == '+'
                 mov byte ptr [rax],0
@@ -290,10 +259,8 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
         xor eax,eax
     .until 1
     ret
-
+    endp
     assume rbx:nothing, rsi:nothing
-
-ParseAssignment endp
 
 
 RenderAssignment proc __ccall private uses rsi rdi rbx dest:string_t, source:string_t, tokenarray:token_t
@@ -307,20 +274,15 @@ RenderAssignment proc __ccall private uses rsi rdi rbx dest:string_t, source:str
     ; <expression1>, <expression2>, ..., [: | 0]
     ;
     .while GetCondition( rdi )
-
         mov rbx,rcx ; next expression
         mov rdi,rdx ; this expression
         Tokenize( tstrcpy( &tokbuf, rdi ), 0, tokenarray, TOK_DEFAULT )
         mov TokenCount,eax
-
         .break .ifd ExpandHllProc( rsi, 0, tokenarray ) == ERROR
-
         .if ( byte ptr [rsi] ) ; function calls expanded
-
             tstrcat( tstrcat( dest, rsi ), "\n" )
             mov byte ptr [rsi],0
         .endif
-
         .break .if !ParseAssignment( rsi, tokenarray )
         tstrcat( tstrcat( dest, rsi ), "\n" )
         mov rdi,rbx
@@ -328,8 +290,7 @@ RenderAssignment proc __ccall private uses rsi rdi rbx dest:string_t, source:str
     mov rax,dest
     movzx eax,byte ptr [rax]
     ret
-
-RenderAssignment endp
+    endp
 
 
     assume  rbx:token_t, rsi:ptr hll_item
@@ -352,24 +313,19 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov  eax,[rbx+rax].tokval
     mov  cmd,eax
     inc  i
-
     .if ( eax == T_DOT_ENDF )
-
         mov rsi,MODULE.HllStack
         .if !rsi
             .return asmerr( 1011 )
         .endif
-
         mov rdx,[rsi].next
         mov rcx,MODULE.HllFree
         mov MODULE.HllStack,rdx
         mov [rsi].next,rcx
         mov MODULE.HllFree,rsi
-
         .if ( [rsi].cmd != HLL_FOR )
             .return asmerr( 1011 )
         .endif
-
         mov eax,[rsi].labels[LTEST*4]
         .if eax
             AddLineQueueX( "%s%s", GetLabelStr( eax, rdi ), LABELQUAL )
@@ -387,22 +343,18 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( [rbx].token != T_FINAL && rc == NOT_ERROR )
             mov rc,asmerr( 2008, [rbx].tokpos )
         .endif
-
     .else
-
         mov rsi,MODULE.HllFree
         .if !rsi
             mov rsi,LclAlloc(hll_item)
         .endif
         ExpandCStrings( tokenarray )
-
         xor eax,eax
         mov [rsi].flags,eax
         mov [rsi].labels[LEXIT*4],eax
         .if ( cmd == T_DOT_FORS )
             mov [rsi].Signed,1
         .endif
-
         mov [rsi].cmd,HLL_FOR
 
         ; create the loop labels
@@ -410,7 +362,6 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov [rsi].labels[LSTART*4],GetHllLabel()
         mov [rsi].labels[LTEST*4],GetHllLabel()
         mov [rsi].labels[LEXIT*4],GetHllLabel()
-
         imul eax,i,asm_tok
         add rbx,rax
         .if ( [rbx].token == T_OP_BRACKET )
@@ -422,9 +373,7 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         tstrcpy( rdi, [rbx].tokpos )
         .for ( ecx = 0, rdx = rbx : [rbx].token != T_FINAL : rbx += asm_tok )
-
             .if ( [rbx].token == T_COLON || [rbx].token == T_DBL_COLON )
-
                 .if ( [rbx].token != T_DBL_COLON && [rbx-asm_tok].token == T_REG )
                     .if ( GetValueSp([rbx-asm_tok].tokval) & OP_SR )
                         .continue .if ( [rbx+asm_tok].token == T_OP_SQ_BRACKET || [rbx+asm_tok].token == T_ID )
@@ -476,16 +425,12 @@ dbl_colon:
         mov rbx,rdx
         tstrtrim( rax )
         tstrtrim( p )
-
         .if ( [rbx-asm_tok].token == T_OP_BRACKET )
-
             .if tstrrchr( q, ')' )
-
                 mov BYTE PTR [rax],0
                 tstrtrim(q)
             .endif
         .endif
-
         lea rbx,cmdstr
         mov BYTE PTR [rbx],0
         .if RenderAssignment( rbx, rdi, tokenarray )
@@ -493,23 +438,18 @@ dbl_colon:
         .endif
         AddLineQueueX("%s%s",
                 GetLabelStr( [rsi].labels[LSTART*4], &buff ), LABELQUAL )
-
         mov BYTE PTR [rbx],0
         mov [rsi].condlines,0
-
         .if ( RenderAssignment(rbx, q, tokenarray) )
             mov [rsi].condlines,LclDup(rbx)
         .endif
-
         mov rdi,p
         mov BYTE PTR [rbx],0
         .while GetCondition(rdi)
-
             mov q,rcx
             mov rdi,rdx
             Tokenize( tstrcat( tstrcpy(&tokbuf, ".if " ), rdi ), 0, tokenarray, TOK_DEFAULT )
             mov TokenCount,eax
-
             mov i,1
             EvaluateHllExpression( rsi, &i, tokenarray, LEXIT, 0, rbx )
             mov rc,eax
@@ -518,7 +458,6 @@ dbl_colon:
             .endif
             mov rdi,q
         .endw
-
         .if ( rsi == MODULE.HllFree )
             mov rax,[rsi].next
             mov MODULE.HllFree,rax
@@ -527,7 +466,6 @@ dbl_colon:
         mov [rsi].next,rax
         mov MODULE.HllStack,rsi
     .endif
-
     .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
@@ -535,7 +473,6 @@ dbl_colon:
         RunLineQueue()
     .endif
     .return( rc )
-
-ForDirective endp
+    endp
 
     END

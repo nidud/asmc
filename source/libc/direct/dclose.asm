@@ -12,12 +12,9 @@ include malloc.inc
     assume rbx:PDIRENT
 
 _dclose proc uses rbx d:PDIRENT
-
     ldr rbx,d
-
     _dfree(rbx)
     .if ( [rbx].flags & _D_MALLOC )
-
         free(rbx)
     .else
         free([rbx].path)
@@ -25,7 +22,6 @@ _dclose proc uses rbx d:PDIRENT
     .endif
     xor eax,eax
     ret
-
-_dclose endp
+    endp
 
     end

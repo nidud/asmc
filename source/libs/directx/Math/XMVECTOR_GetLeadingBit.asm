@@ -54,7 +54,6 @@ XMVECTOR_GetLeadingBit proc vectorcall this:XMVECTOR
     _mm_srli_epi32(xmm1, 1)
     _mm_or_si128(xmm0, xmm1)
     ret
-
-XMVECTOR_GetLeadingBit endp
+    endp
 
     end

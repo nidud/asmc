@@ -57,33 +57,26 @@ undef res
 ; should never be called
 
 StubDir proc __ccall i:int_t, tokenarray:token_t
-
     mov eax,ERROR
     ret
-
-StubDir endp
+    endp
 
 
 ; handle ECHO directive.
 ; displays text on the console
 
 EchoDirective proc __ccall i:int_t, tokenarray:token_t
-
     .if ( Parse_Pass == PASS_1 ) ; display in pass 1 only
-
         .if ( Options.preprocessor_stdout == FALSE ) ; don't print to stdout if -EP is on!
-
             ldr  ecx,i
             ldr  rdx,tokenarray
             imul ecx,ecx,asm_tok
-
             tprintf( "%s\n", [rdx+rcx+asm_tok].asm_tok.tokpos )
         .endif
     .endif
     mov eax,NOT_ERROR
     ret
-
-EchoDirective endp
+    endp
 
 
 IncludeLibrary proc __ccall uses rsi rbx name:string_t
@@ -111,8 +104,7 @@ IncludeLibrary proc __ccall uses rsi rbx name:string_t
     QEnqueue( &MODULE.LibQueue, rbx )
     lea rax,[rbx].qitem.value
     ret
-
-IncludeLibrary endp
+    endp
 
 
     assume rbx:token_t
@@ -130,7 +122,6 @@ IncludeDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
     .if ( CurrFile[TLST] )
         LstWriteSrcLine()
     .endif
-
     inc  i ; skip directive
     imul edx,i,asm_tok
     add  rdx,rbx
@@ -138,16 +129,13 @@ IncludeDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
     ; v2.03: allow plain numbers as file name argument
 
     .if ( [rdx].asm_tok.token == T_FINAL )
-
         .return asmerr( 1017 )
     .endif
 
     ; if the filename is enclosed in <>, just use this literal
 
     .if ( [rdx].asm_tok.token == T_STRING && [rdx].asm_tok.string_delim == '<' )
-
         .if ( [rdx+asm_tok].asm_tok.token != T_FINAL )
-
             .return( asmerr(2008, [rdx+asm_tok].asm_tok.tokpos ) )
         .endif
         mov rcx,[rdx].asm_tok.string_ptr
@@ -158,9 +146,7 @@ IncludeDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
         mov  rcx,[rdx].asm_tok.tokpos
         imul eax,TokenCount,asm_tok
-
         .for ( rdx = [rbx+rax].tokpos, rdx-- : rdx > rcx : rdx-- )
-
             .break .if !islspace( [rdx] )
             mov [rdx],ah
         .endf
@@ -175,22 +161,19 @@ endif
         ProcessFile( rbx ) ; v2.11: process the file synchronously
     .endif
     .return( NOT_ERROR )
-
-IncludeDirective endp
+    endp
 
 
 ; INCLUDELIB directive.
 
 IncludeLibDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
-
     .if ( Parse_Pass != PASS_1 || Options.nolib )
-
+        ;
         ; skip directive
         ; do all work in pass 1
-
+        ;
         .return( NOT_ERROR )
     .endif
-
     ldr ecx,i
     ldr rbx,tokenarray
 
@@ -207,12 +190,10 @@ IncludeLibDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
     .endif
 
     .if ( [rbx+rcx].token == T_STRING && [rbx+rcx].string_delim == '<' )
-
         .if ( [rbx+rcx+asm_tok].token != T_FINAL )
             .return asmerr( 2008, [rbx+rcx+asm_tok].tokpos )
         .endif
         mov rcx,[rbx+rcx].string_ptr
-
     .else
 
         ; regard "everything" behind INCLUDELIB as the library name
@@ -222,18 +203,14 @@ IncludeLibDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
         ; remove trailing white spaces
 
         imul eax,TokenCount,asm_tok
-
         .for ( rdx = [rbx+rax].tokpos, rdx-- : rdx > rcx : rdx-- )
-
             .break .if !islspace( [rdx] )
             mov [rdx],ah
         .endf
     .endif
-
     IncludeLibrary(rcx)
-   .return( NOT_ERROR )
-
-IncludeLibDirective endp
+    .return( NOT_ERROR )
+    endp
 
 
 ; INCBIN directive
@@ -249,25 +226,20 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     add  rbx,rax
 
     .if ( [rbx].token == T_FINAL )
-
         .return asmerr( 1017 )
     .endif
-
     .if ( [rbx].token == T_STRING )
 
         ; v2.08: use string buffer to avoid buffer overflow if string is > FILENAME_MAX
 
         mov rdi,StringBufferEnd
         .if ( [rbx].string_delim == '"' || [rbx].string_delim == "'" )
-
             mov ecx,[rbx].stringlen
             mov rsi,[rbx].string_ptr
             inc rsi
             rep movsb
             mov byte ptr [rdi],0
-
         .elseif ( [rbx].string_delim == '<' )
-
             mov ecx,[rbx].stringlen
             mov rsi,[rbx].string_ptr
             inc ecx
@@ -350,8 +322,7 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         fclose(fp)
     .endif
     .return( NOT_ERROR )
-
-IncBinDirective endp
+    endp
 
 
 ; Alias directive.
@@ -379,7 +350,6 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     inc  ecx ; go past ALIAS
     imul eax,ecx,asm_tok
     add  rbx,rax
-
     .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
         .return asmerr( 2051 )
     .endif
@@ -450,8 +420,7 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
     .endif
     .return( NOT_ERROR )
-
-AliasDirective endp
+    endp
 
 
 ; the NAME directive is ignored in Masm v6
@@ -461,10 +430,8 @@ AliasDirective endp
 NameDirective proc __ccall i:int_t, tokenarray:token_t
 
     .if ( Parse_Pass > PASS_1 )
-
         ldr ecx,i
         ldr rdx,tokenarray
-
         imul ecx,ecx,asm_tok
         lea rdx,[rdx+rcx+asm_tok]
         mov ecx,[rdx].tokval
@@ -480,7 +447,6 @@ NameDirective proc __ccall i:int_t, tokenarray:token_t
         .if ( CurrStruct != NULL || al == T_COLON || ( al == T_DIRECTIVE &&
               ( ecx == T_SEGMENT || ecx == T_STRUCT  || ecx == T_STRUC ||
                 ecx == T_UNION   || ecx == T_TYPEDEF || ecx == T_RECORD ) ) )
-
             .return( asmerr( 2008, [rdx-asm_tok].tokpos ) )
         .endif
 
@@ -488,8 +454,7 @@ NameDirective proc __ccall i:int_t, tokenarray:token_t
         ; However, since the directive is ignored by Masm, nothing is done.
     .endif
     .return( NOT_ERROR )
-
-NameDirective endp
+    endp
 
 
 ; .RADIX directive, value must be between 2 .. 16
@@ -508,7 +473,6 @@ RadixDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     inc  i ; skip directive token
     imul ecx,i,asm_tok
-
     Tokenize( [rbx+rcx].tokpos, i, rbx, TOK_RESCAN )
     mov MODULE.radix,radix
 
@@ -520,22 +484,17 @@ RadixDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
     .if ( opndx.kind != EXPR_CONST )
         .return asmerr( 2026 )
     .endif
-
     imul edx,i,asm_tok
     .if ( [rbx+rdx].token != T_FINAL )
-
         asmerr( 2008, [rbx+rdx].tokpos )
-
     .elseif ( opndx.value > 16 || opndx.value < 2 || opndx.hvalue != 0 )
-
         asmerr( 2113 )
     .else
         mov MODULE.radix,opndx.value
         mov eax,NOT_ERROR
     .endif
     ret
-
-RadixDirective endp
+    endp
 
 
 ; DOSSEG, .DOSSEG, .ALPHA, .SEQ directives
@@ -544,10 +503,8 @@ SegOrderDirective proc __ccall i:int_t, tokenarray:token_t
 
     ldr ecx,i
     ldr rdx,tokenarray
-
     imul ecx,ecx,asm_tok
     add rcx,rdx
-
     .if ( [rcx+asm_tok].asm_tok.token != T_FINAL )
         .return( asmerr(2008, [rcx+asm_tok].asm_tok.tokpos ) )
     .endif
@@ -560,7 +517,6 @@ SegOrderDirective proc __ccall i:int_t, tokenarray:token_t
         mov MODULE.segorder,GetSflagsSp( [rcx].asm_tok.tokval )
     .endif
     .return( NOT_ERROR )
-
-SegOrderDirective endp
+    endp
 
     end

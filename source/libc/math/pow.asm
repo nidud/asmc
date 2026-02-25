@@ -29,7 +29,6 @@ else
     define  x <_x>
     define  y <_y>
 endif
-
     fld     y
     fxam
     fnstsw  ax
@@ -37,16 +36,13 @@ endif
     and     ah,0x45
     cmp     ah,0x40         ; y == 0 ?
     jne     .0
-
     fstp    st(0)           ; pop y
     xor     eax,eax
     mov     edx,0x3FF00000
     jmp     .n
-
 .0:
     cmp     ah,5            ; y == inf ?
     jne     .3
-
     fstp    st(0)           ; pop y
     fld     one
     fld     x
@@ -65,7 +61,6 @@ endif
     xor     eax,eax
     mov     edx,0x3FF00000
     jmp     .n
-
 .2:
     shl     ah,1
     xor     dl,ah
@@ -75,7 +70,6 @@ endif
     mov     edx,[rcx+rdx*8][4]
     jmp     .n
 .3:
-
     cmp     ah,1            ; y == NaN ?
     jne     .5
     fld     x
@@ -89,7 +83,6 @@ endif
     fstp    st(1)
     jmp     .o
 .5:
-
     fld     x
     fxam
     fnstsw  ax
@@ -109,7 +102,6 @@ endif
     fnstsw  ax
     sahf
     jnz     .7
-
     ;
     ; OK, the value is an integer, but is the number of bits small
     ; enough so that all are coming from the mantissa?
@@ -166,7 +158,6 @@ endif
     fld     one
     fdiv    zero
     jmp     .o
-
 .b:
     cmp     ah,5
     jne     .g
@@ -181,7 +172,6 @@ endif
     mov     edx,[rcx+rax][4]
     mov     eax,[rcx+rax]
     jmp     .n
-
 .c:
     ;
     ; We must find out whether y is an odd integer.
@@ -207,7 +197,6 @@ endif
     ;
     ; It's an odd integer.
     ;
-
     shr     edx,31
     lea     rcx,minf_mzero
     mov     eax,[rcx+rdx*8]
@@ -263,7 +252,6 @@ endif
     jnz     .i
     fstp    st
     jmp     .o
-
 .k:
     fxch    st(1)
     fld     one
@@ -302,7 +290,6 @@ ifdef _WIN64
     movsd   xmm0,x
 endif
     ret
-
-pow endp
+    endp
 
     end

@@ -23,7 +23,6 @@ XMStoreFloat3x3 proc XM_CALLCONV pDestination:ptr XMFLOAT3X3, V0:XMVECTOR, V1:XM
     _mm_storeu_ps([rcx][16], xmm2)
     _mm_store_ss([rcx][32], xmm3)
     ret
-
-XMStoreFloat3x3 endp
+    endp
 
     end

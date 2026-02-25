@@ -31,7 +31,6 @@ XMStoreUShortN4 proc XM_CALLCONV pDestination:ptr XMUSHORTN4, V:FXMVECTOR
     mov [rcx].XMUSHORTN4.z,_mm_extract_epi16(xmm0, 4)
     mov [rcx].XMUSHORTN4.w,_mm_extract_epi16(xmm0, 6)
     ret
-
-XMStoreUShortN4 endp
+    endp
 
     end

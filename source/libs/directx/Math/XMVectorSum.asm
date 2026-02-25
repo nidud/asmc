@@ -19,7 +19,6 @@ else
     _mm_add_ps(xmm0, xmm0)
 endif
     ret
-
-XMVectorSum endp
+    endp
 
     end

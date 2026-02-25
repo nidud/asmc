@@ -40,7 +40,6 @@ XMLoadByteN4 proc XM_CALLCONV pSource:ptr XMBYTEN4
 
     _mm_max_ps( xmm0, g_XMNegativeOne )
     ret
-
-XMLoadByteN4 endp
+    endp
 
     end

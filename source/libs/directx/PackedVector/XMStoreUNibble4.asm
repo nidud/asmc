@@ -41,7 +41,6 @@ XMStoreUNibble4 proc XM_CALLCONV pDestination:ptr XMUNIBBLE4, V:FXMVECTOR
     or  edx,eax
     mov [rcx],dx
     ret
-
-XMStoreUNibble4 endp
+    endp
 
     end

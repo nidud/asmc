@@ -12,29 +12,22 @@ include stdio.inc
     .code
 
 _crc32 proc uses rsi rdi crc:uint_t, p:ptr, len:uint_t
-
     ldr eax,crc
     ldr ecx,len
     ldr rsi,p
-
     .for ( rdi = &crctable, edx = 0 : ecx : ecx--, rsi++ )
-
         mov dl,al
         xor dl,[rsi]
         shr eax,8
         xor eax,[rdi+rdx*4]
     .endf
     ret
-
-_crc32 endp
+    endp
 
 
 __initcrc proc uses rbx
-
     .for ( ecx = 0 : ecx < 256 : ecx++ )
-
         .for ( edx = 0, eax = ecx : edx < 8 : edx++ )
-
             mov     ebx,eax
             and     ebx,1
             imul    ebx,ebx,0xEDB88320
@@ -45,8 +38,7 @@ __initcrc proc uses rbx
         mov [rdx+rcx*4],eax
     .endf
     ret
-
-__initcrc endp
+    endp
 
 .pragma init(__initcrc, 50)
 

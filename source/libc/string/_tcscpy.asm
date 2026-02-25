@@ -12,12 +12,9 @@ include tchar.inc
     option dotname
 
 _tcscpy proc dst:tstring_t, src:tstring_t
-
     ldr         rcx,dst
     ldr         rdx,src
-
 if defined(__AVX__) and defined(_WIN64) and not defined(_UNICODE)
-
     mov         rax,rcx
     mov         r10,rdx
     and         r10,-32
@@ -110,9 +107,7 @@ if defined(__AVX__) and defined(_WIN64) and not defined(_UNICODE)
     vmovups     [r9+rcx-32],ymm1
 .5:
     vzeroupper
-
 elseif defined(_WIN64) and not defined(_UNICODE)
-
     mov         rax,rcx
     mov         r10,rdx
     and         r10,-16
@@ -198,15 +193,12 @@ elseif defined(_WIN64) and not defined(_UNICODE)
     movups      [r9],xmm0
     movups      [r9+rcx-16],xmm1
 .5:
-
 else
-
 ifdef _WIN64
     mov     r8,rcx
 else
     push    ecx
 endif
-
 .0:
     mov     _tal,[rdx]
     mov     [rcx],_tal
@@ -214,16 +206,13 @@ endif
     add     rcx,tchar_t
     test    _tal,_tal
     jnz     .0
-
 ifdef _WIN64
     mov     rax,r8
 else
     pop     eax
 endif
-
 endif
     ret
-
-_tcscpy endp
+    endp
 
     end

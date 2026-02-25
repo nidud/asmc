@@ -51,7 +51,6 @@ XMStoreUByteN4 proc XM_CALLCONV pDestination:ptr XMUBYTEN4, V:FXMVECTOR
     _mm_or_si128(xmm0, xmm1)
     _mm_store_ss([rcx], _mm_castsi128_ps(xmm0))
     ret
-
-XMStoreUByteN4 endp
+    endp
 
     end

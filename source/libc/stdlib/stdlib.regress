@@ -10,12 +10,10 @@ include signal.inc
     .code
 
 compare proc private a:ptr, b:ptr
-
     mov rax,a
     mov rdx,b
     mov eax,[rax]
     mov edx,[rdx]
-
     .if eax > edx
         mov eax,1
     .elseif eax < edx
@@ -24,8 +22,7 @@ compare proc private a:ptr, b:ptr
         xor eax,eax
     .endif
     ret
-
-compare endp
+    endp
 
 m   proto fastcall :abs, :abs, :abs, :abs, :abs {
     _1(_2, _3, _4)

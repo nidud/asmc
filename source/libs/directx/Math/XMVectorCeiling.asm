@@ -29,7 +29,6 @@ else
     _mm_or_ps(xmm0, xmm1)
 endif
     ret
-
-XMVectorCeiling endp
+    endp
 
     end

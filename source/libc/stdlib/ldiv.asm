@@ -9,7 +9,6 @@ include stdlib.inc
 .code
 
 ldiv proc x:int_t, y:int_t
-
     ldr eax,x
     ldr ecx,y
     cdq
@@ -19,7 +18,6 @@ ifdef _WIN64
     or  rax,rdx
 endif
     ret
-
-ldiv endp
+    endp
 
     end

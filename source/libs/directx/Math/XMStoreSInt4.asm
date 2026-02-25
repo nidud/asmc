@@ -21,7 +21,6 @@ XMStoreSInt4 proc XM_CALLCONV pDestination:ptr XMINT4, V:FXMVECTOR
     _mm_or_ps(xmm0, xmm2)
     _mm_storeu_si128([rcx], xmm0)
     ret
-
-XMStoreSInt4 endp
+    endp
 
     end

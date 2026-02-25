@@ -9,17 +9,14 @@ include errno.inc
 
 .code
 
-fsetpos proc uses rbx stream:LPFILE, pos:ptr fpos_t
-
+fsetpos proc stream:LPFILE, pos:ptr fpos_t
     ldr rcx,stream
-    ldr rbx,pos
-
-    .if ( rcx == NULL || rbx == NULL )
+    ldr rdx,pos
+    .if ( rcx == NULL || rdx == NULL )
         .return( _set_errno( EINVAL ) )
     .endif
-    _fseeki64(rcx, [rbx], SEEK_SET)
+    _fseeki64(rcx, [rdx], SEEK_SET)
     ret
-
-fsetpos endp
+    endp
 
     end

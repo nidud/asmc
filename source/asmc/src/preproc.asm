@@ -36,7 +36,6 @@ WriteCodeLabel proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t
     .if ( [rbx].token != T_ID )
         .return asmerr( 2008, [rbx].string_ptr )
     .endif
-
     ;
     ; ensure the listing is written with the FULL source line
     ;
@@ -55,19 +54,15 @@ WriteCodeLabel proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t
     mov byte ptr [rdi],0
     mov esi,TokenCount
     mov TokenCount,2
-
     ParseLine( tokenarray )
     .if ( Options.preprocessor_stdout )
         WritePreprocessedLine( line )
     .endif
-
     mov [rdi],bl
     mov TokenCount,esi
     mov [rbx+2*asm_tok].asm_tok.token,bh
-
-   .return( NOT_ERROR )
-
-WriteCodeLabel endp
+    .return( NOT_ERROR )
+    endp
 
 
     assume rcx:token_t
@@ -78,9 +73,7 @@ DelayExpand proc fastcall uses rsi rbx tokenarray:token_t
     .if ( [rcx].HllCode == 0 || MODULE.masm_compat_gencode || eax != Parse_Pass || eax != NoLineStore )
         .return
     .endif
-
     .repeat
-
         .repeat
             .ifs ( eax >= TokenCount )
                 mov [rcx].Delayed,1
@@ -90,36 +83,27 @@ DelayExpand proc fastcall uses rsi rbx tokenarray:token_t
             inc  eax
            .continue( 0 ) .if ( [rcx+rdx].IsFunc == 0 )
         .until ( [rcx+rdx].token == T_OP_BRACKET )
-
         mov edx,1 ; one open bracket found
         .while 1
-
             .ifs ( eax >= TokenCount )
                 mov [rcx].Delayed,1
                 .return 1
             .endif
-
             imul ebx,eax,asm_tok
-
             .switch [rcx+rbx].token
-
             .case T_OP_BRACKET
                 inc edx
                 .endc
-
             .case T_CL_BRACKET
                 dec edx
                 .endc .ifnz
                 inc eax
                 .continue(01)
-
             .case T_STRING
                 mov rsi,[rcx+rbx].string_ptr
                 .if ( byte ptr [rsi] != '<' )
-
                     mov rsi,[rcx+rbx].tokpos
                     .if ( byte ptr [rsi] == '<' )
-
                         asmerr( 7008, rsi ) ; cannot delay macro function
                        .break
                     .endif
@@ -129,8 +113,7 @@ DelayExpand proc fastcall uses rsi rbx tokenarray:token_t
         .endw
     .until 1
     .return( 0 )
-
-DelayExpand endp
+    endp
 
     assume rcx:nothing
 
@@ -140,7 +123,6 @@ DelayExpand endp
 ; 3. "preprocessor" directives are executed
 
 PreprocessLine proc __ccall uses rsi rbx tokenarray:token_t
-
     ;
     ; v2.11: GetTextLine() removed - this is now done in ProcessFile()
     ; v2.08: moved here from GetTextLine()
@@ -155,14 +137,11 @@ PreprocessLine proc __ccall uses rsi rbx tokenarray:token_t
     ;
     mov TokenCount,Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
     mov rbx,TokenArray
-
 if REMOVECOMENT eq 0
     .if ( eax == 0 && ( CurrIfState == BLOCK_ACTIVE || MODULE.listif ) )
-
         LstWriteSrcLine()
     .endif
 endif
-
     mov eax,TokenCount
     .return .if ( eax == 0 )
     ;
@@ -188,15 +167,12 @@ endif
         .endif
         .return 0 .ifs ( esi < NOT_ERROR )
     .endif
-
     mov rbx,TokenArray
     xor esi,esi
     .if ( TokenCount > 2 &&
          ( [rbx+asm_tok].asm_tok.token == T_COLON || [rbx+asm_tok].asm_tok.token == T_DBL_COLON ) )
-
         mov esi,2*asm_tok
     .endif
-
     ;
     ; handle "preprocessor" directives:
     ; IF, ELSE, ENDIF, ...
@@ -206,7 +182,6 @@ endif
     ; since v2.05, error directives are no longer handled here!
     ;
     .if ( [rbx+rsi].token == T_DIRECTIVE && [rbx+rsi].dirtype <= DRT_INCLUDE )
-
         ;
         ; if i != 0, then a code label is located before the directive
         ;
@@ -215,7 +190,6 @@ endif
                 .return 0
             .endif
         .endif
-
         movzx ebx,[rbx+rsi].dirtype
         xor edx,edx
         mov ecx,asm_tok
@@ -224,7 +198,6 @@ endif
         mov esi,eax
         lea rcx,directive_tab
         mov rax,[rcx+rbx*size_t]
-
         assume rax:fpDirective
         rax( esi, TokenArray )
         assume rax:nothing
@@ -244,7 +217,6 @@ endif
     .endif
 
     .if ( eax )
-
         .switch eax
           .case DRT_EQU
             ;
@@ -293,7 +265,6 @@ endif
         .endsw
     .endif
     .return( TokenCount )
-
-PreprocessLine endp
+    endp
 
     end

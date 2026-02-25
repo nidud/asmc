@@ -32,7 +32,6 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_sub_ps(xmm0, xmm2)
 endif
     ret
-
-XMVectorMod endp
+    endp
 
     end

@@ -12,17 +12,13 @@ include tchar.inc
 .code
 
 _tcsnlen proc string:tstring_t, maxsize:size_t
-
     ldr rcx,string
     ldr rdx,maxsize
-
     ; Note that we do not check if string == NULL, because we do not
     ; return errno_t...
-
     .for ( eax = 0 : rax < rdx && tchar_t ptr [rcx] : rax++, rcx += tchar_t )
     .endf
     ret
-
-_tcsnlen endp
+    endp
 
     end

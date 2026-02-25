@@ -12,11 +12,8 @@ include tchar.inc
     option dotname
 
 _tcslen proc string:tstring_t
-
     ldr         rcx,string
-
 ifdef __AVX__
-
 ifdef _UNICODE
     test        cl,1            ; Unicode strings needs to be aligned..
     jnz         .3
@@ -62,14 +59,11 @@ ifdef _UNICODE
 .2:
 endif
     ret
-
 elseifdef __SSE__
-
 ifdef _UNICODE
     test        cl,1
     jnz         .3
 endif
-
 ifdef _WIN64
     mov         r8,rcx
 endif
@@ -113,9 +107,7 @@ ifdef _UNICODE
 .2:
 endif
     ret
-
 else
-
     mov         rdx,rdi
     mov         rdi,rcx
     mov         rcx,-1
@@ -126,9 +118,7 @@ else
     not         rax
     dec         rax
     ret
-
 endif
-
 if defined(_UNICODE) and ( defined(__AVX__) or defined(__SSE__) )
 .3:
     mov         rdx,rdi
@@ -142,7 +132,6 @@ if defined(_UNICODE) and ( defined(__AVX__) or defined(__SSE__) )
     dec         rax
     jmp         .2
 endif
-
-_tcslen endp
+    endp
 
     end

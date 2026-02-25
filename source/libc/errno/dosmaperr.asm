@@ -11,11 +11,9 @@ _get_errno_from_oserr proto oserrno:uint_t
     .code
 
 _dosmaperr proc oserrno:uint_t
-
     mov _doserrno,ldr(oserrno)
     _set_errno( _get_errno_from_oserr( ldr(oserrno) ) )
     ret
-
-_dosmaperr endp
+    endp
 
     end

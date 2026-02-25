@@ -11,10 +11,10 @@ include tchar.inc
 
 _fgettchar proc
     .return(_gettc(stdin))
-_fgettchar endp
+    endp
 
 _gettchar proc
     .return _fgettchar()
-_gettchar endp
+    endp
 
     end

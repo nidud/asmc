@@ -9,11 +9,8 @@ include fltintrn.inc
     .code
 
 ifdef _WIN64
-
 _fltpackfp proc __ccall dst:ptr, src:ptr STRFLT
-
     _fltround( rdx )
-
     mov     rax,[rcx].STRFLT.mantissa.l
     mov     rdx,[rcx].STRFLT.mantissa.h
     mov     cx, [rcx].STRFLT.mantissa.e
@@ -25,16 +22,11 @@ _fltpackfp proc __ccall dst:ptr, src:ptr STRFLT
     mov     [rcx],rax
     mov     [rcx+8],rdx
     mov     rax,rcx
-
 else
-
 _fltpackfp proc __ccall uses esi edi ebx q:ptr, p:ptr STRFLT
-
     mov esi,p
     mov edi,q
-
     _fltround( esi )
-
     mov eax,[esi]
     mov edx,[esi+4]
     mov ebx,[esi+8]
@@ -53,7 +45,6 @@ _fltpackfp proc __ccall uses esi edi ebx q:ptr, p:ptr STRFLT
     mov eax,edi
 endif
     ret
-
-_fltpackfp endp
+    endp
 
     end

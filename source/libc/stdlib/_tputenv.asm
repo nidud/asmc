@@ -13,12 +13,9 @@ include tchar.inc
 .code
 
 _tputenv proc uses rsi rbx string:tstring_t
-
    .new envp:tstring_t
-
     xor ebx,ebx
     .if ( _tcschr(string, '=') != NULL )
-
         mov tchar_t ptr [rax],0
         lea rbx,[rax+tchar_t]
     .endif
@@ -31,25 +28,19 @@ endif
         mov tchar_t ptr [rbx-tchar_t],'='
     .endif
     .if ( !eax )
-
         dec eax
        .return
     .endif
 ifndef __UNIX__
     .if ( _tgetenvs() )
-
         mov rbx,_tenvptr
         mov _tenvptr,rax
-
         .if ( _tsetenvp( &envp ) )
-
             free(rbx)
             free(_tenviron)
             mov _tenviron,envp
             xor eax,eax
-
         .else
-
             free(_tenvptr)
             mov _tenvptr,rbx
             mov eax,-1
@@ -59,7 +50,6 @@ ifndef __UNIX__
     .endif
 endif
     ret
-
-_tputenv endp
+    endp
 
     end

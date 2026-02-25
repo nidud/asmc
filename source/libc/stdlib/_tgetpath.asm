@@ -23,36 +23,27 @@ define _HPFS_
     assume rbx:tstring_t
 
 _tgetpath proc uses rbx src:tstring_t, dst:tstring_t, maxlen:size_t
-
     ldr rbx,src
     ldr rcx,maxlen
     ldr rdx,dst
-
     .while ( [rbx] == DELIM )
         add rbx,tchar_t
     .endw
     mov src,rbx
     dec rcx
     jz  error
-
     .while ( [rbx] && [rbx] != DELIM )
-
 ifdef _HPFS_
-
         .if ( [rbx] != '"' )
-
             mov _tal,[rbx]
             mov [rdx],_tal
             add rdx,tchar_t
             add rbx,tchar_t
             dec rcx
             jz  error
-
         .else
-
             add rbx,tchar_t
             .while ( [rbx] && [rbx] != '"' )
-
                 mov _tal,[rbx]
                 mov [rdx],_tal
                 add rdx,tchar_t
@@ -64,7 +55,6 @@ ifdef _HPFS_
                 add rbx,tchar_t
             .endif
         .endif
-
 else
         mov _tal,[rbx]
         mov [rdx],_tal
@@ -74,11 +64,9 @@ else
         jz  error
 endif
     .endw
-
     .while ( [rbx] == DELIM )
         add rbx,tchar_t
     .endw
-
 appendnull:
     xor eax,eax
     mov [rdx],_tal
@@ -86,14 +74,12 @@ appendnull:
         mov rax,rbx
     .endif
     ret
-
 error:
     mov src,rbx
     mov dst,rdx
     _set_errno(ERANGE)
     mov rdx,dst
     jmp appendnull
-
-_tgetpath endp
+    endp
 
     end

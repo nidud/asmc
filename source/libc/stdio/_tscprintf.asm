@@ -10,10 +10,8 @@ include tchar.inc
 .code
 
 _sctprintf proc format:tstring_t, argptr:vararg
-
     _vsctprintf(format, &argptr)
     ret
-
-_sctprintf endp
+    endp
 
     end

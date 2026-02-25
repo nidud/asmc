@@ -10,37 +10,31 @@ include stdio.inc
 
     .code
 
-    assume rbx:LPFILE
-
 fseek proc uses rbx fp:LPFILE, offs:size_t, whence:int_t
 
     ldr rbx,fp
     ldr edx,whence
 
-    .if ( edx > SEEK_END || rbx == NULL || !( [rbx]._flag & ( _IOREAD or _IOWRT or _IORW ) ) )
+    .if ( edx > SEEK_END || rbx == NULL || !( [rbx].FILE._flag & ( _IOREAD or _IOWRT or _IORW ) ) )
         .return( _set_errno( EINVAL ) )
     .endif
-
-    and [rbx]._flag,not _IOEOF
+    and [rbx].FILE._flag,not _IOEOF
     .if ( edx == SEEK_CUR )
-
         add offs,ftell( rbx )
         mov whence,SEEK_SET
     .endif
-
     fflush( rbx )
-    mov eax,[rbx]._flag
+    mov eax,[rbx].FILE._flag
     .if ( eax & _IORW )
         and eax,not (_IOWRT or _IOREAD)
-        mov [rbx]._flag,eax
+        mov [rbx].FILE._flag,eax
     .elseif ( eax & _IOREAD && eax & _IOMYBUF && !( eax & _IOSETVBUF ) )
-        mov [rbx]._bufsiz,_MINIOBUF
+        mov [rbx].FILE._bufsiz,_MINIOBUF
     .endif
-    .if ( _lseek( [rbx]._file, offs, whence ) != -1 )
+    .if ( _lseek( [rbx].FILE._file, offs, whence ) != -1 )
         xor eax,eax
     .endif
     ret
-
-fseek endp
+    endp
 
     end

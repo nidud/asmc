@@ -31,7 +31,6 @@ XMStoreUDecN4_XR proc XM_CALLCONV pDestination:ptr XMUDECN4, V:FXMVECTOR
     or  edx,eax
     mov [rcx],edx
     ret
-
-XMStoreUDecN4_XR endp
+    endp
 
     end

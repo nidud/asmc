@@ -24,45 +24,31 @@ define FL_READDIGIT 8 ; we've read at least one correct digit
 .code
 
 strtoxq proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base:int_t, flags:int_t
-
    .new maxval:size_t
-
     ldr rbx,strSource
     ldr rsi,endptr
     ldr edi,base
-
     .if ( rsi )
-
         mov [rsi],rbx ; store beginning of string
     .endif
-
     .if ( rbx == NULL || ( edi != 0 && ( edi < 2 || edi > 36 ) ) )
-
         _set_errno(EINVAL)
         .return( 0 )
     .endif
-
     movzx eax,tchar_t ptr [rbx]
     .while ( eax == ' ' || eax == 9 )
-
         add rbx,tchar_t
         movzx eax,tchar_t ptr [rbx]
     .endw
-
     .if ( eax == '-' || eax == '+' )
-
         .if ( eax == '-' )
-
             or flags,FL_NEG
         .endif
         add rbx,tchar_t
         movzx eax,tchar_t ptr [rbx]
     .endif
-
     .if ( edi == 0 )
-
         ; determine base based on first two chars of string
-
         movzx ecx,tchar_t ptr [rbx+tchar_t]
         .if ( eax != '0' )
             mov edi,10
@@ -72,20 +58,15 @@ strtoxq proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base
             mov edi,8
         .endif
     .endif
-
     .if ( edi == 16 && eax == '0' )
-
         movzx eax,tchar_t ptr [rbx+tchar_t]
         .if ( eax == 'x' || eax == 'X' )
             add rbx,2*tchar_t
         .endif
     .endif
-
     xor eax,eax
     xor edx,edx
-
     .while 1
-
         movzx ecx,tchar_t ptr [rbx]
         .if ( ecx >= '0' && ecx <= '9' )
             sub cl,'0'
@@ -97,9 +78,7 @@ strtoxq proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base
             .break
         .endif
         .break .if ecx >= edi
-
         or flags,FL_READDIGIT
-
 ifdef _WIN64
         mov maxval,rax
 else
@@ -133,22 +112,15 @@ endif
         .endif
         add rbx,tchar_t
     .endw
-
     .if ( !( flags & FL_READDIGIT ) )
-
         ; no number there
-
        .return
     .endif
-
     .if ( rsi )
-
         mov [rsi],rbx
     .endif
-
     mov ebx,flags
     .if ( !( ebx & FL_UNSIGNED ) && !( ebx & FL_OVERFLOW ) )
-
         .if ( ebx & FL_NEG )
 ifdef _WIN64
             mov rcx,-_I64_MIN
@@ -169,13 +141,9 @@ endif
             .endif
         .endif
     .endif
-
     .if ( ebx & FL_OVERFLOW  )
-
         ; overflow occurred
-
         _set_errno(ERANGE)
-
         .if ( ebx & FL_UNSIGNED )
 ifdef _WIN64
             mov rax,_UI64_MAX
@@ -199,7 +167,6 @@ else
 endif
         .endif
     .endif
-
     .if ( ebx & FL_NEG )
 ifdef _WIN64
         neg rax
@@ -210,35 +177,26 @@ else
 endif
     .endif
     ret
-
-strtoxq endp
+    endp
 
 _tcstoi64 proc nptr:tstring_t, endptr:tarray_t, ibase:int_t
-
     strtoxq(nptr, endptr, ibase, 0)
     ret
-
-_tcstoi64 endp
+    endp
 
 _tcstoll proc nptr:tstring_t, endptr:tarray_t, ibase:int_t
-
     _tcstoi64(nptr, endptr, ibase)
     ret
-
-_tcstoll endp
+    endp
 
 _tcstoui64 proc nptr:tstring_t, endptr:tarray_t, ibase:int_t
-
     strtoxq(nptr, endptr, ibase, FL_UNSIGNED)
     ret
-
-_tcstoui64 endp
+    endp
 
 _tcstoull proc nptr:tstring_t, endptr:tarray_t, ibase:int_t
-
     _tcstoui64(nptr, endptr, ibase)
     ret
-
-_tcstoull endp
+    endp
 
     end

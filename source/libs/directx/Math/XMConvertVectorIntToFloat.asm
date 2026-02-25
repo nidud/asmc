@@ -24,7 +24,6 @@ XMConvertVectorIntToFloat proc XM_CALLCONV VInt:FXMVECTOR, DivExponent:uint32_t
     movd xmm1,eax
     _mm_mul_ps(_mm_cvtepi32_ps(), XM_PERMUTE_PS(xmm1))
     ret
-
-XMConvertVectorIntToFloat endp
+    endp
 
     end

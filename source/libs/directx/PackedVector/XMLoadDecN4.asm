@@ -40,7 +40,6 @@ XMLoadDecN4 proc XM_CALLCONV pSource:ptr XMDECN4
 
     _mm_max_ps( xmm0, g_XMNegativeOne )
     ret
-
-XMLoadDecN4 endp
+    endp
 
     end

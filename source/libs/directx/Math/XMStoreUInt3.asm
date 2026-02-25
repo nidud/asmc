@@ -32,7 +32,6 @@ XMStoreUInt3 proc XM_CALLCONV pDestination:ptr XMUINT3, V:FXMVECTOR
     _mm_store_ss([rcx][4], xmm1)
     _mm_store_ss([rcx][8], xmm2)
     ret
-
-XMStoreUInt3 endp
+    endp
 
     end

@@ -580,38 +580,27 @@ endif
 ifdef _WIN64
 
 __shlo proc __ccall val:ptr uint128_t, count:int_t, bits:int_t
-
     mov r10,rcx
     mov ecx,edx
-
     mov rax,[r10]
     mov rdx,[r10+8]
-
     .if ( ( ecx >= 128 ) || ( ecx >= 64 && r8d < 128 ) )
-
         xor eax,eax
         xor edx,edx
-
     .elseif ( r8d == 128 )
-
         .while ( ecx >= 64 )
-
             mov rdx,rax
             xor eax,eax
             sub ecx,64
         .endw
-
         shld rdx,rax,cl
         shl rax,cl
-
     .else
-
         shl rax,cl
     .endif
     mov [r10],rax
     mov [r10+8],rdx
     mov rax,r10
-
 else
 
     assume esi:ptr U128
@@ -620,56 +609,43 @@ __shlo proc __ccall uses esi edi ebx val:ptr uint128_t, count:int_t, bits:int_t
 
     mov esi,val
     mov ecx,count
-
     mov eax,[esi].u32[0]
     mov edx,[esi].u32[4]
     mov ebx,[esi].u32[8]
     mov edi,[esi].u32[12]
-
     .if ( ( ecx >= 128 ) || ( ecx >= 64 && bits < 128 ) )
-
         xor eax,eax
         xor edx,edx
         xor ebx,ebx
         xor edi,edi
-
     .elseif ( bits == 128 )
-
         .while ( ecx >= 32 )
-
             mov edi,ebx
             mov ebx,edx
             mov edx,eax
             xor eax,eax
             sub ecx,32
         .endw
-
         shld edi,ebx,cl
         shld ebx,edx,cl
         shld edx,eax,cl
         shl eax,cl
-
     .else
-
         .if ( cl < 32 )
-
             shld edx,eax,cl
             shl eax,cl
         .else
-
             and ecx,31
             mov edx,eax
             xor eax,eax
             shl edx,cl
         .endif
     .endif
-
     mov [esi].u32[0],eax
     mov [esi].u32[4],edx
     mov [esi].u32[8],ebx
     mov [esi].u32[12],edi
     mov eax,esi
-
     assume edi:nothing
 
 endif
@@ -684,32 +660,23 @@ __shro proc __ccall val:ptr uint128_t, count:int_t, bits:int_t
     mov ecx,edx
     mov rax,[r10]
     mov rdx,[r10+8]
-
     .if ( ( ecx >= 128 ) || ( ecx >= 64 && r8d < 128 ) )
-
         xor edx,edx
         xor eax,eax
-
     .elseif ( r8d == 128 )
-
         .while ( ecx > 64 )
-
             mov rax,rdx
             xor edx,edx
             sub ecx,64
         .endw
         shrd rax,rdx,cl
         shr rdx,cl
-
     .else
-
         .if ( eax == -1 && r8d == 32 )
-
             and eax,eax
         .endif
         shr rax,cl
     .endif
-
     mov [r10],rax
     mov [r10+8],rdx
     mov rax,r10
@@ -724,55 +691,41 @@ __shro proc uses esi edi ebx val:ptr uint128_t, count:int_t, bits:int_t
 
     mov esi,val
     mov ecx,count
-
     mov eax,[esi].u32[0]
     mov edx,[esi].u32[4]
     mov ebx,[esi].u32[8]
     mov edi,[esi].u32[12]
-
     .if ( ( ecx >= 128 ) || ( ecx >= 64 && bits < 128 ) )
-
         xor edi,edi
         xor ebx,ebx
         xor edx,edx
         xor eax,eax
-
     .elseif ( bits == 128 )
-
         .while ( ecx > 32 )
-
             mov eax,edx
             mov edx,ebx
             mov ebx,edi
             xor edi,edi
             sub ecx,32
         .endw
-
         shrd eax,edx,cl
         shrd edx,ebx,cl
         shrd ebx,edi,cl
         shr edi,cl
-
     .else
-
         .if ( eax == -1 && bits == 32 )
-
             xor edx,edx
         .endif
-
         .if ( ecx < 32 )
-
             shrd eax,edx,cl
             shr edx,cl
         .else
-
             mov eax,edx
             xor edx,edx
             and cl,32-1
             shr eax,cl
         .endif
     .endif
-
     mov [esi].u32[0],eax
     mov [esi].u32[4],edx
     mov [esi].u32[8],ebx
@@ -780,23 +733,18 @@ __shro proc uses esi edi ebx val:ptr uint128_t, count:int_t, bits:int_t
     mov eax,esi
     ret
     endp
-
     assume esi:nothing
-
 endif
 
 __rolo proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
 
     ldr rsi,val
     ldr edi,bits
-
     .while count
-
         mov ecx,edi
         shr ecx,3
         movzx ebx,byte ptr [rsi+rcx-1]
         __shlo(rsi, 1, edi)
-
         shr ebx,7
         or  [rsi],bl
         dec count
@@ -812,10 +760,8 @@ __roro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
     ldr edi,bits
 
     .while count
-
         mov bl,[rsi]
         __shro(rsi, 1, edi)
-
         shl ebx,7
         mov ecx,edi
         shr ecx,3
@@ -836,31 +782,21 @@ __saro proc __ccall val:ptr uint128_t, count:int_t, bits:int_t
 
     mov rax,[r10]
     mov rdx,[r10+8]
-
     .if ( ecx >= 64 && r8d <= 64 )
-
         xor eax,eax
         xor edx,edx
-
     .elseif ( ecx >= 128 && r8d == 128 )
-
         sar rdx,63
         mov rax,rdx
-
     .elseif ( r8d == 128 )
-
         .if ( ecx >= 64 )
-
             mov rax,rdx
             sar rdx,63
             sub ecx,64
         .endif
-
         shrd rax,rdx,cl
         sar rdx,cl
-
     .else
-
         .if ( eax == -1 && r8d == 32 )
             mov eax,eax
         .endif
@@ -870,7 +806,6 @@ __saro proc __ccall val:ptr uint128_t, count:int_t, bits:int_t
             sar rax,cl
         .endif
     .endif
-
     mov [r10],rax
     mov [r10+8],rdx
     mov rax,r10
@@ -890,62 +825,44 @@ __saro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
     mov edx,[rsi].u32[4]
     mov ebx,[rsi].u32[8]
     mov edi,[rsi].u32[12]
-
     .if ( ecx >= 64 && bits <= 64 )
-
         xor eax,eax
         xor edx,edx
         xor ebx,ebx
         xor edi,edi
-
     .elseif ( ecx >= 128 && bits == 128 )
-
         sar edi,31
         mov ebx,edi
         mov edx,edi
         mov eax,edi
-
     .elseif ( bits == 128 )
-
         .while ( ecx > 32 )
-
             mov eax,edx
             mov edx,ebx
             mov ebx,edi
             sar edi,31
             sub ecx,32
         .endw
-
         shrd eax,edx,cl
         shrd edx,ebx,cl
         shrd ebx,edi,cl
         sar edi,cl
-
     .else
-
         .if ( eax == -1 && bits == 32 )
-
             xor edx,edx
         .endif
-
         .if ( bits == 32 )
-
             sar eax,cl
-
         .elseif ( ecx < 32 )
-
             shrd eax,edx,cl
             sar edx,cl
-
         .else
-
             mov eax,edx
             sar edx,31
             and cl,32-1
             sar eax,cl
         .endif
     .endif
-
     mov [rsi].u32[0],eax
     mov [rsi].u32[4],edx
     mov [rsi].u32[8],ebx
@@ -953,7 +870,6 @@ __saro proc __ccall uses rsi rdi rbx val:ptr uint128_t, count:int_t, bits:int_t
     mov rax,rsi
     ret
     endp
-
     assume rsi:nothing
 
 endif
@@ -974,15 +890,12 @@ __cvtq_h proc __ccall private uses rsi rdi rbx h:ptr half_t, q:ptr qfloat_t
     mov eax,[rsi+10]    ; get top part
     mov cx,[rsi+14]     ; get exponent and sign
     shr eax,1
-
     .if ( ecx & Q_EXPMASK )
         or eax,0x80000000
     .endif
-
     mov edx,eax         ; duplicate it
     shl edx,H_SIGBITS+1 ; get rounding bit
     mov edx,0xFFE00000  ; get mask of bits to keep
-
     .ifc                ; if have to round
         .ifz            ; - if half way between
             .if ( dword ptr [rsi+6] == 0 )
@@ -998,17 +911,12 @@ __cvtq_h proc __ccall private uses rsi rdi rbx h:ptr half_t, q:ptr qfloat_t
             ;
         .endif
     .endif
-
     mov ebx,ecx         ; save exponent and sign
     and cx,Q_EXPMASK    ; if number not 0
-
     .repeat
-
         .ifnz
             .if ( cx == Q_EXPMASK )
-
                 .if ( eax & 0x7FFFFFFF )
-
                     mov eax,-1
                    .break
                 .endif
@@ -1017,7 +925,6 @@ __cvtq_h proc __ccall private uses rsi rdi rbx h:ptr half_t, q:ptr qfloat_t
                 rcr eax,1
                .break
             .endif
-
             add cx,H_EXPBIAS-Q_EXPBIAS
             .ifs
                 ;
@@ -1027,7 +934,6 @@ __cvtq_h proc __ccall private uses rsi rdi rbx h:ptr half_t, q:ptr qfloat_t
                 mov eax,0x00010000
                .break
             .endif
-
             .if ( cx >= H_EXPMASK || ( cx == H_EXPMASK-1 && eax > edx ) )
                 ;
                 ; overflow
@@ -1038,15 +944,12 @@ __cvtq_h proc __ccall private uses rsi rdi rbx h:ptr half_t, q:ptr qfloat_t
                 rcr eax,1
                .break
             .endif
-
             and  eax,edx ; mask off bottom bits
             shl  eax,1
             shrd eax,ecx,H_EXPBITS
             shl  bx,1
             rcr  eax,1
-
             .break .ifs ( cx || eax >= HFLT_MIN )
-
             mov ebx,eax
             mov qerrno,ERANGE
             mov eax,ebx
@@ -1054,15 +957,11 @@ __cvtq_h proc __ccall private uses rsi rdi rbx h:ptr half_t, q:ptr qfloat_t
         .endif
         and eax,edx
     .until 1
-
     shr eax,16
     mov ecx,eax
-
     mov rax,rdi
     mov [rax],cx
-
     .if ( rax == rsi )
-
         xor ecx,ecx
         mov [rax+2],cx
         mov [rax+4],ecx
@@ -1091,18 +990,13 @@ __cvtq_ss proc __ccall uses rbx s:ptr float_t, q:ptr qfloat_t
     mov ecx,eax         ; duplicate it
     shl ecx,F_SIGBITS+1 ; get rounding bit
     mov cx,[rbx+14]     ; get exponent and sign
-
     .ifc                ; if have to round
         .ifz            ; - if half way between
-
             .if ( dword ptr [rbx+6] == 0 )
-
                 shl edx,1
             .endif
         .endif
-
         add eax,0x80000000 shr (F_SIGBITS-1)
-
         .ifc            ; - if exponent needs adjusting
             mov eax,0x80000000
             inc cx
@@ -1111,22 +1005,17 @@ __cvtq_ss proc __ccall uses rbx s:ptr float_t, q:ptr qfloat_t
             ;
         .endif
     .endif
-
     and eax,edx         ; mask off bottom bits
     mov ebx,ecx         ; save exponent and sign
     and cx,0x7FFF       ; if number not 0
-
     .ifnz
         .if ( cx == 0x7FFF )
-
             shl eax,1   ; infinity or NaN
             shr eax,8
             or  eax,0xFF000000
             shl bx,1
             rcr eax,1
-
         .else
-
             add cx,0x07F-0x3FFF
             .ifs
                 ;
@@ -1134,9 +1023,7 @@ __cvtq_ss proc __ccall uses rbx s:ptr float_t, q:ptr qfloat_t
                 ;
                 mov qerrno,ERANGE
                 xor eax,eax
-
             .else
-
                 .ifs ( cx >= 0x00FF )
                     ;
                     ; overflow
@@ -1145,14 +1032,11 @@ __cvtq_ss proc __ccall uses rbx s:ptr float_t, q:ptr qfloat_t
                     mov eax,0x7F800000 shl 1
                     shl bx,1
                     rcr eax,1
-
                 .else
-
                     shl eax,1
                     shrd eax,ecx,8
                     shl bx,1
                     rcr eax,1
-
                     .ifs ( !cx && eax < DDFLT_MIN )
                         mov ebx,eax
                         mov qerrno,ERANGE
@@ -1163,11 +1047,9 @@ __cvtq_ss proc __ccall uses rbx s:ptr float_t, q:ptr qfloat_t
         .endif
     .endif
     mov ecx,eax
-
     mov rax,s
     mov [rax],ecx
     .if ( rax == q )
-
         xor ecx,ecx
         mov [rax+4],ecx
         mov [rax+8],ecx
@@ -1182,7 +1064,6 @@ __cvtq_ss proc __ccall uses rbx s:ptr float_t, q:ptr qfloat_t
 __cvtq_sd proc __ccall uses rsi rdi rbx d:ptr double_t, q:ptr qfloat_t
 
     ldr     rax,q
-
     movzx   ecx,word ptr [rax+14]
     mov     edx,[rax+10]
     mov     ebx,ecx
@@ -1283,16 +1164,13 @@ __cvtq_sd proc __ccall uses rsi rdi rbx d:ptr double_t, q:ptr qfloat_t
             .endif
         .endif
     .endif
-
     mov rdi,d
     mov [rdi],eax
     mov [rdi+4],edx
     .if ebx
         mov qerrno,ebx
     .endif
-
     .if ( rdi == q )
-
         xor eax,eax
         mov [rdi+8],eax
         mov [rdi+12],eax
@@ -1328,7 +1206,6 @@ __cvtq_ld proc __ccall uses rsi rdi rbx ld:ptr ldouble_t, q:ptr qfloat_t
             adc edx,0
         .endif
     .endif
-
     mov [rax],ebx
     mov [rax+4],edx
     .if ( rax == rdi )
@@ -1368,9 +1245,7 @@ __cvth_q proc __ccall private q:ptr qfloat_t, h:ptr half_t
                 xor edx,edx
             .endif
         .endif
-
     .elseif ( edx )
-
         or cx,Q_EXPBIAS-H_EXPBIAS+1 ; set exponent
         .while 1
             ;
@@ -1382,7 +1257,6 @@ __cvth_q proc __ccall private q:ptr qfloat_t, h:ptr half_t
             dec cx
         .endw
     .endif
-
     shl ecx,1
     rcr cx,1
     mov [rax+14],cx
@@ -1408,24 +1282,19 @@ __cvtss_q proc __ccall private q:ptr qfloat_t, f:ptr float_t
     shl edx,8       ; shift fraction into place
     sar ecx,32-9    ; shift to bottom
     xor ch,ch       ; isolate exponent
-
     .if cl
         .if ( cl != 0xFF )
             add cx,0x3FFF-0x7F
         .else
             or ch,0xFF
             .if !( edx & 0x7FFFFFFF )
-
                 ; Invalid exception
-
                 or edx,0x40000000 ; QNaN
                 mov qerrno,EDOM
             .endif
         .endif
         ;or edx,0x80000000
-
     .elseif edx
-
         or cx,0x3FFF-0x7F+1 ; set exponent
         .while 1
 
@@ -1437,7 +1306,6 @@ __cvtss_q proc __ccall private q:ptr qfloat_t, f:ptr float_t
             dec cx
         .endw
     .endif
-
     add ecx,ecx
     rcr cx,1
     mov [rax+14],cx
@@ -1463,7 +1331,6 @@ __cvtsd_q proc __ccall private uses rbx q:ptr qfloat_t, d:ptr double_t
     shl     eax,11
     sar     ecx,32-12
     and     cx,0x7FF
-
     .ifnz
         .if ( cx != 0x7FF )
             add cx,0x3FFF-0x03FF
@@ -1490,12 +1357,10 @@ __cvtsd_q proc __ccall private uses rbx q:ptr qfloat_t, d:ptr double_t
             rcl edx,1
         .untilcxz
     .endif
-
     add     ecx,ecx
     rcr     cx,1
     shl     eax,1
     rcl     edx,1
-
     xchg    rax,rbx
     mov     [rax+6],ebx
     mov     [rax+10],edx
@@ -1508,7 +1373,6 @@ __cvtsd_q proc __ccall private uses rbx q:ptr qfloat_t, d:ptr double_t
 
 
 __cvtld_q proc __ccall private x:ptr qfloat_t, ld:ptr ldouble_t
-
 ifdef _WIN64
     mov     rax,[rdx]
     movzx   edx,word ptr [rdx+8]
@@ -1543,7 +1407,6 @@ __cmpq proc __ccall A:ptr qfloat_t, B:ptr qfloat_t
 
     ldr rcx,A
     ldr rdx,B
-
     .if ( [rcx].U128.u64[0] == [rdx].U128.u64[0] &&
           [rcx].U128.u64[8] == [rdx].U128.u64[8] )
         .return( 0 )
@@ -1622,15 +1485,12 @@ ifdef _WIN64
 else
     mov eax,dword ptr [ecx].mantissa.l[0]
 endif
-
     .if ( eax & 0x4000)
-
 ifdef _WIN64
         mov rdx,[rcx].mantissa.h
 else
         push esi
         push edi
-
         mov edx,dword ptr [ecx].mantissa.l[4]
         mov edi,dword ptr [ecx].mantissa.h[0]
         mov esi,dword ptr [ecx].mantissa.h[4]
@@ -1650,9 +1510,7 @@ endif
             rcr rdx,1
             rcr rax,1
             inc [rcx].mantissa.e
-
             .if ( [rcx].mantissa.e == Q_EXPMASK )
-
                 mov [rcx].mantissa.e,0x7FFF
                 xor eax,eax
                 xor edx,edx
@@ -1676,16 +1534,12 @@ endif
     .endif
     .return rcx
     endp
-
     assume rcx:nothing
 
 
 ifdef _WIN64
-
 _fltpackfp proc __ccall private dst:ptr, src:ptr STRFLT
-
     _fltround( rdx )
-
     mov     rax,[rcx].STRFLT.mantissa.l
     mov     rdx,[rcx].STRFLT.mantissa.h
     mov     cx, [rcx].STRFLT.mantissa.e
@@ -1697,16 +1551,11 @@ _fltpackfp proc __ccall private dst:ptr, src:ptr STRFLT
     mov     [rcx],rax
     mov     [rcx+8],rdx
     mov     rax,rcx
-
 else
-
 _fltpackfp proc __ccall private uses esi edi ebx q:ptr, p:ptr STRFLT
-
     mov esi,p
     mov edi,q
-
     _fltround( esi )
-
     mov eax,[esi]
     mov edx,[esi+4]
     mov ebx,[esi+8]
@@ -1729,7 +1578,6 @@ endif
 
 
 _lc_fltadd proc __ccall private uses rsi rdi rbx A:ptr STRFLT, B:ptr STRFLT, negate:uint_t
-
 ifdef _WIN64
     mov     r11,rcx
     mov     rbx,[rdx].STRFLT.mantissa.l
@@ -1778,7 +1626,6 @@ else
     or      ecx,edi
 endif
     jz      .zero_a
-
 if_zero_b:
 ifdef _WIN64
     mov     rcx,rbx
@@ -1790,9 +1637,7 @@ else
     or      ecx,b[0xC]
 endif
     jz      .zero_b
-
 calculate_exponent:
-
     mov     ecx,esi
     rol     esi,16
     sar     esi,16
@@ -2181,7 +2026,6 @@ else
 endif
     jna     .b
     jmp     .done
-
 .nan_b:
     sub     esi,0x10000
 ifdef _WIN64
@@ -2227,7 +2071,6 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     mov     rax,[rcx].mantissa.l
     mov     rdx,[rcx].mantissa.h
     mov     si, [rcx].mantissa.e
-
     add     si,1
     jc      .nan_a
     jo      .nan_a
@@ -2238,14 +2081,11 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     mov     rcx,rbx
     or      rcx,rdi
     jz      .zero_b
-
 .if_zero_a:
     mov     rcx,rax
     or      rcx,rdx
     jz      .zero_a
-
 .init_done:
-
     mov     ecx,esi
     rol     ecx,16
     sar     ecx,16
@@ -2257,13 +2097,11 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     add     cx,si
     rol     ecx,16
     rol     esi,16
-
     test    cx,cx
     jz      .normalize_a
 .if_denormal_b:
     test    si,si
     jz      .normalize_b
-
 .calculate_exponent:
     sub     cx,si
     add     cx,0x3FFF
@@ -2273,33 +2111,26 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
 .too_small:
     cmp     cx,-65
     jl      .underflow
-
 .divide:
-
     define  BITS 14
     mov     r13,rcx
-
     mov     r12,rbp
     shrd    rax,rdx,BITS
     shr     rdx,BITS
     shrd    rbx,rdi,BITS
     shr     rdi,BITS
     mov     ecx,113 + (16 - BITS)
-
     mov     rbp,rdi         ; rbp:rbx - ebp:ebx:edx:esi
     mov     r10,rax         ; r11:r10 - reminder
     mov     r11,rdx
-
     xor     eax,eax         ; rdx:rax - quotient
     xor     edx,edx
     xor     r8d,r8d         ; r9:r8   - divisor
     xor     r9d,r9d
     xor     edi,edi         ; rsi:rdi - dividend
     xor     esi,esi
-
     add     rbx,rbx
     adc     rbp,rbp
-
 .divide_1:
     shr     rbp,1
     rcr     rbx,1
@@ -2311,7 +2142,6 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     sbb     r11,rbp
     cmc
     jc      .divide_3
-
 .divide_2:
     add     rax,rax
     adc     rdx,rdx
@@ -2326,65 +2156,51 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     adc     r10,rbx
     adc     r11,rbp
     jnc     .divide_2
-
 .divide_3:
     adc     rax,rax
     adc     rdx,rdx
     dec     ecx
     jnz     .divide_1
-
 .end_divide:
-
     mov     rsi,r13
     mov     rbp,r12
     dec     si
-
 .rounding:
-
     bt      rax,0
     adc     rax,0
     adc     rdx,0
-
 .overflow:
     bt      rdx,64 - BITS ; overflow bit
     jnc     .reset
-
     rcr     rdx,1
     rcr     rax,1
     add     esi,1
-
 .reset:
     shld    rdx,rax,BITS
     shl     rax,BITS
-
     test    si,si
     jng     .zero
     add     esi,esi
     rcr     si,1
-
 .done:
-
     mov     rcx,a
     mov     [rcx].mantissa.l,rax
     mov     [rcx].mantissa.h,rdx
     mov     [rcx].mantissa.e,si
     mov     rax,rcx
     ret
-
 .normalize_a:
     dec     cx
     add     rax,rax
     adc     rdx,rdx
     jnc     .normalize_a
     jmp     .if_denormal_b
-
 .normalize_b:
     dec     si
     add     rbx,rbx
     adc     rdi,rdi
     jnc     .normalize_b
     jmp     .calculate_exponent
-
 .zero_a:
     add     si,si
     jz      .za_0
@@ -2396,7 +2212,6 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     jz      .zero
     mov     esi,0x8000
     jmp     .done
-
 .zero_b:
     test    esi,0x7FFF0000
     jnz     .if_zero_a
@@ -2406,35 +2221,29 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     mov     ecx,esi
     add     cx,cx
     jnz     .infinity
-
 .nan:
     mov     esi,0xFFFF
     mov     rdx,0x4000000000000000
     xor     eax,eax
     jmp     .done
-
 .underflow:
     and     cx,0x7FFF
     cmp     cx,0x3FFF
     jae     .zero
-
 .infinity:
     mov     esi,0x7FFF
 .0:
     xor     eax,eax
     xor     edx,edx
     jmp     .done
-
 .zero:
     xor     esi,esi
     jmp     .0
-
 .b:
     mov     rax,rbx
     mov     rdx,rdi
     shr     esi,16
     jmp     .done
-
 .nan_a:
     dec     si
     add     esi,0x10000
@@ -2459,7 +2268,6 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     cmp     rax,rbx
     jna     .b
     jmp     .done
-
 .nan_b:
     sub     esi,0x10000
     mov     rcx,rbx
@@ -2471,9 +2279,7 @@ _fltdiv proc __ccall private uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     and     esi,0x80000000
     jmp     .b
     endp
-
     assume rdx:nothing, rcx:nothing
-
 else
 
     option stackbase:esp
@@ -2491,7 +2297,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     divisor[0x4],[edx+0x4]
     mov     divisor[0x8],[edx+0x8]
     mov     divisor[0xC],[edx+0xC]
-
     mov     si, [edx].STRFLT.mantissa.e
     shl     esi,16
     mov     ecx,a
@@ -2512,16 +2317,13 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     or      ecx,divisor[0x8]
     or      ecx,divisor[0xC]
     jz      .zero_b
-
 .if_zero_a:
     mov     ecx,eax
     or      ecx,edx
     or      ecx,ebx
     or      ecx,edi
     jz      .zero_a
-
 .init_done:
-
     mov     ecx,esi
     rol     ecx,16
     sar     ecx,16
@@ -2533,13 +2335,11 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     add     cx,si
     rol     ecx,16
     rol     esi,16
-
     test    cx,cx
     jz      .normalize_a
 .if_denormal_b:
     test    si,si
     jz      .normalize_b
-
 .calculate_exponent:
     sub     cx,si
     add     cx,0x3FFF
@@ -2549,12 +2349,9 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
 .too_small:
     cmp     cx,-65
     jl      .underflow
-
 .divide:
-
     define  BITS 14
     mov     exp,ecx
-
     shrd    eax,edx,BITS
     shrd    edx,ebx,BITS
     shrd    ebx,edi,BITS
@@ -2563,7 +2360,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     reminder[0x4],edx
     mov     reminder[0x8],ebx
     mov     reminder[0xC],edi
-
     mov     esi,divisor[0x0]
     mov     edx,divisor[0x4]
     mov     ebx,divisor[0x8]
@@ -2573,7 +2369,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     shrd    ebx,ebp,BITS
     shr     ebp,BITS
     mov     ecx,113 + (16 - BITS)
-
     xor     eax,eax
     xor     edi,edi
     mov     quotient[0x0],eax
@@ -2587,12 +2382,10 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     dividend[0x4],eax
     mov     dividend[0x8],eax
     mov     dividend[0xC],eax
-
     add     esi,esi
     adc     edx,edx
     adc     ebx,ebx
     adc     ebp,ebp
-
 .divide_1:
     shr     ebp,1
     rcr     ebx,1
@@ -2612,9 +2405,7 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     sbb     reminder[0xC],ebp
     cmc
     jc      .divide_3
-
 .divide_2:
-
     add     quotient[0x0],quotient[0x0]
     adc     quotient[0x4],quotient[0x4]
     adc     quotient[0x8],quotient[0x8]
@@ -2638,34 +2429,26 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     adc     reminder[0x8],ebx
     adc     reminder[0xC],ebp
     jnc     .divide_2
-
 .divide_3:
-
     adc     quotient[0x0],quotient[0x0]
     adc     quotient[0x4],quotient[0x4]
     adc     quotient[0x8],quotient[0x8]
     adc     edi,edi
     dec     ecx
     jnz     .divide_1
-
 .end_divide:
-
     mov     esi,exp
     mov     eax,quotient[0x0]
     mov     edx,quotient[0x4]
     mov     ebx,quotient[0x8]
     dec     si
-
 .rounding:
-
     bt      eax,0
     adc     eax,0
     adc     edx,0
     adc     ebx,0
     adc     edi,0
-
 .overflow:
-
     bt      edi,32 - BITS
     jnc     .reset
     rcr     edi,1
@@ -2673,20 +2456,16 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     rcr     edx,1
     rcr     eax,1
     add     esi,1
-
 .reset:
     shld    edi,ebx,BITS
     shld    ebx,edx,BITS
     shld    edx,eax,BITS
     shl     eax,BITS
-
     test    si,si
     jng     .zero
     add     esi,esi
     rcr     si,1
-
 .done:
-
     mov     ecx,a
     mov     dword ptr [ecx].STRFLT.mantissa.l[0],eax
     mov     dword ptr [ecx].STRFLT.mantissa.l[4],edx
@@ -2695,7 +2474,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     [ecx].STRFLT.mantissa.e,si
     mov     eax,ecx
     ret
-
 .normalize_a:
     dec     cx
     add     eax,eax
@@ -2704,9 +2482,7 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     adc     edi,edi
     jnc     .normalize_a
     jmp     .if_denormal_b
-
 .normalize_b:
-
     push    eax
 .nb:
     dec     si
@@ -2717,7 +2493,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     jnc     .nb
     pop     eax
     jmp     .calculate_exponent
-
 .zero_a:
     add     si,si
     jz      .za_0
@@ -2729,7 +2504,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     jz      .zero
     mov     esi,0x8000
     jmp     .done
-
 .zero_b:
     test    esi,0x7FFF0000
     jnz     .if_zero_a
@@ -2741,7 +2515,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     ecx,esi
     add     cx,cx
     jnz     .infinity
-
 .nan:
     mov     esi,0xFFFF
     mov     edi,0x40000000
@@ -2749,7 +2522,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     xor     edx,edx
     xor     eax,eax
     jmp     .done
-
 .underflow:
     and     cx,0x7FFF
     cmp     cx,0x3FFF
@@ -2767,7 +2539,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
 .zero:
     xor     esi,esi
     jmp     .0
-
 .b:
     mov     eax,divisor[0x0]
     mov     edx,divisor[0x4]
@@ -2775,7 +2546,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     edi,divisor[0xC]
     shr     esi,16
     jmp     .done
-
 .nan_a:
     dec     si
     add     esi,0x10000
@@ -2812,7 +2582,6 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     cmp     eax,divisor[0x0]
     jna     .b
     jmp     .done
-
 .nan_b:
     sub     esi,0x10000
     mov     ecx,divisor[0]
@@ -2826,14 +2595,12 @@ _fltdiv proc __ccall private uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     and     esi,0x80000000
     jmp     .b
     endp
-
     option stackbase:ebp
 
 endif
 
 
 _fltmul proc __ccall private uses rsi rdi rbx a:ptr STRFLT, b:ptr STRFLT
-
 ifdef _WIN64
     mov     r10,rcx
     mov     rbx,[rdx].STRFLT.mantissa.l
@@ -2856,7 +2623,6 @@ else
     mov     edi,dword ptr [ecx].STRFLT.mantissa.h[4]
 endif
     mov     si, [rcx].STRFLT.mantissa.e
-
     add     si,1
     jc      .nan_a
     jo      .nan_a
@@ -2864,7 +2630,6 @@ endif
     jc      .nan_b
     jo      .nan_b
     sub     esi,0x10000
-
     mov     rcx,rax
     or      rcx,rdx
 ifndef _WIN64
@@ -2872,7 +2637,6 @@ ifndef _WIN64
     or      ecx,edi
 endif
     jz      .zero_a
-
 .if_zero_b:
 ifdef _WIN64
     mov     rcx,rbx
@@ -2887,9 +2651,7 @@ else
     pop     eax
 endif
     jz      .zero_b
-
 .calculate_exponent:
-
     mov     ecx,esi
     rol     ecx,16
     sar     ecx,16
@@ -2904,7 +2666,6 @@ endif
 .too_small:
     cmp     si,-65
     jl      .underflow
-
 ifdef _WIN64
     mov     rcx,rbx
     mov     r11,rdi
@@ -2930,10 +2691,8 @@ ifdef _WIN64
     adc     r11,0
     mov     rax,rcx
     mov     rdx,r11
-
     test    rdx,rdx
     js      .rounding
-
     add     rbx,rbx
     adc     rax,rax
     adc     rdx,rdx
@@ -2942,7 +2701,6 @@ else
     mov     multiplier[0x4],edx
     mov     multiplier[0x8],ebx
     mov     multiplier[0xC],edi
-
     mov     ecx,b
     mul     dword ptr [ecx+0x0]
     mov     result[0x0],eax
@@ -2959,9 +2717,7 @@ else
     mul     dword ptr [ecx+0x0C]
     mov     result[0x18],eax
     mov     result[0x1C],edx
-
     .for ( ebx = 0 : ebx < 12 : ebx++ )
-
         lea ecx,[ebx+ebx]
 
         ;  b a 9 8 7 6 5 4 3 2 1 0 - index
@@ -2975,11 +2731,9 @@ else
         shr edx,cl
         and eax,3
         and edx,3
-
         mov eax,multiplier[eax*4]
         mov edi,b
         mul dword ptr [edi+edx*4]
-
         .if ( eax || edx )
 
             ;  b a 9 8 7 6 5 4 3 2 1 0 - index
@@ -2994,23 +2748,18 @@ else
             add result[edi*4],eax
             adc result[edi*4+4],edx
             sbb edx,edx
-
             .continue .ifz
-
             .for ( eax = 1, edi += 2: edx, edi < 8: edi++ )
-
                 add result[edi*4],eax
                 sbb edx,edx
             .endf
         .endif
     .endf
-
     mov     ecx,result[0x0C]
     mov     eax,result[0x10]    ; high256
     mov     edx,result[0x14]
     mov     ebx,result[0x18]
     mov     edi,result[0x1C]
-
     test    edi,edi             ; if not normalized
     js      .rounding
     add     ecx,ecx
@@ -3019,11 +2768,8 @@ else
     adc     ebx,ebx
     adc     edi,edi
 endif
-
     dec     si
-
 .rounding:
-
 ifdef _WIN64
     add     rbx,rbx
     adc     rax,0
@@ -3035,16 +2781,12 @@ else
     adc     ebx,0
     adc     edi,0
 endif
-
 .validate:
-
     test    si,si
     jng     .zero
     add     esi,esi
     rcr     si,1
-
 .done:
-
 ifdef _WIN64
     mov     [r10].STRFLT.mantissa.l,rax
     mov     [r10].STRFLT.mantissa.h,rdx
@@ -3060,7 +2802,6 @@ else
     mov     eax,ecx
 endif
     ret
-
 .zero_a:
     add     si,si
     jz      .is_zero_a
@@ -3072,7 +2813,6 @@ endif
     jz      .zero
     mov     esi,0x8000
     jmp     .done
-
 .zero_b:
     test    esi,0x7FFF0000
     jnz     .calculate_exponent
@@ -3080,7 +2820,6 @@ endif
     jz      .zero
     mov     esi,0x80000000
     jmp     .b
-
 .nan:
     mov     esi,0xFFFF
 ifdef _WIN64
@@ -3093,9 +2832,7 @@ else
 endif
     xor     eax,eax
     jmp     .done
-
 .overflow:
-
 .infinity:
     mov     esi,0x7FFF
 .0:
@@ -3106,19 +2843,15 @@ ifndef _WIN64
     xor     edi,edi
 endif
     jmp     .done
-
 .underflow:
-
 .zero:
     xor     esi,esi
     jmp     .0
-
 .b:
     mov     rax,rbx
     mov     rdx,rdi
     shr     esi,16
     jmp     .done
-
 .nan_a:
     dec     si
     add     esi,0x10000
@@ -3147,7 +2880,6 @@ endif
     cmp     rax,rbx
     jna     .b
     jmp     .done
-
 .nan_b:
     sub     esi,0x10000
     test    rbx,rbx
@@ -3163,10 +2895,8 @@ endif
 
 
 __addq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
-
   local a:STRFLT
   local b:STRFLT
-
     _fltunpack(&a, dest)
     _fltunpack(&b, src)
     _fltadd(&a, &b)
@@ -3176,10 +2906,8 @@ __addq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
 
 
 __subq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
-
   local a:STRFLT
   local b:STRFLT
-
     _fltunpack(&a, dest)
     _fltunpack(&b, src)
     _fltsub(&a, &b)
@@ -3189,10 +2917,8 @@ __subq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
 
 
 __mulq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
-
   local a:STRFLT
   local b:STRFLT
-
     _fltunpack(&a, dest)
     _fltunpack(&b, src)
     _fltmul(&a, &b)
@@ -3202,10 +2928,8 @@ __mulq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
 
 
 __divq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
-
   local a:STRFLT
   local b:STRFLT
-
     _fltunpack(&a, dest)
     _fltunpack(&b, src)
     _fltdiv(&a, &b)
@@ -3219,11 +2943,8 @@ __sqrtq proc __ccall p:ptr qfloat_t
   local x:U128
   local y:U128
   local t:U128
-
     ldr rcx,p
-
     assume rcx:ptr U128
-
 ifdef _WIN64
     mov rax,[rcx].u64[0]
 else
@@ -3234,19 +2955,14 @@ endif
     or  ax,[rcx].u16[12]
     mov dx,[rcx].u16[14]
     and edx,Q_EXPMASK
-
     .return .if edx == Q_EXPMASK && !eax
     .return .if !edx && !eax
-
     .if [rcx].u8[15] & 0x80
-
         __subq(rcx, rcx)
         __divq(rax, rax)
         .return
     .endif
-
     assume rcx:nothing
-
     mov x,[rcx]
     __cvtq_ld(rcx, rcx)
     mov rcx,p
@@ -3254,7 +2970,6 @@ endif
     fsqrt
     fstp tbyte ptr [rcx]
     __cvtld_q(rcx, rcx)
-
     mov rdx,p
     mov y,[rdx]
     __subq(&y, __divq(&x, rdx))
@@ -3266,7 +2981,6 @@ else
 endif
     mov x.u32[8],0
     mov x.u32[12],0x3FFE0000 ; 0.5
-
     __mulq(&y, &x)
     __subq(p, &y)
     ret
@@ -3280,7 +2994,6 @@ _fltsetflags proc __ccall private uses rsi rdi fp:ptr STRFLT, string:string_t, f
     ldr rdi,fp
     ldr rsi,string
     ldr ecx,flags
-
     xor eax,eax
 ifdef _WIN64
     mov [rdi].mantissa.l,rax
@@ -3294,45 +3007,32 @@ endif
     mov [rdi].mantissa.e,ax
     mov [rdi].exponent,eax
     or  ecx,_ST_ISZERO
-
     .repeat
-
         lodsb
         .break .if ( al == 0 )
         .continue(0) .if ( al == ' ' || ( al >= 9 && al <= 13 ) )
-
         dec rsi
         and ecx,not _ST_ISZERO
         .if ( al == '+' )
-
             inc rsi
             or  ecx,_ST_SIGN
         .endif
-
         .if ( al == '-' )
-
             inc rsi
             or  ecx,_ST_SIGN or _ST_NEGNUM
         .endif
-
         lodsb
         .break .if !al
-
         or al,0x20
         .if ( al == 'n' )
-
             mov ax,[rsi]
             or  ax,0x2020
-
             .if ( ax == 'na' )
-
                 add rsi,2
                 or  ecx,_ST_ISNAN
                 mov [rdi].mantissa.e,0xFFFF
                 movzx eax,byte ptr [rsi]
-
                 .if ( al == '(' )
-
                     lea rdx,[rsi+1]
                     mov al,[rdx]
                     .switch
@@ -3354,14 +3054,10 @@ endif
             .endif
             .break
         .endif
-
         .if ( al == 'i' )
-
             mov ax,[rsi]
             or  ax,0x2020
-
             .if ( ax == 'fn' )
-
                 add rsi,2
                 or  ecx,_ST_ISINF
             .else
@@ -3370,13 +3066,10 @@ endif
             .endif
             .break
         .endif
-
         .if ( al == '0' )
-
             mov al,[rsi]
             or  al,0x20
             .if ( al == 'x' )
-
                 or  ecx,_ST_ISHEX
                 add rsi,2
             .endif
@@ -3388,9 +3081,7 @@ endif
     mov eax,ecx
     ret
     endp
-
     assume rdi:nothing
-
 
     assume rbx:ptr STRFLT
 
@@ -3407,36 +3098,25 @@ _destoflt proc __ccall private uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
     xor edx,edx
 
     .while 1
-
         lodsb
         .break .if !al
-
         .if ( al == '.' )
-
             .break .if ( ecx & _ST_DOT )
             or ecx,_ST_DOT
-
         .else
-
             .if ( ecx & _ST_ISHEX )
-
                 or al,0x20
                 .break .if ( al < '0' || al > 'f' )
                 .break .if ( al > '9' && al < 'a' )
             .else
                 .break .if ( al < '0' || al > '9' )
             .endif
-
             .if ( ecx & _ST_DOT )
-
                 inc sigdig
             .endif
-
             or ecx,_ST_DIGITS
             or edx,eax
-
             .continue .if ( edx == '0' ) ; if a significant digit
-
             .if ( digits < Q_SIGDIG )
                 stosb
             .endif
@@ -3450,12 +3130,9 @@ _destoflt proc __ccall private uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
     ;
     xor edx,edx
     .if ( ecx & _ST_DIGITS )
-
         xor edi,edi ; exponent
-
         .if ( ( ( ecx & _ST_ISHEX ) &&
               ( al == 'p' || al == 'P' ) ) || al == 'e' || al == 'E' )
-
             mov al,[rsi]
             lea rdx,[rsi-1]
             .if ( al == '+' )
@@ -3466,15 +3143,11 @@ _destoflt proc __ccall private uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
                 or  ecx,_ST_NEGEXP
             .endif
             and ecx,not _ST_DIGITS
-
             .while 1
-
                 movzx eax,byte ptr [rsi]
                 .break .if ( al < '0' )
                 .break .if ( al > '9' )
-
                 .if ( edi < 100000000 ) ; else overflow
-
                     imul edi,edi,10
                     lea edi,[rdi+rax-'0']
                 .endif
@@ -3490,7 +3163,6 @@ _destoflt proc __ccall private uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
         .else
             dec rsi ; digits found, but no e or E
         .endif
-
         mov edx,edi
         mov eax,sigdig
         mov edi,Q_DIGITS
@@ -3500,21 +3172,16 @@ _destoflt proc __ccall private uses rsi rdi rbx fp:ptr STRFLT, buffer:string_t
             xor edx,edx
         .endif
         sub edx,eax
-
         .if ( digits > edi )
-
             add edx,digits
             mov digits,edi
             sub edx,edi
         .endif
-
         .while 1
-
             .break .if ( digits <= 0 )
              mov edi,digits
              add rdi,buffer
             .break .if ( byte ptr [rdi-1] != '0' )
-
             inc edx
             dec digits
         .endw
@@ -3543,24 +3210,17 @@ _lk_fltscale proc __ccall uses rsi rdi rbx fp:ptr STRFLT, exponent:int_t, table:
     .if ( [rcx].STRFLT.flags & _ST_ISHEX )
         inc ebx
     .endif
-
     .ifs ( edi < 0 )
-
         imul eax,ebx,EXTFLOAT
         add  rsi,rax
         neg  edi
     .endif
-
     .if ( edi )
-
         .for ( : edi && ebx : ebx--, edi >>= 1, rsi += EXTFLOAT )
-
             .if ( edi & 1 )
-
                 _fltmul( fp, rsi )
             .endif
         .endf
-
         .if ( edi != 0 )
 
             ; exponent overflow
@@ -3600,11 +3260,8 @@ _strtoflt proc __ccall private uses rsi rdi rbx string:string_t
 
         _fltsetflags( &flt, string, 0 )
         .break .if ( eax & _ST_ISZERO or _ST_ISNAN or _ST_ISINF or _ST_INVALID )
-
         mov digits,_destoflt( &flt, &buffer )
-
         .if ( eax == 0 )
-
             or flt.flags,_ST_ISZERO
             .break
         .endif
@@ -3616,29 +3273,23 @@ _strtoflt proc __ccall private uses rsi rdi rbx string:string_t
         xor eax,eax
         mov al,[rdx]
         mov sign,eax
-
         .if ( al == '+' || al == '-' )
             inc rdx
         .endif
-
         mov ebx,16
         .if !( flt.flags & _ST_ISHEX )
             mov ebx,10
         .endif
         lea rsi,flt.mantissa
-
         .while 1
-
             mov al,[rdx]
             .break .if !al
-
             and eax,not 0x30
             bt  eax,6
             sbb ecx,ecx
             and ecx,55
             sub eax,ecx
             mov ecx,8
-
             .repeat
                 movzx edi,word ptr [rsi]
                 imul  edi,ebx
@@ -3650,47 +3301,35 @@ _strtoflt proc __ccall private uses rsi rdi rbx string:string_t
             sub rsi,16
             inc rdx
         .endw
-
         xor ecx,ecx
-
 ifdef _WIN64
-
         mov rax,flt.mantissa.l
         mov rdx,flt.mantissa.h
-
         .if ( rax || rdx )
-
             .if ( rdx )     ; find most significant non-zero bit
                 bsr rcx,rdx
                 add ecx,64
             .else
                 bsr rcx,rax
             .endif
-
             mov ch,cl       ; shift bits into position
             mov cl,127
             sub cl,ch
-
             .if ( cl >= 64 )
-
                 sub cl,64
                 mov rdx,rax
                 xor eax,eax
             .endif
-
             shld rdx,rax,cl
             shl rax,cl
             mov flt.mantissa.l,rax
             mov flt.mantissa.h,rdx
 else
-
         mov eax,dword ptr flt.mantissa.l[0]
         mov edx,dword ptr flt.mantissa.l[4]
         mov ebx,dword ptr flt.mantissa.h[0]
         mov esi,dword ptr flt.mantissa.h[4]
-
         .if ( eax || edx || ebx || esi )
-
             .if ( esi )
                 bsr ecx,esi
                 add ecx,96
@@ -3703,31 +3342,25 @@ else
             .else
                 bsr ecx,eax
             .endif
-
             mov ch,cl       ; shift bits into position
             mov cl,127
             sub cl,ch
-
             .while ( cl >= 32 )
-
                 sub cl,32
                 mov esi,ebx
                 mov ebx,edx
                 mov edx,eax
                 xor eax,eax
             .endw
-
             shld esi,ebx,cl
             shld ebx,edx,cl
             shld edx,eax,cl
             shl eax,cl
-
             mov dword ptr flt.mantissa.l[0],eax
             mov dword ptr flt.mantissa.l[4],edx
             mov dword ptr flt.mantissa.h[0],ebx
             mov dword ptr flt.mantissa.h[4],esi
 endif
-
             shr ecx,8           ; get shift count
             add ecx,Q_EXPBIAS   ; calculate exponent
             .if ( flt.flags & _ST_ISHEX )
@@ -3737,12 +3370,10 @@ endif
         .else
             or flt.flags,_ST_ISZERO
         .endif
-
         mov edx,flt.flags
         .if ( sign == '-' || edx & _ST_NEGNUM )
             or cx,0x8000
         .endif
-
         mov ebx,ecx
         and ebx,Q_EXPMASK
         .switch
@@ -3760,29 +3391,22 @@ else
             mov dword ptr flt.mantissa.h[4],eax
 endif
             .if ( edx & _ST_ISNAN or _ST_INVALID )
-
                 or ecx,0x8000
                 or byte ptr flt.mantissa.h[7],0x80
             .endif
         .endsw
         movsx edi,flt.mantissa.e
         mov flt.mantissa.e,cx
-
         and ecx,Q_EXPMASK
         .if ( ecx >= 0x7FFF )
-
             mov qerrno,ERANGE
-
         .elseif ( flt.flags & _ST_ISHEX )
-
             .if ( edi )
                 _lk_fltscale(&flt, edi, &_base2table)
             .endif
         .elseif ( flt.exponent )
-
             _fltscale( &flt )
         .endif
-
         mov eax,flt.exponent
         add eax,digits
         dec eax
@@ -3808,7 +3432,6 @@ _atoow proc fastcall dst:string_t, src:string_t, radix:int_t, bsize:int_t
     mov     [rcx],rdx
     mov     [rcx+8],rdx
     xor     ecx,ecx
-
 ifdef CHEXPREFIX
     movzx   eax,word ptr [r11]
     or      eax,0x2000
@@ -3818,12 +3441,9 @@ ifdef CHEXPREFIX
     sub     r9d,2
 .0:
 endif
-
     cmp     r8d,16
     jne     .2
-
     ; hex value
-
 .1:
     movzx   eax,byte ptr [r11]
     inc     r11
@@ -3838,7 +3458,6 @@ endif
     dec     r9d
     jnz     .1
     jmp     .7
-
 .2:
     cmp     r8d,10
     jne     .5
@@ -3849,7 +3468,6 @@ endif
 .4:
     dec     r9d
     jz      .7
-
     mov     r8,rdx
     mov     rax,rcx
     shld    rdx,rcx,3
@@ -3864,7 +3482,6 @@ endif
     add     rcx,rax
     adc     rdx,0
     jmp     .4
-
 .5:
     movzx   eax,byte ptr [r11]
     and     eax,not 0x30
@@ -3904,14 +3521,11 @@ else ; _WIN64
 ;-------------------------------------------------------------------------------
 
 __mul64 proc watcall a:int64_t, b:int64_t
-
     .if !edx && !ecx
-
         mul ebx
         xor ebx,ebx
        .return
     .endif
-
     push    ebp
     push    esi
     push    edi
@@ -3949,14 +3563,10 @@ __mul64 proc watcall a:int64_t, b:int64_t
 ;-------------------------------------------------------------------------------
 
 __udiv64 proc watcall dividend:qword, divisor:qword
-
     .repeat
-
         .break .if ecx
-
         dec ebx
         .ifnz
-
             inc ebx
             .if ebx <= edx
                 mov  ecx,eax
@@ -3972,9 +3582,7 @@ __udiv64 proc watcall dividend:qword, divisor:qword
         .endif
         ret
     .until 1
-
     .repeat
-
         .break .if ecx < edx
         .ifz
             .if ebx <= eax
@@ -3991,19 +3599,14 @@ __udiv64 proc watcall dividend:qword, divisor:qword
         xchg ebx,eax
         xchg ecx,edx
         ret
-
     .until 1
-
     push ebp
     push esi
     push edi
-
     xor ebp,ebp
     xor esi,esi
     xor edi,edi
-
     .repeat
-
         add ebx,ebx
         adc ecx,ecx
         .ifnc
@@ -4059,7 +3662,6 @@ _atoow proc uses esi edi ebx dst:string_t, src:string_t, radix:int_t, bsize:int_
     mov edx,dst
     mov ebx,radix
     mov edi,bsize
-
 ifdef CHEXPREFIX
     movzx eax,word ptr [esi]
     or eax,0x2000
@@ -4068,19 +3670,16 @@ ifdef CHEXPREFIX
         sub edi,2
     .endif
 endif
-
     xor eax,eax
     mov [edx],eax
     mov [edx+4],eax
     mov [edx+8],eax
     mov [edx+12],eax
-
     .if ebx == 16 && edi <= 16
 
         ; hex value <= qword
 
         xor ecx,ecx
-
         .if edi <= 8
 
             ; 32-bit value
@@ -4097,7 +3696,6 @@ endif
                 add ecx,eax
                 dec edi
             .untilz
-
             mov [edx],ecx
            .return( edx )
         .endif
@@ -4119,7 +3717,6 @@ endif
             adc  edx,0
             dec  edi
         .untilz
-
         mov eax,dst
         mov [eax],ecx
         mov [eax+4],edx
@@ -4127,13 +3724,10 @@ endif
     .elseif ( ebx == 10 && edi <= 20 )
 
         xor ecx,ecx
-
         mov cl,[esi]
         add esi,1
         sub cl,'0'
-
         .if edi < 10
-
             .while 1
 
                 ; FFFFFFFF - 4294967295 = 10
@@ -4147,21 +3741,16 @@ endif
                 lea ebx,[ecx*8+eax]
                 lea ecx,[ecx*2+ebx]
             .endw
-
             mov [edx],ecx
            .return( edx )
-
         .endif
-
         xor edx,edx
-
         .while 1
 
             ; FFFFFFFFFFFFFFFF - 18446744073709551615 = 20
 
             dec edi
             .break .ifz
-
             mov  al,[esi]
             add  esi,1
             sub  al,'0'
@@ -4176,13 +3765,10 @@ endif
             add  ecx,eax
             adc  edx,0
         .endw
-
         mov eax,dst
         mov [eax],ecx
         mov [eax+4],edx
-
     .else
-
         mov bsize,edi
         mov edi,edx
         .repeat
@@ -4251,11 +3837,9 @@ _atoqw proc fastcall uses rbx string:string_t
 atofloat proc __ccall _out:ptr, inp:string_t, size:uint_t, negative:int_t
 
     mov qerrno,0
-
     mov rdx,_strtoflt( inp )
     mov rcx,_out
     mov [rcx],[rdx].U128.u128
-
     .if ( qerrno )
         asmerr( 2104, inp )
     .endif
@@ -4302,11 +3886,9 @@ atofloat proc __ccall _out:ptr, inp:string_t, size:uint_t, negative:int_t
 
 
 ftoquad proc fastcall opnd:expr_t
-
     xor eax,eax
     mov qerrno,eax
     mov al,[rcx].expr.mem_type
-
     .switch pascal eax
     .case MT_REAL2  : __cvth_q ( rcx, rcx )
     .case MT_REAL4  : __cvtss_q( rcx, rcx )
@@ -4321,7 +3903,6 @@ ftoquad proc fastcall opnd:expr_t
 
 
 quadtof proc fastcall opnd:expr_t
-
     mov al,[rcx].expr.mem_type
     .switch pascal al
     .case MT_REAL2  : __cvtq_h ( rcx, rcx )
@@ -4342,7 +3923,6 @@ quad_resize proc __ccall uses rsi rbx opnd:ptr expr, size:int_t
     movzx   esi,word ptr [rbx+14]
     and     esi,0x7FFF
     mov     eax,size
-
     .switch eax
     .case 10
         __cvtq_ld(rbx, rbx)
@@ -4381,7 +3961,6 @@ quad_resize proc __ccall uses rsi rbx opnd:ptr expr, size:int_t
         mov [rbx].mem_type,MT_REAL2
         .endc
     .endsw
-
     .if ( qerrno && esi != 0x7FFF )
         asmerr( 2071 )
     .endif
@@ -4415,13 +3994,10 @@ m64 ends
 _flttoi64 proc __ccall private p:ptr STRFLT
 
     ldr rcx,p
-
     mov dx,[rcx+16]
     mov eax,edx
     and eax,Q_EXPMASK
-
     .ifs ( eax < Q_EXPBIAS )
-
         xor eax,eax
         .if ( dx & 0x8000 )
             dec rax
@@ -4429,9 +4005,7 @@ _flttoi64 proc __ccall private p:ptr STRFLT
 ifndef _WIN64
         cdq
 endif
-
     .elseif ( eax > 62 + Q_EXPBIAS )
-
         mov qerrno,ERANGE
 ifdef _WIN64
         mov rax,_I64_MAX
@@ -4447,11 +4021,8 @@ else
             dec eax
         .endif
 endif
-
     .else
-
 ifdef _WIN64
-
         mov r10,[rcx+8]
         mov ecx,eax
         xor eax,eax
@@ -4462,9 +4033,7 @@ ifdef _WIN64
         .if ( edx & 0x8000 )
             neg rax
         .endif
-
 else
-
         push    edx
         push    ebx
         push    edi
@@ -4477,15 +4046,10 @@ else
         adc     eax,eax
         shl     ebx,1
         sub     ecx,Q_EXPBIAS
-
         .if ( ecx < 32 )
-
             shld eax,edi,cl
-
         .else
-
             .while ecx
-
                 add ebx,ebx
                 adc edi,edi
                 adc eax,eax
@@ -4496,9 +4060,7 @@ else
         pop edi
         pop ebx
         pop ecx
-
         .if ( ecx & 0x8000 )
-
             neg edx
             neg eax
             sbb edx,0
@@ -4510,9 +4072,7 @@ endif
 
 
 _i64toflt proc __ccall private p:ptr STRFLT, ll:int64_t
-
 ifdef _WIN64
-
     mov rax,rdx
     mov rdx,rcx
     mov r8d,Q_EXPBIAS   ; set exponent
@@ -4534,15 +4094,11 @@ ifdef _WIN64
     mov [rdx].STRFLT.mantissa.h,rax
     mov [rdx].STRFLT.mantissa.e,r9w
     mov rax,rdx
-
 else
-
     push ebx
-
     mov eax,dword ptr ll[0]
     mov edx,dword ptr ll[4]
     mov ebx,Q_EXPBIAS   ; set exponent
-
     test edx,edx        ; if number is negative
     .ifs
         neg edx         ; negate number
@@ -4550,21 +4106,17 @@ else
         sbb edx,0
         or  ebx,0x8000
     .endif
-
     xor ecx,ecx
     .if ( eax || edx )
-
         .if edx         ; find most significant non-zero bit
             bsr ecx,edx
             add ecx,32
         .else
             bsr ecx,eax
         .endif
-
         mov ch,cl
         mov cl,64
         sub cl,ch
-
         .if ( cl <= 64 ) ; shift bits into position
             dec cl
             .if ( cl >= 32 )
@@ -4581,7 +4133,6 @@ else
         shr ecx,8       ; get shift count
         add ecx,ebx     ; calculate exponent
     .endif
-
     mov     ebx,p
     xchg    eax,ebx
     mov     dword ptr [eax].STRFLT.mantissa.h[0],ebx
@@ -4603,7 +4154,6 @@ __modq proc __ccall uses rsi rdi dest:ptr qfloat_t, src:ptr qfloat_t
 
     ldr rsi,dest
     ldr rdi,src
-
     xor eax,eax
     mov rcx,[rdi].expr.float_tok
     .if ( rcx && [rcx].asm_tok.floattype == 'r' )
@@ -4611,17 +4161,12 @@ __modq proc __ccall uses rsi rdi dest:ptr qfloat_t, src:ptr qfloat_t
     .elseif ( [rdi].expr.kind != EXPR_FLOAT )
         inc eax
     .endif
-
     .if ( eax )
-
         __divo( rsi, rdi, &a )
         mov [rsi].expr.llvalue,a.mantissa.l
         mov [rsi].expr.hlvalue,a.mantissa.h
-
     .else
-
         ; R = A - N * Int64(A / N)
-
         _fltunpack(&a, rsi)
         _fltunpack(&b, rdi)
         _fltdiv(&a, &b)
@@ -4657,7 +4202,6 @@ _flttostr proc __ccall uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, fl
     add rax,rcx
     dec rax
     mov endbuf,rax
-
     mov eax,D_CVT_DIGITS
     .if ( flags & _ST_LONGDOUBLE )
         mov eax,LD_CVT_DIGITS
@@ -4665,28 +4209,22 @@ _flttostr proc __ccall uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, fl
         mov eax,QF_CVT_DIGITS
     .endif
     mov digits,eax
-
     xor eax,eax
     mov [rbx].n1,eax
     mov [rbx].nz1,eax
     mov [rbx].n2,eax
     mov [rbx].nz2,eax
     mov [rbx].dec_place,eax
-
     _fltunpack( &qflt, q )
-
     mov ax,qflt.mantissa.e
     bt  eax,15
     sbb ecx,ecx
     mov [rbx].sign,ecx
     and eax,Q_EXPMASK   ; make number positive
     mov qflt.mantissa.e,ax
-
     movzx ecx,ax
-
     xor eax,eax
     mov qflt.flags,eax
-
     .if ( ecx == Q_EXPMASK )
 
         ; NaN or Inf
@@ -4700,21 +4238,15 @@ else
         or eax,dword ptr qflt.mantissa.h[4]
 endif
         .ifz
-
             ; INFINITY
-
             mov eax,'fni'
             or  [rbx].flags,_ST_ISINF
         .else
-
             ; NaN
-
             mov eax,'nan'
             or  [rbx].flags,_ST_ISNAN
         .endif
-
         .if ( flags & _ST_CAPEXP )
-
             and eax,NOT 0x202020
         .endif
         mov rcx,buf
@@ -4730,9 +4262,7 @@ endif
         mov [rbx].sign,eax ; force sign to +0.0
         mov xexp,eax
         mov qflt.flags,_ST_ISZERO
-
     .else
-
         mov  esi,ecx
         sub  ecx,0x3FFE
         mov  eax,30103
@@ -4741,13 +4271,9 @@ endif
         idiv ecx
         sub  eax,NDIG / 2
         mov  xexp,eax
-
         .if ( eax )
-
             .ifs
-
                 ; scale up
-
                 neg eax
                 add eax,NDIG / 2 - 1
                 and eax,NOT (NDIG / 2 - 1)
@@ -4755,38 +4281,26 @@ endif
                 mov xexp,eax
                 neg eax
                 mov qflt.exponent,eax
-
                 _fltscale( &qflt )
-
             .else
-
                 mov eax,dword ptr qflt.mantissa.h[0]
                 mov edx,dword ptr qflt.mantissa.h[4]
-
                 .if ( esi < E16_EXP || ( ( esi == E16_EXP && ( edx < E16_HIGH ||
                       ( edx == E16_HIGH && eax < E16_LOW ) ) ) ) )
-
                     ; number is < 1e16
-
                     mov xexp,0
-
                 .else
                     .if ( esi < E32_EXP || ( ( esi == E32_EXP && ( edx < E32_HIGH ||
                           ( edx == E32_HIGH && eax < E32_LOW ) ) ) ) )
-
                         ; number is < 1e32
-
                         mov xexp,16
                     .endif
-
                     ; scale number down
-
                     mov eax,xexp
                     and eax,NOT (NDIG / 2 - 1)
                     mov xexp,eax
                     neg eax
                     mov qflt.exponent,eax
-
                     _fltscale( &qflt )
                 .endif
             .endif
@@ -4795,7 +4309,6 @@ endif
 
     mov eax,[rbx].ndigits
     .if ( [rbx].flags & _ST_F )
-
         add eax,xexp
         add eax,2 + NDIG
         .ifs ( [rbx].scale > 0 )
@@ -4808,7 +4321,6 @@ endif
         mov eax,STK_BUF_SIZE-1-NDIG
     .endif
     mov n,eax
-
     mov ecx,digits
     add ecx,NDIG / 2
     mov maxsize,ecx
@@ -4826,16 +4338,13 @@ endif
     mov i,0
 
     .while ( n > 0 )
-
         sub n,NDIG
 ifdef _WIN64
         .if ( value.v == 0 )
 else
         .if ( value.l == 0 && value.h == 0 )
 endif
-
             ; get value to subtract
-
             _flttoi64( &qflt )
 ifdef _WIN64
             mov value.v,rax
@@ -4844,24 +4353,17 @@ else
             mov value.h,edx
 endif
             .ifs ( n > 0 )
-
                 _i64toflt( &tmp, value )
                 _fltsub( &qflt, &tmp )
                 _fltmul( &qflt, &_fltpowtable[EXTFLOAT*4] )
             .endif
         .endif
-
         mov ecx,NDIG
-
 ifdef _WIN64
-
         mov rax,value.v
         mov value.v,0
-
         .if ( rax )
-
             .for ( r8d = 10 : ecx : ecx-- )
-
                 xor edx,edx
                 div r8
                 add dl,'0'
@@ -4872,58 +4374,42 @@ else
         mov edx,value.h
         mov value.l,0
         mov value.h,0
-
         .if ( eax || edx )
-
             add edi,ecx
             mov esi,ecx
-
             .fors ( : eax || edx || esi > 0 : esi-- )
-
                 .if ( edx == 0 )
-
                     div radix
                     mov ecx,edx
                     xor edx,edx
-
                 .else
-
                     push esi
                     push edi
-
                     .for ( ecx = 64, esi = 0, edi = 0 : ecx : ecx-- )
-
                         add eax,eax
                         adc edx,edx
                         adc esi,esi
                         adc edi,edi
-
                         .if ( edi || esi >= radix )
-
                             sub esi,radix
                             sbb edi,0
                             inc eax
                         .endif
                     .endf
                     mov ecx,esi
-
                     pop edi
                     pop esi
                 .endif
-
                 add cl,'0'
                 dec edi
                 mov [edi],cl
 endif
             .endf
             add rdi,NDIG
-
         .else
-
             mov al,'0'
             rep stosb
         .endif
-
         add i,NDIG
     .endw
 
@@ -4937,30 +4423,22 @@ endif
            ecx = xexp,
            ecx += NDIG-1 : edx && byte ptr [rsi] == '0' : eax--, ecx--, edx--, rsi++ )
     .endf
-
     mov n,eax
     mov rbx,cvt
     mov edx,[rbx].ndigits
-
     .if ( [rbx].flags & _ST_F )
-
         add ecx,[rbx].scale
         lea edx,[rdx+rcx+1]
-
     .elseif ( [rbx].flags & _ST_E )
-
         .ifs ( [rbx].scale > 0 )
             inc edx
         .else
             add edx,[rbx].scale
         .endif
-
         inc ecx             ; xexp = xexp + 1 - scale
         sub ecx,[rbx].scale
     .endif
-
     .ifs ( edx >= 0 )       ; round and strip trailing zeros
-
         .ifs ( edx > eax )
             mov edx,eax     ; nsig = n
         .endif
@@ -4969,30 +4447,23 @@ endif
             mov edx,eax
         .endif
         mov maxsize,eax
-
         mov eax,'0'
         .ifs ( ( n > edx && byte ptr [rsi+rdx] >= '5' ) ||
                ( edx == digits && byte ptr [rsi+rdx-1] == '9' ) )
             mov al,'9'
         .endif
-
         mov edi,[rbx].scale
         add edi,[rbx].ndigits
-
         .if ( al == '9' && edx == edi &&
               byte ptr [rsi+rdx] != '9' &&  byte ptr [rsi+rdx-1] == '9' )
-
             .while edi
-
                 dec edi
                .break .if ( byte ptr [rsi+rdi] != '9' )
             .endw
-
             .if ( byte ptr [rsi+rdi] == '9' )
                  mov al,'0'
             .endif
         .endif
-
         lea     rdi,[rsi+rdx-1]
         xchg    ecx,edx
         inc     ecx
@@ -5001,7 +4472,6 @@ endif
         cld
         xchg    ecx,edx
         inc     rdi
-
         .if ( al == '9' ) ; round up
             inc byte ptr [rdi]
         .endif
@@ -5012,12 +4482,9 @@ endif
             inc ecx
         .endif
     .endif
-
     .ifs ( edx <= 0 || qflt.flags == _ST_ISZERO )
-
         mov edx,1   ; nsig = 1
         xor ecx,ecx ; xexp = 0
-
         mov stkbuf,'0'
         mov [rbx].sign,ecx
         lea rsi,stkbuf
@@ -5025,19 +4492,14 @@ endif
 
     mov i,0
     mov eax,[rbx].flags
-
     .ifs ( eax & _ST_F || ( eax & _ST_G && ( ( ecx >= -1 && ecx < [rbx].ndigits ) || eax & _ST_CVT ) ) )
 
         mov rdi,buf
         inc ecx
-
         .if ( eax & _ST_G )
-
             .ifs ( edx < [rbx].ndigits && !( eax & _ST_DOT ) )
-
                 mov [rbx].ndigits,edx
             .endif
-
             sub [rbx].ndigits,ecx
             .ifs ( [rbx].ndigits < 0 )
                 mov [rbx].ndigits,0
@@ -5045,47 +4507,35 @@ endif
         .endif
 
         .ifs ( ecx <= 0 ) ; digits only to right of '.'
-
             .if !( eax & _ST_CVT )
-
                 mov byte ptr [rdi],'0'
                 inc i
-
                 .ifs ( [rbx].ndigits > 0 || eax & _ST_DOT )
-
                     mov byte ptr [rdi+1],'.'
                     inc i
                 .endif
             .endif
-
             mov [rbx].n1,i
             mov eax,ecx
             neg eax
-
             .ifs ( [rbx].ndigits < eax )
-
                 mov ecx,[rbx].ndigits
                 neg ecx
             .endif
-
             mov eax,ecx
             neg eax
             mov [rbx].dec_place,eax
             mov [rbx].nz1,eax
             add [rbx].ndigits,ecx
-
             .ifs ( [rbx].ndigits < edx )
                 mov edx,[rbx].ndigits
             .endif
             mov [rbx].n2,edx
-
             sub edx,[rbx].ndigits
             neg edx
             mov [rbx].nz2,edx
-
             mov ecx,[rbx].n1    ; number of leading characters
             add rdi,rcx
-
             mov ecx,[rbx].nz1   ; followed by this many '0's
             mov eax,[rbx].n2
             add eax,[rbx].nz2
@@ -5093,14 +4543,12 @@ endif
             lea rax,[rdi+rax]
             cmp rax,endbuf
             ja  overflow
-
             add i,ecx
             mov al,'0'
             rep stosb
             mov ecx,[rbx].n2    ; followed by these characters
             add i,ecx
             rep movsb
-
             mov ecx,[rbx].nz2   ; followed by this many '0's
             add i,ecx
             rep stosb
@@ -5115,7 +4563,6 @@ endif
             mov [rbx].dec_place,ecx
             mov ecx,edx
             rep movsb
-
             lea rcx,[rdi+rax+2]
             cmp rcx,endbuf
             ja  overflow
@@ -5123,19 +4570,15 @@ endif
             mov eax,'0'
             add i,ecx
             rep stosb
-
             mov ecx,[rbx].ndigits
             .if !( [rbx].flags & _ST_CVT )
-
                 .ifs ( ecx > 0 || [rbx].flags & _ST_DOT )
-
                     mov byte ptr [rdi],'.'
                     inc rdi
                     inc i
                     mov [rbx].n2,1
                 .endif
             .endif
-
             lea rdx,[rdi+rcx]
             cmp rdx,endbuf
             ja  overflow
@@ -5149,35 +4592,24 @@ endif
             add i,ecx
             sub edx,ecx
             rep movsb
-
             mov rdi,buf
             mov ecx,[rbx].dec_place
-
             .if !( [rbx].flags & _ST_CVT )
-
                 .ifs ( [rbx].ndigits > 0 || [rbx].flags & _ST_DOT )
-
-
                     mov eax,i
                     mov byte ptr [rdi+rax],'.'
                     inc i
                 .endif
-
             .elseif ( byte ptr [rdi] == '0' ) ; ecvt or fcvt with 0.0
-
                 mov [rbx].dec_place,0
             .endif
-
             .ifs ( [rbx].ndigits < edx )
-
                 mov edx,[rbx].ndigits
             .endif
-
             mov eax,i
             add rdi,rax
             mov ecx,edx
             rep movsb
-
             add i,edx
             mov [rbx].n1,i
             mov eax,edx
@@ -5186,22 +4618,16 @@ endif
             mov [rbx].nz1,edx
             sub ecx,eax
             add i,ecx
-
             lea rdx,[rdi+rcx]
             cmp rdx,endbuf
             ja  overflow
-
             mov eax,'0'
             rep stosb
-
         .endif
-
         mov edi,i
         add rdi,buf
         mov byte ptr [rdi],0
-
     .else
-
         mov eax,[rbx].ndigits
         .ifs ( [rbx].scale <= 0 )
             add eax,[rbx].scale   ; decrease number of digits after decimal
@@ -5209,7 +4635,6 @@ endif
             sub eax,[rbx].scale   ; adjust number of digits (see fortran spec)
             inc eax
         .endif
-
         mov i,0
         .if ( [rbx].flags & _ST_G )
 
@@ -5226,7 +4651,6 @@ endif
                 xor eax,eax
             .endif
             .ifs ( ecx > -5 && ecx < 0 )
-
                 neg ecx
                 add eax,ecx
                 add edx,ecx
@@ -5238,22 +4662,17 @@ endif
         mov xexp,ecx
         mov nsig,edx
         mov rdi,buf
-
         .ifs ( [rbx].scale <= 0 )
-
             mov byte ptr [rdi],'0'
             inc i
             .if ( ecx >= maxsize )
                 inc xexp
             .endif
-
         .else
-
             mov eax,[rbx].scale
             .if ( eax > edx )
                 mov eax,edx
             .endif
-
             mov edx,eax
             mov ecx,i
             add rdi,rcx  ; put in leading digits
@@ -5261,13 +4680,10 @@ endif
             mov rax,rsi
             rep movsb
             mov rsi,rax
-
             add i,edx
             add rsi,rdx
             sub nsig,edx
-
             .ifs ( edx < [rbx].scale ) ; put in zeros if required
-
                 mov ecx,[rbx].scale
                 sub ecx,edx
                 add i,ecx
@@ -5277,90 +4693,68 @@ endif
                 rep stosb
             .endif
         .endif
-
         mov edx,i
         mov rdi,buf
         mov [rbx].dec_place,edx
         mov eax,[rbx].ndigits
-
         .if !( [rbx].flags & _ST_CVT )
-
             .ifs ( eax > 0 || [rbx].flags & _ST_DOT )
-
                 mov byte ptr [rdi+rdx],'.'
                 inc i
             .endif
         .endif
-
         mov ecx,[rbx].scale
         .ifs ( ecx < 0 )
-
             neg ecx
             add rdi,rdx
             add i,ecx
             mov al,'0'
             rep stosb
         .endif
-
         mov ecx,nsig
         mov eax,[rbx].ndigits
-
         .ifs ( eax > 0 ) ; put in fraction digits
-
             .ifs ( eax < ecx )
-
                 mov ecx,eax
                 mov nsig,eax
             .endif
-
             .if ( ecx )
-
                 mov edi,i
                 add rdi,buf
                 add i,ecx
                 rep movsb
             .endif
-
             mov [rbx].n1,i
             mov ecx,[rbx].ndigits
             sub ecx,nsig
             mov [rbx].nz1,ecx
-
             mov edi,i
             add rdi,buf
             add i,ecx
             mov eax,'0'
             rep stosb
         .endif
-
         mov edi,xexp
         mov rsi,buf
         mov ecx,i
-
         .if ( [rbx].flags & _ST_G && edi == 0 )
-
             mov edx,ecx
         .else
-
             mov eax,[rbx].expchar
             .if ( al )
-
                 mov [rsi+rcx],al
                 inc i
                 inc ecx
             .endif
-
             .ifs ( edi >= 0 )
                 mov byte ptr [rsi+rcx],'+'
             .else
                 mov byte ptr [rsi+rcx],'-'
                 neg edi
             .endif
-
             inc i
             mov eax,edi
             mov ecx,[rbx].expwidth
-
             .switch ecx
             .case 0           ; width unspecified
                 mov ecx,3
@@ -5383,13 +4777,9 @@ endif
                 .endc
             .endsw
             mov [rbx].expwidth,ecx    ; pass back width actually used
-
             .if ( ecx >= 4 )
-
                 xor edx,edx
-
                 .if ( eax >= 1000 )
-
                     mov  ecx,1000
                     div  ecx
                     mov  edx,eax
@@ -5397,18 +4787,14 @@ endif
                     sub  edi,eax
                     mov  ecx,[rbx].expwidth
                 .endif
-
                 lea eax,[rdx+'0']
                 mov edx,i
                 mov [rsi+rdx],al
                 inc i
             .endif
-
             .if ( ecx >= 3 )
-
                 xor edx,edx
                 .ifs ( edi >= 100 )
-
                     mov  eax,edi
                     mov  ecx,100
                     div  ecx
@@ -5417,18 +4803,14 @@ endif
                     sub  edi,eax
                     mov  ecx,[rbx].expwidth
                 .endif
-
                 lea eax,[rdx+'0']
                 mov edx,i
                 mov [rsi+rdx],al
                 inc i
             .endif
-
             .if ( ecx >= 2 )
-
                 xor edx,edx
                 .ifs ( edi >= 10 )
-
                     mov  eax,edi
                     mov  ecx,10
                     div  ecx
@@ -5437,36 +4819,30 @@ endif
                     sub  edi,eax
                     mov  ecx,[rbx].expwidth
                 .endif
-
                 lea eax,[rdx+'0']
                 mov edx,i
                 mov [rsi+rdx],al
                 inc i
             .endif
-
             mov edx,i
             lea eax,[rdi+'0']
             mov [rsi+rdx],al
             inc edx
          .endif
-
          mov eax,edx
          sub eax,[rbx].n1
          mov [rbx].n2,eax
          xor eax,eax
          mov [rsi+rdx],al
     .endif
-
 toend:
     ret
-
 overflow:
     mov rdi,buf
     lea rsi,e_space
     mov ecx,sizeof(e_space)
     rep movsb
     jmp toend
-
-_flttostr endp
+    endp
 
     end

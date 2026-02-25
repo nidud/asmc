@@ -38,7 +38,6 @@ endif
         mov tchar_t ptr [rcx],0
     .endif
     ret
-
-_stprintf_s endp
+    endp
 
     end

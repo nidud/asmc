@@ -29,7 +29,6 @@ else
     fldcw   w           ; restore original control word
 endif
     ret
-
-floorf endp
+    endp
 
     end

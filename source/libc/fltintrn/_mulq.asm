@@ -8,16 +8,13 @@ include fltintrn.inc
     .code
 
 __mulq proc __ccall dest:ptr qfloat_t, src:ptr qfloat_t
-
   local a:STRFLT
   local b:STRFLT
-
     _fltunpack(&a, dest)
     _fltunpack(&b, src)
     _fltmul(&a, &b)
     _fltpackfp(dest, &a)
     ret
-
-__mulq endp
+    endp
 
     end

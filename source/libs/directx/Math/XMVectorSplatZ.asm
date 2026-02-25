@@ -8,12 +8,9 @@ include DirectXMath.inc
     .code
 
 XMVectorSplatZ proc XM_CALLCONV V:FXMVECTOR
-
     ldr xmm0,V
-
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2, 2, 2, 2))
     ret
-
-XMVectorSplatZ endp
+    endp
 
     end

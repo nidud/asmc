@@ -32,7 +32,6 @@ XMLoadU555 proc XM_CALLCONV pSource:ptr XMU555
     shufps  xmm1,xmm1,01011000B
     shufps  xmm0,xmm1,01000100B
     ret
-
-XMLoadU555 endp
+    endp
 
     end

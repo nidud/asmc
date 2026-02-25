@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorFalseInt proc XM_CALLCONV
-
     _mm_setzero_ps()
     ret
-
-XMVectorFalseInt endp
+    endp
 
     end

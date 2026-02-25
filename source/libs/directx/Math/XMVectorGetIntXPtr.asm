@@ -14,7 +14,6 @@ XMVectorGetIntXPtr proc XM_CALLCONV p:ptr uint32_t, V:FXMVECTOR
 
     _mm_store_ss([rcx], xmm1)
     ret
-
-XMVectorGetIntXPtr endp
+    endp
 
     end

@@ -11,17 +11,13 @@ include stdio.inc
     assume rbx:LPFILE
 
 _fneedb proc uses rbx fp:LPFILE, count:int_t
-
     ldr rbx,fp
-
     .ifd ( _fgetb(rbx, ldr(count)) != -1 )
-
         add [rbx]._bitcnt,ecx
         shl [rbx]._charbuf,cl
         or  [rbx]._charbuf,eax
     .endif
     ret
-
-_fneedb endp
+    endp
 
     end

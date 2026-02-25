@@ -65,30 +65,23 @@ sys_nerr int_t lengthof(sys_errlist) - 1
     .code
 
 __sys_nerr proc
-
     lea rax,sys_nerr
     ret
-
-__sys_nerr endp
+    endp
 
 __sys_errlist proc
-
     lea rax,sys_errlist
     ret
-
-__sys_errlist endp
+    endp
 
 _sys_err_msg proc m:int_t
-
     ldr ecx,m
     .ifs ( ecx < 0 || ecx > sys_nerr )
-
         mov ecx,sys_nerr
     .endif
     lea rax,sys_errlist
     mov rax,[rax+rcx*string_t]
     ret
-
-_sys_err_msg endp
+    endp
 
     end

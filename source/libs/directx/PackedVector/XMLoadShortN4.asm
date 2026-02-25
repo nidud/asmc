@@ -44,7 +44,6 @@ XMLoadShortN4 proc XM_CALLCONV pSource:ptr XMSHORTN4
 
     _mm_max_ps( xmm0, g_XMNegativeOne )
     ret
-
-XMLoadShortN4 endp
+    endp
 
     end

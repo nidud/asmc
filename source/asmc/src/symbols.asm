@@ -110,24 +110,18 @@ dyneqcount int_t 0
     .code
 
 FindDefinedName proc fastcall private uses rsi rdi rbx name:string_t
-
     .for ( rbx = rcx, rsi = &dyneqtable, edi = 0 : edi < dyneqcount : edi++, rsi+=string_t )
-
         .ifd !tstrcmp( rbx, [rsi] )
-
             inc edi
            .return( edi )
         .endif
     .endf
     .return 0
-
-FindDefinedName endp
+    endp
 
 
 define_name proc __ccall name:string_t, value:string_t
-
     .ifd !FindDefinedName( ldr(name) )
-
         mov ecx,dyneqcount
         lea rdx,dyneqtable
         mov rax,name
@@ -138,16 +132,12 @@ define_name proc __ccall name:string_t, value:string_t
         inc dyneqcount
     .endif
     ret
-
-define_name endp
+    endp
 
 
 undef_name proc __ccall name:string_t
-
     .ifd FindDefinedName( ldr(name) )
-
         .for ( ecx = eax : ecx < dyneqcount : ecx++ )
-
             lea rdx,dyneqtable
             mov rax,[rdx+rcx*string_t]
             mov [rdx+rcx*string_t-string_t],rax
@@ -158,26 +148,22 @@ undef_name proc __ccall name:string_t
         dec dyneqcount
     .endif
     ret
-
-undef_name endp
+    endp
 
 
 SymSetCmpFunc proc __ccall
-
     lea rax,tmemicmp
     .if ( MODULE.case_sensitive )
         lea rax,tmemcmp
     .endif
     mov SymCmpFunc,rax
     ret
-
-SymSetCmpFunc endp
+    endp
 
 
 ; reset local hash table
 
 SymClearLocal proc __ccall
-
     xor  eax,eax
     lea  rdx,lsym_table
     mov  ecx,sizeof(lsym_table) / 4
@@ -185,21 +171,17 @@ SymClearLocal proc __ccall
     rep  stosd
     mov  rdi,rdx
     ret
-
-SymClearLocal endp
+    endp
 
 ; store local hash table in proc's list of local symbols
 
 SymGetLocal proc __ccall uses rbx psym:asym_t
-
     ldr rcx,psym
     mov rdx,[rcx].asym.procinfo
     lea rdx,[rdx].proc_info.labellist
     xor ecx,ecx
     lea rbx,lsym_table
-
     .while ecx < LHASH_TABLE_SIZE
-
         mov rax,[rbx+rcx*asym_t]
         inc ecx
         .continue .if !rax
@@ -209,8 +191,7 @@ SymGetLocal proc __ccall uses rbx psym:asym_t
     xor eax,eax
     mov [rdx],eax
     ret
-
-SymGetLocal endp
+    endp
 
 
 ; restore local hash table.
@@ -230,12 +211,9 @@ SymSetLocal proc __ccall uses rsi rdi psym:asym_t
     mov ecx,sizeof(lsym_table) / 4
     rep stosd
     mov rdi,rdx
-
     mov rsi,[rsi].asym.procinfo
     mov rsi,[rsi].proc_info.labellist
-
     .while rsi
-
         mov rcx,[rsi].asym.name
         mov eax,FNVBASE
         mov dl,[rcx]
@@ -251,35 +229,27 @@ SymSetLocal proc __ccall uses rsi rdi psym:asym_t
         mov rsi,[rsi].asym.nextll
     .endw
     ret
-
-SymSetLocal endp
+    endp
 
 
 SymAlloc proc __ccall uses rsi rdi name:string_t
-
     ldr rsi,name
     mov edi,tstrlen( rsi )
     LclAlloc( &[rdi+asym+1] )
-
     mov [rax].asym.name_size,edi
     mov [rax].asym.mem_type,MT_EMPTY
-
     lea rdx,[rax+asym]
     mov [rax].asym.name,rdx
-
     .if ( MODULE.cref )
         mov [rax].asym.list,1
     .endif
-
     .if edi
-
         mov ecx,edi
         mov rdi,rdx
         rep movsb
     .endif
     ret
-
-SymAlloc endp
+    endp
 
 
 .pragma warning(disable: 6004)
@@ -296,11 +266,9 @@ ifdef _WIN64
     ; second scan necessary.
 
 SymFind proc fastcall string:string_t
-
     movzx   eax,byte ptr [rcx]
     test    eax,eax
     jz      .done
-
     mov     r10,rcx
     or      al,0x20
     xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
@@ -319,10 +287,8 @@ SymFind proc fastcall string:string_t
 .1:
     sub     rcx,r10
     mov     r8d,ecx
-
     cmp     CurrProc,0
     je      .global
-
     mov     r9d,eax
     and     eax,LHASH_TABLE_SIZE - 1
     lea     rdx,lsym_table
@@ -466,19 +432,16 @@ SymFind proc fastcall string:string_t
     mov     gsym,rdx
 .done:
     ret
-
-SymFind endp
+    endp
 
     option win64:rbp auto save
 
 else
 
 SymFind proc fastcall uses esi edi ebx ebp string:string_t
-
     movzx   eax,byte ptr [ecx]
     test    eax,eax
     jz      .done
-
     mov     esi,ecx
     or      al,0x20
     xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
@@ -496,17 +459,14 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
     jnz     .0
 .1:
     sub     ecx,esi
-
     cmp     CurrProc,0
     je      .global
-
     mov     ebp,eax
     and     eax,LHASH_TABLE_SIZE - 1
     lea     edx,lsym_table[eax*4]
     mov     eax,[edx]
     test    eax,eax
     jz      .end_l
-
     cmp     MODULE.case_sensitive,0
     je      .cmp_li
 .cmp_l:
@@ -571,9 +531,7 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
 .end_l:
     mov     lsym,edx
     mov     eax,ebp
-
 .global:
-
     and     eax,GHASH_TABLE_SIZE - 1
     lea     edx,gsym_table[eax*4]
     mov     eax,[edx]
@@ -641,8 +599,7 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
     mov     gsym,edx
 .done:
     ret
-
-SymFind endp
+    endp
 
 endif
 
@@ -651,17 +608,14 @@ endif
 ; SymLookup() creates a global label if it isn't defined yet
 ;
 SymLookup proc __ccall name:string_t
-
     .if !SymFind( name )
-
         SymAlloc( name )
         mov rcx,gsym
         mov [rcx],rax
         inc SymCount
     .endif
     ret
-
-SymLookup endp
+    endp
 
 
 ; SymLookupLocal() creates a local label if it isn't defined yet.
@@ -700,8 +654,7 @@ SymLookupLocal proc __ccall name:string_t
         mov [rcx],rax
     .endif
     ret
-
-SymLookupLocal endp
+    endp
 
 
 ; free a symbol.
@@ -714,7 +667,6 @@ SymFree proc __ccall sym:asym_t
 
     ldr rcx,sym
     movzx eax,[rcx].asym.state
-
     .switch eax
     .case SYM_INTERNAL
         .if ( [rcx].asym.isproc )
@@ -722,11 +674,9 @@ SymFree proc __ccall sym:asym_t
         .endif
         .endc
     .case SYM_EXTERNAL
-
         .if ( [rcx].asym.isproc )
             DeleteProc( rcx )
         .endif
-
         mov rcx,sym
         mov [rcx].asym.first_size,0
 
@@ -739,8 +689,7 @@ SymFree proc __ccall sym:asym_t
        .endc
     .endsw
     ret
-
-SymFree endp
+    endp
 
 
 ; add a symbol to local table and set the symbol's name.
@@ -754,20 +703,15 @@ SymAddLocal proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t
     ldr rsi,name
 
     .if SymFind( rsi )
-
         .if ( [rax].asym.state != SYM_UNDEFINED )
-
             ; shouldn't happen
-
             asmerr( 2005, rsi )
            .return 0
         .endif
     .endif
-
     tstrlen( rsi )
     mov [rbx].asym.name_size,eax
     lea edi,[rax+1]
-
     LclAlloc( edi )
     mov [rbx].asym.name,rax
     mov ecx,edi
@@ -778,8 +722,7 @@ SymAddLocal proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t
     mov [rbx].asym.nextitem,0
     mov rax,rbx
     ret
-
-SymAddLocal endp
+    endp
 
 
 ; add a symbol to the global symbol table.
@@ -790,12 +733,10 @@ SymAddGlobal proc __ccall sym:asym_t
 
     ldr rcx,sym
     .if SymFind( [rcx].asym.name )
-
         mov rcx,sym
         asmerr( 2005, [rcx].asym.name )
         xor eax,eax
     .else
-
         mov rax,sym
         inc SymCount
         mov rcx,gsym
@@ -803,28 +744,23 @@ SymAddGlobal proc __ccall sym:asym_t
         mov [rax].asym.nextitem,0
     .endif
     ret
-
-SymAddGlobal endp
+    endp
 
 
 ; Create symbol and optionally insert it into the symbol table
 
 SymCreate proc __ccall name:string_t
-
     .if SymFind( name )
-
         asmerr( 2005, name )
         xor eax,eax
     .else
-
         SymAlloc( name )
         inc SymCount
         mov rcx,gsym
         mov [rcx],rax
     .endif
     ret
-
-SymCreate endp
+    endp
 
 
 ; Create symbol and insert it into the local symbol table.
@@ -832,47 +768,33 @@ SymCreate endp
 ; in proc.c ( for LOCAL directive and PROC parameters ).
 
 SymLCreate proc __ccall name:string_t
-
     .if SymFind( name )
-
         .if ( [rax].asym.state != SYM_UNDEFINED )
-
             ; shouldn't happen
-
             asmerr( 2005, name )
            .return 0
         .endif
     .endif
-
     SymAlloc( name )
     mov rcx,lsym
     mov [rcx],rax
     ret
-
-SymLCreate endp
+    endp
 
 
 SymGetCount proc __ccall
-
     mov eax,SymCount
     ret
-
-SymGetCount endp
+    endp
 
 
 SymMakeAllSymbolsPublic proc __ccall uses rsi rdi
-
     xor esi,esi
-
     .repeat
-
         lea rax,gsym_table
         mov rdi,[rax+rsi*size_t]
-
         .while ( rdi )
-
             .if ( [rdi].asym.state == SYM_INTERNAL )
-
                 mov rcx,[rdi].asym.name
 
                 ; no EQU or '=' constants
@@ -886,7 +808,6 @@ SymMakeAllSymbolsPublic proc __ccall uses rsi rdi
                       ![rdi].asym.predefined &&
                       ![rdi].asym.ispublic &&
                       ![rdi].asym.included && ah != '&' )
-
                     xor ecx,ecx
                     .if ( ah == '$' )
                         .if ( ( al == 'D' || al == 'F' ) && [rdi].asym.name_size == 6 )
@@ -900,15 +821,13 @@ SymMakeAllSymbolsPublic proc __ccall uses rsi rdi
                         AddPublicData( rdi )
                     .endif
                 .endif
-
             .endif
             mov rdi,[rdi].asym.nextitem
         .endw
         add esi,1
     .until esi == GHASH_TABLE_SIZE
     ret
-
-SymMakeAllSymbolsPublic endp
+    endp
 
 
 ; initialize global symbol table
@@ -923,14 +842,11 @@ SymInit proc __ccall uses rsi rdi rbx
     ; v2.11: ensure CurrProc is NULL - might be a problem if multiple files are assembled
 
     mov CurrProc,rax
-
     lea rdi,gsym_table
     mov ecx,sizeof(gsym_table)/4
     rep stosd
-
     time( &time_of_day )
     mov rsi,localtime(&time_of_day)
-
 if USESTRFTIME
     strftime( &szDate, 9, "%D", esi )   ; POSIX date (mm/dd/yy)
     strftime( &szTime, 9, "%T", esi )   ; POSIX time (HH:MM:SS)
@@ -947,12 +863,9 @@ else
 endif
     tsprintf( &szTime, "%02u:%02u:%02u", [rsi].tm.tm_hour, [rsi].tm.tm_min, [rsi].tm.tm_sec )
 endif
-
     lea rsi,tmtab
     .while ( [rsi].tmitem.name )
-
         SymCreate( [rsi].tmitem.name )
-
         mov [rax].asym.state,SYM_TMACRO
         mov [rax].asym.isdefined,1
         mov [rax].asym.predefined,1
@@ -964,12 +877,9 @@ endif
             mov [rcx],rax
         .endif
     .endw
-
     lea rsi,eqtab
     .while [rsi].eqitem.name
-
         SymCreate( [rsi].eqitem.name )
-
         mov [rax].asym.state,SYM_INTERNAL
         mov [rax].asym.isdefined,1
         mov [rax].asym.predefined,1
@@ -987,10 +897,8 @@ endif
     ; @WordSize should not be listed
 
     mov [rax].asym.list,0
-
     xor esi,esi
     .while ( esi < dyneqcount )
-
         lea rax,dyneqtable
         .if SymCreate( [rax+rsi*string_t] )
             mov [rax].asym.state,SYM_TMACRO
@@ -1012,8 +920,7 @@ endif
     mov rax,LineCur
     mov [rax].asym.list,0
     ret
-
-SymInit endp
+    endp
 
 
 SymPassInit proc __ccall pass:int_t
@@ -1033,12 +940,9 @@ SymPassInit proc __ccall pass:int_t
 
             xor ecx,ecx
             .repeat
-
                 lea rax,gsym_table
                 mov rax,[rax+rcx*asym_t]
-
                 .while ( rax )
-
                     .if !( [rax].asym.predefined )
                         mov [rax].asym.isdefined,0
                     .endif
@@ -1049,8 +953,7 @@ SymPassInit proc __ccall pass:int_t
         .endif
     .endif
     ret
-
-SymPassInit endp
+    endp
 
 
 ; get all symbols in global hash table
@@ -1063,10 +966,8 @@ SymGetAll proc __ccall syms:asym_t
     ; copy symbols to table
 
     .repeat
-
         lea rax,gsym_table
         mov rax,[rax+rcx*asym_t]
-
         .while rax
             mov [rdx],rax
             add rdx,asym_t
@@ -1075,54 +976,42 @@ SymGetAll proc __ccall syms:asym_t
         add ecx,1
     .until ecx == GHASH_TABLE_SIZE
     ret
-
-SymGetAll endp
+    endp
 
 
 ; enum symbols in global hash table.
 ; used for codeview symbolic debug output.
 
 SymEnum proc __ccall uses rbx sym:asym_t, pi:ptr int_t
-
     lea rbx,gsym_table
     ldr rax,sym
     ldr rdx,pi
-
     .if ( rax )
-
         mov rax,[rax].asym.nextitem
         mov ecx,[rdx]
     .else
-
         xor ecx,ecx
         mov [rdx],ecx
         mov rax,[rbx]
     .endif
-
     .while ( !rax && ecx < GHASH_TABLE_SIZE - 1 )
-
         add ecx,1
         mov [rdx],ecx
         mov rax,[rbx+rcx*asym_t]
     .endw
     ret
-
-SymEnum endp
+    endp
 
 
 ; add a new node to a queue
 
 QEnqueue proc fastcall q:qdesc_t, item:ptr
-
     xor eax,eax
-
     .if ( rax == [rcx].qdesc.head )
-
         mov [rcx].qdesc.head,rdx
         mov [rcx].qdesc.tail,rdx
         mov [rdx],rax
     .else
-
         mov rax,[rcx].qdesc.tail
         mov [rcx].qdesc.tail,rdx
         mov [rax],rdx
@@ -1130,22 +1019,17 @@ QEnqueue proc fastcall q:qdesc_t, item:ptr
         mov [rdx],rax
     .endif
     ret
-
-QEnqueue endp
+    endp
 
 
 QAddItem proc fastcall uses rsi rdi q:qdesc_t, d:ptr
-
     mov rsi,rcx
     mov rdi,rdx
-
     LclAlloc( qdesc )
-
     mov [rax].qnode.elmt,rdi
     QEnqueue( rsi, rax )
     ret
-
-QAddItem endp
+    endp
 
 ; add a symbol into the Publics queue.
 ; called by:
@@ -1157,10 +1041,8 @@ QAddItem endp
 ; - sym_ext2int() in parser.asm, for public data, constants, labels ( not PROCs )
 
 AddPublicData proc fastcall sym:asym_t
-
     QAddItem( &MODULE.PubQueue, rcx )
     ret
-
-AddPublicData endp
+    endp
 
     end

@@ -23,7 +23,6 @@ XMVectorRotateLeft proc XM_CALLCONV V:FXMVECTOR, Elements:uint32_t
 
     XMVectorSwizzle(xmm0, edx, r8d, r9d, eax)
     ret
-
-XMVectorRotateLeft endp
+    endp
 
     end

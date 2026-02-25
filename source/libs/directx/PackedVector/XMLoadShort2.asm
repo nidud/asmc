@@ -41,7 +41,6 @@ XMLoadShort2 proc XM_CALLCONV pSource:ptr XMSHORT2
 
     _mm_max_ps( xmm0, g_XMNegativeOne )
     ret
-
-XMLoadShort2 endp
+    endp
 
     end

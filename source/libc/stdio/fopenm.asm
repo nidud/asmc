@@ -14,9 +14,7 @@ include stdio.inc
 _fopenm proc uses rbx fp:LPFILE
 
     ldr rbx,fp
-
     .if _getst()
-
         mov ecx,[rbx].FILE._file
         mov [rax].FILE._file,ecx ; duplicate handle..
         mov ecx,[rbx].FILE._flag
@@ -25,7 +23,6 @@ _fopenm proc uses rbx fp:LPFILE
         mov [rax].FILE._flag,ecx
     .endif
     ret
-
-_fopenm endp
+    endp
 
     end

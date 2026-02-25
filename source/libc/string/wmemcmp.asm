@@ -9,7 +9,6 @@ include string.inc
     .code
 
 wmemcmp proc uses rsi rdi a:ptr, b:ptr, count:size_t
-
     ldr     rdi,a
     ldr     rsi,b
     ldr     rcx,count
@@ -20,7 +19,6 @@ wmemcmp proc uses rsi rdi a:ptr, b:ptr, count:size_t
     sbb     rax,-1
 @@:
     ret
-
-wmemcmp endp
+    endp
 
     end

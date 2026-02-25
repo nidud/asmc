@@ -12,7 +12,6 @@ include stdio.inc
     assume rbx:LPFILE
 
 _fgetb proc uses rbx fp:LPFILE, count:int_t
-
     ldr     rbx,fp
     ldr     ecx,count
 .0:
@@ -56,7 +55,6 @@ _fgetb proc uses rbx fp:LPFILE, count:int_t
 .5:
     mov     eax,-1
     jmp     .1
-
-_fgetb endp
+    endp
 
     end

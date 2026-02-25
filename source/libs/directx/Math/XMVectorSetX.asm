@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorSetX proc XM_CALLCONV V:FXMVECTOR, x:float
-
     _mm_store_ss(xmm0, xmm1)
     ret
-
-XMVectorSetX endp
+    endp
 
     end

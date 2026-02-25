@@ -46,7 +46,6 @@ XMVectorASin proc XM_CALLCONV V:FXMVECTOR
     _mm_store_ps(xmm0, g_XMHalfPi)
     _mm_sub_ps(xmm0, xmm3)
     ret
-
-XMVectorASin endp
+    endp
 
     end

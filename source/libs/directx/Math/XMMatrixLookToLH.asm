@@ -34,7 +34,6 @@ XMMatrixLookToLH proc XM_CALLCONV uses xmm6 xmm7 EyePosition:FXMVECTOR, EyeDirec
     _mm_store_ps(xmm1, xmm3)
     XMMatrixTranspose(xmm4, xmm1, xmm2, g_XMIdentityR3.v)
     ret
-
-XMMatrixLookToLH endp
+    endp
 
     end

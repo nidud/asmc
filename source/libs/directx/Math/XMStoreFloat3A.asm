@@ -16,7 +16,6 @@ XMStoreFloat3A proc XM_CALLCONV pDestination:ptr XMFLOAT3, V:FXMVECTOR
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2, 2, 2, 2))
     _mm_store_ss([rcx][8], xmm0)
     ret
-
-XMStoreFloat3A endp
+    endp
 
     end

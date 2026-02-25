@@ -14,19 +14,14 @@ include tchar.inc
 .code
 
 _tcsunix proc string:tstring_t
-
     ldr rax,string
-
     .for ( : tchar_t ptr [rax] : rax+=tchar_t )
-
         .if ( tchar_t ptr [rax] == BSLASH )
-
             mov tchar_t ptr [rax],'/'
         .endif
     .endf
     ldr rax,string
     ret
-
-_tcsunix endp
+    endp
 
     end

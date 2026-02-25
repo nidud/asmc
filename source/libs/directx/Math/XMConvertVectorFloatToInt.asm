@@ -32,7 +32,6 @@ XMConvertVectorFloatToInt proc XM_CALLCONV VFloat:FXMVECTOR, MulExponent:uint32_
     _mm_andnot_ps(xmm2, _mm_castsi128_ps(xmm1))
     _mm_or_ps(xmm0, xmm2)
     ret
-
-XMConvertVectorFloatToInt endp
+    endp
 
     end

@@ -11,13 +11,11 @@ include tchar.inc
     .code
 
 _tcstof proc string:tstring_t, endptr:tarray_t
-
     ldr rcx,string
 ifdef _UNICODE
     .new buffer[128]:char_t
     .new i:int_t = 0
     .for ( rdx = &buffer : i < lengthof(buffer) - 1 : i++, rdx++, rcx += 2 )
-
         mov ax,[rcx]
        .break .if ( !ax || ax > 0x7F )
         mov [rdx],al
@@ -34,7 +32,6 @@ else
 endif
     mov rcx,endptr
     .if ( rcx )
-
         mov rdx,[rax].STRFLT.string
 ifdef _UNICODE
         lea rcx,buffer
@@ -46,7 +43,6 @@ endif
         mov [rcx],rdx
     .endif
     ret
-
-_tcstof endp
+    endp
 
     end

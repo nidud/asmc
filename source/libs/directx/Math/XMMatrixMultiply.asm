@@ -118,7 +118,6 @@ endif
     _mm_add_ps(vY, vW)
     _mm_add_ps(vX, vY)
     ret
-
-XMMatrixMultiply endp
+    endp
 
     end

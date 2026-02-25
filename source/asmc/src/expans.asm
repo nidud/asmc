@@ -50,26 +50,18 @@ MAX_TEXTMACRO_NESTING equ 20
 myltoa proc __ccall uses rsi rdi rbx value:qword, buffer:string_t, radix:uint_t, sign:int_t, addzero:int_t
 
   local tmpbuf[64]:char_t
-
 ifdef _WIN64
-
     mov rdi,rdx
     mov rax,rcx
-
     .if ( r9d )
-
         mov byte ptr [rdi],'-'
         inc rdi
         neg rax
-
     .elseif ( rax == 0 )
-
         mov word ptr [rdi],'0'
        .return 1
     .endif
-
     .for ( rsi = &tmpbuf[63] : rax : rsi-- )
-
         xor edx,edx
         div r8
         add dl,'0'
@@ -79,47 +71,33 @@ ifdef _WIN64
         mov [rsi],dl
     .endf
     inc rsi
-
 else
-
     mov edi,buffer
     mov eax,dword ptr value
     mov edx,dword ptr value[4]
-
     .if ( sign )
-
         mov byte ptr [edi],'-'
         inc edi
         neg eax
         neg edx
         sbb edx,0
-
     .elseif ( edx == 0 && eax == 0 )
-
         mov word ptr [edi],'0'
        .return 1
     .endif
-
     .for ( esi = &tmpbuf[63] : eax || edx : esi-- )
-
         .if ( !edx || !radix )
-
             div radix
             mov ecx,edx
             xor edx,edx
-
         .else
-
             push edi
             .for ( ebx = 64, ecx = 0, edi = 0 : ebx : ebx-- )
-
                 add eax,eax
                 adc edx,edx
                 adc ecx,ecx
                 adc edi,edi
-
                 .if ( edi || ecx >= radix )
-
                     sub ecx,radix
                     sbb edi,0
                     inc eax
@@ -127,7 +105,6 @@ else
             .endf
             pop edi
         .endif
-
         add cl,'0'
         .if cl > '9'
             add cl,'A'-'9'-1
@@ -135,7 +112,6 @@ else
         mov [esi],cl
     .endf
     inc esi
-
 endif
 
     ; v2: add a leading '0' if first digit is alpha
@@ -144,7 +120,6 @@ endif
         mov byte ptr [rdi],'0'
         inc rdi
     .endif
-
     lea rcx,tmpbuf[64]
     sub rcx,rsi
     rep movsb
@@ -152,8 +127,7 @@ endif
     mov rax,rdi
     sub rax,buffer
     ret
-
-myltoa endp
+    endp
 
 
 ; Read the current (macro) queue until it's done.
@@ -171,8 +145,7 @@ SkipMacro proc __ccall private tokenarray:token_t
     .endw
     free_line(buffer)
     ret
-
-SkipMacro endp
+    endp
 
 
 ExpandTMacro proto __ccall :string_t, :token_t, :int_t, :int_t
@@ -1130,17 +1103,13 @@ RunMacro proc __ccall uses rsi rdi rbx mac:asym_t, idx:int_t, tokenarray:token_t
         .endif
 
         ; don't use tokenarray from here on, it's invalid after PopInputStatus()
-
     .endif
-
 toend:
-
     .if ( mem_alloc )
         MemFree(mi.parm_array)
     .endif
     .return( idx )
-
-RunMacro endp
+    endp
 
     assume rsi:nothing, rdi:nothing
 
@@ -1149,39 +1118,30 @@ RunMacro endp
 
 AddTokens proc __ccall private uses rbx tokenarray:token_t, start:int_t, count:int_t, _end:int_t
 
-    ldr     rbx,tokenarray
+    ldr rbx,tokenarray
 ifdef _WIN64
-    movsxd  rax,count
+    movsxd rax,count
 else
-    mov     eax,count
+    mov eax,count
 endif
-    imul    rcx,rax,asm_tok
-    mov     edx,start
-
+    imul rcx,rax,asm_tok
+    mov edx,start
     .ifs ( eax > 0 )
-
         imul eax,_end,asm_tok
         add  rbx,rax
-
         .for ( : _end >= edx : _end--, rbx -= asm_tok )
-
             mov [rbx+rcx],asm_tok ptr [rbx]
         .endf
-
     .elseifs ( eax < 0 )
-
         sub  edx,eax
         imul eax,edx,asm_tok
         add  rbx,rax
-
         .for ( : edx <= _end : edx++, rbx += asm_tok )
-
             mov [rbx+rcx],asm_tok ptr [rbx]
         .endf
     .endif
     ret
-
-AddTokens endp
+    endp
 
 
 ; ExpandText() is called if
@@ -1379,9 +1339,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
     mov rax,oldend
     add rax,StringBuffer
     mov StringBufferEnd,rax
-
     .if ( rc == STRING_EXPANDED )
-
         mov rcx,rdi
         mov rsi,buffer
         sub rcx,rsi
@@ -1389,9 +1347,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
         rep movsb
     .endif
     MemFree(buffer)
-
     .if ( substitute )
-
         mov rbx,TokenArray
         .if rc == STRING_EXPANDED
             mov TokenCount,Tokenize( [rbx].tokpos, 0, rbx, TOK_RESCAN )
@@ -1405,8 +1361,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
         .endif
     .endif
     .return( rc )
-
-ExpandText endp
+    endp
 
     assume rsi:nothing, rdi:nothing, rdx:nothing
 
@@ -1510,9 +1465,8 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
     .endw
     free_line(buffer)
     mov TokenCount,old_tokencount
-   .return( rc )
-
-ExpandTMacro endp
+    .return( rc )
+    endp
 
 
 ; rebuild a source line
@@ -1535,7 +1489,6 @@ RebuildLine proc __ccall private uses rsi rdi rbx newstring:string_t, i:int_t,
 
     imul ebx,i,asm_tok
     add rbx,tokenarray
-
     mov esi,oldlen
     add rsi,[rbx].tokpos
     inc tstrlen( rsi )
@@ -1546,39 +1499,29 @@ RebuildLine proc __ccall private uses rsi rdi rbx newstring:string_t, i:int_t,
 
     mov rdi,[rbx].tokpos
     mov newlen,tstrlen( newstring )
-
     .if ( addbrackets )
-
         add newlen,2 ; count '<' and '>'
-
         .for ( rsi = newstring, al = [rsi] : al : rsi++, al = [rsi] )
-
             .if ( al == '<' || al == '>' || al == '!' ) ; count '!' operator
                 inc newlen
             .endif
         .endf
     .endif
-
     .if ( newlen > oldlen )
-
         mov eax,pos_line
         add eax,newlen
         sub eax,oldlen
         add eax,rest
         .if ( eax >= MaxLineLength )
-
             mov rc,asmerr( 2039 )
             jmp toend
         .endif
     .endif
 
     .if ( addbrackets )
-
         mov byte ptr [rdi],'<'
         inc rdi
-
         .for ( rsi = newstring: byte ptr [rsi] : rsi++ )
-
             mov al,[rsi]
             .if ( al == '<' || al == '>' || al == '!' )
                 mov byte ptr [rdi],'!'
@@ -1605,17 +1548,13 @@ RebuildLine proc __ccall private uses rsi rdi rbx newstring:string_t, i:int_t,
            rbx += asm_tok,
            eax = oldlen,
            edx = newlen : ecx <= TokenCount : ecx++, rbx += asm_tok )
-
         sub [rbx].tokpos,rax
         add [rbx].tokpos,rdx
     .endf
-
 toend:
-
-     free_line(buffer)
+    free_line(buffer)
     .return( rc )
-
-RebuildLine endp
+    endp
 
 
 ; expand one token
@@ -1974,8 +1913,7 @@ endif
         mov rc,STRING_EXPANDED
     .endif
     .return( rc )
-
-ExpandToken endp
+    endp
 
 
 ; used by EQU ( may also be used by directives flagged with DF_NOEXPAND
@@ -2009,17 +1947,14 @@ ExpandLineItems proc __ccall uses rsi rdi line:string_t, i:int_t, tokenarray:tok
         ; expansion happened, re-tokenize and continue!
 
         mov TokenCount,Tokenize( line, i, tokenarray, TOK_RESCAN )
-
         .if ( esi == MAX_TEXTMACRO_NESTING )
-
             asmerr( 2123 )
            .break
         .endif
     .endf
      free_line(buffer)
     .return( esi )
-
-ExpandLineItems endp
+    endp
 
 
 ; v2.09: added, expand literals for structured data items.
@@ -2036,7 +1971,6 @@ ExpandLiterals proc __ccall uses rbx i:int_t, tokenarray:token_t
     ; count non-empty literals
 
     .for ( : ecx < TokenCount: ecx++ )
-
         imul edx,ecx,asm_tok
         .if ( [rbx+rdx].token == T_STRING && [rbx+rdx].stringlen &&
              ( [rbx+rdx].string_delim == '<' || [rbx+rdx].string_delim == '{' ) )
@@ -2048,18 +1982,14 @@ ExpandLiterals proc __ccall uses rbx i:int_t, tokenarray:token_t
     ; was expanded, re-tokenize it.
 
     .if ( eax )
-
         imul ecx,i,asm_tok
         add rbx,rcx
-
         .if ExpandText( [rbx].tokpos, tokenarray, FALSE ) == STRING_EXPANDED
-
             Tokenize( [rbx].tokpos, i, tokenarray, TOK_RESCAN )
         .endif
     .endif
     ret
-
-ExpandLiterals endp
+    endp
 
 ; Expand class member functions and data
 
@@ -2103,8 +2033,7 @@ ExpandClass proc __ccall uses rsi rdi rbx buffer:string_t, string:string_t, toke
         .endf
     .endif
     ret
-
-ExpandClass endp
+    endp
 
 
 ; scan current line for (text) macros and expand them.
@@ -2511,13 +2440,11 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
         .endif
         .break .if ( rc != STRING_EXPANDED )
     .endf
-
     free_line(buffer)
     .if ( lvl == MAX_TEXTMACRO_NESTING )
         .return asmerr( 2123 )
     .endif
     .return( rc )
-
-ExpandLine endp
+    endp
 
     end

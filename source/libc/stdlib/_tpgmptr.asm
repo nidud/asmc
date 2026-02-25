@@ -13,25 +13,20 @@ _tpgmptr tstring_t 0
 .code
 
 _get_tpgmptr proc pgmptr:tarray_t
-
     ldr rcx,pgmptr
     mov rax,_tpgmptr
     .if ( rcx )
-
         mov [rcx],rax
     .endif
     ret
-
-_get_tpgmptr endp
+    endp
 
 __initpgmptr proc private
-
     mov rcx,__targv
     mov rax,[rcx]
     mov _tpgmptr,rax
     ret
-
-__initpgmptr endp
+    endp
 
 .pragma init(__initpgmptr, 5)
 

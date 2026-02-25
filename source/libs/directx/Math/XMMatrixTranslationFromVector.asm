@@ -15,7 +15,6 @@ XMMatrixTranslationFromVector proc XM_CALLCONV Offs:FXMVECTOR
     _mm_store_ps(xmm1, g_XMIdentityR1.v)
     _mm_store_ps(xmm0, g_XMIdentityR0.v)
     ret
-
-XMMatrixTranslationFromVector endp
+    endp
 
     end

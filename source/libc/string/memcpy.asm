@@ -16,34 +16,25 @@ endif
     option dotname
 
 memcpy proc dst:ptr, src:ptr, size:size_t
-
 ifdef __SSE__
-
 ifdef _WIN64
-
     define reg <r8>
     define rdb <r8b>
     define rd1 <r9>
     define rd2 <r10>
-
 else
-
     push esi
     push edi
     push ebx
-
     define reg <esi>
     define rdb <esi>
     define rd1 <edi>
     define rd2 <ebx>
-
 endif
-
     ldr     reg,size
     ldr     rcx,dst
     ldr     rdx,src
     mov     rax,rcx
-
 ifdef __AVX__
     cmp     reg,64
     ja      .64
@@ -53,7 +44,6 @@ else
     cmp     reg,32
     ja      .32
 endif
-
     test    rdb,0x30
     jnz     .16
     test    rdb,0x08
@@ -94,9 +84,7 @@ endif
     movups  [rax+reg-16],xmm1
     jmp     .3
 .32:
-
 ifdef __AVX__
-
     vmovups ymm0,[rdx]
     vmovups ymm1,[rdx+reg-32]
     vmovups [rax],ymm0
@@ -138,9 +126,7 @@ ifdef __AVX__
     vmovups [rax+reg-32],ymm4
     vmovups [rax+reg-64],ymm5
     vzeroupper
-
 else
-
     movups  xmm2,[rdx]
     movups  xmm3,[rdx+16]
     movups  xmm4,[rdx+reg-16]
@@ -174,9 +160,7 @@ else
     movups  [rax+16],xmm3
     movups  [rax+reg-16],xmm4
     movups  [rax+reg-32],xmm5
-
 endif
-
 .3:
 ifndef _WIN64
     pop     ebx
@@ -184,9 +168,7 @@ ifndef _WIN64
     pop     esi
 endif
     ret
-
 else
-
 ifdef _WIN64
 ifdef __UNIX__
     mov     rax,rdi
@@ -206,7 +188,6 @@ else
     mov     ecx,size
     mov     edi,eax
 endif
-
     cmp     rax,rsi
     ja      .0
     rep     movsb

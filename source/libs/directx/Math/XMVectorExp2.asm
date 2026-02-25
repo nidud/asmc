@@ -79,7 +79,6 @@ XMVectorExp2 proc XM_CALLCONV uses xmm6 xmm7 V:FXMVECTOR
     _mm_andnot_si64(xmm0, xmm5)
     _mm_or_si64(xmm0, xmm3)
     ret
-
-XMVectorExp2 endp
+    endp
 
     end

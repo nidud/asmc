@@ -15,16 +15,13 @@ include tchar.inc
 _fputts proc uses rbx string:tstring_t, fp:LPFILE
 
    .new length:int_t
-
     ldr rbx,string
-    mov length,_tcslen( rbx )
 
+    mov length,_tcslen( rbx )
 ifdef _UNICODE
     .new retval:int_t = 0
     .for ( : length : length--, rbx+=2 )
-
         .if ( fputwc([rbx], fp) == WEOF )
-
             mov retval,-1
            .break
         .endif
@@ -41,7 +38,6 @@ else
     .endif
 endif
     ret
-
-_fputts endp
+    endp
 
     end

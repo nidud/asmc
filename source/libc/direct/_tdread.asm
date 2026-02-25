@@ -20,7 +20,6 @@ _dread proc uses rbx d:PDIRENT
    .new ff:_tfinddatai64_t
 
     ldr rbx,d
-
     _dfree(rbx)
     _tcslen([rbx].path)
 ifdef _UNICODE
@@ -28,7 +27,6 @@ ifdef _UNICODE
 endif
     add rax,[rbx].path
     mov fp,rax
-
     mov rdx,[rbx].mask
     .if ( [rbx].flags & _D_READSUB )
         lea rdx,@CStr("*.*")
@@ -37,40 +35,28 @@ endif
     mov h,_tfindfirsti64(rcx, &ff)
     mov rcx,fp
     mov tchar_t ptr [rcx],0
-
     .if ( h == -1 )
-
        .return( 0 )
     .endif
-
     .while ( eax != -1 )
-
         .if ( ff.name == '.' && ff.name[tchar_t] == 0 )
-
             _tfindnexti64(h, &ff)
             .continue
         .endif
-
         .if ( [rbx].flags & _D_READSUB && !( ff.attrib & _F_SUBDIR ) )
-
             .ifd !_tcswild([rbx].mask, &ff.name)
-
                 _tfindnexti64(h, &ff)
                 .continue
             .endif
         .endif
-
         _tcslen(&ff.name)
         .if !malloc(&[rax*tchar_t+FILENT])
-
             .break
         .endif
-
         mov rcx,rax
         mov [rcx].FILENT.name,NULL
         mov [rcx].FILENT.attrib,ff.attrib
         mov [rcx].FILENT.size,ff.size
-
         mov rax,[rbx].fcb
         .if ( rax == NULL )
             mov [rbx].fcb,rcx
@@ -86,18 +72,13 @@ endif
         _tfindnexti64(h, &ff)
     .endw
     _findclose(h)
-
     mov ecx,[rbx].count
     mov rdx,malloc(&[rcx*size_t+size_t])
     mov rcx,[rbx].fcb
     mov [rbx].fcb,rax
-
     assume rbx:nothing
-
     .if ( rax )
-
         .for ( rbx = rcx : rbx : rdx+=size_t )
-
             mov [rdx],rbx
             lea rax,[rbx].FILENT.nbuf
             mov rcx,rbx
@@ -107,11 +88,8 @@ endif
         mov [rdx],rbx
         mov rbx,d
         mov eax,[rbx].DIRENT.count
-
     .else
-
         .for ( rbx = rcx : rbx : )
-
             mov rcx,rbx
             mov rbx,[rbx].FILENT.name
             free(rcx)
@@ -119,7 +97,6 @@ endif
         xor eax,eax
     .endif
     ret
-
-_dread endp
+    endp
 
     end

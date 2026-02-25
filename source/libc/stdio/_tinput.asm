@@ -780,13 +780,10 @@ endif
             .endif
 if not defined(_UNICODE) and not defined(__UNIX__)
             .ifd isleadbyte( _ch )
-
                 _inc(stream)
                 movzx ecx,[rbx]
                 add rbx,tchar_t
-
                 .if ( ecx != eax )
-
                     _un_inc(eax, stream)
                     _un_inc(_ch, stream)
                     jmp error_return
@@ -799,7 +796,6 @@ endif
             .break
         .endif
     .endw
-
 error_return:
     mov eax,count
     .if ( _ch == -1 )
@@ -808,7 +804,6 @@ error_return:
         .endif
     .endif
     ret
-
-_tinput endp
+    endp
 
     end

@@ -15,9 +15,7 @@ endif
 .code
 
 _cwait proc uses rbx stat_loc:ptr int_t, process_id:intptr_t, action_code:int_t
-
 ifndef __UNIX__
-
    .new retval:intptr_t
    .new retstatus:int_t
 
@@ -30,23 +28,18 @@ ifndef __UNIX__
 
     ldr rbx,process_id
     .if ( rbx == -1 || rbx == -2 )
-
         .return( _set_errno(ECHILD) )
     .endif
 
     ; wait for child process, then fetch its exit code
 
     .ifd ( WaitForSingleObject(rbx, -1) == 0 )
-
         GetExitCodeProcess(rbx, &retstatus)
     .else
         xor eax,eax
     .endif
-
     .if ( eax )
-
         mov retval,rbx
-
     .else
 
         ; one of the API calls failed. map the error and set up to
@@ -55,7 +48,6 @@ ifndef __UNIX__
 
         mov ecx,GetLastError()
         .if ( ecx == ERROR_INVALID_HANDLE )
-
             mov _doserrno,ecx
             _set_errno(ECHILD)
         .else
@@ -64,11 +56,9 @@ ifndef __UNIX__
         mov retval,-1
         mov retstatus,-1
     .endif
-
     CloseHandle(rbx)
     mov rcx,stat_loc
     .if ( rcx != NULL )
-
         mov eax,retstatus
         mov [rcx],eax
     .endif
@@ -77,7 +67,6 @@ else
     _set_errno( ENOSYS )
 endif
     ret
-
-_cwait endp
+    endp
 
     end

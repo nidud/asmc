@@ -21,14 +21,13 @@ _topenfile proc uses rbx file:tstring_t, mode:tstring_t, shflag:int_t, stream:LP
 
    .new oflag:int_t
    .new fileflag:int_t
-
     ldr rbx,mode
+
     .while ( tchar_t ptr [rbx] == ' ' )
         add rbx,tchar_t
     .endw
     movzx eax,tchar_t ptr [rbx]
     add rbx,tchar_t
-
     .switch pascal eax
     .case 'r': mov ecx,_IOREAD : mov edx,O_RDONLY
     .case 'w': mov ecx,_IOWRT  : mov edx,O_WRONLY or O_CREAT or O_TRUNC
@@ -37,10 +36,8 @@ _topenfile proc uses rbx file:tstring_t, mode:tstring_t, shflag:int_t, stream:LP
         _set_errno(EINVAL)
         .return(NULL)
     .endsw
-
     movzx eax,tchar_t ptr [rbx]
     .while eax
-
         .switch pascal eax
         .case ' '
         .case '+'
@@ -70,7 +67,6 @@ endif
         movzx eax,tchar_t ptr [rbx]
     .endw
     mov fileflag,ecx
-
     xor ecx,ecx
     .while eax
         .switch eax
@@ -87,9 +83,7 @@ endif
         add rbx,tchar_t
         movzx eax,tchar_t ptr [rbx]
     .endw
-
     .if ( ecx == 5 && eax == 'U' )
-
         movzx eax,tchar_t ptr [rbx+tchar_t]
         movzx ecx,tchar_t ptr [rbx+tchar_t*4]
         .if ( eax == 'N' && ecx == 'O' )
@@ -104,10 +98,8 @@ endif
         .endif
     .endif
     mov oflag,edx
-
     mov rbx,stream
     .ifd ( _tsopen(file, oflag, shflag, CMASK) != -1 )
-
         mov [rbx]._iobuf._file,eax
         xor eax,eax
         mov [rbx]._iobuf._cnt,eax
@@ -119,7 +111,6 @@ endif
         xor eax,eax
     .endif
     ret
-
-_topenfile endp
+    endp
 
     end

@@ -20,7 +20,6 @@ include stdlib.inc
     option dotname
 
 _utftows proc uses rdi rbx path:string_t
-
     ldr     rcx,path
     lea     rdx,_lookuptrailbytes
     lea     rdi,wbuf
@@ -63,7 +62,6 @@ _utftows proc uses rdi rbx path:string_t
     mov     rcx,rax
     sub     rcx,rdi
     ret
-
-_utftows endp
+    endp
 
     end

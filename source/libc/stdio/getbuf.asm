@@ -14,12 +14,9 @@ include malloc.inc
 _getbuf proc uses rbx fp:LPFILE
 
     ldr rbx,fp
-
 ifdef STDZIP
     .if ( [rbx]._flag & _IOZIP )
-
         .if _aligned_malloc( _ZIPIOBUF*2, _ZIPIOBUF*2 )
-
             mov ecx,_ZIPIOBUF
             .if ( [rbx]._flag & _IOZIP64 )
                 add ecx,ecx
@@ -27,7 +24,6 @@ ifdef STDZIP
             or  [rbx]._flag,_IOMYBUF
             mov [rbx]._bufsiz,ecx
         .endif
-
     .elseif malloc( _INTIOBUF )
 else
     .if malloc( _INTIOBUF )
@@ -43,7 +39,6 @@ endif
     mov [rbx]._base,rax
     mov [rbx]._cnt,0
     ret
-
-_getbuf endp
+    endp
 
     end

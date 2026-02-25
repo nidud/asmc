@@ -15,7 +15,6 @@ XMLoadFloat2 proc XM_CALLCONV pSource:ptr XMFLOAT2
     _mm_load_ss(xmm1, [rcx+4])
     _mm_unpacklo_ps(xmm0, xmm1)
     ret
-
-XMLoadFloat2 endp
+    endp
 
     end

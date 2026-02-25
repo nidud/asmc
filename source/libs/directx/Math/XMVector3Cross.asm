@@ -18,7 +18,6 @@ XMVector3Cross proc XM_CALLCONV V1:FXMVECTOR, V2:FXMVECTOR
     _mm_sub_ps(xmm0, xmm2)
     _mm_and_ps(xmm0, g_XMMask3)
     ret
-
-XMVector3Cross endp
+    endp
 
     end

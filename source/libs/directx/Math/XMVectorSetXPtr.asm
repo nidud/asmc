@@ -8,12 +8,9 @@ include DirectXMath.inc
     .code
 
 XMVectorSetXPtr proc XM_CALLCONV V:FXMVECTOR, p:ptr float
-
     ldr rdx,p
-
     _mm_move_ss(xmm0, [rdx])
     ret
-
-XMVectorSetXPtr endp
+    endp
 
     end

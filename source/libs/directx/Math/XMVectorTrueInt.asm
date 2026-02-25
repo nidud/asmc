@@ -13,7 +13,6 @@ XMVectorTrueInt proc XM_CALLCONV
     movd xmm0,eax
     XM_PERMUTE_PS()
     ret
-
-XMVectorTrueInt endp
+    endp
 
     end

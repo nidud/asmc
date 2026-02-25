@@ -11,27 +11,19 @@ include errno.inc
     .code
 
 _flttoi proc __ccall uses rbx p:ptr STRFLT
-
     ldr rbx,p
-
     mov cx,[rbx+16]
     mov eax,ecx
     and eax,Q_EXPMASK
-
     .ifs ( eax < Q_EXPBIAS )
-
         xor eax,eax
-
     .elseif ( eax > 32 + Q_EXPBIAS )
-
         mov qerrno,ERANGE
         mov eax,INT_MAX
         .if ( cx & 0x8000 )
             mov eax,INT_MIN
         .endif
-
     .else
-
         mov ecx,eax
         sub ecx,Q_EXPBIAS
         xor eax,eax
@@ -44,7 +36,6 @@ _flttoi proc __ccall uses rbx p:ptr STRFLT
         .endif
     .endif
     ret
-
-_flttoi endp
+    endp
 
     end

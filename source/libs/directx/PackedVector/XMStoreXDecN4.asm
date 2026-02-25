@@ -46,7 +46,6 @@ XMStoreXDecN4 proc XM_CALLCONV pDestination:ptr XMXDECN4, V:FXMVECTOR
     _mm_or_si128(xmm0, _mm_castps_si128(xmm1))
     _mm_store_ss([rcx], _mm_castsi128_ps(xmm0))
     ret
-
-XMStoreXDecN4 endp
+    endp
 
     end

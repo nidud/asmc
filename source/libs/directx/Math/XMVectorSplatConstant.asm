@@ -40,7 +40,6 @@ XMVectorSplatConstant proc XM_CALLCONV IntConstant:int32_t, DivExponent:uint32_t
     ;;
     _mm_mul_ps(xmm0, xmm1)
     ret
-
-XMVectorSplatConstant endp
+    endp
 
     end

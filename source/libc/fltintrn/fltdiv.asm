@@ -16,7 +16,6 @@ ifdef _WIN64
     assume rcx:ptr STRFLT
 
 _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
-
     mov     rbx,[rdx].mantissa.l
     mov     rdi,[rdx].mantissa.h
     mov     si, [rdx].mantissa.e
@@ -24,7 +23,6 @@ _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     mov     rax,[rcx].mantissa.l
     mov     rdx,[rcx].mantissa.h
     mov     si, [rcx].mantissa.e
-
     add     si,1
     jc      .nan_a
     jo      .nan_a
@@ -35,14 +33,11 @@ _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     mov     rcx,rbx
     or      rcx,rdi
     jz      .zero_b
-
 .if_zero_a:
     mov     rcx,rax
     or      rcx,rdx
     jz      .zero_a
-
 .init_done:
-
     mov     ecx,esi
     rol     ecx,16
     sar     ecx,16
@@ -54,13 +49,11 @@ _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     add     cx,si
     rol     ecx,16
     rol     esi,16
-
     test    cx,cx
     jz      .normalize_a
 .if_denormal_b:
     test    si,si
     jz      .normalize_b
-
 .calculate_exponent:
     sub     cx,si
     add     cx,0x3FFF
@@ -70,33 +63,26 @@ _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
 .too_small:
     cmp     cx,-65
     jl      .underflow
-
 .divide:
-
     define  BITS 14
     mov     r13,rcx
-
     mov     r12,rbp
     shrd    rax,rdx,BITS
     shr     rdx,BITS
     shrd    rbx,rdi,BITS
     shr     rdi,BITS
     mov     ecx,113 + (16 - BITS)
-
     mov     rbp,rdi         ; rbp:rbx - ebp:ebx:edx:esi
     mov     r10,rax         ; r11:r10 - reminder
     mov     r11,rdx
-
     xor     eax,eax         ; rdx:rax - quotient
     xor     edx,edx
     xor     r8d,r8d         ; r9:r8   - divisor
     xor     r9d,r9d
     xor     edi,edi         ; rsi:rdi - dividend
     xor     esi,esi
-
     add     rbx,rbx
     adc     rbp,rbp
-
 .divide_1:
     shr     rbp,1
     rcr     rbx,1
@@ -108,7 +94,6 @@ _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     sbb     r11,rbp
     cmc
     jc      .divide_3
-
 .divide_2:
     add     rax,rax
     adc     rdx,rdx
@@ -123,65 +108,51 @@ _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     adc     r10,rbx
     adc     r11,rbp
     jnc     .divide_2
-
 .divide_3:
     adc     rax,rax
     adc     rdx,rdx
     dec     ecx
     jnz     .divide_1
-
 .end_divide:
-
     mov     rsi,r13
     mov     rbp,r12
     dec     si
-
 .rounding:
-
     bt      rax,0
     adc     rax,0
     adc     rdx,0
-
 .overflow:
     bt      rdx,64 - BITS ; overflow bit
     jnc     .reset
-
     rcr     rdx,1
     rcr     rax,1
     add     esi,1
-
 .reset:
     shld    rdx,rax,BITS
     shl     rax,BITS
-
     test    si,si
     jng     .zero
     add     esi,esi
     rcr     si,1
-
 .done:
-
     mov     rcx,a
     mov     [rcx].mantissa.l,rax
     mov     [rcx].mantissa.h,rdx
     mov     [rcx].mantissa.e,si
     mov     rax,rcx
     ret
-
 .normalize_a:
     dec     cx
     add     rax,rax
     adc     rdx,rdx
     jnc     .normalize_a
     jmp     .if_denormal_b
-
 .normalize_b:
     dec     si
     add     rbx,rbx
     adc     rdi,rdi
     jnc     .normalize_b
     jmp     .calculate_exponent
-
 .zero_a:
     add     si,si
     jz      .za_0
@@ -193,7 +164,6 @@ _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     jz      .zero
     mov     esi,0x8000
     jmp     .done
-
 .zero_b:
     test    esi,0x7FFF0000
     jnz     .if_zero_a
@@ -203,35 +173,29 @@ _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     mov     ecx,esi
     add     cx,cx
     jnz     .infinity
-
 .nan:
     mov     esi,0xFFFF
     mov     rdx,0x4000000000000000
     xor     eax,eax
     jmp     .done
-
 .underflow:
     and     cx,0x7FFF
     cmp     cx,0x3FFF
     jae     .zero
-
 .infinity:
     mov     esi,0x7FFF
 .0:
     xor     eax,eax
     xor     edx,edx
     jmp     .done
-
 .zero:
     xor     esi,esi
     jmp     .0
-
 .b:
     mov     rax,rbx
     mov     rdx,rdi
     shr     esi,16
     jmp     .done
-
 .nan_a:
     dec     si
     add     esi,0x10000
@@ -256,7 +220,6 @@ _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     cmp     rax,rbx
     jna     .b
     jmp     .done
-
 .nan_b:
     sub     esi,0x10000
     mov     rcx,rbx
@@ -267,25 +230,21 @@ _fltdiv proc __ccall uses rsi rdi rbx r12 r13 a:ptr STRFLT, b:ptr STRFLT
     xor     esi,ecx
     and     esi,0x80000000
     jmp     .b
-
 else
 
     option stackbase:esp
 
 _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
-
     local   exp:dword
     local   dividend[4]:dword
     local   divisor [4]:dword
     local   reminder[4]:dword
     local   quotient[4]:dword
-
     mov     edx,b
     mov     divisor[0x0],[edx+0x0]
     mov     divisor[0x4],[edx+0x4]
     mov     divisor[0x8],[edx+0x8]
     mov     divisor[0xC],[edx+0xC]
-
     mov     si, [edx].STRFLT.mantissa.e
     shl     esi,16
     mov     ecx,a
@@ -306,16 +265,13 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     or      ecx,divisor[0x8]
     or      ecx,divisor[0xC]
     jz      .zero_b
-
 .if_zero_a:
     mov     ecx,eax
     or      ecx,edx
     or      ecx,ebx
     or      ecx,edi
     jz      .zero_a
-
 .init_done:
-
     mov     ecx,esi
     rol     ecx,16
     sar     ecx,16
@@ -327,13 +283,11 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     add     cx,si
     rol     ecx,16
     rol     esi,16
-
     test    cx,cx
     jz      .normalize_a
 .if_denormal_b:
     test    si,si
     jz      .normalize_b
-
 .calculate_exponent:
     sub     cx,si
     add     cx,0x3FFF
@@ -343,12 +297,9 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
 .too_small:
     cmp     cx,-65
     jl      .underflow
-
 .divide:
-
     define  BITS 14
     mov     exp,ecx
-
     shrd    eax,edx,BITS
     shrd    edx,ebx,BITS
     shrd    ebx,edi,BITS
@@ -357,7 +308,6 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     reminder[0x4],edx
     mov     reminder[0x8],ebx
     mov     reminder[0xC],edi
-
     mov     esi,divisor[0x0]
     mov     edx,divisor[0x4]
     mov     ebx,divisor[0x8]
@@ -367,7 +317,6 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     shrd    ebx,ebp,BITS
     shr     ebp,BITS
     mov     ecx,113 + (16 - BITS)
-
     xor     eax,eax
     xor     edi,edi
     mov     quotient[0x0],eax
@@ -381,12 +330,10 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     dividend[0x4],eax
     mov     dividend[0x8],eax
     mov     dividend[0xC],eax
-
     add     esi,esi
     adc     edx,edx
     adc     ebx,ebx
     adc     ebp,ebp
-
 .divide_1:
     shr     ebp,1
     rcr     ebx,1
@@ -406,9 +353,7 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     sbb     reminder[0xC],ebp
     cmc
     jc      .divide_3
-
 .divide_2:
-
     add     quotient[0x0],quotient[0x0]
     adc     quotient[0x4],quotient[0x4]
     adc     quotient[0x8],quotient[0x8]
@@ -432,34 +377,26 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     adc     reminder[0x8],ebx
     adc     reminder[0xC],ebp
     jnc     .divide_2
-
 .divide_3:
-
     adc     quotient[0x0],quotient[0x0]
     adc     quotient[0x4],quotient[0x4]
     adc     quotient[0x8],quotient[0x8]
     adc     edi,edi
     dec     ecx
     jnz     .divide_1
-
 .end_divide:
-
     mov     esi,exp
     mov     eax,quotient[0x0]
     mov     edx,quotient[0x4]
     mov     ebx,quotient[0x8]
     dec     si
-
 .rounding:
-
     bt      eax,0
     adc     eax,0
     adc     edx,0
     adc     ebx,0
     adc     edi,0
-
 .overflow:
-
     bt      edi,32 - BITS
     jnc     .reset
     rcr     edi,1
@@ -467,20 +404,16 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     rcr     edx,1
     rcr     eax,1
     add     esi,1
-
 .reset:
     shld    edi,ebx,BITS
     shld    ebx,edx,BITS
     shld    edx,eax,BITS
     shl     eax,BITS
-
     test    si,si
     jng     .zero
     add     esi,esi
     rcr     si,1
-
 .done:
-
     mov     ecx,a
     mov     dword ptr [ecx].STRFLT.mantissa.l[0],eax
     mov     dword ptr [ecx].STRFLT.mantissa.l[4],edx
@@ -489,7 +422,6 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     [ecx].STRFLT.mantissa.e,si
     mov     eax,ecx
     ret
-
 .normalize_a:
     dec     cx
     add     eax,eax
@@ -498,9 +430,7 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     adc     edi,edi
     jnc     .normalize_a
     jmp     .if_denormal_b
-
 .normalize_b:
-
     push    eax
 .nb:
     dec     si
@@ -511,7 +441,6 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     jnc     .nb
     pop     eax
     jmp     .calculate_exponent
-
 .zero_a:
     add     si,si
     jz      .za_0
@@ -523,7 +452,6 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     jz      .zero
     mov     esi,0x8000
     jmp     .done
-
 .zero_b:
     test    esi,0x7FFF0000
     jnz     .if_zero_a
@@ -535,7 +463,6 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     ecx,esi
     add     cx,cx
     jnz     .infinity
-
 .nan:
     mov     esi,0xFFFF
     mov     edi,0x40000000
@@ -543,12 +470,10 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     xor     edx,edx
     xor     eax,eax
     jmp     .done
-
 .underflow:
     and     cx,0x7FFF
     cmp     cx,0x3FFF
     jae     .zero
-
 .infinity:
     mov     esi,0x7FFF
 .0:
@@ -557,11 +482,9 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     xor     ebx,ebx
     xor     edi,edi
     jmp     .done
-
 .zero:
     xor     esi,esi
     jmp     .0
-
 .b:
     mov     eax,divisor[0x0]
     mov     edx,divisor[0x4]
@@ -569,7 +492,6 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     mov     edi,divisor[0xC]
     shr     esi,16
     jmp     .done
-
 .nan_a:
     dec     si
     add     esi,0x10000
@@ -606,7 +528,6 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     cmp     eax,divisor[0x0]
     jna     .b
     jmp     .done
-
 .nan_b:
     sub     esi,0x10000
     mov     ecx,divisor[0]
@@ -620,7 +541,6 @@ _fltdiv proc __ccall uses esi edi ebx ebp a:ptr STRFLT, b:ptr STRFLT
     and     esi,0x80000000
     jmp     .b
 endif
-
-_fltdiv endp
+    endp
 
     end

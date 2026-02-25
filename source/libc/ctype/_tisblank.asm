@@ -10,7 +10,6 @@ include tchar.inc
     .code
 
 _istblank proc c:int_t
-
     ldr eax,c
     movzx eax,_tal
 ifdef _UNICODE
@@ -25,8 +24,7 @@ ifdef _UNICODE
     .endif
 endif
     ret
-
-_istblank endp
+    endp
 
     end
 

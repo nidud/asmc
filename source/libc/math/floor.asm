@@ -26,7 +26,6 @@ else
     fldcw   w
 endif
     ret
-
-floor endp
+    endp
 
     end

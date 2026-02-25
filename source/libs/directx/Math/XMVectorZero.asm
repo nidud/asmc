@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorZero proc XM_CALLCONV
-
     _mm_setzero_ps()
     ret
-
-XMVectorZero endp
+    endp
 
     end

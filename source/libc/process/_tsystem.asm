@@ -17,15 +17,13 @@ ifdef __UNIX__
     _tspawnl( _P_WAIT, "/bin/sh", "sh", "-c", cmd, 0 )
 else
    .new com[_MAX_PATH]:tchar_t
-
     _tcscpy( &com, "cmd.exe" )
     .if !GetEnvironmentVariable( "Comspec", &com, _MAX_PATH )
-
         SearchPath( 0, "cmd.exe", 0, _MAX_PATH, &com, 0 )
     .endif
     _tspawnl( _P_WAIT, &com, "cmd.exe", "/C", cmd, 0 )
 endif
     ret
-_tsystem endp
+    endp
 
     end

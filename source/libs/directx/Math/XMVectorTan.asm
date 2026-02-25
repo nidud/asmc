@@ -79,7 +79,6 @@ XMVectorTan proc XM_CALLCONV uses xmm6 xmm7 V:FXMVECTOR
     _mm_or_ps(xmm6, xmm2)
     _mm_andnot_ps(xmm0, xmm6)
     ret
-
-XMVectorTan endp
+    endp
 
     end

@@ -588,12 +588,10 @@ else
     pop     esi
 endif
     ret
-
-FindResWord endp
+    endp
 
 
 get_hash proc fastcall private uses rsi token:string_t, len:byte
-
     xor     eax,eax
     test    edx,edx
     jz      .1
@@ -624,17 +622,14 @@ get_hash proc fastcall private uses rsi token:string_t, len:byte
     xor     edx,edx
     and     eax,HASH_TABITEMS-1
     ret
-
-get_hash endp
+    endp
 
 
 AddResWord proc fastcall private uses rsi rdi rbx token:int_t
-
     mov     esi,ecx
     lea     rbx,ResWordTable
     shl     ecx,RWSHIFT
     invoke  get_hash, [rbx+rcx].ReservedWord.name, [rbx+rcx].ReservedWord.len
-
     lea     rcx,resw_table
     lea     rdi,[rcx+rax*2]
 
@@ -666,19 +661,16 @@ AddResWord proc fastcall private uses rsi rdi rbx token:int_t
     mov     [rbx+rdx].next,si
 .3:
     ret
-
-AddResWord endp
+    endp
 
 
 ; remove a reserved word from the hash table.
 
 RemoveResWord proc fastcall uses rsi rdi rbx token:int_t
-
     mov     esi,ecx
     lea     rbx,ResWordTable
     shl     ecx,RWSHIFT
     invoke  get_hash, [rbx+rcx].name, [rbx+rcx].len
-
     lea     rcx,resw_table
     lea     rdi,[rcx+rax*2]
     movzx   ecx,word ptr [rdi]
@@ -707,8 +699,7 @@ RemoveResWord proc fastcall uses rsi rdi rbx token:int_t
     xor     eax,eax
 .4:
     ret
-
-RemoveResWord endp
+    endp
 
 
 rename_node struct
@@ -729,9 +720,7 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
 
     ldr ecx,token
     ldr rdx,name
-
     .for ( rdi = &newname, rsi = rdx :: )
-
         lodsb
         .break .if !al
         or al,0x20 ;; '@' --> 'ï'..
@@ -745,7 +734,6 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
     lea rbx,ResWordTable
     shl ecx,RWSHIFT
     add rbx,rcx
-
     movzx ecx,length
     .if ( [rbx].len == cl )
         .return .ifd !tmemicmp( &newname, [rbx].name, ecx )
@@ -758,14 +746,11 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
     lea rax,resw_strings
     lea rcx,[rax+size_resw_strings]
     mov rsi,[rbx].name
-
     .if ( rsi >= rax && rsi < rcx )
-
         mov rcx,LclAlloc( sizeof( rename_node ) )
         mov [rcx].rename_node.name,rsi
         mov [rcx].rename_node.token,di
         mov [rcx].rename_node.length,[rbx].len
-
         .if renamed_keys.head == NULL
             mov renamed_keys.head,rcx
             mov renamed_keys.tail,rcx
@@ -774,7 +759,6 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
             mov [rdx].rename_node.next,rcx
             mov renamed_keys.tail,rcx
         .endif
-
     .else
 
         ; v2.11: search the original name. if the "new" names matches
@@ -783,9 +767,7 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
         ; v2.17: fixed infinite loop ( curr wasn't changed )
 
         assume rdi:ptr rename_node
-
         .for ( rdi = renamed_keys.head, rsi = NULL : rdi : rsi = rdi, rdi = [rdi].next )
-
             mov eax,token
             .if ( ax == [rdi].token )
                 .if ( [rdi].length == length )
@@ -817,8 +799,7 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
     tmemcpy(rax, &newname, esi)
     AddResWord(token)
     ret
-
-RenameKeyword endp
+    endp
 
 ; ResWordsInit() initializes the reserved words hash array ( resw_table[] )
 ; and also the reserved words string pointers ( ResWordTable[].name + ResWordTable[].len )
@@ -849,7 +830,6 @@ ResWordsInit proc uses rsi rdi rbx
     .for ( rsi = &resw_strings,
            rbx = &ResWordTable[ReservedWord],
            edi = 1: edi < ResWordCount: edi++, rbx += ReservedWord )
-
         mov [rbx].name,rsi
         movzx eax,[rbx].len
         add rsi,rax
@@ -858,8 +838,7 @@ ResWordsInit proc uses rsi rdi rbx
         .endif
     .endf
     ret
-
-ResWordsInit endp
+    endp
 
 ; ResWordsFini() is called once per module
 ; it restores the resword table
@@ -873,7 +852,6 @@ ResWordsFini proc uses rsi rdi rbx
     ; since its position most likely will change.
 
     .for ( rdi = renamed_keys.head : rdi : rdi = rsi )
-
         mov rsi,[rdi].next
         movzx ebx,[rdi].token
         RemoveResWord(ebx)
@@ -884,7 +862,6 @@ ResWordsFini proc uses rsi rdi rbx
         lea rdx,ResWordTable
         mov [rdx+rcx].ReservedWord.name,[rdi].name
         mov [rdx+rcx].ReservedWord.len,[rdi].length
-
         AddResWord(ebx)
     .endf
     mov renamed_keys.head,NULL
@@ -894,7 +871,6 @@ ResWordsFini proc uses rsi rdi rbx
     lea rbx,ResWordTable
     movzx edi,Removed.Head
     .for ( : edi : di = si )
-
         imul ecx,edi,ReservedWord
         mov si,[rbx+rcx].next
         and [rbx+rcx].flags,not RWF_DISABLED
@@ -905,8 +881,7 @@ ResWordsFini proc uses rsi rdi rbx
     mov Removed.Head,0
     mov Removed.Tail,0
     ret
-
-ResWordsFini endp
+    endp
 
     assume rsi:nothing, rdi:nothing
 
@@ -916,11 +891,8 @@ DisableKeyword proc fastcall uses rsi rdi rbx token:uint_t
     mov  esi,ecx
     imul edi,ecx,ReservedWord
     lea  rbx,ResWordTable
-
     .if ( !( [rbx+rdi].flags & RWF_DISABLED ) )
-
         RemoveResWord(ecx)
-
         mov [rbx+rdi].next,0
         or  [rbx+rdi].flags,RWF_DISABLED
         .if Removed.Head == 0
@@ -933,17 +905,14 @@ DisableKeyword proc fastcall uses rsi rdi rbx token:uint_t
         mov Removed.Tail,si
     .endif
     ret
-
-DisableKeyword endp
+    endp
 
 
 EnableKeyword proc fastcall uses rsi rdi rbx token:uint_t
 
     lea rbx,ResWordTable
     imul edx,ecx,ReservedWord
-
     .if ( ( [rbx+rdx].flags & RWF_DISABLED ) )
-
         .if ( Removed.Head == cx )
             mov Removed.Head,[rbx+rdx].next
         .else
@@ -964,25 +933,20 @@ EnableKeyword proc fastcall uses rsi rdi rbx token:uint_t
         AddResWord(ecx)
     .endif
     ret
-
-EnableKeyword endp
+    endp
 
 
 ; check if a keyword is in the list of disabled words.
 
 IsKeywordDisabled proc fastcall uses rsi rdi rbx _name:string_t, len:int_t
-
     mov rbx,rcx
     mov esi,edx
     movzx edi,Removed.Head
-
     .while ( edi )
-
         lea  rdx,ResWordTable
         imul ecx,edi,ReservedWord
         mov  di,[rdx+rcx].ReservedWord.next
         mov  rdx,[rdx+rcx].ReservedWord.name
-
         .if ( byte ptr [rdx+rsi] == 0 )
             .ifd !tmemicmp( rbx, rdx, esi )
                 .return( TRUE )
@@ -990,101 +954,77 @@ IsKeywordDisabled proc fastcall uses rsi rdi rbx _name:string_t, len:int_t
         .endif
     .endw
     .return( FALSE )
-
-IsKeywordDisabled endp
+    endp
 
 ; depending on 64bit on or off, some instructions must be added,
 ; some removed. Currently this is a bit hackish.
 
 Set64Bit proc __ccall uses rsi rdi rbx newmode:int_t
-
     ldr ecx,newmode
-
     .if ( ecx != b64bit )
-
         .if ( ecx != FALSE )
-
             inc optable_idx[(T_INC-SPECIAL_LAST)*2] ; skip the one-byte register INC
             inc optable_idx[(T_DEC-SPECIAL_LAST)*2] ; skip the one-byte register DEC
-
             .for ( esi = 0 : esi < lengthof(patchtab64) : esi++ )
-
                 lea  rcx,patchtab64
                 lea  rbx,ResWordTable
                 mov  edi,[rcx+rsi*4]
                 imul eax,edi,ReservedWord
                 add  rbx,rax
-
                 .for ( : [rbx].flags & RWF_X64 : rbx+=ReservedWord, edi++ )
                     .if ( !( [rbx].flags & RWF_DISABLED ) )
                         AddResWord(edi)
                     .endif
                 .endf
             .endf
-
             .for ( esi = 0: esi < lengthof(patchtab32): esi++ )
-
                 lea  rcx,patchtab32
                 lea  rbx,ResWordTable
                 mov  edi,[rcx+rsi*4]
                 imul eax,edi,ReservedWord
                 add  rbx,rax
-
                 .for ( : [rbx].flags & RWF_IA32 : rbx+=ReservedWord, edi++ )
                     .if ( !( [rbx].flags & RWF_DISABLED ) )
                         RemoveResWord(edi)
                     .endif
                 .endf
             .endf
-
             assume rbx:nothing
-
             .for ( rbx = &patchtabr, rcx = &optable_idx, edi = 0 : edi < sizeof(patchtabr) : edi+=replace_ins )
-
                 movzx edx,[rbx+rdi].replace_ins.tok
                 mov eax,[rbx+rdi].replace_ins.idx64
                 mov [rcx+rdx*2],ax
             .endf
-
         .else
-
             dec optable_idx[(T_INC - SPECIAL_LAST)*2] ;; restore the one-byte register INC
             dec optable_idx[(T_DEC - SPECIAL_LAST)*2] ;; restore the one-byte register DEC
-
             assume rbx:ptr ReservedWord
             .for ( esi = 0 : esi < lengthof(patchtab64) : esi++ )
-
                 lea  rcx,patchtab64
                 lea  rbx,ResWordTable
                 mov  edi,[rcx+rsi*4]
                 imul eax,edi,ReservedWord
                 add  rbx,rax
-
                 .for ( : [rbx].flags & RWF_X64 : rbx+=ReservedWord, edi++ )
                     .if ( !( [rbx].flags & RWF_DISABLED ) )
                         RemoveResWord(edi)
                     .endif
                 .endf
             .endf
-
             .for ( esi = 0 : esi < lengthof(patchtab32) : esi++ )
-
                 lea  rcx,patchtab32
                 lea  rbx,ResWordTable
                 mov  edi,[rcx+rsi*4]
                 imul eax,edi,ReservedWord
                 add  rbx,rax
-
                 .for ( : [rbx].flags & RWF_IA32 : rbx+=ReservedWord, edi++ )
                     .if ( !( [rbx].flags & RWF_DISABLED ) )
                         AddResWord(edi)
                     .endif
                 .endf
             .endf
-
             assume rbx:nothing
             .for ( rbx = &patchtabr, rcx = &optable_idx, edi = 0 : edi < sizeof(patchtabr) : edi+=replace_ins )
-
                 movzx edx,[rbx+rdi].replace_ins.tok
                 mov eax,[rbx+rdi].replace_ins.idx32
                 mov [rcx+rdx*2],ax
@@ -1093,14 +1033,12 @@ Set64Bit proc __ccall uses rsi rdi rbx newmode:int_t
         mov b64bit,newmode
     .endif
     ret
-
-Set64Bit endp
+    endp
 
 ; get current name of a reserved word.
 ; max size is 255.
 
 GetResWName proc fastcall uses rsi rdi resword:uint_t, buff:string_t
-
     lea     rdi,intbuff
     test    rdx,rdx
 ifdef __P686__
@@ -1118,13 +1056,11 @@ endif
     rep     movsb
     mov     byte ptr [rdi],0
     ret
-
-GetResWName endp
+    endp
 
 ; option masm:on|off
 
 SetMasmKeywords proc fastcall uses rsi enable:int_t
-
     lea rsi,masmkeywords
     lodsd
     .if ( ecx )
@@ -1139,7 +1075,6 @@ SetMasmKeywords proc fastcall uses rsi enable:int_t
         .endw
     .endif
     ret
-
-SetMasmKeywords endp
+    endp
 
     end

@@ -14,7 +14,6 @@ include tchar.inc
     assume rcx:ptr tchar_t
 
 _tcscat_s proc uses rbx dst:tstring_t, cnt:size_t, src:tstring_t
-
     ldr     rcx,dst
     ldr     rbx,cnt
     test    rcx,rcx
@@ -70,7 +69,6 @@ endif
     invoke  _set_errno,ERANGE
     mov     eax,ERANGE
     jmp     .3
-
-_tcscat_s endp
+    endp
 
     end

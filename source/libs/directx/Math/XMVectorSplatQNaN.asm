@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorSplatQNaN proc XM_CALLCONV
-
     _mm_store_ps(xmm0, g_XMQNaN)
     ret
-
-XMVectorSplatQNaN endp
+    endp
 
     end

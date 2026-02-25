@@ -25,7 +25,6 @@ else
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,0,0,0))
 endif
     ret
-
-XMVector3Dot endp
+    endp
 
     end

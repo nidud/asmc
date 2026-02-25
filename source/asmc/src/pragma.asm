@@ -652,13 +652,10 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
 
     .case T_PUSH
-
         .endc .if [rbx].tokval != T_PUSH
-
         mov eax,[rcx]
         inc eax
         .endc .if eax >= MAXSTACK
-
         mov [rcx],eax
         .if ( edi )
             mov ecx,MODULE.list
@@ -666,13 +663,11 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov ecx,MODULE.cref
         .endif
         mov [rdx+rax-1],cl
-
         inc i
         .if ( [rbx+asm_tok].token == T_COMMA )
             inc i
         .endif
         .endc .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
-
         imul ebx,i,asm_tok
         add rbx,tokenarray
         .if opndx.kind != EXPR_CONST
@@ -697,9 +692,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             add rbx,asm_tok
         .endif
         .endc
-
     .case T_POP
-
         mov eax,[rcx]
         .endc .if !eax ; gives an error if nothing pushed
         dec eax
@@ -719,14 +712,12 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
     .endsw
-
     .if [rbx].token == T_CL_BRACKET
         add rbx,asm_tok
     .endif
     .if [rbx].token != T_FINAL
         mov rc,asmerr(2008, [rbx].tokpos)
     .endif
-
     .if !list_directive
         .if MODULE.list
             LstWrite(LSTTYPE_DIRECTIVE, GetCurrOffset(), 0)
@@ -736,43 +727,33 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
     .endif
     .return( rc )
-
-PragmaDirective endp
+    endp
 
 PragmaInit proc __ccall
-
     mov ListCount,0
     mov PackCount,0
     mov CrefCount,0
     ret
-
-PragmaInit endp
+    endp
 
 PragmaCheckOpen proc __ccall
-
     .if ListCount || PackCount || CrefCount
-
         asmerr(1010, ".pragma-push-pop")
     .endif
     ret
-
-PragmaCheckOpen endp
+    endp
 
 warning_disable proc __ccall id:int_t
-
     .for ( eax = id,
            rdx = &pragma_wtable,
            ecx = 0 : ecx < wtable_count : ecx++, rdx += sizeof(warning) )
-
         .if ( ax == [rdx].warning.id )
-
             movzx eax,[rdx].warning.state
             .return
         .endif
     .endf
     .return( 0 )
-
-warning_disable endp
+    endp
 
     END
 

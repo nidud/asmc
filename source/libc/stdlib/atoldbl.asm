@@ -11,7 +11,6 @@ include fltintrn.inc
     .code
 
 _atoldbl proc ldbl:ptr ldouble_t, string:string_t
-
     mov rdx,_strtoflt( ldr(string) )
     mov rcx,ldbl
     xor eax,eax
@@ -21,7 +20,6 @@ ifndef _WIN64
     mov [ecx+4],eax
 endif
     .if ( [rdx].STRFLT.flags & _ST_OVERFLOW )
-
         mov eax,_OVERFLOW
     .elseif ( [rdx].STRFLT.flags & _ST_UNDERFLOW )
         mov eax,_UNDERFLOW
@@ -34,7 +32,6 @@ endif
         .endif
     .endif
     ret
-
-_atoldbl endp
+    endp
 
     end

@@ -50,41 +50,27 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, re
     mov n.next,level
 
     .if ( [rsi].asym.total_size )
-
-        .for ( rdx = [rsi].asym.structinfo,
-               rdi = [rdx].struct_info.head : rdi : rdi = [rdi].next, i++ )
-
+        .for ( rdx = [rsi].asym.structinfo, rdi = [rdx].struct_info.head : rdi : rdi = [rdi].next, i++ )
             .if ( [rdi].type )
-
                 mov rdx,[rdi].type
                 .if ( [rdx].asym.typekind == TYPE_STRUCT )
-
                     mov i,AssignVTable(name, rdx, reg, i, &n)
-
                 .else
-
                     mov m,0
                     .if ( SymFind( tstrcat( tstrcat( tstrcpy( &q, name ), "_" ), [rdi].name ) ) )
-
                         .if ( [rax].asym.state == SYM_MACRO || [rax].asym.state == SYM_TMACRO )
                             mov m,1
                         .endif
-
                     .else
-
                         .for ( rbx = &n : rbx : rbx = [rbx].node.next )
-
                             mov rcx,[rbx].node.sym
                             .if ( [rcx].asym.name_size > 4 )
-
                                 tstrcpy( &t, [rcx].asym.name )
                                 mov rcx,[rbx].node.sym
                                 mov edx,[rcx].asym.name_size
                                 mov t[rdx-4],'_'
                                 mov t[rdx-3],0
-
                                 .if ( SymFind( tstrcat( rax, [rdi].name ) ) )
-
                                     .if ( [rax].asym.state != SYM_MACRO && [rax].asym.state != SYM_TMACRO )
                                         tstrcpy( &q, &t )
                                     .endif
@@ -92,9 +78,7 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, re
                             .endif
                         .endf
                     .endif
-
                     .if ( m == 0 )
-
                         mov ebx,reg
                         dec ebx
                         AddLineQueueX( "lea %r, %s", ebx, &q )
@@ -112,8 +96,7 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, re
     mov eax,i
     dec eax
     ret
-
-AssignVTable endp
+    endp
 
     assume rbx:token_t
 
@@ -139,33 +122,26 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
     neg eax
     and edx,eax
     mov size,edx
-
     .switch
     .case rbx
-
         mov rax,rbx
         sub rax,TokenArray
         mov ecx,asm_tok
         xor edx,edx
         div ecx
         mov i,eax
-
         .return .ifd ( EvalOperand( &i, TokenArray, TokenCount, &opnd, 0 ) == ERROR )
         .if ( opnd.kind != EXPR_CONST )
-
             .if ( opnd.kind == EXPR_ADDR && opnd.mem_type == MT_TYPE )
                 mov vinst,T_LEA
             .endif
             imul ecx,i,asm_tok
             add rcx,TokenArray
             .if ( [rcx].asm_tok.token == T_COMMA )
-
                 .if ( [rcx+asm_tok].asm_tok.token == T_REG )
-
                     AddLineQueueX( "%s(addr [%r+%d])", alloc, [rcx+asm_tok].asm_tok.tokval,  [rsi].asym.total_size )
                    .endc
                 .endif
-
                 inc i
                 .return .ifd ( EvalOperand( &i, TokenArray, TokenCount, &opnd, 0 ) == ERROR )
                 .if ( opnd.kind != EXPR_CONST )
@@ -185,9 +161,7 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
     .default
         AddLineQueueX( "%s(%d+%sVtbl)", alloc, size, [rsi].asym.name )
     .endsw
-
     .if ( size > wsize )
-
         mov ecx,eax
         lea eax,[rdi+T_EDI-T_EAX]
         lea edx,[rdi+T_EDX-T_EAX]
@@ -218,14 +192,12 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
     .endif
     mov eax,edi
     ret
-
-DefaultConstructor endp
+    endp
 
 
 ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
 
     ldr rbx,tokenarray
-
     mov edi,tstricmp( [rbx].string_ptr, "@ComAlloc" )
     .if edi
         .while [rbx].token != T_FINAL
@@ -237,12 +209,10 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
         .endw
     .endif
     .return 0 .if ( edi )
-
     add rbx,asm_tok*2
     .if ( [rbx-asm_tok].token != T_OP_BRACKET )
         .return 0
     .endif
-
     SymFind( [rbx].string_ptr )
     .if ( rax && [rax].asym.state == SYM_TMACRO )
         SymFind( [rax].asym.string_ptr )
@@ -273,9 +243,6 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
         tsprintf(buffer, "%r", edi)
     .endif
    .return 1
-
-ComAlloc endp
-
+    endp
 endif
-
     end

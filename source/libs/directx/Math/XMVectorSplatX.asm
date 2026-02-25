@@ -8,12 +8,9 @@ include DirectXMath.inc
     .code
 
 XMVectorSplatX proc XM_CALLCONV V:FXMVECTOR
-
     ldr xmm0,V
-
     XM_PERMUTE_PS()
     ret
-
-XMVectorSplatX endp
+    endp
 
     end

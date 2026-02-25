@@ -62,7 +62,6 @@ XMConvertFloatToHalf proc XM_CALLCONV Value:float
     or eax,edx
     movd xmm0,eax
     ret
-
-XMConvertFloatToHalf endp
+    endp
 
     end

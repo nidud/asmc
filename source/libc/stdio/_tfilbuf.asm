@@ -15,26 +15,21 @@ include tchar.inc
 _tfilbuf proc uses rbx fp:LPFILE
 
 ifdef _UNICODE
-
    .new is_split_character:int_t = 0
    .new leftover_low_order_byte:byte = 0
-
 endif
-
     ldr rbx,fp
+
     mov edx,[rbx]._flag
     xor eax,eax
     dec rax
-
     .if ( !( edx & _IOREAD or _IOWRT or _IORW ) || edx & _IOSTRG )
         .return
     .endif
-
     .if ( edx & _IOWRT )
         or [rbx]._flag,_IOERR
        .return
     .endif
-
     or  edx,_IOREAD
     mov [rbx]._flag,edx
     .if ( !( edx & _IOMYBUF or _IONBF or _IOYOURBUF ) )
@@ -50,10 +45,8 @@ ifdef _UNICODE
 endif
         mov [rbx]._ptr,rcx
     .endif
-
     _read([rbx]._file, [rbx]._base, [rbx]._bufsiz)
     mov [rbx]._cnt,eax
-
     .ifs ( eax < tchar_t )
         .if ( eax )
             mov eax,_IOERR
@@ -75,19 +68,16 @@ ifdef STDZIP
 endif
     mov edx,[rbx]._flag
     .if ( !( edx & _IOWRT or _IORW ) )
-
         mov al,_osfile([rbx]._file)
         and al,FTEXT or FEOFLAG
         .if ( al == FTEXT or FEOFLAG)
             or [rbx]._flag,_IOCTRLZ
         .endif
     .endif
-
     mov eax,[rbx]._bufsiz
     .if ( eax == _MINIOBUF && edx & _IOMYBUF && !( edx & _IOSETVBUF ) )
         mov [rbx]._bufsiz,_INTIOBUF
     .endif
-
     mov rcx,[rbx]._ptr
 ifdef _UNICODE
     .if ( is_split_character )
@@ -100,7 +90,6 @@ ifdef _UNICODE
         mov ah,[rcx]
         dec [rbx]._cnt
         inc [rbx]._ptr
-
     .else
 endif
         sub [rbx]._cnt,tchar_t
@@ -110,7 +99,6 @@ ifdef _UNICODE
     .endif
 endif
     ret
-
-_tfilbuf endp
+    endp
 
     end

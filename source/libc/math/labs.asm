@@ -9,7 +9,6 @@ include math.inc
     .code
 
 labs proc x:int_t
-
     ldr     ecx,x
     mov     eax,ecx
     neg     eax
@@ -22,7 +21,6 @@ else
     .endif
 endif
     ret
-
-labs endp
+    endp
 
     end

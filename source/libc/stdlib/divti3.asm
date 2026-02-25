@@ -13,7 +13,6 @@ ifdef _WIN64
     option dotname
 
 __divti3 proc dividend:int128_t, divisor:int128_t
-
     ;
     ; rdx:rax.r9:r8 = rdx::rcx / r9::r8
     ;
@@ -23,7 +22,6 @@ __divti3 proc dividend:int128_t, divisor:int128_t
     js      .0          ; signed ?
     call    __udivti3
     jmp     .3
-
 .0:
     neg     r9
     neg     r8
@@ -33,7 +31,6 @@ __divti3 proc dividend:int128_t, divisor:int128_t
     neg     rax
     sbb     rdx,0
     jmp     .3
-
 .1:
     neg     rdx
     neg     rcx
@@ -58,9 +55,7 @@ __divti3 proc dividend:int128_t, divisor:int128_t
     sbb     rdx,0
 .3:
     ret
-
-__divti3 endp
-
+    endp
 else
     int     3
 endif

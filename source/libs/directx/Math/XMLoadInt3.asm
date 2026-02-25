@@ -17,7 +17,6 @@ XMLoadInt3 proc XM_CALLCONV pSource:ptr uint32_t
     _mm_unpacklo_ps(xmm0, xmm1)
     _mm_movelh_ps(xmm0, xmm2)
     ret
-
-XMLoadInt3 endp
+    endp
 
     end

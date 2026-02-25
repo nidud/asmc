@@ -14,7 +14,6 @@ XMVectorGetXPtr proc XM_CALLCONV x:ptr float, V:FXMVECTOR
 
     _mm_store_ss([rcx], xmm1)
     ret
-
-XMVectorGetXPtr endp
+    endp
 
     end

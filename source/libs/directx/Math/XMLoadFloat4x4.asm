@@ -16,7 +16,6 @@ XMLoadFloat4x4 proc XM_CALLCONV pSource:ptr XMFLOAT4X4
     _mm_loadu_ps(xmm2, xmmword ptr [rcx].XMFLOAT4X4._31)
     _mm_loadu_ps(xmm3, xmmword ptr [rcx].XMFLOAT4X4._41)
     ret
-
-XMLoadFloat4x4 endp
+    endp
 
     end

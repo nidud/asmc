@@ -62,14 +62,11 @@ else
 .3:
 endif
     ret
-
-alldiv endp
+    endp
 
 ifndef _WIN64
-
 __lldiv::
 _alldiv::
-
     push    ebx
     mov     eax,4[esp+4]
     mov     edx,4[esp+8]
@@ -78,8 +75,6 @@ _alldiv::
     call    alldiv
     pop     ebx
     ret     16
-
 endif
-
     end
 

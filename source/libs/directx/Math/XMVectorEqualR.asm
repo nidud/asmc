@@ -25,7 +25,6 @@ XMVectorEqualR proc XM_CALLCONV pCR:ptr uint32_t, V1:FXMVECTOR, V2:FXMVECTOR
     .endif
     mov [rcx],edx
     ret
-
-XMVectorEqualR endp
+    endp
 
     end

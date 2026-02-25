@@ -10,16 +10,12 @@ include stdlib.inc
     _tenvptr tstring_t 0
 
     .code
-
 ifndef __UNIX__
-
 __initenvptr proc private
     mov _tenvptr,_tgetenvs()
     ret
-__initenvptr endp
+    endp
 
 .pragma init(__initenvptr, 4)
-
 endif
-
     end

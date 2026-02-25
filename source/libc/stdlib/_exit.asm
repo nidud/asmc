@@ -12,9 +12,7 @@ doexit proto :int_t, :int_t, :int_t
     .code
 
 _exit proc retval:int_t
-
     doexit( ldr(retval), 1, 0 ) ; quick term, kill process
-
 ifdef _CRT_APP
     ;
     ; The use of __fastfail here is a temporary workaround to ensure that
@@ -25,6 +23,6 @@ ifdef _CRT_APP
     ;
     __fastfail(FAST_FAIL_FATAL_APP_EXIT)
 endif
-_exit endp
+    endp
 
     end

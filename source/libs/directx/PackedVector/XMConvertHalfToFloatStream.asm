@@ -22,10 +22,8 @@ XMConvertHalfToFloatStream proc XM_CALLCONV uses rsi rdi rbx pOutputStream:ptr f
         add rsi,InputStride
         add rdi,OutputStride
     .endf
-
     mov rax,pOutputStream
     ret
-
-XMConvertHalfToFloatStream endp
+    endp
 
     end

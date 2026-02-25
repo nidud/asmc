@@ -27,7 +27,6 @@ AddLinnumData proc __ccall private uses rsi rdi rbx data:ptr line_num_info
 
     mov rbx,CurrSeg
     mov rdi,[rbx].asym.seginfo
-
     .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF )
         mov rsi,[rdi].seg_info.LinnumQueue
         .if ( rsi == NULL )
@@ -49,8 +48,7 @@ AddLinnumData proc __ccall private uses rsi rdi rbx data:ptr line_num_info
         mov [rsi].qdesc.tail,rdi
     .endif
     ret
-
-AddLinnumData endp
+    endp
 
 
 ; store a reference for the current line at the current address
@@ -72,31 +70,25 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
     .if ( rsi )
         mov rdi,[rsi].asym.debuginfo
     .endif
-
     .if ( Options.output_format == OFORMAT_COFF && Options.debug_symbols != 4 &&
           rbx == NULL && ( rsi == NULL || [rdi].debug_info.file != srcfile ||
           [rsi].asym.segm != CurrSeg ) )
 
         .new procname[12]:char_t
-
         .if ( rsi )
-
             mov rcx,[rsi].asym.segm
             mov rcx,[rcx].asym.seginfo
             mov eax,[rcx].seg_info.current_loc
             sub eax,[rsi].asym.offs
             mov [rsi].asym.total_size,eax
         .endif
-
         tsprintf( &procname, "$$$%05u", procidx )
-
         mov dmyproc,SymFind( &procname )
         mov rsi,rax
 
         ; in pass 1, create the proc
 
         .if ( rsi == NULL )
-
             mov dmyproc,CreateProc( NULL, &procname, SYM_INTERNAL )
             mov rsi,rax
             mov [rsi].asym.isproc,1 ; flag is usually set inside ParseProc()
@@ -110,14 +102,10 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
         ; by the user - bad! A warning should be displayed
 
         .if ( [rsi].asym.isproc )
-
             SetSymSegOfs( rsi )
-
             mov [rsi].asym.Ofssize,MODULE.Ofssize
             mov [rsi].asym.langtype,MODULE.langtype
-
             .if ( write_to_file == TRUE )
-
                 mov rdi,LclAlloc( sizeof( line_num_info ) )
                 mov [rdi].line_num_info.sym,rsi
                 mov [rdi].line_num_info.line_number,GetLineNumber()
@@ -129,30 +117,23 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
             .endif
         .endif
     .endif
-
     .if ( line_num && ( write_to_file == FALSE || lastLineNumber == line_num ) )
         .return
     .endif
-
     mov rdi,LclAlloc( sizeof( line_num_info ) )
     mov [rdi].line_num_info.number,line_num
 
     .if ( line_num == 0 ) ; happens for COFF only
-
         mov rcx,CurrProc
-
         .if ( Parse_Pass == PASS_1 &&
             Options.output_format == OFORMAT_COFF && rcx && !( [rcx].asym.ispublic ) )
-
             mov [rcx].asym.included,1
             AddPublicData( rcx )
         .endif
-
         mov rax,dmyproc
         .if ( CurrProc )
             mov rax,CurrProc
         .endif
-
         mov [rdi].line_num_info.sym,rax
         mov [rdi].line_num_info.line_number,GetLineNumber()
         mov eax,srcfile
@@ -163,7 +144,6 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
 
         mov rsi,dmyproc
         .if ( rsi )
-
             mov rcx,[rsi].asym.segm
             mov rcx,[rcx].asym.seginfo
             mov eax,[rcx].seg_info.current_loc
@@ -176,9 +156,7 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
 
         mov rcx,CurrProc
         mov rdx,[rcx].asym.procinfo
-
         .if ( ecx && [rdx].proc_info.size_prolog )
-
             AddLinnumData( rdi )
             mov rdi,LclAlloc( sizeof( line_num_info ) )
             mov [rdi].line_num_info.number,GetLineNumber()
@@ -186,11 +164,9 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
             mov [rdi].line_num_info.srcfile,srcfile
         .endif
     .else
-
         mov [rdi].line_num_info.offs,GetCurrOffset()
         mov [rdi].line_num_info.srcfile,srcfile
     .endif
-
     mov lastLineNumber,line_num
 
     ; v2.11: added, improved multi source support for CV.
@@ -204,23 +180,18 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
     ; v2.10: warning if line-numbers for segments without class code!
     mov rbx,CurrSeg
     mov rsi,[rbx].asym.seginfo
-
     .if ( !( [rsi].seg_info.linnum_init ) )
-
         mov [rsi].seg_info.linnum_init,1
-
         .if ( TypeFromClassName( rbx, [rsi].seg_info.clsym ) != SEGTYPE_CODE )
             asmerr( 4012, [rbx].asym.name )
         .endif
     .endif
     AddLinnumData( rdi )
     ret
-
-AddLinnumDataRef endp
+    endp
 
 
 QueueDeleteLinnum proc fastcall queue:ptr qdesc
-
     .if ( rcx != NULL )
         mov rdx,[rcx].qdesc.head
         .for( : rdx : rdx = rax )
@@ -228,18 +199,15 @@ QueueDeleteLinnum proc fastcall queue:ptr qdesc
         .endf
     .endif
     ret
-
-QueueDeleteLinnum endp
+    endp
 
 
 ; if -Zd is set and there is trailing code not inside
 ; a function, set the dummy function's length now.
 
 LinnumFini proc __ccall
-
     mov rax,dmyproc
     .if ( rax )
-
         mov rcx,[rax].asym.segm
         mov rcx,[rcx].asym.seginfo
         mov edx,[rcx].seg_info.current_loc
@@ -247,16 +215,13 @@ LinnumFini proc __ccall
         mov [rax].asym.total_size,edx
     .endif
     ret
-
-LinnumFini endp
+    endp
 
 
 LinnumInit proc __ccall
-
     mov lastLineNumber,0
     mov dmyproc,NULL
     ret
-
-LinnumInit endp
+    endp
 
     end

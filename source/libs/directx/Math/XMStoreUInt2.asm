@@ -29,7 +29,6 @@ XMStoreUInt2 proc XM_CALLCONV pDestination:ptr XMUINT2, V:FXMVECTOR
     XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1, 1, 1, 1))
     _mm_store_ss([rcx][4], xmm1)
     ret
-
-XMStoreUInt2 endp
+    endp
 
     end

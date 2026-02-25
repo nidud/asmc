@@ -20,7 +20,6 @@ XMVectorNearEqual proc XM_CALLCONV V1:FXMVECTOR, V2:FXMVECTOR, Epsilon:FXMVECTOR
     _mm_max_ps(xmm0, xmm3)
     _mm_cmple_ps(xmm0, xmm2)
     ret
-
-XMVectorNearEqual endp
+    endp
 
     end

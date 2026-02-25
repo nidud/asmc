@@ -17,16 +17,13 @@ include tchar.inc
     option dotname
 
 compare proc private uses rsi rdi rbx a:PFILENT, b:PFILENT
-
    .new name_a:tstring_t
    .new name_b:tstring_t
-
     ldr rax,b
     mov rsi,[rax]
     mov edx,[rsi].FILENT.attrib
     mov rbx,[rsi].FILENT.name
     mov name_b,rbx
-
     ldr rax,a
     mov rdi,[rax]
     mov ecx,[rdi].FILENT.attrib
@@ -126,17 +123,13 @@ else
 endif
 .C:
     ret
-
-compare endp
+    endp
 
 _dsort proc uses rbx d:PDIRENT
-
     ldr rbx,d
-
     mov sortflag,[rbx].DIRENT.flags
     qsort([rbx].DIRENT.fcb, [rbx].DIRENT.count, size_t, &compare)
     ret
-
-_dsort endp
+    endp
 
     end

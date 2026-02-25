@@ -10,7 +10,6 @@ include tchar.inc
     .code
 
 _istgraph proc c:int_t
-
     ldr eax,c
     .if ( eax < 0x21 || eax >= 0x7F )
         xor eax,eax
@@ -18,7 +17,6 @@ _istgraph proc c:int_t
         mov eax,1
     .endif
     ret
-
-_istgraph endp
+    endp
 
     end

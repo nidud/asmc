@@ -13,10 +13,8 @@ option dotname
     .code
 
 _tcsstr proc uses rbx s1:tstring_t, s2:tstring_t
-
     ldr     rcx,s1
     ldr     rdx,s2
-
     movzx   eax,tchar_t ptr [rdx]
     test    eax,eax
     jz      .3
@@ -40,7 +38,6 @@ _tcsstr proc uses rbx s1:tstring_t, s2:tstring_t
     lea     rax,[rcx-tchar_t]
 .3:
     ret
-
-_tcsstr endp
+    endp
 
     end

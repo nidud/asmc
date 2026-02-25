@@ -8,7 +8,6 @@ include stdlib.inc
     .code
 
 aullrem proc watcall a:uint64_t, b:uint64_t
-
     call    aulldiv
 ifdef _WIN64
     mov     rax,rdx
@@ -17,8 +16,7 @@ else
     mov     edx,ecx
 endif
     ret
-
-aullrem endp
+    endp
 
 ifndef _WIN64
 __ullmod::

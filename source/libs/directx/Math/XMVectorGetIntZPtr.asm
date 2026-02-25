@@ -15,7 +15,6 @@ XMVectorGetIntZPtr proc XM_CALLCONV p:ptr uint32_t, V:FXMVECTOR
     XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(2,2,2,2))
     _mm_store_ss([rcx], xmm1)
     ret
-
-XMVectorGetIntZPtr endp
+    endp
 
     end

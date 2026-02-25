@@ -17,10 +17,8 @@ endif
 .code
 
 _texecve proc name:tstring_t, argv:tarray_t, envp:tarray_t
-
     _tspawnve( _P_OVERLAY, ldr(name), ldr(argv), ldr(envp) )
     ret
-
-_texecve endp
+    endp
 
     end

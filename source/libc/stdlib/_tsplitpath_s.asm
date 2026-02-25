@@ -16,10 +16,8 @@ _tsplitpath_s proc uses rsi rdi rbx path:tstring_t,
     dir:tstring_t,   max_dir:size_t,
     fname:tstring_t, max_fname:size_t,
     ext:tstring_t,   max_ext:size_t
-
    .new endptr:tstring_t
    .new bEinval:int_t = 0
-
     ldr rbx,path
     .if ( rbx == NULL )
         jmp error_einval
@@ -44,16 +42,12 @@ _tsplitpath_s proc uses rsi rdi rbx path:tstring_t,
     .if ( ( rcx && !rax ) || ( !rcx && rax ) )
         jmp error_einval
     .endif
-
     mov rcx,drive
     .if ( ( rcx && max_drive < _MAX_DRIVE ) )
         jmp error_erange
     .endif
-
     .if ( tchar_t ptr [rbx+tchar_t] == ':' )
-
         .if ( rcx )
-
             mov [rcx],tchar_t ptr [rbx]
             mov tchar_t ptr [rcx+tchar_t],':'
             add rcx,tchar_t*2
@@ -63,16 +57,11 @@ _tsplitpath_s proc uses rsi rdi rbx path:tstring_t,
     .if ( rcx )
         mov tchar_t ptr [rcx],0
     .endif
-
     .for ( edx=0, edi=0, esi=0, rcx=rbx :: rcx+=tchar_t )
-
         movzx eax,tchar_t ptr [rcx]
-
         .break .if eax == 0
         .if ( eax == '\' || eax == '/' )
-
             .if ( rdi == 0 )
-
                 mov rdi,rcx
             .endif
             mov rsi,rcx
@@ -80,12 +69,9 @@ _tsplitpath_s proc uses rsi rdi rbx path:tstring_t,
             mov rdx,rcx
         .endif
     .endf
-
     mov endptr,rcx
     mov rcx,dir
-
     .if ( rcx )
-
         mov rax,rsi
         sub rax,rdi
         add eax,tchar_t*2
@@ -94,7 +80,6 @@ _tsplitpath_s proc uses rsi rdi rbx path:tstring_t,
             jmp error_erange
         .endif
         .while ( rdi < rsi )
-
             mov [rcx],tchar_t ptr [rdi]
             add rdi,tchar_t
             add rcx,tchar_t
@@ -105,13 +90,10 @@ _tsplitpath_s proc uses rsi rdi rbx path:tstring_t,
         .endif
         mov tchar_t ptr [rcx],0
     .endif
-
     mov rcx,ext
     .if ( rcx )
-
         mov eax,tchar_t
         .if ( rdx )
-
             mov rax,endptr
             sub rax,rdx
             add eax,tchar_t
@@ -120,28 +102,22 @@ _tsplitpath_s proc uses rsi rdi rbx path:tstring_t,
         .if ( rax > max_ext )
             jmp error_erange
         .endif
-
         .if ( rdx )
-
             .for ( eax=0, rdi=rdx :: rdi+=tchar_t, rcx+=tchar_t )
-
                 mov [rcx],tchar_t ptr [rdi]
                .break .if ( eax == 0 )
             .endf
         .endif
         mov tchar_t ptr [rcx],0
     .endif
-
     mov rcx,fname
     .if ( rcx )
-
         .if ( rdx == 0 )
             mov rdx,endptr
         .endif
         .if ( rsi >= rbx )
             lea rbx,[rsi+tchar_t]
         .endif
-
         mov rax,rdx
         sub rax,rbx
         add eax,tchar_t
@@ -149,10 +125,8 @@ _tsplitpath_s proc uses rsi rdi rbx path:tstring_t,
         .if ( rax > max_fname )
             jmp error_erange
         .endif
-
         xor eax,eax
         .while ( rbx < rdx )
-
             mov [rcx],tchar_t ptr [rbx]
            .break .if ( eax == 0 )
             add rcx,tchar_t
@@ -161,7 +135,6 @@ _tsplitpath_s proc uses rsi rdi rbx path:tstring_t,
         mov tchar_t ptr [rcx],0
     .endif
     .return( 0 )
-
 error_einval:
     mov bEinval,1
 ifdef _UNICODE
@@ -195,7 +168,6 @@ error_erange:
         mov eax,ERANGE
     .endif
     ret
-
-_tsplitpath_s endp
+    endp
 
     end

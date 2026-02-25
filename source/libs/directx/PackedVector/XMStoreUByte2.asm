@@ -21,7 +21,6 @@ XMStoreUByte2 proc XM_CALLCONV pDestination:ptr XMUBYTE2, V:FXMVECTOR
     shr rdx,32
     mov [rcx].XMUBYTE2.y,dl
     ret
-
-XMStoreUByte2 endp
+    endp
 
     end

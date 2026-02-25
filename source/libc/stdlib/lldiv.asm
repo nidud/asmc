@@ -9,7 +9,6 @@ include stdlib.inc
 .code
 
 lldiv proc p:ptr _lldiv_t, x:int64_t, y:int64_t
-
 ifdef _WIN64
     ldr     rcx,p
     ldr     rax,x
@@ -33,7 +32,6 @@ else
     pop     ebx
 endif
     ret
-
-lldiv endp
+    endp
 
     end

@@ -12,9 +12,7 @@ include tchar.inc
     .code
 
 _tisexec proc uses rbx path:tstring_t
-
     .if _tcsext( ldr(path) )
-
         lea rbx,[rax+tchar_t]
         .if ( _tcsicmp(rbx, "cmd") == 0 )
             .return( _EXEC_CMD )
@@ -31,7 +29,6 @@ _tisexec proc uses rbx path:tstring_t
         xor eax,eax
     .endif
     ret
-
-_tisexec endp
+    endp
 
     end

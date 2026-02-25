@@ -48,7 +48,6 @@ XMConvertVectorUIntToFloat proc XM_CALLCONV VInt:FXMVECTOR, DivExponent:uint32_t
     movd xmm0,eax
     _mm_mul_ps(XM_PERMUTE_PS(), xmm1)
     ret
-
-XMConvertVectorUIntToFloat endp
+    endp
 
     end

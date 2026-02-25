@@ -10,13 +10,10 @@ include fltintrn.inc
     .code
 
 __cvtq_i64 proc __ccall q:ptr qfloat_t
-
   local flt:STRFLT
-
     _fltunpack( &flt, q )
     _flttoi64( &flt )
     ret
-
-__cvtq_i64 endp
+    endp
 
     end

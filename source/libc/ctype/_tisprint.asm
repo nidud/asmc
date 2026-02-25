@@ -10,7 +10,6 @@ include tchar.inc
     .code
 
 _istprint proc c:int_t
-
     ldr eax,c
     .if ( eax < 0x20 || eax >= 0x7F )
         xor eax,eax
@@ -18,8 +17,7 @@ _istprint proc c:int_t
         mov eax,1
     .endif
     ret
-
-_istprint endp
+    endp
 
     end
 

@@ -80,7 +80,6 @@ endif
     fld         x
 endif
     ret
-
-roundf endp
+    endp
 
     end

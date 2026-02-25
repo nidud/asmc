@@ -78,8 +78,8 @@ Bounce::Down proc
 ; Runs the application
 
 CApplication::Run proc
-    .new hr:HRESULT = 0
-    .if (SUCCEEDED(BeforeEnteringMessageLoop()))
+    .new hr:HRESULT = BeforeEnteringMessageLoop()
+    .if (SUCCEEDED(hr))
         mov hr,EnterMessageLoop()
     .else
         ErrorMessage(hr, "An error occuring when running the sample" )
@@ -160,9 +160,7 @@ CApplication::OnSize proc width:UINT, height:UINT
     mov m_rc.left,0
     mov m_rc.right,edx
     mov m_rc.bottom,eax
-
     .if ( m_isFullScreen == FALSE )
-
         mov m_rc.top,130
         mov m_rc.left,50
         sub m_rc.right,50
@@ -173,13 +171,11 @@ CApplication::OnSize proc width:UINT, height:UINT
     .endif
 
     .if ( m_pRT )
-
         ;
         ; Note: This method can fail, but it's okay to ignore the
         ; error here -- it will be repeated on the next call to
         ; EndDraw.
         ;
-
         m_pRT.Resize(&m_size)
         InitObjects()
     .endif
@@ -188,22 +184,16 @@ CApplication::OnSize proc width:UINT, height:UINT
 
 
 CApplication::OnRender proc
-
-   .new hr:HRESULT = CreateDeviceResources()
-
+    .new hr:HRESULT = CreateDeviceResources()
     .if (SUCCEEDED(hr))
-
         .if !( m_pRT.CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED )
-
            .new color:D3DCOLORVALUE
            .new matrix:Matrix3x2F
             color.Init(Black, 1.0)
             matrix.Identity()
-
             m_pRT.BeginDraw()
             m_pRT.SetTransform(&matrix)
             m_pRT.Clear(&color)
-
             mov hr,RenderMainContent()
             .if (SUCCEEDED(hr))
                 mov hr,RenderTextInfo()
@@ -303,16 +293,12 @@ CApplication::OnDestroy proc
     assume rsi:pball_t
 
 CApplication::InitObjects proc uses rsi rdi
-
     SafeRelease(m_obj)
-
     mov eax,m_rc.bottom
     sub eax,m_rc.top
     mov ecx,m_rc.right
     sub ecx,m_rc.left
-
     .ifs ( ecx < 100 || eax < 100 )
-
         mov m_count,0
        .return 0
     .endif
@@ -395,7 +381,6 @@ CApplication::GoFullScreen proc uses rdi
 ; Makes the host window resizable and focusable.
 
 CApplication::GoPartialScreen proc
-
     mov m_isFullScreen,FALSE
     SetWindowLong(m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED); or WS_EX_TRANSPARENT)
     SetWindowLong(m_hwnd, GWL_STYLE, WINDOWSTYLES)
@@ -417,26 +402,13 @@ CApplication::GoPartialScreen proc
 ;
 
 CApplication::CreateDeviceIndependentResources proc
-
-    ; Create the Direct2D factory.
-
     .new hr:HRESULT = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &IID_ID2D1Factory, NULL, &m_pD2DFactory)
-
-    .if (SUCCEEDED(hr))
-
-        ; Create a DirectWrite factory.
-
+    .if (SUCCEEDED(hr)) ; Create a DirectWrite factory.
         mov hr,DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &IID_IDWriteFactory, &m_pDWriteFactory)
     .endif
-
-
-    .if (SUCCEEDED(hr))
-
-        ; Create a DirectWrite text format object.
-
+    .if (SUCCEEDED(hr)) ; Create a DirectWrite text format object.
         mov hr,m_pDWriteFactory.CreateTextFormat(IDS_TEXTFONT, NULL, DWRITE_FONT_WEIGHT_NORMAL,
                 DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 14.0, "", &m_pTextFont)
-
         .if (SUCCEEDED(hr))
             mov hr,m_pDWriteFactory.CreateTextFormat(IDS_TEXTFONT, NULL, DWRITE_FONT_WEIGHT_NORMAL,
                     DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 30.0, "", &m_pTextFont2)
@@ -446,7 +418,6 @@ CApplication::CreateDeviceIndependentResources proc
             mov hr,m_pTextFont2.SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP)
         .endif
     .endif
-
     .if (SUCCEEDED(hr))
         mov hr,m_pDWriteFactory.CreateTextFormat(IDS_MONOFONT, NULL, DWRITE_FONT_WEIGHT_NORMAL,
                 DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 12.0, "", &m_pMonoFont)
@@ -492,10 +463,7 @@ CApplication::CreateDeviceResources proc
                 &m_pRT
                 )
 
-        .if (SUCCEEDED(hr))
-
-            ; Create brushes.
-
+        .if (SUCCEEDED(hr)) ; Create brushes.
            .new color:D3DCOLORVALUE(White, 1.0)
             mov hr,m_pRT.CreateSolidColorBrush(&color, NULL, &m_pSolidColorBrush)
         .endif
@@ -728,16 +696,12 @@ CApplication::DiscardDeviceResources proc
 ; Main Window procedure
 
 WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
-
     .if ( ldr(message) == WM_CREATE )
-
         ldr rax,lParam
         SetWindowLongPtr(ldr(hwnd), GWLP_USERDATA, [rax].CREATESTRUCT.lpCreateParams)
        .return( 1 )
     .endif
-
     .new app:ptr CApplication = GetWindowLongPtr(ldr(hwnd), GWLP_USERDATA)
-
     .switch ( message )
     .case WM_SIZE
         movzx edx,word ptr lParam
@@ -922,7 +886,6 @@ CApplication::ErrorMessage proc hr:HRESULT, format:LPTSTR
 
 
 CApplication::Release proc
-
     SafeRelease(m_obj)
     SafeRelease(m_pSolidColorBrush)
     SafeRelease(m_pTextFont)
@@ -957,10 +920,8 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, i
     ; unlikely event that HeapSetInformation fails.
 
     HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
-
     .new hr:HRESULT = CoInitialize(NULL)
     .if (SUCCEEDED(hr))
-
        .new app:ptr CApplication(hInstance)
         mov hr,app.Run()
         app.Release()

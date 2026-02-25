@@ -9,17 +9,13 @@ include errno.inc
 .code
 
 _swab proc uses rbx src:string_t, dest:string_t, n:int_t
-
     ldr rcx,src
     ldr rdx,dest
     ldr ebx,n
-
     .ifs ( !rcx || !rdx || ebx < 0 )
-
         _set_errno(EINVAL)
     .else
         .while ( ebx > 1 )
-
             mov ax,[rcx]
             mov [rdx],ah
             mov [rdx+1],al
@@ -29,7 +25,6 @@ _swab proc uses rbx src:string_t, dest:string_t, n:int_t
         .endw
     .endif
     ret
-
-_swab endp
+    endp
 
     end

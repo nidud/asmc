@@ -21,7 +21,6 @@ ifdef _WIN64
     movsd   xmm0,x
 endif
     ret
-
-tan endp
+    endp
 
     end

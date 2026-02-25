@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorMergeZW proc XM_CALLCONV V1:FXMVECTOR, V2:FXMVECTOR
-
     _mm_unpackhi_ps(xmm0, xmm1)
     ret
-
-XMVectorMergeZW endp
+    endp
 
     end

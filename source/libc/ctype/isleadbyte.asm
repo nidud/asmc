@@ -9,7 +9,6 @@ include ctype.inc
     .code
 
 isleadbyte proc wc:int_t
-
     ldr     ecx,wc
     movzx   ecx,cl
     mov     rax,_pctype
@@ -17,8 +16,7 @@ isleadbyte proc wc:int_t
     setnz   al
     movzx   eax,al
     ret
-
-isleadbyte endp
+    endp
 
     end
 

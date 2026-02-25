@@ -16,10 +16,8 @@ endif
     .code
 
 __doserrno proc
-
     lea rax,DoserrorNoMem
     ret
-
-__doserrno endp
+    endp
 
     end

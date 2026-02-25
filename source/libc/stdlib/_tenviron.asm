@@ -11,16 +11,12 @@ include tchar.inc
     _tenviron tarray_t 0
 
     .code
-
 ifndef __UNIX__
-
 __initenviron proc private
     _tsetenvp( &_tenviron )
     ret
-__initenviron endp
+    endp
 
 .pragma init(__initenviron, 5)
-
 endif
-
     end

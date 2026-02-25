@@ -14,18 +14,12 @@ include tchar.inc
 _tperror proc message:tstring_t
 
     ldr rcx,message
-
     .if ( rcx )
-
 ifdef _UNICODE
-
        .new buffer[512]:char_t
-
         xor edx,edx
         movzx eax,wchar_t ptr [rcx]
-
         .while ( eax && edx < 512 )
-
             mov buffer[rdx],al
             add rcx,2
             add edx,1
@@ -40,17 +34,14 @@ ifdef _UNICODE
         mov message,rcx
 endif
         .if ( byte ptr [rcx] )
-
             _write( 2, message, strlen( rcx ) )
             _write( 2, ": ", 2 )
         .endif
-
         mov message,_get_sys_err_msg( errno )
         _write( 2, message, strlen( rax ) )
         _write( 2, "\n", 1 )
     .endif
     ret
-
-_tperror endp
+    endp
 
     end

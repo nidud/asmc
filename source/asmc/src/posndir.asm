@@ -102,8 +102,7 @@ OrgDirective proc __ccall i:int_t, tokenarray:token_t
         .endif
     .endif
     .return( asmerr( 2132 ) )
-
-OrgDirective endp
+    endp
 
 
 fill_in_objfile_space proc __ccall private uses rsi rdi rbx size:dword
@@ -147,16 +146,13 @@ fill_in_objfile_space proc __ccall private uses rsi rdi rbx size:dword
         .endf
     .endif
     ret
-
-fill_in_objfile_space endp
+    endp
 
 
 ; align current offset to value ( alignment is 2^value )
 
 AlignCurrOffset proc __ccall value:int_t
-
     GetCurrOffset()
-
     mov ecx,value
     mov edx,1
     shl edx,cl
@@ -168,8 +164,7 @@ AlignCurrOffset proc __ccall value:int_t
         fill_in_objfile_space( ecx )
     .endif
     ret
-
-AlignCurrOffset endp
+    endp
 
 
 define align_value <opndx.value>
@@ -261,7 +256,6 @@ AlignDirective proc __ccall i:int_t, tokenarray:token_t
         LstWrite( LSTTYPE_DATA, CurrAddr, NULL )
     .endif
     .return( NOT_ERROR )
-
-AlignDirective endp
+    endp
 
     end

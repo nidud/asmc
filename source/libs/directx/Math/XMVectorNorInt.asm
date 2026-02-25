@@ -8,11 +8,9 @@ include DirectXMath.inc
     .code
 
 XMVectorNorInt proc XM_CALLCONV V1:FXMVECTOR, V2:FXMVECTOR
-
     _mm_or_si128(xmm0, xmm1)
     _mm_andnot_si128(xmm0, g_XMNegOneMask)
     ret
-
-XMVectorNorInt endp
+    endp
 
     end

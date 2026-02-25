@@ -31,7 +31,6 @@ XMVectorInsert proc XM_CALLCONV VD:FXMVECTOR, VS:FXMVECTOR, VSLeftRotateElements
     movaps xmm1,xmm0
     XMVectorSelect(V1, xmm1, Control)
     ret
-
-XMVectorInsert endp
+    endp
 
     end

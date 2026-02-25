@@ -15,7 +15,6 @@ include tchar.inc
     option dotname
 
 _tcsnccmp proc uses rbx a:tstring_t, b:tstring_t, count:size_t
-
     ldr     rcx,a
     ldr     rbx,count
     ldr     rdx,b
@@ -39,7 +38,6 @@ _tcsnccmp proc uses rbx a:tstring_t, b:tstring_t, count:size_t
     mov     rax,rbx
 .2:
     ret
-
-_tcsnccmp endp
+    endp
 
     end

@@ -8,7 +8,6 @@ include stdlib.inc
     .code
 
 allrem proc watcall a:int64_t, b:int64_t
-
     call    alldiv
 ifdef _WIN64
     mov     rax,rdx
@@ -17,8 +16,7 @@ else
     mov     edx,ecx
 endif
     ret
-
-allrem endp
+    endp
 
 ifndef _WIN64
 _allrem::
@@ -31,5 +29,4 @@ _allrem::
     pop     ebx
     ret     16
 endif
-
     end

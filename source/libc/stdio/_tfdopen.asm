@@ -18,15 +18,11 @@ _tfdopen proc uses rsi rdi rbx filedes:int_t, mode:tstring_t
 
     ldr ecx,filedes
     ldr rdx,mode
-
     .if ( rdx == NULL )
-
         _set_errno( EINVAL )
         .return( NULL )
     .endif
-
     .ifs ( ecx < 0 || ecx > _nfile || !( _osfile(ecx) & FOPEN ) )
-
         _set_errno( EBADF )
         .return( NULL )
     .endif
@@ -66,9 +62,7 @@ _tfdopen proc uses rsi rdi rbx filedes:int_t, mode:tstring_t
     xor edi,edi
     add rdx,tchar_t
     movzx eax,tchar_t ptr [rdx]
-
     .while eax
-
         .switch pascal eax
         .case ' '
         .case '+'
@@ -107,14 +101,12 @@ _tfdopen proc uses rsi rdi rbx filedes:int_t, mode:tstring_t
     ; Find a free stream; stream is returned 'locked'.
 
     .if ( _getst() == NULL )
-
         _set_errno( EMFILE )
         .return( NULL )
     .endif
     mov [rax].FILE._flag,ebx
     mov [rax].FILE._file,esi
     ret
-
-_tfdopen endp
+    endp
 
     end

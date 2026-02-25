@@ -9,7 +9,6 @@ include string.inc
     .code
 
 memset proc dst:ptr, chr:int_t, size:size_t
-
     ldr     eax,chr
 ifdef _WIN64
 ifdef __UNIX__
@@ -34,7 +33,6 @@ else
     pop     edi
 endif
     ret
-
-memset endp
+    endp
 
     end

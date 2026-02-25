@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorNotEqual proc XM_CALLCONV V1:FXMVECTOR, V2:FXMVECTOR
-
     _mm_cmpneq_ps(xmm0, xmm1)
     ret
-
-XMVectorNotEqual endp
+    endp
 
     end

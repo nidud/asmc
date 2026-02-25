@@ -56,16 +56,12 @@ FindDotSymbol proto fastcall :token_t
 
     assume proc:private, rcx:expr_t, rdx:expr_t, rsi:expr_t, rdi:expr_t
 
-
 noasmerr proc __ccall msg:int_t, args:vararg
-
     .return( ERROR )
-
-noasmerr endp
+    endp
 
 
 ConstError proc fastcall opnd1:expr_t, opnd2:expr_t
-
     .if ( [rcx].is_opattr )
         .return( NOT_ERROR )
     .endif
@@ -75,8 +71,7 @@ ConstError proc fastcall opnd1:expr_t, opnd2:expr_t
         fnasmerr( 2026 )
     .endif
     ret
-
-ConstError endp
+    endp
 
 
 TokenAssign proc fastcall uses rsi rdi opnd1:expr_t, opnd2:expr_t
@@ -91,25 +86,20 @@ TokenAssign proc fastcall uses rsi rdi opnd1:expr_t, opnd2:expr_t
     rep movsd
     mov rcx,rax
     ret
-
-TokenAssign endp
+    endp
 
 
 invalid_operand proc fastcall uses rbx opnd:expr_t, oprtr:string_t, operand:string_t
-
     mov rbx,operand
-
     .if ( !( [rcx].is_opattr ) )
         fnasmerr( 3018, tstrupr( rdx ), rbx )
     .endif
     .return ERROR
-
-invalid_operand endp
+    endp
 
     assume rcx:asym_t
 
 GetSizeValue proc fastcall sym:asym_t
-
     movzx eax,[rcx].mem_type
     .if ( eax == MT_PTR )
         mov eax,MT_NEAR
@@ -120,14 +110,12 @@ GetSizeValue proc fastcall sym:asym_t
     movzx edx,[rcx].Ofssize
     SizeFromMemtype( al, edx, [rcx].type )
     ret
-
-GetSizeValue endp
+    endp
 
 
     assume rcx:nothing, rdx:nothing
 
 SetRecordMask proc fastcall rec:asym_t, opnd:expr_t
-
     .for ( rax = [rcx].asym.structinfo,
            rax = [rax].struct_info.head,
            ecx = 64 : rax : rax = [rax].asym.next )
@@ -152,12 +140,10 @@ else
     mov [ecx+4],edx
 endif
     ret
-
-SetRecordMask endp
+    endp
 
 
 SetBitMask proc fastcall public uses rbx rec:asym_t, opnd:expr_t
-
     mov rbx,rcx
     xor eax,eax
     mov ecx,64
@@ -193,14 +179,12 @@ else
     mov [ebx+4],edx
 endif
     ret
-
-SetBitMask endp
+    endp
 
 
     assume rcx:expr_t
 
 IsOffset proc fastcall opnd:expr_t
-
     .if ( [rcx].mem_type == MT_EMPTY )
         mov eax,[rcx].inst
         .if ( eax == T_OFFSET ||
@@ -211,8 +195,7 @@ IsOffset proc fastcall opnd:expr_t
         .endif
     .endif
     .return( false )
-
-IsOffset endp
+    endp
 
 
 ;--------------------------------------------------------------------------------
@@ -222,9 +205,7 @@ IsOffset endp
     assume rdx:expr_t
 
 tofloat proc fastcall opnd1:expr_t, opnd2:expr_t, size:int_t
-
     .if ( Options.strict_masm_compat )
-
         ConstError( rcx, rdx )
         mov ecx,eax
        .return 1
@@ -236,8 +217,7 @@ tofloat proc fastcall opnd1:expr_t, opnd2:expr_t, size:int_t
         quad_resize( rcx, size )
     .endif
     .return( NOT_ERROR )
-
-tofloat endp
+    endp
 
 
     assume rdx:nothing, rcx:nothing, rbx:asym_t
@@ -248,7 +228,6 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
     ldr rsi,opnd1
     ldr rdi,opnd2
     ldr eax,uot
-
     .switch eax
     .case UOT_LOW
         TokenAssign( rsi, rdi )
@@ -822,9 +801,7 @@ endif
         .endc
     .endsw
     .return( NOT_ERROR )
-
-unaryop endp
-
+    endp
 
 ;--------------------------------------------------------------------------------
 ;
@@ -833,16 +810,13 @@ unaryop endp
     assume rcx:expr_t
 
 init_expr proc fastcall opnd:expr_t
-
     mov rcx,tmemset( rcx, 0, sizeof(expr) )
     mov [rcx].inst,EMPTY
     mov [rcx].kind,EXPR_EMPTY
     mov [rcx].mem_type,MT_EMPTY
     mov [rcx].Ofssize,USE_EMPTY
     ret
-
-init_expr endp
-
+    endp
 
     assume rcx:token_t
 
@@ -914,12 +888,10 @@ get_precedence proc fastcall item:token_t
         .return [rcx].precedence
     .case T_OP_BRACKET
     .case T_OP_SQ_BRACKET
-
         ; v2.08: with -Zm, the priority of [] and (), if
         ; used as binary operator, is 9 (like binary +/-).
         ; test cases: mov ax,+5[bx]
         ;             mov ax,-5[bx]
-
         mov eax,1
         .if ( MODULE.m510 )
             mov eax,9
@@ -942,12 +914,10 @@ get_precedence proc fastcall item:token_t
     .endsw
     fnasmerr( 2008, [rcx].string_ptr )
     ret
-
-get_precedence endp
+    endp
 
 
 GetTypeSize proc fastcall mem_type:byte, ofssize:int_t
-
     .if ( cl == MT_ZWORD )
         .return 64
     .endif
@@ -977,8 +947,7 @@ GetTypeSize proc fastcall mem_type:byte, ofssize:int_t
         xor eax,eax
     .endif
     ret
-
-GetTypeSize endp
+    endp
 
     assume rdx:nothing
 
@@ -986,11 +955,9 @@ GetTypeSize endp
 ; added v2.31.32
 
 SetEvexOpt proc fastcall tok:token_t
-
     .if ( [rcx-1*asm_tok].token == T_COMMA &&
           [rcx-2*asm_tok].token == T_REG &&
           [rcx-3*asm_tok].token == T_INSTRUCTION )
-
         mov eax,GetValueSp( [rcx-2*asm_tok].tokval )
         .if ( eax & OP_XMM )
             .if ( [rcx-3*asm_tok].tokval < VEX_START &&
@@ -1000,9 +967,8 @@ SetEvexOpt proc fastcall tok:token_t
         .endif
     .endif
     mov [rcx].asm_tok.Modifier,1
-   .return( true )
-
-SetEvexOpt endp
+    .return( true )
+    endp
 
 
     assume rcx:nothing, rbx:token_t
@@ -1646,18 +1612,14 @@ endif
         .endif
         .return
     .endsw
-
     mov rcx,idx
     inc dword ptr [rcx]
     .return( NOT_ERROR )
-
-get_operand endp
-
+    endp
 
     assume rcx:expr_t, rdx:expr_t
 
 check_both proc fastcall opnd1:expr_t, opnd2:expr_t, type1:int_t, type2:int_t
-
     .if ( [rcx].kind == type1 && [rdx].kind == type2 )
         .return 1
     .endif
@@ -1665,12 +1627,10 @@ check_both proc fastcall opnd1:expr_t, opnd2:expr_t, type1:int_t, type2:int_t
         .return 1
     .endif
     .return 0
-
-check_both endp
+    endp
 
 
 index_connect proc fastcall opnd1:expr_t, opnd2:expr_t
-
     mov rax,[rdx].base_reg
     .if ( rax != NULL )
         .if ( [rcx].base_reg == NULL )
@@ -1719,36 +1679,29 @@ endif
         mov [rcx].indirect,1
     .endif
     .return( NOT_ERROR )
-
-index_connect endp
+    endp
 
 
 MakeConst proc fastcall opnd:expr_t
-
     .if ( ( [rcx].kind != EXPR_ADDR ) || [rcx].indirect )
         .return
     .endif
-
     mov rax,[rcx].sym
     .if ( rax )
-
         .if ( Parse_Pass > PASS_1 )
             .return
         .endif
-
         .if ( !( ( [rax].asym.state == SYM_UNDEFINED && [rcx].inst == EMPTY ) ||
                  ( [rax].asym.state == SYM_EXTERNAL && [rax].asym.weak && [rcx].is_abs ) ) )
             .return
         .endif
         mov [rcx].value,1
     .endif
-
     mov [rcx].label_tok,NULL
     mov rax,[rcx].mbr
     .if ( rax && [rax].asym.state != SYM_STRUCT_FIELD )
         .return
     .endif
-
     .if ( [rcx].override != NULL )
         .return
     .endif
@@ -1757,19 +1710,16 @@ MakeConst proc fastcall opnd:expr_t
     mov [rcx].explicit,0
     mov [rcx].mem_type,MT_EMPTY
     ret
-
-MakeConst endp
+    endp
 
 
     assume rax:asym_t, rbx:asym_t
 
 MakeConst2 proc fastcall uses rbx opnd1:expr_t, opnd2:expr_t
-
     mov rax,[rcx].sym
     .if ( [rax].state == SYM_EXTERNAL )
         .return fnasmerr( 2018, [rax].name )
     .endif
-
     mov rbx,[rdx].sym
     .if ( ( [rax].state != SYM_UNDEFINED && [rbx].segm != [rax].segm &&
             [rbx].state != SYM_UNDEFINED ) || [rbx].state == SYM_EXTERNAL )
@@ -1780,34 +1730,29 @@ MakeConst2 proc fastcall uses rbx opnd1:expr_t, opnd2:expr_t
     mov [rdx].kind,EXPR_CONST
     add [rcx].value,[rax].offs
     add [rdx].value,[rbx].offs
-   .return NOT_ERROR
-
-MakeConst2 endp
+    .return NOT_ERROR
+    endp
 
 
 fix_struct_value proc fastcall opnd:expr_t
-
     mov rax,[rcx].mbr
     .if ( rax && [rax].state == SYM_TYPE )
         add [rcx].value,[rax].total_size
         mov [rcx].mbr,NULL
     .endif
     ret
-
-fix_struct_value endp
+    endp
 
     assume rax:nothing
 
 
 check_direct_reg proc fastcall opnd1:expr_t, opnd2:expr_t
-
     .if ( [rcx].kind == EXPR_REG && !( [rcx].indirect ) ||
           [rdx].kind == EXPR_REG && !( [rdx].indirect ) )
         .return ERROR
     .endif
     .return NOT_ERROR
-
-check_direct_reg endp
+    endp
 
 
     assume rsi:expr_t, rdi:expr_t, rbx:nothing
@@ -1820,17 +1765,14 @@ plus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
     .ifd ( check_direct_reg( rcx, rdx ) == ERROR )
         .return fnasmerr( 2032 )
     .endif
-
     .if ( [rsi].kind == EXPR_REG )
         mov [rsi].kind,EXPR_ADDR
     .endif
     .if ( [rdi].kind == EXPR_REG )
        mov [rdi].kind,EXPR_ADDR
     .endif
-
     .if ( [rdi].override )
         .if ( [rsi].override )
-
             mov rbx,[rsi].override
             mov rax,[rdi].override
             mov al,[rax].asm_tok.token
@@ -1840,28 +1782,20 @@ plus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
         .endif
         mov [rsi].override,[rdi].override
     .endif
-
     .if ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST )
-
         add [rsi].llvalue,[rdi].llvalue
         .if ( [rsi].hvalue >= 0 )
             mov [rsi].negative,0
         .endif
-
     .elseif ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_FLOAT )
-
         __addq( rsi, rdi )
-
     .elseif ( ( [rsi].kind == EXPR_ADDR && [rdi].kind == EXPR_ADDR ) )
-
         fix_struct_value(rsi)
         fix_struct_value(rdi)
         .ifd ( index_connect( rsi, rdi ) == ERROR )
             .return
         .endif
-
         .if ( [rdi].sym != NULL )
-
             mov rax,[rsi].sym
             .if ( rax && [rax].asym.state != SYM_UNDEFINED )
                 mov rax,[rdi].sym
@@ -1869,7 +1803,6 @@ plus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
                     .return( fnasmerr( 2101 ) )
                 .endif
             .endif
-
             mov [rsi].label_tok,[rdi].label_tok
             mov [rsi].sym,[rdi].sym
             .if ( [rsi].mem_type == MT_EMPTY )
@@ -1879,32 +1812,22 @@ plus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
                 mov [rsi].inst,[rdi].inst
             .endif
         .endif
-
         add [rsi].llvalue,[rdi].llvalue
         .if ( [rdi].type )
             mov [rsi].type,[rdi].type
         .endif
-
     .elseif check_both( rsi, rdi, EXPR_CONST, EXPR_ADDR )
-
         .if ( [rsi].kind == EXPR_CONST )
-
             add [rdi].llvalue,[rsi].llvalue
-
             .if ( [rsi].indirect )
                 mov [rdi].indirect,1
             .endif
-
             .if ( [rsi].explicit )
-
                 mov [rdi].explicit,1
                 mov [rdi].mem_type,[rsi].mem_type
-
             .elseif ( [rdi].mem_type == MT_EMPTY )
-
                 mov [rdi].mem_type,[rsi].mem_type
             .endif
-
             .if ( [rdi].mbr == NULL )
                 mov [rdi].mbr,[rsi].mbr
             .endif
@@ -1912,9 +1835,7 @@ plus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
                 mov [rsi].type,[rdi].type
             .endif
             TokenAssign( rsi, rdi )
-
         .else
-
             add [rsi].llvalue,[rdi].llvalue
             .if ( [rdi].mbr )
                 mov [rsi].mbr,[rdi].mbr
@@ -1924,24 +1845,19 @@ plus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             .endif
         .endif
         fix_struct_value( rsi )
-
     .else
         .return ConstError( rsi, rdi )
     .endif
     .return( NOT_ERROR )
-
-plus_op endp
+    endp
 
 
 minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
-
     mov rsi,rcx
     mov rdi,rdx
-
     .ifd ( check_direct_reg( rsi, rdi ) == ERROR )
         .return fnasmerr( 2032 )
     .endif
-
     mov rax,[rdi].sym
     .if ( !( [rsi].kind == EXPR_ADDR && [rdi].kind == EXPR_ADDR &&
            rax && [rax].asym.state == SYM_UNDEFINED ) )
@@ -1978,7 +1894,6 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             add [rsi].value,[rbx].asym.offs
             adc [rsi].hvalue,0
             mov rax,[rdi].sym
-
             .if ( MODULE.fctype == FCT_ELF64 && [rax].asym.predefined && [rax].asym.isvariable )
 
                 ; v2.37.63: label - $
@@ -1990,7 +1905,6 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
                    .endc
                 .endif
             .endif
-
             mov rcx,[rbx].asym.segm
             .if ( Parse_Pass > PASS_1 )
                 .if ( ( [rax].asym.state == SYM_EXTERNAL || [rbx].asym.state == SYM_EXTERNAL ) && rax != [rsi].sym )
@@ -2053,22 +1967,18 @@ endif
         .return ConstError( rsi, rdi )
     .endsw
     .return( NOT_ERROR )
-
-minus_op endp
+    endp
 
 
     assume rcx:expr_t, rdx:expr_t
 
 struct_field_error proc fastcall opnd:expr_t
-
     .if ( [rcx].is_opattr )
-
         mov [rcx].kind,EXPR_ERROR
        .return NOT_ERROR
     .endif
     .return( fnasmerr( 2166 ) )
-
-struct_field_error endp
+    endp
 
 
 dot_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
@@ -2079,17 +1989,14 @@ dot_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
     .ifd ( check_direct_reg( rsi, rdi ) == ERROR )
         .return( fnasmerr( 2032 ) )
     .endif
-
     .if ( [rsi].kind == EXPR_REG )
         mov [rsi].kind,EXPR_ADDR
     .endif
     .if ( [rdi].kind == EXPR_REG )
         mov [rdi].kind,EXPR_ADDR
     .endif
-
     mov rax,[rdi].sym
     .if ( rax && [rax].asym.state == SYM_UNDEFINED && Parse_Pass == PASS_1 )
-
         mov rax,nullstruct
         .if ( !rax )
             mov nullstruct,CreateTypeSymbol( NULL, "", 0 )
@@ -2099,19 +2006,15 @@ dot_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
         mov [rdi].sym,NULL
         mov [rdi].kind,EXPR_CONST
     .endif
-
     .if ( [rsi].kind == EXPR_ADDR && [rdi].kind == EXPR_ADDR )
-
         .if ( [rdi].mbr == NULL && !MODULE.oldstructs )
             .return( struct_field_error( rsi ) )
         .endif
         .ifd ( index_connect( rsi, rdi ) == ERROR )
             .return
         .endif
-
         mov rax,[rdi].sym
         .if ( rax )
-
             mov rbx,[rsi].sym
             .if ( rbx && [rbx].asym.state != SYM_UNDEFINED && [rax].asym.state != SYM_UNDEFINED )
                 .return( fnasmerr( 2101 ) )
@@ -2119,13 +2022,11 @@ dot_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             mov [rsi].label_tok,[rdi].label_tok
             mov [rsi].sym,[rdi].sym
         .endif
-
         mov rax,[rdi].mbr
         .if ( rax )
             mov [rsi].mbr,rax
         .endif
         add [rsi].value,[rdi].value
-
         .if ( !( [rsi].explicit ) )
             mov [rsi].mem_type,[rdi].mem_type
         .endif
@@ -2133,26 +2034,20 @@ dot_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
         .if ( rax )
             mov [rsi].type,rax
         .endif
-
     .elseif ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_ADDR )
-
         .if ( [rsi].is_type && [rsi].type )
-
             mov [rdi].assumecheck,0
             mov [rsi].value,0
             mov [rsi].hvalue,0
         .endif
-
         .if ( ( !MODULE.oldstructs ) && ( !( [rsi].is_type ) && [rsi].mbr == NULL ) )
             .return( struct_field_error( rsi ) )
         .endif
-
         mov rax,[rsi].mbr
         .if ( rax && [rax].asym.state == SYM_TYPE )
             mov [rsi].value,[rax].asym.offs
             mov [rsi].hvalue,0
         .endif
-
         .if ( [rsi].indirect )
             mov [rdi].indirect,1
         .endif
@@ -2161,42 +2056,29 @@ dot_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             mov [rsi].type,[rdi].type
         .endif
         TokenAssign( rsi, rdi )
-
     .elseif ( [rsi].kind == EXPR_ADDR && [rdi].kind == EXPR_CONST )
-
         .if ( !MODULE.oldstructs && ( [rdi].type == NULL || !( [rdi].is_type ) ) &&
               [rdi].mbr == NULL )
             .return( struct_field_error( rsi ) )
         .endif
-
         .if ( [rdi].is_type && [rdi].type )
-
             mov [rsi].assumecheck,0
-
             ; v2.37: adjust for type's size only (japheth)
-
             mov rbx,[rdi].type
             sub [rdi].value,[rbx].asym.total_size
             sbb [rdi].hvalue,0
         .endif
-
         mov rbx,[rdi].mbr
         .if ( rbx && [rbx].asym.state == SYM_TYPE )
-
             mov [rsi].value,[rbx].asym.offs
             mov [rsi].hvalue,0
         .endif
-
         add [rsi].value64,[rdi].value64
         mov [rsi].mem_type,[rdi].mem_type
         mov [rsi].type,[rdi].type
-
         .if ( rbx )
-
             mov [rsi].mbr,rbx
-
 ifdef USE_INDIRECTION
-
             .if ( rax && [rdi].is_dot )
                 .if ( [rsi].explicit && [rdi].scale == 0x80 )
                     mov [rsi].type,NULL
@@ -2206,17 +2088,12 @@ ifdef USE_INDIRECTION
             .endif
 endif
         .endif
-
     .elseif ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST )
-
         .if ( [rdi].mbr == NULL && !MODULE.oldstructs )
             .return( struct_field_error( rsi ) )
         .endif
-
         .if ( [rsi].type != NULL )
-
             assume rcx:nothing
-
             mov rcx,[rdi].mbr
             mov eax,[rdi].value
             mov edx,[rdi].hvalue
@@ -2244,9 +2121,7 @@ endif
             .else
                 mov [rsi].type,NULL
             .endif
-
         .else
-
             add [rsi].llvalue,[rdi].llvalue
             mov [rsi].mbr,[rdi].mbr
             mov [rsi].mem_type,[rdi].mem_type
@@ -2255,8 +2130,7 @@ endif
         .return( struct_field_error( rsi ) )
     .endif
     .return( NOT_ERROR )
-
-dot_op endp
+    endp
 
 
 colon_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
@@ -2271,7 +2145,6 @@ colon_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             .return( fnasmerr( 3013 ) )
         .endif
     .endif
-
     .switch [rdi].kind
     .case EXPR_REG
         .if ( !( [rdi].indirect ) )
@@ -2281,21 +2154,16 @@ colon_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
     .case EXPR_FLOAT
         .return fnasmerr( 2050 )
     .endsw
-
     .if ( [rsi].kind == EXPR_REG )
-
         .if ( [rsi].idx_reg != NULL )
             .return( fnasmerr( 2032 ) )
         .endif
-
         mov rax,[rsi].base_reg
         imul eax,[rax].asm_tok.tokval,special_item
         lea rbx,SpecialTable
-
         .if !( [rbx+rax].special_item.value & OP_SR )
             .return( fnasmerr( 2096 ) )
         .endif
-
         mov [rdi].override,[rsi].base_reg
         .if ( [rsi].indirect )
             mov [rdi].indirect,1
@@ -2303,42 +2171,31 @@ colon_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
         .if ( [rdi].kind == EXPR_CONST )
             mov [rdi].kind,EXPR_ADDR
         .endif
-
         .if ( [rsi].explicit )
-
             mov [rdi].explicit,1
             mov [rdi].mem_type,[rsi].mem_type
             mov [rdi].Ofssize,[rsi].Ofssize
         .endif
-
         TokenAssign( rsi, rdi )
-
         .if ( [rdi].type )
             mov [rsi].type,[rdi].type
         .endif
-
     .elseif ( [rsi].kind == EXPR_ADDR && [rsi].override == NULL && [rsi].inst == EMPTY &&
               [rsi].value == 0 && [rsi].sym && [rsi].base_reg == NULL && [rsi].idx_reg == NULL )
-
         mov rax,[rsi].sym
         .if ( [rax].asym.state == SYM_GRP || [rax].asym.state == SYM_SEG )
-
             mov [rdi].kind,EXPR_ADDR
             mov [rdi].override,[rsi].label_tok
             .if ( [rsi].indirect )
                 mov [rdi].indirect,1
             .endif
-
             .if ( [rsi].explicit )
-
                 mov [rdi].explicit,1
                 mov [rdi].mem_type,[rsi].mem_type
                 mov [rdi].Ofssize,[rsi].Ofssize
             .endif
-
             TokenAssign( rsi, rdi )
             mov [rsi].type,[rdi].type
-
         .elseif ( Parse_Pass > PASS_1 || [rax].asym.state != SYM_UNDEFINED )
             .return fnasmerr( 2096 )
         .endif
@@ -2346,8 +2203,7 @@ colon_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
         .return fnasmerr( 2096 )
     .endif
     .return( NOT_ERROR )
-
-colon_op endp
+    endp
 
 
 positive_op proc fastcall uses rsi rdi opnd1:expr_t, opnd2:expr_t
@@ -2357,26 +2213,21 @@ positive_op proc fastcall uses rsi rdi opnd1:expr_t, opnd2:expr_t
 
     MakeConst(rdi)
     .if ( [rdi].kind == EXPR_CONST )
-
         mov [rsi].kind,EXPR_CONST
         mov [rsi].llvalue,[rdi].llvalue
         mov [rsi].hlvalue,[rdi].hlvalue
-
     .elseif ( [rdi].kind == EXPR_FLOAT )
-
         mov [rsi].kind,EXPR_FLOAT
         mov [rsi].mem_type,[rdi].mem_type
         mov [rsi].llvalue,[rdi].llvalue
         mov [rsi].hlvalue,[rdi].hlvalue
         and [rsi].chararray[15],not 0x80
         mov [rsi].flags,[rdi].flags
-
     .else
         .return( fnasmerr( 2026 ) )
     .endif
     .return( NOT_ERROR )
-
-positive_op endp
+    endp
 
 
 negative_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
@@ -2385,9 +2236,7 @@ negative_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
     mov rdi,rdx
 
     MakeConst( rdi )
-
     .if ( [rdi].kind == EXPR_CONST )
-
         mov [rsi].flags,[rdi].flags
         xor [rsi].negative,1
         mov [rsi].kind,EXPR_CONST
@@ -2413,9 +2262,7 @@ else
         mov [esi].hvalue,ebx
         sbb eax,eax
         mov ebx,[edi].h64_h
-
         .if ( [edi].h64_l || ebx )
-
             bt  eax,0
             mov eax,[edi].h64_l
             adc eax,0
@@ -2427,7 +2274,6 @@ else
         .endif
 endif
     .elseif ( [rdi].kind == EXPR_FLOAT )
-
         mov [rsi].kind,EXPR_FLOAT
         mov [rsi].mem_type,[rdi].mem_type
         mov [rsi].llvalue,[rdi].llvalue
@@ -2439,14 +2285,12 @@ endif
         .return fnasmerr( 2026 )
     .endif
     .return( NOT_ERROR )
-
-negative_op endp
+    endp
 
 
     assume rdi:nothing, rbx:asym_t, rsi:expr_t
 
 CheckAssume proc fastcall uses rsi rbx opnd:expr_t
-
     mov rsi,rcx
     .if ( [rsi].explicit )
         mov rbx,[rsi].type
@@ -2458,10 +2302,8 @@ CheckAssume proc fastcall uses rsi rbx opnd:expr_t
             .endif
         .endif
     .endif
-
     xor ebx,ebx
     .if ( [rsi].idx_reg )
-
         mov rax,[rsi].idx_reg
         mov rbx,GetStdAssumeEx( [rax].asm_tok.bytval )
     .endif
@@ -2469,7 +2311,6 @@ CheckAssume proc fastcall uses rsi rbx opnd:expr_t
         mov rax,[rsi].base_reg
         mov rbx,GetStdAssumeEx( [rax].asm_tok.bytval )
     .endif
-
     .if ( rbx )
         .if ( [rbx].mem_type == MT_TYPE )
             mov [rsi].type,[rbx].type
@@ -2484,14 +2325,12 @@ CheckAssume proc fastcall uses rsi rbx opnd:expr_t
         .endif
     .endif
     ret
-
-CheckAssume endp
+    endp
 
     assume rbx:nothing
 
 
 check_streg proc fastcall opnd1:expr_t, opnd2:expr_t
-
     .if ( [rcx].scale > 0 )
         .return( fnasmerr( 2032 ) )
     .endif
@@ -2500,9 +2339,8 @@ check_streg proc fastcall opnd1:expr_t, opnd2:expr_t
         .return( fnasmerr( 2032 ) )
     .endif
     mov [rcx].st_idx,[rdx].value
-   .return( NOT_ERROR )
-
-check_streg endp
+    .return( NOT_ERROR )
+    endp
 
 
     assume rsi:asym_t, rdi:asym_t
@@ -2511,9 +2349,7 @@ cmp_types proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, trueval:int
 
     mov rsi,[rcx].type
     mov rdi,[rdx].type
-
     .if ( [rcx].mem_type == MT_PTR && [rdx].mem_type == MT_PTR )
-
         mov rbx,rcx
         .if !rsi
             mov rax,[rcx].type_tok
@@ -2536,9 +2372,7 @@ cmp_types proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, trueval:int
         mov rcx,rbx
         mov [rcx].value,eax
         mov [rcx].hvalue,edx
-
     .else
-
         .if ( rsi && [rsi].typekind == TYPE_TYPEDEF && [rsi].is_ptr == 0 )
             mov [rcx].type,NULL
         .endif
@@ -2556,8 +2390,7 @@ cmp_types proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, trueval:int
         mov [rcx].hvalue,edx
     .endif
     ret
-
-cmp_types endp
+    endp
 
 
     assume rcx:nothing, rdx:nothing, rsi:expr_t, rdi:expr_t, rbx:token_t
@@ -2570,43 +2403,29 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
     ldr rsi,opnd1
     ldr rdi,opnd2
     ldr rbx,oper
-
     mov [rsi].quoted_string,NULL
-
     .if ( ( [rdi].h64_l || [rdi].h64_h ) && [rdi].mem_type != MT_REAL16 )
-
         .if ( !( [rbx].token == T_UNARY_OPERATOR && [rdi].kind == EXPR_CONST &&
               MODULE.Ofssize == USE64 ) )
-
             .if ( !( [rdi].is_opattr || ( ( [rbx].token == '+' ||
                   [rbx].token == '-' ) && [rbx].specval == 0 ) ) )
-
                 .return( fnasmerr( 2084 ) )
             .endif
         .endif
     .endif
-
     movzx eax,[rbx].token
-
     .switch eax
-
     .case T_OP_SQ_BRACKET
-
         .if ( [rdi].assumecheck )
-
             mov [rdi].assumecheck,0
-
             .if ( [rsi].sym == NULL )
                 CheckAssume(rdi)
             .endif
         .endif
         .if ( [rsi].kind == EXPR_EMPTY )
-
             TokenAssign(rsi, rdi)
             mov [rsi].type,[rdi].type
-
             .if ( [rsi].is_type && [rsi].kind == EXPR_CONST )
-
                 mov [rsi].is_type,0
             .endif
             .endc
@@ -2620,7 +2439,6 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
             .return( check_streg( rsi, rdi ) )
         .endif
         .return( plus_op( rsi, rdi ) )
-
     .case T_OP_BRACKET
         .if ( [rsi].kind == EXPR_EMPTY )
             TokenAssign( rsi, rdi )
@@ -2635,7 +2453,6 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
             .return( check_streg( rsi, rdi ) )
         .endif
         .return( plus_op( rsi, rdi ) )
-
     .case '+'
         .if ( [rbx].specval == 0 )
             .return( positive_op( rsi, rdi ) )
@@ -2644,7 +2461,6 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
             .return( plus_op( rsi, rdi ) )
         .endif
         .endc
-
     .case '-'
         .if ( [rbx].specval == 0 )
             .return( negative_op( rsi, rdi ) )
@@ -2653,34 +2469,25 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
             .return(minus_op( rsi, rdi ) )
         .endif
         .endc
-
     .case T_DOT
         .return( dot_op( rsi, rdi ) )
-
     .case T_COLON
         .return(colon_op( rsi, rdi ) )
-
     .case '*'
-
         MakeConst(rsi)
         MakeConst(rdi)
-
         .if ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST )
-
             __mul64( [rdi].llvalue, [rsi].llvalue )
             mov size_t ptr [rsi].expr.llvalue,rax
 ifndef _WIN64
             mov [rsi].expr.l64_h,edx
 endif
         .elseif check_both( rsi, rdi, EXPR_REG, EXPR_CONST )
-
             .ifd ( check_direct_reg( rsi, rdi ) == ERROR )
                 .return fnasmerr( 2032 )
             .endif
-
             ; v2.34.61 - jwasm v2.17
             ; v2.17: check if bits are lost ( else scales of 257 or similar are accepted )
-
             .if ( [rdi].kind == EXPR_REG )
                 mov [rsi].idx_reg,[rdi].base_reg
             .else
@@ -2692,27 +2499,21 @@ endif
             .endif
             mov [rsi].scale,[rsi].value
             mov [rsi].value,0
-
             mov [rsi].base_reg,NULL
             mov [rsi].indirect,1
             mov [rsi].kind,EXPR_ADDR
-
         .elseif ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_FLOAT )
-
             ftoquad( rsi )
             ftoquad( rdi )
             __mulq( rsi, rdi )
             quadtof( rsi )
-
         .elseifd ( EvalOperator( rsi, rdi, rbx ) == ERROR )
-
             .return( ConstError( rsi, rdi ) )
         .endif
         .endc
 
     .case '/'
         .if ( ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_FLOAT ) )
-
             ftoquad( rsi )
             ftoquad( rdi )
             __divq( rsi, rdi )
@@ -2780,19 +2581,14 @@ else
         mov [esi].l64_h,edx
 endif
        .endc
-
     .case T_BINARY_OPERATOR
         .if ( [rbx].tokval == T_PTR || [rbx].tokval == T_BCST )
-
             ; v2.36.29 - added reserved word BCST -- Masm style "embedded broadcast"
-
             .if ( [rbx].tokval == T_BCST )
-
                 .for ( rax = rbx : [rax+asm_tok].asm_tok.token != T_FINAL : rax+=asm_tok )
                 .endf
                 mov [rax].asm_tok.Modifier,1
             .endif
-
             .if ( !( [rsi].is_type ) )
                 mov rax,[rsi].sym
                 .if ( rax && [rax].asym.state == SYM_UNDEFINED )
@@ -2804,23 +2600,18 @@ endif
                     .return( fnasmerr( 2010 ) )
                 .endif
             .endif
-
             mov [rdi].explicit,1
-
             .if ( [rdi].kind == EXPR_REG && ( !( [rdi].indirect ) || [rdi].assumecheck ) )
-
                 mov  rax,[rdi].base_reg
                 mov  ecx,[rax].asm_tok.tokval
                 imul eax,ecx,special_item
                 lea  rdx,SpecialTable
                 add  rdx,rax
-
                 .if ( [rdx].special_item.value & OP_SR )
                     .if ( [rsi].value != 2 && [rsi].value != 4 )
                         .return( fnasmerr( 2032 ) )
                     .endif
                 .else
-
                     mov eax,[rdx].special_item.sflags
                     and eax,SFR_SIZMSK
                     .ifz
@@ -2830,9 +2621,7 @@ endif
                         .endif
                     .endif
                     .if ( eax != [rsi].value )
-
                         .if !( eax == 16 && ( [rsi].mem_type == MT_REAL4 || [rsi].mem_type == MT_REAL8 ) )
-
                             .return( fnasmerr( 2032 ) )
                         .endif
                     .endif
@@ -2856,13 +2645,10 @@ endif
             TokenAssign( rsi, rdi )
             .endc
         .endif
-
         MakeConst(rsi)
         MakeConst(rdi)
-
         mov eax,[rsi].kind
         mov edx,[rdi].kind
-
         .if ( ( eax == EXPR_CONST || eax == EXPR_FLOAT ) &&
               ( edx == EXPR_CONST || edx == EXPR_FLOAT ) )
 
@@ -2872,9 +2658,7 @@ endif
             ; const XX float
 
         .elseif ( [rbx].precedence == 10 && eax != EXPR_CONST )
-
             .if ( eax == EXPR_ADDR && !( [rsi].indirect ) && [rsi].sym )
-
                 .if ( edx == EXPR_ADDR && !( [rdi].indirect ) && [rdi].sym )
                     .return .ifd MakeConst2(rsi, rdi) == ERROR
                 .else
@@ -2886,21 +2670,15 @@ endif
         .else
             .return( ConstError( rsi, rdi ) )
         .endif
-
         mov eax,[rbx].tokval
         .switch rax
-
         .case T_EQ
             .if ( [rsi].is_type && [rdi].is_type )
-
                 cmp_types( rsi, rdi, -1 )
-
             .else
-
                 xor eax,eax
                 xor edx,edx
                 .if ( [rsi].kind == EXPR_FLOAT )
-
                     mov [rsi].kind,EXPR_CONST
                     mov [rsi].mem_type,MT_EMPTY
 ifdef _WIN64
@@ -2908,7 +2686,6 @@ ifdef _WIN64
                     sub rdx,[rdi].hlvalue
                     mov [rsi].hlvalue,rax
                 .endif
-
                 add rdx,[rsi].llvalue
                 sub rdx,[rdi].llvalue
                 .ifz
@@ -2935,14 +2712,10 @@ else
 endif
             .endif
             .endc
-
         .case T_NE
             .if ( [rsi].is_type && [rdi].is_type )
-
                 cmp_types(rsi, rdi, 0)
-
             .else
-
                 xor eax,eax
                 xor edx,edx
                 .if ( [rsi].kind == EXPR_FLOAT )
@@ -2981,12 +2754,9 @@ else
 endif
             .endif
             .endc
-
         .case T_LT
             .if ( [rsi].kind == EXPR_FLOAT )
-
                 __cmpq( rsi, rdi )
-
                 xor ecx,ecx
                 mov [rsi].kind,EXPR_CONST
                 mov [rsi].mem_type,MT_EMPTY
@@ -2997,9 +2767,7 @@ endif
                 .if ( eax == -1 )
                     dec rcx
                 .endif
-
             .else
-
                 xor ecx,ecx
                 .if ( [rsi].value64 < [rdi].value64 )
                     dec rcx
@@ -3013,7 +2781,6 @@ endif
 
         .case T_LE
             .if ( [rsi].kind == EXPR_FLOAT )
-
                 __cmpq( rsi, rdi )
                 xor ecx,ecx
                 mov size_t ptr [rsi].hlvalue,rcx
@@ -3036,10 +2803,8 @@ ifndef _WIN64
             mov [rsi].l64_h,ecx
 endif
             .endc
-
         .case T_GT
             .if [rsi].kind == EXPR_FLOAT
-
                 __cmpq(rsi, rdi)
                 xor ecx,ecx
                 mov size_t ptr [rsi].hlvalue,rcx
@@ -3062,10 +2827,8 @@ ifndef _WIN64
             mov [rsi].l64_h,ecx
 endif
             .endc
-
         .case T_GE
             .if ( [rsi].kind == EXPR_FLOAT )
-
                 __cmpq(rsi, rdi)
                 xor ecx,ecx
                 mov size_t ptr [rsi].hlvalue,rcx
@@ -3088,7 +2851,6 @@ ifndef _WIN64
             mov [rsi].l64_h,ecx
 endif
             .endc
-
         .case T_MOD
             .if ( [rsi].kind == EXPR_FLOAT )
                 __modq( rsi, rdi )
@@ -3137,7 +2899,6 @@ else
             mov [esi].l64_h,ecx
 endif
            .endc
-
         .case T_ROL
         .case T_ROR
         .case T_SAL
@@ -3180,7 +2941,6 @@ endif
                 .endif
             .endsw
             .endc
-
         .case T_ADD
             .if ( [rsi].kind != EXPR_FLOAT )
                 fnasmerr( 2187 )
@@ -3188,7 +2948,6 @@ endif
             add [rsi].llvalue,[rdi].llvalue
             adc [rsi].hlvalue,[rdi].hlvalue
            .endc
-
         .case T_SUB
             .if ( [rsi].kind != EXPR_FLOAT && [rdi].kind != EXPR_FLOAT )
                 fnasmerr( 2187 )
@@ -3196,35 +2955,30 @@ endif
             sub [rsi].llvalue,[rdi].llvalue
             sbb [rsi].hlvalue,[rdi].hlvalue
            .endc
-
         .case T_MUL
             .if ( [rsi].kind != EXPR_FLOAT )
                 fnasmerr( 2187 )
             .endif
             __mulo( rsi, rdi, NULL )
             .endc
-
         .case T_DIV
             .if ( [rsi].kind != EXPR_FLOAT )
                 fnasmerr( 2187 )
             .endif
             __divo( rsi, rdi, &opnd )
             .endc
-
         .case T_AND
             .if ( [rsi].kind == EXPR_FLOAT )
                 and [rsi].hlvalue,[rdi].hlvalue
             .endif
             and [rsi].llvalue,[rdi].llvalue
            .endc
-
         .case T_OR
             .if ( [rsi].kind == EXPR_FLOAT )
                 or [rsi].hlvalue,[rdi].hlvalue
             .endif
             or [rsi].llvalue,[rdi].llvalue
            .endc
-
         .case T_XOR
             .if ( [rsi].kind == EXPR_FLOAT )
                 xor [rsi].hlvalue,[rdi].hlvalue
@@ -3233,11 +2987,9 @@ endif
            .endc
         .endsw
         .endc
-
     .case T_UNARY_OPERATOR
         mov eax,[rbx].tokval
         .if ( eax == T_NOT || eax == T_BSR || eax == T_BSF )
-
             MakeConst( rdi )
             .if ( [rdi].kind != EXPR_CONST && [rdi].kind != EXPR_FLOAT )
                 .return fnasmerr( 2026 )
@@ -3321,50 +3073,36 @@ endif
             .endif
             .endc
         .endif
-
         imul eax,[rbx].tokval,special_item
         lea rcx,SpecialTable
         mov ecx,[rcx+rax].special_item.value
         mov rax,[rdi].sym
-
         .if ( [rdi].mbr != NULL )
             mov rax,[rdi].mbr
         .endif
-
         mov sym,rax
         mov esi,ecx
         .if ( [rdi].inst != EMPTY )
-
             tstrlen( [rbx].string_ptr )
             inc eax
             add rax,[rbx].tokpos
-
         .elseif ( rax )
-
             mov rax,[rax].asym.name
-
         .elseif ( [rdi].base_reg != NULL && !( [rdi].indirect ) )
-
             mov rax,[rdi].base_reg
             mov rax,[rax].asm_tok.string_ptr
-
         .else
-
             tstrlen( [rbx].string_ptr )
             inc eax
             add rax,[rbx].tokpos
         .endif
-
         mov rdx,rax
         mov ecx,esi
         mov rsi,opnd1
-
         .switch [rdi].kind
-
         .case EXPR_CONST
             mov rax,[rdi].mbr
             .if ( rax && [rax].asym.state != SYM_TYPE )
-
                 .if ( [rax].asym.mem_type == MT_BITS )
                     .if !( ecx & AT_BF )
                         .return( invalid_operand( rdi, [rbx].string_ptr, rdx ) )
@@ -3372,15 +3110,11 @@ endif
                 .elseif !( ecx & AT_FIELD )
                     .return( invalid_operand( rdi, [rbx].string_ptr, rdx ) )
                 .endif
-
             .elseif ( [rdi].is_type )
-
                 .if !( ecx & AT_TYPE )
                     .return invalid_operand( rdi, [rbx].string_ptr, rdx )
                 .endif
-
             .elseif !( ecx & AT_NUM )
-
                 .if ( [rdi].is_opattr )
                     .return ERROR
                 .endif
@@ -3390,7 +3124,6 @@ endif
                 .return fnasmerr( 2009 )
             .endif
             .endc
-
         .case EXPR_ADDR
             .if ( [rdi].indirect && [rdi].sym == NULL )
                 .if !( ecx & AT_IND )
@@ -3400,7 +3133,6 @@ endif
                 .return( asmerr( 2026 ) )
             .endif
             .endc
-
         .case EXPR_REG
             .if !( ecx & AT_REG )
                 .if !( [rdi].is_opattr )
@@ -3433,7 +3165,6 @@ endif
             .endif
             .endc
         .endsw
-
         imul eax,[rbx].tokval,special_item
         lea  rcx,SpecialTable
         mov  ecx,[rcx+rax].special_item.sflags
@@ -3442,13 +3173,11 @@ endif
         .return fnasmerr( 2008, [rbx].string_ptr )
     .endsw
     .return( NOT_ERROR )
-
-calculate endp
+    endp
 
     assume rcx:expr_t, rdx:expr_t
 
 PrepareOp proc fastcall opnd:expr_t, old:expr_t, oper:token_t
-
     mov [rcx].is_opattr,0
     .if [rdx].is_opattr
         mov [rcx].is_opattr,1
@@ -3477,14 +3206,12 @@ endif
         .endc
     .endsw
     ret
-
-PrepareOp endp
+    endp
 
 
     assume rcx:nothing, rdx:nothing
 
 OperErr proc fastcall i:int_t, tokenarray:token_t
-
     imul eax,ecx,asm_tok
     .if ( [rdx+rax].asm_tok.token <= T_BAD_NUM )
         fnasmerr( 2206 )
@@ -3492,8 +3219,7 @@ OperErr proc fastcall i:int_t, tokenarray:token_t
         fnasmerr( 2008, [rdx+rax].asm_tok.string_ptr )
     .endif
     ret
-
-OperErr endp
+    endp
 
 
     assume rsi:token_t
@@ -3513,7 +3239,6 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
     imul eax,_end,asm_tok
     add  rax,tokenarray
     mov  last,rax
-
     mov al,[rbx].token
     .if ( [rdi].kind == EXPR_EMPTY &&
           al != T_OP_BRACKET &&
@@ -3527,19 +3252,13 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
         imul ebx,[rax],asm_tok
         add rbx,tokenarray
     .endif
-
     .while ( rc == NOT_ERROR && rbx < last &&
              [rbx].token != T_CL_BRACKET && [rbx].token != T_CL_SQ_BRACKET )
-
         mov rsi,rbx
-
         .if ( [rdi].kind != EXPR_EMPTY )
-
             mov dl,[rsi].token
             .if ( dl == '+' || dl == '-' )
-
                 mov [rsi].specval,1
-
             .elseif ( !( dl >= T_OP_BRACKET ||
                          dl == T_UNARY_OPERATOR ||
                          dl == T_BINARY_OPERATOR ) ||
@@ -3548,18 +3267,14 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
                 ; v2.26 - added for {k1}{z}..
 
                 .if ( dl == T_STRING && [rsi].string_delim == '{' )
-
                     SetEvexOpt( rsi )
                     mov rdx,i
                     inc dword ptr [rdx]
                     add rbx,asm_tok
                    .continue
-
                 .else
-
                     mov rc,ERROR
                     .if !( [rdi].is_opattr )
-
                         sub rsi,tokenarray
                         mov ecx,asm_tok
                         xor edx,edx
@@ -3571,15 +3286,12 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
                 .endif
             .endif
         .endif
-
         mov rdx,i
         inc dword ptr [rdx]
         add rbx,asm_tok
         init_expr( &opnd2 )
         PrepareOp( &opnd2, rdi, rsi )
-
         .if ( [rsi].token == T_OP_BRACKET || [rsi].token == T_OP_SQ_BRACKET )
-
             xor ecx,ecx
             mov exp_token,T_CL_BRACKET
             .if ( [rsi].token == T_OP_SQ_BRACKET )
@@ -3589,23 +3301,18 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
                 mov opnd2.type,[rdi].type
                 mov opnd2.is_dot,1
             .endif
-
             or  cl,flags
             and ecx,not EXPF_ONEOPND
             mov rc,evaluate( &opnd2, i, tokenarray, _end, cl )
-
             mov  rax,i
             imul ebx,[rax],asm_tok
             add  rbx,tokenarray
             mov  eax,exp_token
-
             .if ( al != [rbx].token )
-
                 .if ( rc != ERROR )
                     fnasmerr( 2157 )
                     mov rax,[rdi].sym
                     .if ( ( [rbx].token == T_COMMA ) && rax && [rax].asym.state == SYM_UNDEFINED )
-
                         fnasmerr( 2006, [rax].asym.name )
                     .endif
                 .endif
@@ -3615,7 +3322,6 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
                 inc dword ptr [rdx]
                 add rbx,asm_tok
             .endif
-
         .elseif ( ( [rbx].token == T_OP_BRACKET || [rbx].token == T_OP_SQ_BRACKET ||
                     [rbx].token == '+' || [rbx].token == '-' || [rbx].token == T_UNARY_OPERATOR ) )
             movzx ecx,flags
@@ -3624,32 +3330,22 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
         .else
             mov rc,get_operand( &opnd2, i, tokenarray, flags )
         .endif
-
         mov   rcx,i
         imul  ebx,[rcx],asm_tok
         add   rbx,tokenarray
         movzx eax,[rbx].token
-
         .while ( rc != ERROR && rbx < last && eax != T_CL_BRACKET && eax != T_CL_SQ_BRACKET )
-
             .if ( eax == '+' || eax == '-' )
-
                 mov [rbx].specval,1
-
             .elseif ( !( eax >= T_OP_BRACKET || eax == T_UNARY_OPERATOR ||
                         eax == T_BINARY_OPERATOR ) || eax == T_UNARY_OPERATOR )
-
                 ; v2.26 - added for {k1}{z}..
-
                 .if ( eax == T_STRING && [rbx].string_delim == '{' )
-
                     SetEvexOpt(rbx)
                     mov rdx,i
                     inc dword ptr [rdx]
                     add rbx,asm_tok
-
                 .else
-
                     mov rc,ERROR
                     .if !( [rdi].is_opattr )
                         mov rcx,i
@@ -3658,11 +3354,8 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
                 .endif
                 .break
             .endif
-
             .new precedence:int_t = get_precedence( rbx )
-
             .break .ifd ( get_precedence( rsi ) <= precedence )
-
             mov   cl,flags
             or    cl,EXPF_ONEOPND
             mov   rc,evaluate( &opnd2, i, tokenarray, _end, cl )
@@ -3673,10 +3366,8 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
         .endw
 
         .if ( rc == ERROR && opnd2.is_opattr )
-
             .while ( rbx < last && [rbx].token != T_CL_BRACKET &&
                     [rbx].token != T_CL_SQ_BRACKET )
-
                 mov rcx,i
                 inc dword ptr [rcx]
                 add rbx,asm_tok
@@ -3685,7 +3376,6 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
             mov rc,NOT_ERROR
         .endif
         .if ( rc != ERROR )
-
             mov rc,calculate( rdi, &opnd2, rsi )
             ; v2.15 ensure that any undefined symbol finds its way into the expression.
             ; this is for assembly-time variables.
@@ -3699,8 +3389,7 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
         .break .if ( flags & EXPF_ONEOPND )
     .endw
     .return( rc )
-
-evaluate endp
+    endp
 
 
     option proc:public
@@ -3713,7 +3402,6 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
     mov  esi,ebx
     imul ebx,ebx,asm_tok
     add  rbx,tokenarray
-
     init_expr(result)
     .for ( : esi < end_tok : esi++, rbx += asm_tok )
         ;
@@ -3775,7 +3463,6 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
             ; PROC is converted to a type
 
             .if ( [rbx].tokval == T_PROC )
-
                 mov [rbx].token,T_STYPE
 
                 ; v2.06: avoid to use ST_PROC
@@ -3794,17 +3481,13 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
                 mov [rbx].tokval,eax
                .continue
             .endif
-
             ; fall through. Other directives will end the expression
-
         .case T_COMMA
             .break
         .endsw
     .endf
-
     mov rdx,start_tok
     .return NOT_ERROR .if ( esi == [rdx] )
-
     lea rax,asmerr
     .if ( flags & EXPF_NOERRMSG )
         lea rax,noasmerr
@@ -3812,20 +3495,16 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
     mov fnasmerr,rax
     evaluate( result, rdx, tokenarray, esi, flags )
     ret
-
-EvalOperand endp
+    endp
 
 
 EmitConstError proc
-
     asmerr( 2084 )
     ret
-
-EmitConstError endp
+    endp
 
 
 ExprEvalInit proc
-
     lea rax,asmerr
     mov fnasmerr,rax
     xor eax,eax
@@ -3833,7 +3512,6 @@ ExprEvalInit proc
     mov nullstruct,rax
     mov nullmbr,rax
     ret
-
-ExprEvalInit endp
+    endp
 
     end

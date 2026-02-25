@@ -45,7 +45,6 @@ XMLoadUDecN4_XR proc XM_CALLCONV pSource:ptr XMUDECN4
     shufps  xmm1,xmm1,01011000B
     shufps  xmm0,xmm1,01000100B
     ret
-
-XMLoadUDecN4_XR endp
+    endp
 
     end

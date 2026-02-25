@@ -219,7 +219,6 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
     mov eax,rc
     ret
-
-EnumDirective endp
+    endp
 
     end

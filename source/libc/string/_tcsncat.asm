@@ -14,7 +14,6 @@ include tchar.inc
     option dotname
 
 _tcsncat proc uses rdi rbx dst:tstring_t, src:tstring_t, cnt:size_t
-
     ldr     rcx,dst
     ldr     rdx,src
     ldr     rbx,cnt
@@ -41,7 +40,6 @@ _tcsncat proc uses rdi rbx dst:tstring_t, src:tstring_t, cnt:size_t
     mov     [rcx],_tbl
     mov     rax,rdi
     ret
-
-_tcsncat endp
+    endp
 
     end

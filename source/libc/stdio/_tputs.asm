@@ -18,14 +18,12 @@ include tchar.inc
 _putts proc uses rbx string:tstring_t
 
    .new retval:int_t = 0
-
     ldr rbx,string
+
 ifdef _UNICODE
     .for ( : tchar_t ptr [rbx] : rbx+=tchar_t, retval++ )
-
         movzx ecx,tchar_t ptr [rbx]
         .if ( _puttch( ecx ) == WEOF )
-
            .return
         .endif
     .endf
@@ -41,7 +39,6 @@ else
 endif
     mov eax,ebx
     ret
-
-_putts endp
+    endp
 
     end

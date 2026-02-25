@@ -178,12 +178,9 @@ StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         asmerr( 2008, [rbx].tokpos )
         mov rc,ERROR
     .endif
-
     RunLineQueue()
-   .return(rc)
-
-StartupExitDirective endp
-
+    .return(rc)
+    endp
 endif
 
 ; END directive
@@ -284,9 +281,7 @@ endif
     ;SegmentModuleExit() - v2.19 moved
 
     .if ( MODULE.EndDirHook )
-
         MODULE.EndDirHook()
-
 ifdef _EXEC_LINK
     .elseif ( Parse_Pass == PASS_1 )
         mov rcx,MODULE.curr_fname[TOBJ]
@@ -295,10 +290,8 @@ ifdef _EXEC_LINK
         .endif
 endif
     .endif
-
     mov MODULE.EndDirFound,TRUE
-   .return( NOT_ERROR )
-
-EndDirective endp
+    .return( NOT_ERROR )
+    endp
 
     end

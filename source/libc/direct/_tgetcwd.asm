@@ -16,12 +16,10 @@ include tchar.inc
     .code
 
 _tgetcwd proc uses rbx buffer:tstring_t, maxlen:int_t
-
     ldr rbx,buffer
     ldr edx,maxlen
 ifdef __UNIX__
     .ifsd ( sys_getcwd(rbx, edx) < 0 )
-
         neg eax
         _set_errno(eax)
         xor ebx,ebx
@@ -31,7 +29,6 @@ else
     _tgetdcwd( 0, rbx, edx )
 endif
     ret
-
-_tgetcwd endp
+    endp
 
     end

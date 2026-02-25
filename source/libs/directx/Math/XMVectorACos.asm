@@ -44,7 +44,6 @@ XMVectorACos proc XM_CALLCONV V:FXMVECTOR
     _mm_or_ps(xmm3, xmm1)
     _mm_store_ps(xmm0, xmm3)
     ret
-
-XMVectorACos endp
+    endp
 
     end

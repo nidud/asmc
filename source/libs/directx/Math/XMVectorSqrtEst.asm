@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorSqrtEst proc XM_CALLCONV V:FXMVECTOR
-
     _mm_sqrt_ps(xmm0)
     ret
-
-XMVectorSqrtEst endp
+    endp
 
     end

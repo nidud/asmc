@@ -10,10 +10,8 @@ include tchar.inc
 .code
 
 _vtscanf proc format:tstring_t, argptr:ptr
-
     _tinput(stdin, ldr(format), ldr(argptr))
     ret
-
-_vtscanf endp
+    endp
 
     end

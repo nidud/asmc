@@ -8,12 +8,10 @@ include float.inc
 .code
 
 _controlfp proc newval:uint_t, unmask:uint_t
-
     ldr eax,unmask
     and eax,not _EM_DENORMAL
     _control87(newval, eax)
     ret
-
-_controlfp endp
+    endp
 
     end

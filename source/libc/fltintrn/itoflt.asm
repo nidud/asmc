@@ -9,9 +9,7 @@ include fltintrn.inc
     .code
 
 _itoflt proc __ccall p:ptr STRFLT, i:int_t
-
 ifdef _WIN64
-
     mov eax,edx
     mov rdx,rcx
     mov r8d,Q_EXPBIAS   ; set exponent
@@ -33,9 +31,7 @@ ifdef _WIN64
     mov [rdx].STRFLT.mantissa.h,rax
     mov [rdx].STRFLT.mantissa.e,r9w
     mov rax,rdx
-
 else
-
     mov eax,i
     mov edx,Q_EXPBIAS   ; set exponent
     test eax,eax        ; if number is negative
@@ -63,7 +59,6 @@ else
     mov dword ptr [eax].STRFLT.mantissa.h[0],edx
 endif
     ret
-
-_itoflt endp
+    endp
 
     end

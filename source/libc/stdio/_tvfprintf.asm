@@ -10,7 +10,6 @@ include tchar.inc
     .code
 
 _vftprintf proc uses rbx file:LPFILE, format:tstring_t, args:ptr
-
     mov rbx,_stbuf( ldr(file) )
     _toutput(file, format, args)
     mov rcx,rbx
@@ -18,7 +17,6 @@ _vftprintf proc uses rbx file:LPFILE, format:tstring_t, args:ptr
     _ftbuf(ecx, file)
     mov rax,rbx
     ret
-
-_vftprintf endp
+    endp
 
     end

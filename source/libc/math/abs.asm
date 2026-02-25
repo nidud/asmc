@@ -22,7 +22,6 @@ else
     .endif
 endif
     ret
-
-abs endp
+    endp
 
     end

@@ -31,10 +31,8 @@ public _pctype ; pointer to table for char's
 .code
 
 __pctype_func proc
-
     mov rax,_pctype
     ret
-
-__pctype_func endp
+    endp
 
     end

@@ -15,7 +15,6 @@ else
     pow(2.0, x)
 endif
     ret
-
-exp2 endp
+    endp
 
     end

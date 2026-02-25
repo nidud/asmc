@@ -36,7 +36,6 @@ XMLoadUByte4 proc XM_CALLCONV pSource:ptr XMUBYTE4
 
     _mm_mul_ps(xmm0, _mm_get_epi32(1.0, 1.0/256.0, 1.0/65536.0, 1.0/(65536.0*256.0)))
     ret
-
-XMLoadUByte4 endp
+    endp
 
     end

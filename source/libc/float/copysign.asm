@@ -22,7 +22,6 @@ else
     fld	    x
 endif
     ret
-
-_copysign endp
+    endp
 
     end

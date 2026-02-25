@@ -13,7 +13,6 @@ include errno.inc
 __cvtq_sd proc __ccall uses rsi rdi rbx d:ptr double_t, q:ptr qfloat_t
 
     ldr     rax,q
-
     movzx   ecx,word ptr [rax+14]
     mov     edx,[rax+10]
     mov     ebx,ecx
@@ -114,22 +113,18 @@ __cvtq_sd proc __ccall uses rsi rdi rbx d:ptr double_t, q:ptr qfloat_t
             .endif
         .endif
     .endif
-
     mov rdi,d
     mov [rdi],eax
     mov [rdi+4],edx
     .if ebx
         mov qerrno,ebx
     .endif
-
     .if ( rdi == q )
-
         xor eax,eax
         mov [rdi+8],eax
         mov [rdi+12],eax
     .endif
     .return( rdi )
-
-__cvtq_sd endp
+    endp
 
     end

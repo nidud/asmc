@@ -12,10 +12,8 @@ include tchar.inc
     option dotname
 
 _tcscmp proc a:tstring_t, b:tstring_t
-
     ldr     rcx,a
     ldr     rdx,b
-
     mov     eax,1
 .0:
     test    eax,eax
@@ -29,7 +27,6 @@ _tcscmp proc a:tstring_t, b:tstring_t
     sbb     rax,-1
 .1:
     ret
-
-_tcscmp endp
+    endp
 
     end

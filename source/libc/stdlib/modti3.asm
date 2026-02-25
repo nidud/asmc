@@ -8,16 +8,12 @@ include stdlib.inc
     .code
 
 ifdef _WIN64
-
 __modti3 proc dividend:int128_t, divisor:int128_t
-
     call    __divti3
     xchg    r9,rdx
     xchg    r8,rax
     ret
-
-__modti3 endp
-
+    endp
 else
     int     3
 endif

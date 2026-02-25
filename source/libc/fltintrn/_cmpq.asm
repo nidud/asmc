@@ -15,10 +15,8 @@ __cmpq proc __ccall A:ptr qfloat_t, B:ptr qfloat_t
 
     ldr rcx,A
     ldr rdx,B
-
     assume rcx:ptr __m128i
     assume rdx:ptr __m128i
-
     .if ( [rcx].m128i_u64[0] == [rdx].m128i_u64[0] &&
           [rcx].m128i_u64[8] == [rdx].m128i_u64[8] )
         .return( 0 )
@@ -39,7 +37,6 @@ __cmpq proc __ccall A:ptr qfloat_t, B:ptr qfloat_t
     sbb eax,eax
     sbb eax,-1
     ret
-
-__cmpq endp
+    endp
 
     end

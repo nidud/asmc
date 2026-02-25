@@ -116,27 +116,19 @@ endif
 
 ifndef ASMC64
 
-    assume rcx:ptr omf_rec
-
 omf_InitRec proc fastcall private obj:ptr omf_rec, cmd:byte
-
     xor eax,eax
-    mov [rcx].length,eax
-    mov [rcx].curoff,eax
-    mov [rcx].pdata,rax
-    mov [rcx].command,dl
-    mov [rcx].is_32,al
+    mov [rcx].omf_rec.length,eax
+    mov [rcx].omf_rec.curoff,eax
+    mov [rcx].omf_rec.pdata,rax
+    mov [rcx].omf_rec.command,dl
+    mov [rcx].omf_rec.is_32,al
     ret
-
-omf_InitRec endp
-
-    assume rcx:nothing
+    endp
 
 
 timet2dostime proc __ccall private uses rsi rdi x:time_t
-
     .if ( localtime( &x ) )
-
         mov rcx,rax
         mov eax,[rcx].tm.tm_year
         sub eax,80
@@ -162,43 +154,36 @@ timet2dostime proc __ccall private uses rsi rdi x:time_t
        .return
     .endif
     .return x
-
-timet2dostime endp
+    endp
 
 
     assume rcx:ptr omf_rec
 
 Put8 proc fastcall private objr:ptr omf_rec, value:byte
-
     mov eax,[rcx].curoff
     inc [rcx].curoff
     add rax,[rcx].pdata
     mov [rax],dl
     ret
-
-Put8 endp
+    endp
 
 
 Put16 proc fastcall private objr:ptr omf_rec, value:dword
-
     mov eax,[rcx].curoff
     add [rcx].curoff,2
     add rax,[rcx].pdata
     mov [rax],dx
     ret
-
-Put16 endp
+    endp
 
 
 Put32 proc fastcall private objr:ptr omf_rec, value:dword
-
     mov eax,[rcx].curoff
     add [rcx].curoff,4
     add rax,[rcx].pdata
     mov [rax],edx
     ret
-
-Put32 endp
+    endp
 
 
 PutIndex proc fastcall private objr:ptr omf_rec, index:dword
@@ -219,12 +204,10 @@ PutIndex proc fastcall private objr:ptr omf_rec, index:dword
     .endif
     mov [rax],dl
     ret
-
-PutIndex endp
+    endp
 
 
 PutData proc fastcall private uses rsi rdi objr:ptr omf_rec, data:ptr byte, len:int_t
-
     mov eax,len
     mov edi,[rcx].curoff
     add rdi,[rcx].pdata
@@ -233,43 +216,34 @@ PutData proc fastcall private uses rsi rdi objr:ptr omf_rec, data:ptr byte, len:
     mov ecx,eax
     rep movsb
     ret
-
-PutData endp
+    endp
 
 
 PutName proc __ccall private objr:ptr omf_rec, name:string_t, len:int_t
 
     ldr eax,len
     ldr rcx,objr
-
 if MAX_ID_LEN gt MAX_ID_LEN_OMF
-
     .if ( eax > MAX_ID_LEN_OMF )
-
         asmerr( 2043 )
         mov eax,MAX_ID_LEN_OMF
         mov rcx,objr
     .endif
-
 endif
-
     mov edx,[rcx].curoff
     add rdx,[rcx].pdata
     inc [rcx].curoff
     mov [rdx],al
     PutData( rcx, name, eax )
     ret
-
-PutName endp
+    endp
 
 
 AttachData proc fastcall private objr:ptr omf_rec, data:ptr byte, len:size_t
-
     mov [rcx].pdata,rdx
     mov [rcx].length,len
     ret
-
-AttachData endp
+    endp
 
 
 TruncRec proto fastcall objr:ptr omf_rec {
@@ -282,15 +256,13 @@ TruncRec proto fastcall objr:ptr omf_rec {
 ; return a group's index
 
 omf_GetGrpIdx proc fastcall sym:asym_t
-
     xor eax,eax
     .if rcx
         mov rdx,[rcx].asym.grpinfo
         mov eax,[rdx].grp_info.grp_idx
     .endif
     ret
-
-omf_GetGrpIdx endp
+    endp
 
 endif
 
@@ -312,7 +284,6 @@ ifndef ASMC64
 
     mov rbx,CurrSeg
     mov rbx,[rbx].asym.seginfo
-
     .if ( ecx )
 
         ; do nothing if it isn't the first data item or
@@ -328,20 +299,15 @@ ifndef ASMC64
     .elseif ( [rbx].seg_info.data_in_code ) ; data items written?
 
         mov [rbx].seg_info.data_in_code,0
-
         .if ( write_to_file == TRUE )
 
             omf_InitRec( &obj, CMD_COMENT )
             mov obj.d.coment.attr,CMT_TNP
             mov obj.d.coment.cmt_class,CMT_DISASM_DIRECTIVE
-
             mov sel_idx,GetSegIdx( CurrSeg )
-
             AttachData( &obj, &buffer, 11 ) ; 11 = 1 + 2 + 4 + 4
             mov currofs,GetCurrOffset()
-
             .if ( ( sel_start > 0xffff ) || ( currofs > 0xffff ) )
-
                 Put8( &obj, DDIR_SCAN_TABLE_32 )
                 PutIndex( &obj, sel_idx )
                 Put32( &obj, sel_start )
@@ -358,8 +324,7 @@ ifndef ASMC64
     .endif
 endif
     ret
-
-omf_OutSelect endp
+    endp
 
 
 ; write line number debug info.
@@ -377,9 +342,7 @@ ifndef ASMC64
 omf_write_linnum proc fastcall private uses rsi rdi rbx is32:byte
 
   local obj:omf_rec
-
     .for ( rsi = MODULE.LinnumQueue.head, rdi = StringBufferEnd: rsi: rsi = rbx )
-
         mov rbx,[rsi].line_num_info.next
         mov eax,[rsi].line_num_info.number
         stosw
@@ -390,12 +353,9 @@ omf_write_linnum proc fastcall private uses rsi rdi rbx is32:byte
             stosw
         .endif
     .endf
-
     mov MODULE.LinnumQueue.head,NULL
     sub rdi,StringBufferEnd
-
     .if ( rdi )
-
         mov esi,ecx
         omf_InitRec( &obj, CMD_LINNUM )
         mov eax,esi
@@ -410,8 +370,7 @@ omf_write_linnum proc fastcall private uses rsi rdi rbx is32:byte
         omf_write_record( &obj )
     .endif
     ret
-
-omf_write_linnum endp
+    endp
 
 
 omf_write_fixupp proc fastcall private uses rsi rdi rbx s:asym_t, _is32:char_t
@@ -424,15 +383,11 @@ omf_write_fixupp proc fastcall private uses rsi rdi rbx s:asym_t, _is32:char_t
     .if ( dl )
         mov type,FIX_GEN_MS386
     .endif
-
     mov rbx,rcx
     mov rsi,[rbx].asym.seginfo
     mov rbx,[rsi].seg_info.head
-
     .while ( rbx )
-
         .for ( rdi = StringBufferEnd, size = 0 : rbx : rbx = [rbx].fixup.nextrlc )
-
             .switch( [rbx].fixup.type )
             .case FIX_RELOFF32
             .case FIX_OFF32
@@ -449,9 +404,7 @@ omf_write_fixupp proc fastcall private uses rsi rdi rbx s:asym_t, _is32:char_t
             sub rax,StringBufferEnd
             mov size,eax
         .endf
-
         .if ( size )
-
             omf_InitRec( &obj, CMD_FIXUPP )
             mov obj.is_32,is32
             AttachData( &obj, StringBufferEnd, size )
@@ -459,8 +412,7 @@ omf_write_fixupp proc fastcall private uses rsi rdi rbx s:asym_t, _is32:char_t
         .endif
     .endw
     ret
-
-omf_write_fixupp endp
+    endp
 
 
 get_omfalign proto fastcall private alignment:byte
@@ -473,38 +425,30 @@ omf_write_ledata proc fastcall private uses rsi rdi rbx s:asym_t
 
     mov rbx,rcx
     mov rsi,[rbx].asym.seginfo
-
     mov edi,[rsi].seg_info.current_loc
     sub edi,[rsi].seg_info.start_loc
-
     .ifs ( edi > 0 && write_to_file == TRUE )
 
         mov LastCodeBufSize,edi
-
         .if ( [rsi].seg_info.comdatselection )
 
             ; if the COMDAT symbol has been referenced in a FIXUPP,
             ; a CEXTDEF has to be written.
 
             .if ( [rbx].asym.used )
-
                 omf_InitRec( &obj, CMD_CEXTDEF )
                 AttachData( &obj, StringBufferEnd, 2 * sizeof( uint_16 ) )
                 PutIndex( &obj, [rsi].seg_info.comdat_idx ) ; Index
                 PutIndex( &obj, 0 ) ; Type
                 TruncRec( &obj )
                 omf_write_record( &obj )
-
                 .if ( [rsi].seg_info.seg_idx == 0 )
-
                     mov [rsi].seg_info.seg_idx,startext
                     inc startext
                 .endif
             .endif
-
             omf_InitRec( &obj, CMD_COMDAT )
             AttachData( &obj, [rsi].seg_info.CodeBuffer, edi )
-
             .if ( [rsi].seg_info.start_loc > 0xffff )
                 mov obj.is_32,1
             .endif
@@ -525,7 +469,6 @@ omf_write_ledata proc fastcall private uses rsi rdi rbx s:asym_t
                     mov obj.d.comdat.attributes,COMDAT_FAR_DATA
                 .endif
             .endif
-
             get_omfalign( [rsi].seg_info.alignment )
             mov obj.d.comdat._align,al
             mov obj.d.comdat.offs,[rsi].seg_info.start_loc
@@ -538,10 +481,8 @@ omf_write_ledata proc fastcall private uses rsi rdi rbx s:asym_t
 
             omf_InitRec( &obj, CMD_LEDATA )
             AttachData( &obj, [rsi].seg_info.CodeBuffer, edi )
-
             mov obj.d.ledata.idx,[rsi].seg_info.seg_idx
             mov obj.d.ledata.offs,[rsi].seg_info.start_loc
-
             .if( obj.d.ledata.offs > 0xffff )
                 mov obj.is_32,1
             .endif
@@ -560,8 +501,7 @@ omf_write_ledata proc fastcall private uses rsi rdi rbx s:asym_t
     .endif
     mov [rsi].seg_info.start_loc,[rsi].seg_info.current_loc
     ret
-
-omf_write_ledata endp
+    endp
 
 endif
 
@@ -570,22 +510,18 @@ endif
 ; write_to_file is always TRUE here
 
 omf_FlushCurrSeg proc
-
 ifndef ASMC64
-
     omf_write_ledata( CurrSeg )
 
     ; add line numbers if debugging info is desired
 
     .if ( Options.line_numbers )
-
         omf_write_linnum( ln_is32 )
         mov ln_size,0
     .endif
 endif
     ret
-
-omf_FlushCurrSeg endp
+    endp
 
 
 ifndef ASMC64
@@ -609,8 +545,7 @@ omf_write_theadr proc fastcall private uses rsi rdi name:string_t
     PutName( &obj, rsi, edi )
     omf_write_record( &obj )
     ret
-
-omf_write_theadr endp
+    endp
 
 endif
 
@@ -641,7 +576,6 @@ ifndef ASMC64
 if MULTIHDR
 
     .if ( [rsi].line_num_info.srcfile != ln_srcfile )
-
         .if ( MODULE.LinnumQueue.head )
             omf_FlushCurrSeg()
         .endif
@@ -694,8 +628,7 @@ endif
     add ln_size,size
 endif
     ret
-
-omf_check_flush endp
+    endp
 
 
 ;------------------------------------------------------
@@ -703,49 +636,39 @@ omf_check_flush endp
 ; write end of pass 1 record.
 
 ifndef ASMC64
-
 omf_end_of_pass1 proc private
-
   local obj:omf_rec
-
     omf_InitRec( &obj, CMD_COMENT )
     mov obj.d.coment.attr,0x00
     mov obj.d.coment.cmt_class,CMT_MS_END_PASS_1
     AttachData( &obj, "\x01", 1 )
     omf_write_record( &obj )
     ret
-
-omf_end_of_pass1 endp
-
+    endp
 endif
 
 ; called when a new path is started
 ; the OMF "path 2" records (LEDATA, FIXUP, LINNUM ) are written in all passes.
 
 omf_set_filepos proc uses rsi rdi
-
 ifndef ASMC64
     fseek( CurrFile[TOBJ], end_of_header, SEEK_SET )
 endif
     ret
-
-omf_set_filepos endp
+    endp
 
 
 ifndef ASMC64
 
 omf_write_dosseg proc private
-
   local obj:omf_rec
-
     omf_InitRec( &obj, CMD_COMENT )
     mov obj.d.coment.attr,CMT_TNP
     mov obj.d.coment.cmt_class,CMT_DOSSEG
     AttachData( &obj, "", 0 )
     omf_write_record( &obj )
     ret
-
-omf_write_dosseg endp
+    endp
 
 
 omf_write_lib proc private uses rsi rdi rbx
@@ -763,8 +686,7 @@ omf_write_lib proc private uses rsi rdi rbx
         omf_write_record( &obj )
     .endf
     ret
-
-omf_write_lib endp
+    endp
 
 
 omf_write_export proc private uses rsi rdi rbx
@@ -830,8 +752,7 @@ endif
         .endif
     .endf
     ret
-
-omf_write_export endp
+    endp
 
 
 ; write OMF GRPDEF records
@@ -884,8 +805,7 @@ omf_write_grpdef proc private uses rsi rdi rbx
         omf_write_record( &grp )
     .endf
     ret
-
-omf_write_grpdef endp
+    endp
 
 
 get_omfalign proc fastcall private alignment:byte
@@ -901,8 +821,7 @@ get_omfalign proc fastcall private alignment:byte
     ; value 0 is byte alignment, anything elso is "unexpected"
 
     .return( SEGDEF_ALIGN_BYTE )
-
-get_omfalign endp
+    endp
 
 
 ; write segment table.
@@ -978,8 +897,7 @@ omf_write_segdef proc private uses rsi rdi rbx
         .endif
     .endf
     ret
-
-omf_write_segdef endp
+    endp
 
 
 ; the lnames are stored in a queue. read
@@ -1068,8 +986,7 @@ omf_write_lnames proc private uses rsi rdi rbx
         .endsw
     .endf
     ret
-
-omf_write_lnames endp
+    endp
 
 
 .template readext
@@ -1120,8 +1037,7 @@ GetExt proc fastcall private r:ptr readext
        .return( rdx )
     .endf
     .return( NULL )
-
-GetExt endp
+    endp
 
 
 ; write EXTDEF records.
@@ -1229,8 +1145,7 @@ endif
         .endif
     .endf
     .return( r.index )
-
-omf_write_extdef endp
+    endp
 
 
 define THREE_BYTE_MAX ( ( 1 shl 24 ) - 1 )
@@ -1252,8 +1167,7 @@ get_size_of_comdef_number proc fastcall private value:dword
         .return( 5 )   ;; 1 byte flag + 4 byte value
     .endif
     ret
-
-get_size_of_comdef_number endp
+    endp
 
 
 ; for COMDEF: write item size (or number of items)
@@ -1263,7 +1177,6 @@ put_comdef_number proc fastcall private uses rsi rdi rbx buffer:ptr byte, value:
     mov rdi,rcx
     mov esi,edx
     mov ebx,get_size_of_comdef_number( esi )
-
     .switch ebx
     .case 1
         mov eax,esi
@@ -1282,10 +1195,8 @@ put_comdef_number proc fastcall private uses rsi rdi rbx buffer:ptr byte, value:
         stosb
         .endc
     .endsw
-
     .new umax:uint_t = ( UCHAR_MAX + 1 )
     .for ( ecx = 1: ecx < ebx: ecx++ )
-
         mov eax,esi
         cdq
         div umax
@@ -1294,8 +1205,7 @@ put_comdef_number proc fastcall private uses rsi rdi rbx buffer:ptr byte, value:
         shr esi,8
     .endf
     .return( ebx )
-
-put_comdef_number endp
+    endp
 
 
 ; write OMF COMDEF records.
@@ -1406,22 +1316,18 @@ endif
         .endif
     .endw
     .return( index )
-
-omf_write_comdef endp
+    endp
 
 
 ifdef __UNIX__
 
 GetFileTimeStamp proc __ccall private uses rsi rdi filename:string_t
-
   local statbuf:_stat32
-
     .ifd ( stat( filename, &statbuf ) != 0 )
         .return( 0 )
     .endif
     .return( statbuf.st_mtime )
-
-GetFileTimeStamp endp
+    endp
 
 else
 
@@ -1432,15 +1338,11 @@ GetFileTimeStamp proc __ccall private filename:string_t
     .new LocalFTime:FILETIME
 
     .ifd ( FindFirstFile( ldr(filename), &ff ) == -1 )
-
         .return( 0 )
     .endif
     FindClose( rax )
-
     .if FileTimeToLocalFileTime(&ff.ftLastWriteTime, &LocalFTime)
-
         .if FileTimeToSystemTime(&LocalFTime, &SystemTime)
-
             _loctotime_t(
                 SystemTime.wYear,
                 SystemTime.wMonth,
@@ -1452,8 +1354,7 @@ GetFileTimeStamp proc __ccall private filename:string_t
         .endif
     .endif
     ret
-
-GetFileTimeStamp endp
+    endp
 
 endif
 
@@ -1498,9 +1399,8 @@ endif
     mov obj.d.coment.cmt_class,CMT_DEPENDENCY
     AttachData( &obj, "", 0 )
     omf_write_record( &obj )
-   .return( NOT_ERROR )
-
-omf_write_autodep endp
+    .return( NOT_ERROR )
+    endp
 
 
 omf_write_alias proc private uses rsi rdi rbx
@@ -1543,9 +1443,7 @@ endif
         stosb
         mov ecx,eax
         rep movsb
-
         omf_InitRec( &obj, CMD_ALIAS )
-
         mov ecx,len1
         add ecx,len2
         add ecx,2
@@ -1553,8 +1451,7 @@ endif
         omf_write_record( &obj )
     .endf
     ret
-
-omf_write_alias endp
+    endp
 
 
 ; the PUBDEF record consists of:
@@ -1585,10 +1482,9 @@ omf_write_pubdef proc private uses rsi rdi rbx
 
         .for ( size = 0, data = StringBufferEnd: rsi: rsi = [rsi].qnode.next )
 
-            .new recsize:dword
-            .new len:dword
-            .new sym:asym_t
-
+           .new recsize:dword
+           .new len:dword
+           .new sym:asym_t
             mov sym,[rsi].qnode.sym
 
             ; COMDAT symbol? Then write an LNAME record
@@ -1598,20 +1494,15 @@ omf_write_pubdef proc private uses rsi rdi rbx
                 mov rdx,[rcx].asym.seginfo
             .endif
             .if ( rcx && [rdx].seg_info.comdatselection )
-
                 .if ( [rdx].seg_info.comdat_idx == 0 )
-
                    .new obj:omf_rec
-
                     mov [rcx].asym.used,0
                     .if ( [rax].asym.used )
                         mov [rcx].asym.used,1
                     .endif
                     mov [rdx].seg_info.comdat_idx,startitem
                     inc startitem
-
                     omf_InitRec( &obj, CMD_LNAMES )
-
                     mov rdi,StringBufferEnd
                     inc rdi
                     mov len,Mangle( sym, rdi )
@@ -1710,10 +1601,8 @@ endif
             omf_write_record( &obj )
         .endif
     .endw
-
     .return( NOT_ERROR )
-
-omf_write_pubdef endp
+    endp
 
 
 omf_write_modend proc __ccall private fixp:ptr fixup, displ:uint_32
@@ -1746,8 +1635,7 @@ omf_write_modend proc __ccall private fixp:ptr fixup, displ:uint_32
     .endif
     omf_write_record( &obj )
     ret
-
-omf_write_modend endp
+    endp
 
 
 ; this callback function is called during codeview debug info generation
@@ -1761,9 +1649,7 @@ omf_cv_flushfunc proc __ccall private uses rbx segm:asym_t, curr:ptr uint_8, siz
     mov rdx,[rcx].asym.seginfo
     sub rbx,[rdx].seg_info.CodeBuffer
     add eax,ebx
-
     .if ( ebx && eax > ( 1024 - 8 ) )
-
         mov eax,[rdx].seg_info.start_loc
         add eax,ebx
         mov rbx,[rdx].seg_info.CodeBuffer
@@ -1773,8 +1659,7 @@ omf_cv_flushfunc proc __ccall private uses rbx segm:asym_t, curr:ptr uint_8, siz
         add rbx,[rdx].seg_info.CodeBuffer
     .endif
     .return( rbx )
-
-omf_cv_flushfunc endp
+    endp
 
 
 ; If -Zi is set, a comment class
@@ -1811,8 +1696,7 @@ omf_write_header_dbgcv proc private uses rdi rbx
         .endif
     .endf
     ret
-
-omf_write_header_dbgcv endp
+    endp
 
 
 ; write contents of segments $$SYMBOLS and $$TYPES
@@ -1821,20 +1705,16 @@ omf_write_debug_tables proc private
 
     mov rax,SymDebSeg[DBGS_SYMBOLS*size_t]
     mov rdx,SymDebSeg[DBGS_TYPES*size_t]
-
     .if ( rax && rdx )
-
         mov rcx,[rax].asym.seginfo
         mov [rcx].seg_info.CodeBuffer,CurrSource
         mov rcx,[rdx].asym.seginfo
         add rax,1024
         mov [rcx].seg_info.CodeBuffer,rax
-
         cv_write_debug_tables( SymDebSeg[DBGS_SYMBOLS*size_t], rdx, NULL )
     .endif
     ret
-
-omf_write_debug_tables endp
+    endp
 
 
 ; write OMF module.
@@ -1884,9 +1764,8 @@ endif
 
     fseek( CurrFile[TOBJ], public_pos, SEEK_SET)
     omf_write_pubdef()
-   .return( NOT_ERROR )
-
-omf_write_module endp
+    .return( NOT_ERROR )
+    endp
 
 
 ; write OMF header info after pass 1
@@ -1894,11 +1773,9 @@ omf_write_module endp
 omf_write_header_initial proc private uses rsi rdi rbx
 
    .new ext_idx:uint_16
-
     .if ( write_to_file == FALSE )
         .return( NOT_ERROR )
     .endif
-
     omf_write_theadr( CurrFName[TASM] ) ; write THEADR record, main src filename
 
     ; v2.11: coment record "ms extensions present" now written here
@@ -1949,18 +1826,14 @@ omf_write_header_initial proc private uses rsi rdi rbx
     .endif
     mov end_of_header,ftell( CurrFile[TOBJ] )
    .return( NOT_ERROR )
-
-omf_write_header_initial endp
-
+    endp
 endif
 
 
 ; init. called once per module
 
 omf_init proc
-
 ifndef ASMC64
-
     mov MODULE.WriteModule,&omf_write_module
     mov MODULE.Pass1Checks,&omf_write_header_initial
     mov SymDebSeg[DBGS_SYMBOLS*size_t],NULL
@@ -1971,7 +1844,6 @@ endif
     mov ln_size,0
 endif
     ret
-
-omf_init endp
+    endp
 
     end

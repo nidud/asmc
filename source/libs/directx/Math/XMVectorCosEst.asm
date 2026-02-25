@@ -52,7 +52,6 @@ XMVectorCosEst proc XM_CALLCONV V:FXMVECTOR
     _mm_add_ps(xmm0, g_XMOne)
     _mm_mul_ps(xmm0, xmm4)
     ret
-
-XMVectorCosEst endp
+    endp
 
     end

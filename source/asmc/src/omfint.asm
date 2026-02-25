@@ -92,8 +92,7 @@ PutIndex proc watcall private index:word
     .endif
     mov [rbx].buffer[rcx],al
     ret
-
-PutIndex endp
+    endp
 
 
 PutBase proc watcall private uses rdi base:ptr base_info
@@ -107,8 +106,7 @@ PutBase proc watcall private uses rdi base:ptr base_info
         PutWord( [rdi].base_info.fram )
     .endif
     ret
-
-PutBase endp
+    endp
 
 
 ; call a function - bit 0 of command is always 0
@@ -362,7 +360,6 @@ write_end:
         WriteError()
     .endif
     ret
-
-omf_write_record endp
+    endp
 
     end

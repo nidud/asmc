@@ -10,7 +10,6 @@ include tchar.inc
     .code
 
 _ltot_s proc val:int_t, buffer:tstring_t, sizeInTChars:size_t, radix:int_t
-
 ifdef _WIN64
     xor eax,eax
  ifdef __UNIX__
@@ -36,7 +35,6 @@ else
     _txtoa_s( edx::eax, buffer, sizeInTChars, radix, ecx )
 endif
     ret
-
-_ltot_s endp
+    endp
 
     end

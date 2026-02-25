@@ -22,18 +22,13 @@ externdef _exitflag:char_t
     .code
 
 doexit proc code:int_t, quick:int_t, retcaller:int_t
-
     .if ( _C_Exit_Done != TRUE )
-
         mov _C_Termination_Done,TRUE
-
         ldr eax,retcaller
         mov _exitflag,al
         _initterm(&_CRTFINI_S, &_CRTFINI_E)
     .endif
-
     .if ( !retcaller )
-
         mov _C_Exit_Done,TRUE
 ifdef __UNIX__
         sys_exit(code)
@@ -42,7 +37,6 @@ else
 endif
     .endif
     ret
-
-doexit endp
+    endp
 
     end

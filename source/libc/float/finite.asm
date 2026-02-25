@@ -20,7 +20,6 @@ endif
     cmp edx,DBL_EXPMASK
     setne al
     ret
-
-_finite endp
+    endp
 
     end

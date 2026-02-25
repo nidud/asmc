@@ -33,8 +33,7 @@ LABELOPT equ 1
 
 BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
 
-   .new next:fixup_t
-
+    .new next:fixup_t
     .return( NOT_ERROR ) .if ( Parse_Pass != PASS_1 )
 
     .for ( rsi = rcx, rbx = [rsi].bp_fixup : rbx : rbx = next )
@@ -53,7 +52,6 @@ BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
 
         xor edi,edi         ; size
         movzx ecx,[rbx].type
-
         .if ( [rsi].mem_type == MT_FAR && [rbx].options == OPTJ_CALL )
 
             ; convert near call to push cs + near call,
@@ -66,26 +64,17 @@ BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
 
             OutputByte(0) ; it's pass one, nothing is written
            .continue
-
-        .else
-
-            ; forward reference, only at first pass
-
-            .if ( ecx == FIX_RELOFF32 || ecx == FIX_RELOFF16 )
-
-               .continue
-            .endif
-
-            .if ( ecx == FIX_OFF8 ) ; push <forward reference>
-
-                .if ( [rbx].options == OPTJ_PUSH )
-
-                    mov edi,1 ; size increases from 2 to 3/5
-                    jmp patch
-                .endif
-            .endif
         .endif
 
+        ; forward reference, only at first pass
+
+        .continue .if ( ecx == FIX_RELOFF32 || ecx == FIX_RELOFF16 )
+        .if ( ecx == FIX_OFF8 ) ; push <forward reference>
+            .if ( [rbx].options == OPTJ_PUSH )
+                mov edi,1 ; size increases from 2 to 3/5
+                jmp patch
+            .endif
+        .endif
         .switch ecx
         .case FIX_RELOFF32
             mov edi,2   ; will be 4 finally
@@ -108,16 +97,13 @@ BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
             mov ecx,eax
             neg ecx
             dec ecx
-
             .ifs ( edx > eax || edx < ecx )
-
               patch:
-
                 mov MODULE.PhaseError,TRUE
-
+                ;
                 ; ok, the standard case is: there's a forward jump which
                 ; was assumed to be SHORT, but it must be NEAR instead.
-
+                ;
                 .switch edi
                 .case 1
                     xor edi,edi
@@ -142,13 +128,9 @@ if LABELOPT
                         ; the optimization!
 
                         mov eax,[rbx].locofs
-
                         .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
-
                             .continue( 1 ) .if ( [rcx].fixup.orgoccured )
-
                             ; do this check after the check for ORG!
-
                             .break .if ( [rcx].fixup.locofs <= eax )
                         .endf
 
@@ -158,9 +140,7 @@ if LABELOPT
                         ; use the <next>-field of asym already!)
 
                         .for ( rcx = [rdx].label_list: rcx: rcx = [rcx].asym.next )
-
                             .break .if ( [rcx].asym.offs <= eax )
-
                             add [rcx].asym.offs,edi
                         .endf
 
@@ -169,21 +149,17 @@ if LABELOPT
                         ; number of passes to 2 for not too complex sources.
 
                         .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
-
                             .if ( [rcx].fixup.sym != rsi )
-
                                 .break .if ( [rcx].fixup.locofs <= eax )
                                 add [rcx].fixup.locofs,edi
                             .endif
                         .endf
-
 else
                         add [rsi].offs,edi
 endif
                         ; it doesn't matter what's actually "written"
 
                         .for ( : edi : edi-- )
-
                             OutputByte( 0xCC )
                         .endf
                         .endc
@@ -195,7 +171,6 @@ endif
                     asmerr( 2075, edx ) ; warning ?
                 .endsw
             .endif
-
             ; v2.04: fixme: is it ok to remove the fixup?
             ; it might still be needed in a later backpatch.
         .endsw
@@ -203,7 +178,6 @@ endif
     xor eax,eax ; NOT_ERROR
     mov [rsi].bp_fixup,rax
     ret
-
-BackPatch endp
+    endp
 
     end

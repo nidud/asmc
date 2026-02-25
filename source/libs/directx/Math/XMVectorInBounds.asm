@@ -24,7 +24,6 @@ XMVectorInBounds proc XM_CALLCONV V:FXMVECTOR, Bounds:FXMVECTOR
     _mm_cmple_ps(xmm1, xmm2)
     _mm_and_ps(xmm0, xmm1)
     ret
-
-XMVectorInBounds endp
+    endp
 
     end

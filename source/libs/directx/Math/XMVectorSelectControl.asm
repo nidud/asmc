@@ -33,7 +33,6 @@ XMVectorSelectControl proc XM_CALLCONV VectorIndex0:uint32_t, VectorIndex1:uint3
 
     _mm_store_ps(xmm0, ControlVector)
     ret
-
-XMVectorSelectControl endp
+    endp
 
     end

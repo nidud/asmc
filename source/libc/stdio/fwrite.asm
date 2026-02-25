@@ -25,19 +25,14 @@ fwrite proc uses rsi rdi rbx buf:string_t, rsize:int_t, num:int_t, fp:LPFILE
     mul num
     mov count,rax
     mov total,eax
-
     mov bufsize,_MAXIOBUF
     .if ( [rbx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF )
         mov bufsize,[rbx]._bufsiz
     .endif
-
     .while count
-
         mov rax,count
         mov ecx,[rbx]._cnt
-
         .if ( ecx && [rbx]._flag & _IOMYBUF or _IOYOURBUF )
-
             .if ( count < rcx )
                 mov rcx,count
             .endif
@@ -48,24 +43,19 @@ fwrite proc uses rsi rdi rbx buf:string_t, rsize:int_t, num:int_t, fp:LPFILE
             rep movsb
             mov [rbx]._ptr,rdi
             mov buf,rsi
-
 ifdef STDZIP
         .elseif ( eax >= bufsize && !( [rbx]._flag & _IOMEMBUF ) )
 else
         .elseif ( eax >= bufsize )
 endif
             .if ( [rbx]._flag & _IOMYBUF or _IOYOURBUF )
-
                 fflush( rbx )
                 test eax,eax
                 jnz break
             .endif
-
             mov rax,count
             mov ecx,bufsize
-
             .if ecx
-
                 xor edx,edx
                 div ecx
                 mov rax,count
@@ -74,7 +64,6 @@ endif
             mov nbytes,eax
 ifdef STDZIP
             .if ( [rbx]._flag & _IOCRC32 )
-
                 _crc32( [rbx]._crc32, [rbx]._base, eax )
                 mov [rbx]._crc32,eax
                 mov eax,nbytes
@@ -83,20 +72,16 @@ endif
             _write( [rbx]._file, buf, eax )
             cmp eax,-1
             je  error
-
             sub count,rax
             add buf,rax
             cmp eax,nbytes
             jb  error
-
         .else
-
             mov rcx,buf
             movzx eax,byte ptr [rcx]
             _flsbuf( eax, rbx )
             cmp eax,-1
             je  break
-
             inc buf
             dec count
             mov eax,[rbx]._bufsiz
@@ -107,20 +92,16 @@ endif
         .endif
     .endw
     .return( num )
-
 toend:
     ret
-
 error:
     or  [rbx]._flag,_IOERR
-
 break:
     mov eax,total
     sub rax,count
     xor edx,edx
     div dword ptr rsize
     jmp toend
-
-fwrite  endp
+    endp
 
     end

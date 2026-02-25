@@ -24,7 +24,6 @@ XMVector3Normalize proc XM_CALLCONV V:FXMVECTOR
     _mm_and_ps(xmm1, xmm0)
     _mm_or_ps(_mm_store_ps(xmm0, xmm2), xmm1)
     ret
-
-XMVector3Normalize endp
+    endp
 
     end

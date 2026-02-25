@@ -27,10 +27,8 @@ endif
     option dotname
 
 _tcsicmp proc use_regs a:tstring_t, b:tstring_t
-
     ldr     rcx,a
     ldr     rdx,b
-
     mov     reg,_pclmap
     mov     eax,1
 .0:
@@ -60,7 +58,6 @@ ifdef _UNICODE
     sub     rax,rgq
     jmp     .1
 endif
-
-_tcsicmp endp
+    endp
 
     end

@@ -33,7 +33,6 @@ XMVectorAddAngles proc XM_CALLCONV V1:FXMVECTOR, V2:FXMVECTOR
     ;;
     _mm_sub_ps(xmm0, xmm1)
     ret
-
-XMVectorAddAngles endp
+    endp
 
     end

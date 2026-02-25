@@ -10,7 +10,6 @@ include tchar.inc
     .code
 
 _istcsymf proc c:int_t
-
     ldr ecx,c
     xor eax,eax
     .if ( ecx == '_' )
@@ -22,8 +21,7 @@ _istcsymf proc c:int_t
         setnz   al
     .endif
     ret
-
-_istcsymf endp
+    endp
 
     end
 

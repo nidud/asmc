@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorSplatEpsilon proc XM_CALLCONV
-
     _mm_store_ps(xmm0, g_XMEpsilon)
     ret
-
-XMVectorSplatEpsilon endp
+    endp
 
     end

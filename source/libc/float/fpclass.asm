@@ -26,9 +26,7 @@ endif
     ; With 0x7ff, it can only be infinity or NaN
     ;
     .if ecx == DBL_EXPMASK
-
         .if !edx
-
             .if !eax
                 mov eax,_FPCLASS_PINF
             .else
@@ -40,7 +38,6 @@ endif
             ;
             mov eax,_FPCLASS_QNAN
         .endif
-
     .elseif !ecx
         ;
         ; With 0, it can only be zero or denormalized number
@@ -67,7 +64,6 @@ endif
         .endif
     .endif
     ret
-
-_fpclass endp
+    endp
 
     end

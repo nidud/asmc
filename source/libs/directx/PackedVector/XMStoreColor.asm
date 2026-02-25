@@ -45,7 +45,6 @@ XMStoreColor proc XM_CALLCONV pDestination:ptr XMCOLOR, V:FXMVECTOR
 
     _mm_store_ss([rcx], _mm_castsi128_ps(xmm0))
     ret
-
-XMStoreColor endp
+    endp
 
     end

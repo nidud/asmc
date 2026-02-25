@@ -439,11 +439,8 @@ print_err proc __ccall private uses rsi rdi rbx erbuf:string_t, format:string_t,
     ;
     mov rbx,MODULE.curr_fname[TERR]
     mov rcx,MODULE.curr_file[TERR]
-
     .if ( !rcx && rbx )
-
         .if fopen( rbx, "w" )
-
             mov MODULE.curr_file[TERR],rax
         .else
             ;
@@ -458,15 +455,11 @@ print_err proc __ccall private uses rsi rdi rbx erbuf:string_t, format:string_t,
             asmerr( 4910, rbx )
         .endif
     .endif
-
     mov rbx,MODULE.curr_file[TERR]
     .if rbx
-
         fwrite( erbuf, 1, tstrlen(erbuf), rbx )
         fwrite( "\n", 1, 1, rbx )
-
         .if ( Parse_Pass == PASS_1 && MODULE.curr_file[TLST] )
-
             GetCurrOffset()
             LstWrite( LSTTYPE_DIRECTIVE, eax, 0 )
             LstPrintf( "                           %s", erbuf )
@@ -474,26 +467,20 @@ print_err proc __ccall private uses rsi rdi rbx erbuf:string_t, format:string_t,
         .endif
     .endif
     ret
-
-print_err endp
+    endp
 
 
 errexit proc __ccall private
-
     .if MODULE.curr_fname[TASM]
-
         longjmp( &jmpenv, 3 )
     .endif
-
     mov rcx,MODULE.curr_file[TOBJ]
     .if rcx
-
         fclose( rcx )
         remove( MODULE.curr_fname[TOBJ] )
     .endif
     exit(1)
-
-errexit endp
+    endp
 
 
 asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
@@ -505,20 +492,14 @@ asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
     ldr ebx,value
 
     .repeat
-
         .repeat
-
             .break .if ( ebx < MIN_ID )
             .break .if ( ebx > MAX_ID )
-
             .if ( ebx >= 4000 )
-
                 .break(1) .if ( !Options.warning_error && !Options.warning_level )
                 .break(1) .if ( ebx >= 5000 && ebx < 8000 && Options.warning_level < 3 )
                 .break(1) .if warning_disable(ebx)
-
             .endif
-
             tstrcpy( rdi, "ASMC : " )
             mov rdx,MODULE.src_stack
 
@@ -551,16 +532,13 @@ asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
 
             add rdi,tstrlen(rdi)
             tsprintf(rdi, " A%04u: ", ebx)
-
             xor ecx,ecx
             lea eax,[rbx-1000]
             .while ( eax >= 1000 )
-
                 add ecx,1
                 sub eax,1000
             .endw
             .if ( eax == 910 )
-
                 mov eax,14
             .endif
             lea rdx,maxid
@@ -569,28 +547,20 @@ asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
             lea rsi,table
             mov rsi,[rsi+rcx*string_t]
             mov rsi,[rsi+rax*string_t]
-
             lea rdx,E(INTER)
             .break .if ( rsi == rdx )
-
             lea rdi,format
             tstrcat( rdi, rsi )
 if 0
             .new masm[64]:char_t
             .if ( ebx == 2006 )
-
                 mov rbx,args
                 lea rsi,MS
-
                 .while 1
-
                     mov rax,[rsi]
                     add rsi,string_t
-
                     .break .if !rax
-
                     .ifd ( tstricmp( rax, rbx ) == 0 )
-
                         tstrcpy( &masm, rbx )
                         mov args,tstrcat( rax, " -- use option /Zne for Masm keywords" )
                        .break
@@ -599,17 +569,12 @@ if 0
             .endif
 endif
             print_err( &erbuf, rdi, &args )
-
             lea rsi,erbuf
             mov ebx,value
-
             .if ( ebx == 1012 )
-
                 errexit()
             .endif
-
             .if ( ebx >= 4000 )
-
                 .if ( !Options.warning_error )
                     inc MODULE.warning_count
                 .else
@@ -618,7 +583,6 @@ endif
             .else
                 inc MODULE.error_count
             .endif
-
             mov eax,Options.error_limit
             .if ( eax != -1 )
                 inc eax
@@ -633,30 +597,23 @@ endif
             .endif
             .break(1)
         .until 1
-
         tprintf( "ASMC : fatal error A1901: %s\n", INTER )
         errexit()
     .until 1
     .return( ERROR )
-
-asmerr endp
+    endp
 
 
 WriteError proc __ccall
-
     .return( asmerr( 1002, MODULE.curr_fname[TOBJ] ) )
-
-WriteError endp
+    endp
 
 
 PrintNote proc __ccall value:int_t, args:vararg
-
    .new erbuf[512]:byte
-
     ldr ecx,value
     lea rdx,NOTE
-   .return( print_err( &erbuf, [rdx+rcx*string_t], &args ) )
-
-PrintNote endp
+    .return( print_err( &erbuf, [rdx+rcx*string_t], &args ) )
+    endp
 
     END

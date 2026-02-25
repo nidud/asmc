@@ -12,14 +12,11 @@ include tchar.inc
 .code
 
 _tcsfxcat proc path:tstring_t, ext:tstring_t
-
     .if _tcsext(path)
-
         mov tchar_t ptr [rax],0
     .endif
     _tcscat(path, ext)
     ret
-
-_tcsfxcat endp
+    endp
 
     end

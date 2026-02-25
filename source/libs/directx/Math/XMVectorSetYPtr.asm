@@ -21,7 +21,6 @@ XMVectorSetYPtr proc XM_CALLCONV V:FXMVECTOR, p:ptr float
     ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
     ret
-
-XMVectorSetYPtr endp
+    endp
 
     end

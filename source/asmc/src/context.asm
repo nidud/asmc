@@ -213,26 +213,19 @@ endif
                 mov rcx,start
                 .return( asmerr( 1010, [rcx].asm_tok.tokpos ) )
             .endif
-
         .else
-
             .for ( esi = 0: esi < lengthof(typetab) && type: esi++ )
-
                 lea rcx,typetab
                 mov eax,[rcx+rsi*4]
-
                 .if ( type & eax )
-
                     not eax
                     and type,eax
-
                     .if ( contextFree )
                         mov rdi,contextFree
                         mov contextFree,[rdi].next
                     .else
                         mov rdi,LclAlloc( sizeof( context ) )
                     .endif
-
                     mov [rdi].next,contextStack
                     lea rcx,typetab
                     mov [rdi].type,[rcx+rsi*4]
@@ -273,8 +266,7 @@ endif
         .return( asmerr(2008, [rbx].tokpos ) )
     .endif
     .return( NOT_ERROR )
-
-ContextDirective endp
+    endp
 
 
 ; save current context status
@@ -282,7 +274,6 @@ ContextDirective endp
     assume rdi:ptr context
 
 ContextSaveState proc uses rsi rdi rbx
-
     .for ( ecx = 0, rdx = contextStack : rdx : ecx++, rdx = [rdx].context.next )
     .endf
     .if ( ecx )
@@ -298,14 +289,12 @@ ContextSaveState proc uses rsi rdi rbx
         .endf
     .endif
     ret
-
-ContextSaveState endp
+    endp
 
 
 ; restore context status
 
 ContextRestoreState proc private uses rsi rdi rbx
-
     .for ( ebx = cntsavedContexts : ebx : ebx-- )
         .if ( contextFree )
             mov rdi,contextFree
@@ -324,22 +313,21 @@ ContextRestoreState proc private uses rsi rdi rbx
         mov contextStack,rdi
     .endf
     ret
-
-ContextRestoreState endp
+    endp
 
 
 ; init context, called once per pass
 
 ContextInit proc __ccall pass:int_t
-
+    ;
     ; if ContextStack isn't NULL, then at least one PUSHCONTEXT
     ; didn't have a matching POPCONTEXT. No need to reset it to NULL -
     ; but might be ok to move the items to the ContextFree heap.
-
+    ;
     .if ( pass > PASS_1 )
         ContextRestoreState()
     .endif
     ret
-ContextInit endp
+    endp
 
     end

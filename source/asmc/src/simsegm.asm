@@ -54,23 +54,19 @@ SegmCombine string_t \
 .code
 
 SimGetSegName proc fastcall segno:sim_seg
-
     lea rax,SegmNames
     .return( [rax+rcx*string_t] )
-
-SimGetSegName endp
+    endp
 
 
 GetCodeClass proc __ccall
-
     ; option -nc set?
     .if ( Options.names[OPTN_CODE_CLASS*string_t] )
         .return( Options.names[OPTN_CODE_CLASS*string_t] )
     .endif
     lea rax,SegmClass
-   .return( [rax+SIM_CODE*string_t] )
-
-GetCodeClass endp
+    .return( [rax+SIM_CODE*string_t] )
+    endp
 
 
 ; emit DGROUP GROUP instruction
@@ -80,32 +76,26 @@ AddToDgroup proc fastcall private segm:sim_seg, name:string_t
     ; no DGROUP for FLAT or COFF/ELF
     .if ( MODULE._model == MODEL_FLAT || Options.output_format == OFORMAT_COFF ||
           Options.output_format == OFORMAT_ELF )
-
         .return
     .endif
-
     .if ( rdx == NULL )
-
         lea rdx,SegmNames
         mov rdx,[rdx+rcx*string_t]
     .endif
     AddLineQueueX( "%s %r %s", &szDgroup, T_GROUP, rdx )
     ret
-
-AddToDgroup endp
+    endp
 
 
 ; generate code to close the current segment
 
 close_currseg proc __ccall private
-
     mov rcx,CurrSeg
     .if ( rcx )
         AddLineQueueX( "%s %r", [rcx].asym.name, T_ENDS )
     .endif
     ret
-
-close_currseg endp
+    endp
 
 
 ; translate a simplified segment directive to
@@ -124,25 +114,20 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
     ; v2.24 /Sp[n] Set segment alignment
 
     .if ( Options.segmentalign != 4 )
-
         mov edx,1
         mov cl,Options.segmentalign
         shl edx,cl
         tsprintf( &calign, "ALIGN(%d)", edx )
         mov pAlignSt,&calign
     .endif
-
     .if ( MODULE.defOfssize > USE16 )
-
         .if ( MODULE._model == MODEL_FLAT )
             mov pUse,&T("FLAT")
         .else
             mov pUse,&T("USE32")
         .endif
-
         mov eax,MODULE.curr_cpu
         and eax,P_CPU_MASK
-
         .if ( Options.segmentalign != 4 )
             mov pAlign,&calign
         .elseif ( eax <= P_386 )
@@ -152,7 +137,6 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
         .endif
         mov pAlignSt,pAlign
     .endif
-
     mov esi,segm
     .if ( esi == SIM_CODE )
         mov pClass,GetCodeClass()
@@ -160,27 +144,20 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
         lea rcx,SegmClass
         mov pClass,[rcx+rsi*size_t]
     .endif
-
     .if ( esi == SIM_STACK || esi == SIM_FARDATA || esi == SIM_FARDATA_UN )
         mov pAlign,pAlignSt
     .endif
-
     mov pFmt,&T("%s %r %s %s %s '%s'")
     mov rdi,name
-
     .if ( rdi == NULL )
-
         lea rcx,SegmNames
         mov rdi,[rcx+rsi*size_t]
-
         mov ebx,1
         mov ecx,esi
         shl ebx,cl
-
         .if ( MODULE.simseg_init & bl )
             mov pFmt,&T("%s %r")
         .else
-
             or MODULE.simseg_init,bl
 
             ; v2.05: if segment exists already, use the current attribs.
@@ -189,7 +166,6 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
             ; of the simplified segment directives have highest priority.
 
             .if ( Parse_Pass == PASS_1 )
-
                 SymFind( rdi )
 
                 ; v2.12: check 'isdefined' member instead of 'lname_idx'
@@ -203,7 +179,6 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
             .endif
         .endif
     .else
-
         SymFind( rdi )
 
         ; v2.04: testing for state SYM_SEG isn't enough. The segment
@@ -219,28 +194,22 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
     mov rcx,[rax+rsi*size_t]
     AddLineQueueX( pFmt, rdi, T_SEGMENT, pAlign, pUse, rcx, pClass )
     ret
-
-SetSimSeg endp
+    endp
 
 
 EndSimSeg proc fastcall private segm:sim_seg
-
     lea rax,SegmNames
     mov rdx,[rax+rcx*size_t]
     AddLineQueueX( "%s %r", rdx, T_ENDS )
     ret
-
-EndSimSeg endp
+    endp
 
 
 GetCodeGroupName proc fastcall private name:string_t
-
     ldr rax,name
-
     .if ( MODULE._model == MODEL_FLAT ||
           Options.output_format == OFORMAT_COFF ||
           Options.output_format == OFORMAT_ELF )
-
         .if ( rax == NULL )
             mov rax,SegmNames[SIM_CODE*size_t]
         .endif
@@ -248,8 +217,7 @@ GetCodeGroupName proc fastcall private name:string_t
         lea rax,szDgroup
     .endif
     ret
-
-GetCodeGroupName endp
+    endp
 
 
     assume rbx:token_t
@@ -261,17 +229,14 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     .new init:char_t
     .new opndx:expr
-
     .return( ERROR ) .if ( MODULE._model == MODEL_NONE )
 
     LstWrite( LSTTYPE_DIRECTIVE, 0, NULL )
-
     xor  edi,edi
     inc  i ; get past the directive token
     imul ebx,i,asm_tok
     add  rbx,tokenarray
     mov  esi,GetSflagsSp( [rbx-asm_tok].tokval )
-
     .if ( esi == SIM_STACK )
         .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
             .return( ERROR )
@@ -297,17 +262,13 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     imul ebx,i,asm_tok
     add  rbx,tokenarray
-
     .if ( [rbx].token != T_FINAL )
         .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
-
     .if ( esi != SIM_STACK )
         close_currseg() ; emit a "xxx ENDS" line to close current seg
     .endif
-
     .if ( rdi == NULL )
-
         mov ecx,esi
         mov edx,1
         shl edx,cl
@@ -317,9 +278,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     .switch esi
     .case SIM_CODE ; .code
-
         SetSimSeg( SIM_CODE, rdi )
-
         .if ( MODULE._model == MODEL_TINY )
 
             ; v2.34.61 - v2.05: add the named code segment to DGROUP
@@ -333,9 +292,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                     mov rax,[rax].asym.seginfo
                     mov al,[rax].seg_info.Ofssize
-
                     .if ( al == MODULE.defOfssize )
-
                         AddToDgroup( SIM_CODE, rdi )
                         mov rdi,GetCodeGroupName( rdi )
                     .endif
@@ -345,9 +302,7 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
 
         .elseif ( MODULE._model == MODEL_FLAT )
-
             lea rdi,T("FLAT")
-
         .else
             .if ( rdi == NULL )
                 mov rdi,SegmNames[SIM_CODE*size_t]
@@ -399,11 +354,9 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .default ; shouldn't happen
         .endc
     .endsw
-
     RunLineQueue()
-   .return( NOT_ERROR )
-
-SimplifiedSegDir endp
+    .return( NOT_ERROR )
+    endp
 
 
 ; Set default values for .CODE and .DATA segment names.
@@ -418,15 +371,11 @@ SetModelDefaultSegNames proc __ccall uses rsi
     ; option -nt set?
 
     .if ( Options.names[OPTN_TEXT_SEG*size_t] )
-
         mov SegmNames[SIM_CODE*size_t],LclDup( Options.names[OPTN_TEXT_SEG*size_t] )
-
     .else
-
         mov eax,1
         mov cl,MODULE._model
         shl eax,cl
-
         .if ( eax & SIZE_CODEPTR )
 
             ; for some models, the code segment contains the module name
@@ -439,14 +388,12 @@ SetModelDefaultSegNames proc __ccall uses rsi
             tstrcat( SegmNames[SIM_CODE*size_t], SegmNamesDef[SIM_CODE*size_t] )
         .endif
     .endif
-
     ; option -nd set?
     .if ( Options.names[OPTN_DATA_SEG*size_t] )
         mov SegmNames[SIM_DATA*size_t],LclDup( Options.names[OPTN_DATA_SEG*size_t] )
     .endif
     ret
-
-SetModelDefaultSegNames endp
+    endp
 
 
 ; Called by SetModel() [.MODEL directive].
@@ -471,7 +418,6 @@ ModelSimSegmInit proc __ccall model:int_t
     ; create DGROUP for BIN/OMF if model isn't FLAT
     .if ( model != MODEL_FLAT &&
          ( Options.output_format == OFORMAT_OMF || Options.output_format == OFORMAT_BIN ) )
-
         tstrcpy( &buffer, "%s %r %s" )
         .if ( model == MODEL_TINY )
             tstrcat( &buffer, ", %s" )
@@ -481,21 +427,18 @@ ModelSimSegmInit proc __ccall model:int_t
         .endif
     .endif
     .return( NOT_ERROR )
-
-ModelSimSegmInit endp
+    endp
 
 
 ; called when END has been found
 
 ModelSimSegmExit proc __ccall
-
     ; a model is set. Close current segment if one is open.
     .if ( CurrSeg )
         close_currseg()
         RunLineQueue()
     .endif
     ret
-
-ModelSimSegmExit endp
+    endp
 
     end

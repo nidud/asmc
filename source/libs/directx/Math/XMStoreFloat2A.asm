@@ -14,7 +14,6 @@ XMStoreFloat2A proc XM_CALLCONV pDestination:ptr XMFLOAT2, V:FXMVECTOR
 
     _mm_storel_epi64([rcx], xmm1)
     ret
-
-XMStoreFloat2A endp
+    endp
 
     end

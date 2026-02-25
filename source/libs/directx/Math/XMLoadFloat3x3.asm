@@ -27,7 +27,6 @@ XMLoadFloat3x3 proc XM_CALLCONV pSource:ptr XMFLOAT3X3
     _mm_add_ps(xmm1, xmm5)
     _mm_store_ps(xmm3, g_XMIdentityR3)
     ret
-
-XMLoadFloat3x3 endp
+    endp
 
     end

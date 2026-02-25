@@ -110,7 +110,6 @@ endif
     _mm_store_ps(xmm6, x6)
     _mm_store_ps(xmm7, x7)
     ret
-
-XMVectorLogE endp
+    endp
 
     end

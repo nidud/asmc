@@ -61,21 +61,17 @@ AddFloatingPointEmulationFixup proc __ccall uses rsi rdi rbx CodeInfo:ptr code_i
     ; emit 1-2 externals for the patch if not done already
 
     .for ( ebx = 0 : ebx < 2 : ebx++ )
-
         mov sym[rbx*asym_t],NULL
         lea ecx,[rdi+rbx*8]
         mov eax,1
         shl eax,cl
-
         .if ( eax & patchmask )
-
             lea eax,[rbx+'I']
             mov byte ptr name[1],al
             lea rcx,patchchr2
             mov al,[rcx+rdi]
             mov byte ptr name[2],al
             mov sym[rbx*asym_t],SymFind( &name )
-
             .if ( rax == NULL || [rax].asym.state == SYM_UNDEFINED )
                 mov sym[rbx*asym_t],MakeExtern( &name, MT_FAR, NULL, rax, USE16 )
                 mov [rax].asym.langtype,LANG_NONE
@@ -99,7 +95,6 @@ AddFloatingPointEmulationFixup proc __ccall uses rsi rdi rbx CodeInfo:ptr code_i
     .if ( Options.output_format == OFORMAT_OMF && eax > MAX_LEDATA_THRESHOLD )
         omf_FlushCurrSeg()
     .endif
-
     assume rsi:ptr fixup
     .for ( ebx = 0 : ebx < 2 : ebx++ )
         mov rax,sym[rbx*asym_t]
@@ -112,7 +107,6 @@ AddFloatingPointEmulationFixup proc __ccall uses rsi rdi rbx CodeInfo:ptr code_i
         .endif
     .endf
     ret
-
-AddFloatingPointEmulationFixup endp
+    endp
 
     end

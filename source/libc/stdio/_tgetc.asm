@@ -10,7 +10,6 @@ include tchar.inc
     .code
 
 _gettc proc fp:ptr FILE
-
     ldr rcx,fp
     sub [rcx]._iobuf._cnt,tchar_t
     .ifl
@@ -21,7 +20,6 @@ _gettc proc fp:ptr FILE
         movzx eax,tchar_t ptr [rax]
     .endif
     ret
-
-_gettc endp
+    endp
 
     end

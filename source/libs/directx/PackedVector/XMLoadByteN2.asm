@@ -30,7 +30,6 @@ XMLoadByteN2 proc XM_CALLCONV pSource:ptr XMBYTEN2
     shufps xmm0,xmm1,01000100B
     shufps xmm0,xmm0,01011000B
     ret
-
-XMLoadByteN2 endp
+    endp
 
     end

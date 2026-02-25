@@ -29,7 +29,6 @@ ifdef _WIN64
     movsd   xmm0,x
 endif
     ret
-
-ceil endp
+    endp
 
     end

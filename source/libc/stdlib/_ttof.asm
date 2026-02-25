@@ -11,13 +11,11 @@ include tchar.inc
     .code
 
 _ttof proc string:tstring_t
-
     ldr rcx,string
 ifdef _UNICODE
     .new buf[128]:char_t
     .new i:int_t = 0
     .for ( rdx = &buf : i < lengthof(buf) - 1 : i++, rdx++, rcx += 2 )
-
         mov ax,[rcx]
        .break .if ( !ax || ax > 0x7F )
         mov [rdx],al
@@ -33,7 +31,6 @@ else
     fld real8 ptr [rax]
 endif
     ret
-
-_ttof endp
+    endp
 
     end

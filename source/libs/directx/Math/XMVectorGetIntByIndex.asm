@@ -11,10 +11,8 @@ include DirectXMath.inc
     .code
 
 XMVectorGetIntByIndex proc XM_CALLCONV V:FXMVECTOR, i:size_t
-
     mov eax,dword ptr V[rdx*4]
     ret
-
-XMVectorGetIntByIndex endp
+    endp
 
     end

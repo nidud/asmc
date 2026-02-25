@@ -15,10 +15,8 @@ include tchar.inc
 .code
 
 _tcstrunc proc string:tstring_t
-
     _tcstrim( _tcsstart( ldr(string) ) )
     ret
-
-_tcstrunc endp
+    endp
 
     end

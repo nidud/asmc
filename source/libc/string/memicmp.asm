@@ -18,11 +18,9 @@ else
 _memicmp proc uses esi edi ebx a:ptr, b:ptr, size:size_t
     mov     esi,_pclmap
 endif
-
     ldr     rax,size
     ldr     rcx,a
     ldr     rdx,b
-
     dec     rcx
     dec     rdx
 .0:
@@ -47,7 +45,6 @@ endif
     sbb     rax,-1
 .1:
     ret
-
-_memicmp endp
+    endp
 
     end

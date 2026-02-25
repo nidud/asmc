@@ -51,13 +51,10 @@ undef opt
     .code
 
 InitStackBase proc fastcall private reg:int_t
-
     lea rdx,ModuleInfo
     movzx eax,MODULE.Ofssize
     mov [rdx].module_info.basereg[rax*4],ecx
-
     .if ( !MODULE.StackBase )
-
         mov MODULE.StackBase,CreateVariable( "@StackBase", 0 )
         mov rcx,rax
         mov [rcx].asym.predefined,1
@@ -68,8 +65,7 @@ InitStackBase proc fastcall private reg:int_t
         mov [rcx].asym.sfunc_ptr,&UpdateProcStatus
     .endif
     ret
-
-InitStackBase endp
+    endp
 
 
     assume rbx:token_t
@@ -97,8 +93,7 @@ SetAlignment proc __ccall private i:ptr int_t, tokenarray:token_t, max:int_t, de
         mov [rdx],al
     .endif
     .return( NOT_ERROR )
-
-SetAlignment endp
+    endp
 
 
 OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
@@ -751,6 +746,6 @@ endif
         .return( asmerr( 2008, [rbx].tokpos ) )
     .endif
     .return( NOT_ERROR )
-OptionDirective endp
+    endp
 
     end

@@ -20,7 +20,6 @@ XMVectorIsInfinite proc XM_CALLCONV V:FXMVECTOR
     ;; If any are infinity, the signs are true.
     ;;
     ret
-
-XMVectorIsInfinite endp
+    endp
 
     end

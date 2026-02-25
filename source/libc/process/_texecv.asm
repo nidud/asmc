@@ -17,10 +17,8 @@ endif
 .code
 
 _texecv proc file:tstring_t, argv:tarray_t
-
     _texecve( ldr(file), ldr(argv), _tenviron )
     ret
-
-_texecv endp
+    endp
 
     end

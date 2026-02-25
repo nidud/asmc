@@ -9,10 +9,8 @@ include fltintrn.inc
    .code
 
 __addo proc __ccall a:ptr uint128_t, b:ptr uint128_t
-
     ldr     rcx,a
     ldr     rdx,b
-
     mov     rax,[rdx]
     add     [rcx],rax
     mov     rax,[rdx+size_t]
@@ -25,7 +23,6 @@ ifndef _WIN64
 endif
     mov     rax,rcx
     ret
-
-__addo endp
+    endp
 
     end

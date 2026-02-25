@@ -98,15 +98,14 @@ AddPredefinedConstant endp
 ;; set default wordsize for segment definitions
 
 SetDefaultOfssize proc fastcall private size:int_t
-
+    ;
     ; outside any segments?
-
-    .if( CurrSeg == NULL )
+    ;
+    .if ( CurrSeg == NULL )
         mov MODULE.defOfssize,cl
     .endif
     .return( SetOfssize() )
-
-SetDefaultOfssize endp
+    endp
 
 
 ; set memory model, called by ModelDirective()
@@ -171,13 +170,10 @@ SetModel proc __ccall private uses rsi rdi rbx
 
     ModelSimSegmInit( MODULE._model ) ;; create segments in first pass
     ModelAssumeInit()
-
     .if ( MODULE.list )
         LstWriteSrcLine()
     .endif
-
     RunLineQueue()
-
     .return .if ( Parse_Pass != PASS_1 )
 
     ;; Set @CodeSize
@@ -186,7 +182,6 @@ SetModel proc __ccall private uses rsi rdi rbx
     shl eax,cl
     and eax,SIZE_CODEPTR
     setnz al
-
     mov sym_CodeSize,AddPredefinedConstant( "@CodeSize", eax )
     AddPredefinedText( "@code", SimGetSegName( SIM_CODE ) )
 
@@ -203,13 +198,11 @@ SetModel proc __ccall private uses rsi rdi rbx
         .endc
     .endsw
     mov sym_DataSize,AddPredefinedConstant( "@DataSize", eax )
-
     lea rsi,szDgroup
     .if ( MODULE._model == MODEL_FLAT )
         lea rsi,@CStr("FLAT")
     .endif
     AddPredefinedText( "@data", rsi )
-
     .if ( MODULE.distance == STACK_FAR )
         lea rsi,@CStr("STACK")
     .endif
@@ -218,7 +211,6 @@ SetModel proc __ccall private uses rsi rdi rbx
     ;; Set @Model and @Interface
     mov sym_Model,     AddPredefinedConstant( "@Model", MODULE._model )
     mov sym_Interface, AddPredefinedConstant( "@Interface", MODULE.langtype )
-
     .if ( MODULE.defOfssize == USE64 &&
          ( MODULE.fctype == FCT_WIN64 ||
            MODULE.fctype == FCT_VEC64 ||
@@ -231,8 +223,7 @@ SetModel proc __ccall private uses rsi rdi rbx
         pe_create_PE_header()
     .endif
     ret
-
-SetModel endp
+    endp
 
 
 ; handle .model directive
@@ -276,16 +267,13 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .if ( [rbx].token == T_FINAL )
         .return( asmerr( 2013 ) )
     .endif
-
     mov edi,i
     xor esi,esi
 
     ; get the model argument
 
     FindToken( [rbx].string_ptr, &ModelToken, lengthof( ModelToken ) )
-
     .ifs ( eax >= 0 )
-
         lea esi,[rax+1] ; model is one-base ( 0 is MODEL_NONE )
         add rbx,asm_tok
         inc edi
@@ -299,28 +287,19 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     ;; get the optional arguments: language, stack distance, os
 
     mov init,0
-
     .while ( [rbx].token == T_COMMA )
-
         .break .if edi >= TokenCount
-
         inc edi
         add rbx,asm_tok
         .if ( [rbx].token != T_COMMA )
-
             mov i,0
-
             .ifd ( GetLangType( &i, rbx, &language ) == NOT_ERROR )
-
                 inc edi
                 add rbx,asm_tok
                 mov cl,INIT_LANG
-
             .else
-
                 FindToken( [rbx].string_ptr, &ModelAttr, lengthof( ModelToken ) )
                 .break .ifs ( eax < 0 )
-
                 lea rdx,ModelAttrValue
                 mov cl,[rdx+rax*2].typeinfo.init
                 mov al,[rdx+rax*2].typeinfo.value
@@ -339,7 +318,6 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             ; attribute set already?
             ;
             .if ( cl & init )
-
                 dec edi
                 sub rbx,asm_tok
                .break
@@ -353,12 +331,9 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .if ( [rbx].token != T_FINAL )
         .return( asmerr( 2008, [rbx].tokpos ) )
     .endif
-
     .if ( esi == MODEL_FLAT )
-
         mov eax,MODULE.curr_cpu
         and eax,P_CPU_MASK
-
         .if ( eax < P_386 )
             .return( asmerr( 2085 ) )
         .endif
@@ -370,7 +345,6 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
         .endif
     .endif
-
     mov eax,esi
     mov MODULE._model,al
     mov cl,init
@@ -383,12 +357,10 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .if ( cl & INIT_OS )
         mov MODULE.ostype,ostype
     .endif
-
     SetModelDefaultSegNames()
     SetModel()
-   .return( NOT_ERROR )
-
-ModelDirective endp
+    .return( NOT_ERROR )
+    endp
 
 
 ; set CPU and FPU parameter in ModuleInfo.cpu + ModuleInfo.curr_cpu.
@@ -402,28 +374,20 @@ SetCPU proc __ccall newcpu:cpu_info
 
     ldr edx,newcpu
     mov ecx,MODULE.curr_cpu
-
     .if ( edx == P_86 || ( edx & P_CPU_MASK ) )
-
         ;; reset CPU and EXT bits
         and ecx, not ( P_CPU_MASK or P_EXT_MASK or P_PM )
-
         ;; set CPU bits
         mov eax,edx
         and eax,( P_CPU_MASK or P_PM )
         or  ecx,eax
-
         ;; set default FPU bits if nothing is given and .NO87 not active
-
         mov eax,ecx
         and eax,P_FPU_MASK
-
         .if ( eax != P_NO87 && !( edx & P_FPU_MASK ) )
-
             and ecx,not P_FPU_MASK
             mov eax,ecx
             and eax,P_CPU_MASK
-
             .if ( eax < P_286 )
                 or ecx,P_87
             .elseif ( eax < P_386 )
@@ -433,7 +397,6 @@ SetCPU proc __ccall newcpu:cpu_info
             .endif
         .endif
     .endif
-
     .if ( edx & P_FPU_MASK )
         and ecx,not P_FPU_MASK
         mov eax,edx
@@ -448,13 +411,11 @@ SetCPU proc __ccall newcpu:cpu_info
     .if ( eax == P_64 )
         or ecx,P_EXT_ALL
     .endif
-
     .if ( edx & P_EXT_MASK )
         and ecx,not P_EXT_MASK
         and edx,P_EXT_MASK
         or  ecx,edx
     .endif
-
     mov MODULE.curr_cpu,ecx
     mov eax,ecx
     and eax,P_CPU_MASK
@@ -485,13 +446,11 @@ SetCPU proc __ccall newcpu:cpu_info
         mov eax,M_8086
        .endc
     .endsw
-
     .if ( ecx & P_PM )
         or eax,M_PROT
     .endif
     mov edx,ecx
     and edx,P_FPU_MASK
-
     .switch edx
     .case P_87
         or eax,M_8087
@@ -504,9 +463,7 @@ SetCPU proc __ccall newcpu:cpu_info
        .endc
     .endsw
     mov MODULE.cpu,eax
-
     .if ( MODULE._model == MODEL_NONE )
-
         and ecx,P_CPU_MASK
         .if ( ecx >= P_64 )
             mov eax,USE64
@@ -523,9 +480,8 @@ SetCPU proc __ccall newcpu:cpu_info
     ; differs from Codeinfo cpu setting
 
     mov sym_Cpu,CreateVariable( "@Cpu", MODULE.cpu )
-   .return( NOT_ERROR )
-
-SetCPU endp
+    .return( NOT_ERROR )
+    endp
 
 
 ; handles
@@ -536,31 +492,26 @@ SetCPU endp
 ; .NO87, .MMX, .K3D, .XMM directives.
 
 CpuDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
-
     imul ebx,i,asm_tok
     add rbx,tokenarray
-
     mov edx,GetSflagsSp( [rbx].tokval )
     add rbx,asm_tok
     .if ( [rbx].token != T_FINAL )
         .return( asmerr(2008, [rbx].tokpos ) )
     .endif
     .return( SetCPU( edx ) )
-
-CpuDirective endp
+    endp
 
 else
 
     .code
 
 AddPredefinedConstant proc fastcall private name:string_t, value:int_t
-
     .if CreateVariable( rcx, edx )
         mov [rax].asym.predefined,1
     .endif
     ret
-
-AddPredefinedConstant endp
+    endp
 
 
 SetCPU proc __ccall newcpu:cpu_info
@@ -622,11 +573,8 @@ SetCPU proc __ccall newcpu:cpu_info
         lea rax,coff64_fmtopt
     .endif
     mov MODULE.fmtopt,rax
-
     SetModelDefaultSegNames()
-
     mov MODULE.offsettype,OT_FLAT
-
     .if ( CurrSeg == NULL )
         mov MODULE.defOfssize,USE64
     .endif
@@ -640,16 +588,12 @@ SetCPU proc __ccall newcpu:cpu_info
         mov al,FCT_ELF64
     .endif
     mov MODULE.fctype,al
-
     DefineFlatGroup()
-
     ModelSimSegmInit( MODULE._model ) ;; create segments in first pass
     ModelAssumeInit()
-
     .if ( MODULE.list )
         LstWriteSrcLine()
     .endif
-
     .if ( Parse_Pass != PASS_1 )
         .return( NOT_ERROR )
     .endif
@@ -657,7 +601,6 @@ SetCPU proc __ccall newcpu:cpu_info
     AddPredefinedConstant( "@CodeSize", 0 )
     AddPredefinedText( "@code", SimGetSegName( SIM_CODE ) )
     AddPredefinedConstant( "@DataSize", 0 )
-
     AddPredefinedText( "@data",  "FLAT" )
     AddPredefinedText( "@stack", "FLAT" )
 
@@ -665,21 +608,15 @@ SetCPU proc __ccall newcpu:cpu_info
 
     AddPredefinedConstant( "@Model", MODULE._model );
     mov sym_Interface,AddPredefinedConstant( "@Interface", MODULE.langtype )
-
     mov al,MODULE.fctype
     .if ( al == FCT_WIN64 || al == FCT_VEC64  || al == FCT_ELF64 ) ;; v2.28: added
         mov sym_ReservedStack,AddPredefinedConstant( "@ReservedStack", 0 )
     .endif
-
     .if ( MODULE.sub_format == SFORMAT_PE ||
         ( MODULE.sub_format == SFORMAT_64BIT && Options.output_format == OFORMAT_BIN ) )
         pe_create_PE_header()
     .endif
-
     .return( NOT_ERROR )
-
-SetCPU endp
-
+    endp
 endif
-
     end

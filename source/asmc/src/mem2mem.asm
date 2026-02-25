@@ -26,30 +26,30 @@ include lqueue.inc
     .code
 
 InlineCopy proc __ccall private uses rsi rdi rbx dst:ptr, src:ptr, count:uint_t
-
-    movzx   eax,MODULE.Ofssize
-    shl     eax,2
     lea     rbx,ofss
-    add     rax,rbx
+    movzx   eax,MODULE.Ofssize
+    movzx   edx,byte ptr [rbx+rax+4*3]
+    lea     rax,[rbx+rax*4]
     movzx   esi,byte ptr [rax]
     movzx   edi,byte ptr [rax+1]
     movzx   ebx,byte ptr [rax+2]
     movzx   ecx,byte ptr [rax+3]
-
+    ;
+    ; PUSH/POP should not be used for 64-bit..
+    ;
     AddLineQueueX(
         " push %r\n"
         " push %r\n"
-        " push %r\n"
+        " mov %r, %r\n"
         " lea %r, %s\n"
         " lea %r, %s\n"
         " mov %r, %u\n"
         " rep movsb\n"
+        " mov %r, %r\n"
         " pop %r\n"
-        " pop %r\n"
-        " pop %r", esi, edi, ebx, esi, src, edi, dst, ecx, count, ebx, edi, esi )
+        " pop %r", esi, edi, edx, ebx, esi, src, edi, dst, ecx, count, ebx, edx, edi, esi )
     ret
-
-InlineCopy endp
+    endp
 
 
 InlineMove proc __ccall private uses rsi rdi rbx dst:ptr, src:ptr, count:uint_t
@@ -63,17 +63,13 @@ InlineMove proc __ccall private uses rsi rdi rbx dst:ptr, src:ptr, count:uint_t
     mov     type,eax
     mov     edi,2
     shl     edi,cl
-
     .for ( ebx = 0 : count >= edi : count -= edi, ebx += edi )
-
         AddLineQueueX(
             " mov %r, %r ptr %s[%d]\n"
             " mov %r ptr %s[%d], %r", esi, type, src, ebx, type, dst, ebx, esi )
     .endf
-
     mov esi,count
     .if ( edi == 8 && esi >= 4 )
-
         AddLineQueueX(
             " mov eax, dword ptr %s[%d]\n"
             " mov dword ptr %s[%d], eax", src, ebx, dst, ebx )
@@ -86,35 +82,26 @@ InlineMove proc __ccall private uses rsi rdi rbx dst:ptr, src:ptr, count:uint_t
             " mov byte ptr %s[%d], al", src, ebx, dst, ebx )
     .endf
     ret
-
-InlineMove endp
+    endp
 
 
 RetLineQueue proc __ccall
-
     .if MODULE.list
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
     RunLineQueue()
-   .return( NOT_ERROR )
-
-RetLineQueue endp
+    .return( NOT_ERROR )
+    endp
 
 
 SizeFromExpression proc fastcall private opnd:ptr expr
-
     mov rdx,rcx
     mov rcx,[rdx].expr.mbr
-
     .if ( [rdx].expr.mem_type != MT_EMPTY && [rdx].expr.mem_type != MT_BITS )
-
         movzx ecx,[rdx].expr.mem_type
         SizeFromMemtype( cl, [rdx].expr.Ofssize, [rdx].expr.type )
-
     .elseif ( rcx && [rcx].asym.state == SYM_STRUCT_FIELD )
-
         .if ( [rcx].asym.crecord )
-
             movzx   eax,[rcx].asym.bitf_bits
             mov     edx,eax
             shr     eax,3
@@ -124,20 +111,13 @@ SizeFromExpression proc fastcall private opnd:ptr expr
         .else
             jmp symbol_size
         .endif
-
     .else
-
         xor eax,eax
         mov rcx,[rdx].expr.type
-
         .if rcx
-
             symbol_size:
-
             mov eax,[rcx].asym.total_size
-
             .if [rcx].asym.isarray
-
                 mov ecx,[rcx].asym.total_length
                 xor edx,edx
                 div ecx
@@ -145,8 +125,7 @@ SizeFromExpression proc fastcall private opnd:ptr expr
         .endif
     .endif
     ret
-
-SizeFromExpression endp
+    endp
 
 
 mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr expr
@@ -186,11 +165,8 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
         add rcx,asm_tok*2
     .endif
     mov dst,[rcx].asm_tok.tokpos
-
     .for ( rdx = rcx : [rdx].asm_tok.token != T_FINAL : rdx += asm_tok )
-
         .if ( [rdx].asm_tok.token == T_REG )
-
             mov eax,[rdx].asm_tok.tokval
             .if ( eax == T_AL || eax == T_AX || eax == T_EAX || eax == T_RAX )
                 .return asmerr( 2070 )
@@ -205,7 +181,6 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
     mov comma,[rdx].asm_tok.tokpos
     add rdx,asm_tok
     .if ( [rdx].asm_tok.token == '&' )
-
         inc isptr
         add rdx,asm_tok
     .endif
@@ -217,9 +192,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
 
     mov rsi,opnd
     mov size,SizeFromExpression( rsi )
-
     .if  ( !isptr )
-
         .if SizeFromExpression( &[rsi+expr] )
             .if eax < size
                 mov size,eax
@@ -232,9 +205,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
 
     mov rdx,tokenarray
     mov op,[rdx].asm_tok.tokval
-
     .if ( eax != T_MOV && ( [rsi].expr.mem_type & MT_FLOAT || [rsi+expr].expr.mem_type & MT_FLOAT ) )
-
         mov isfloat,1
         .if ( size != 4 && size != 8 )
             .return asmerr( 2070 )
@@ -270,7 +241,6 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
         .endif
         .endc
     .endsw
-
     .if ( esi > edi && ebx == OP_MS )
         mov edi,esi
     .endif
@@ -285,28 +255,21 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
     mov rdx,tok
 
     .if ( isptr )
-
         mov edi,ecx
         AddLineQueueX( " lea %r, %s", ecx, [rdx].asm_tok.tokpos )
         .if ( size == 4 && edi == T_RAX )
             mov edi,T_EAX
         .endif
-
     .elseif ( edi > esi && esi < T_EAX )
-
         AddLineQueueX( " movzx eax, %s", rax )
-
     .else
-
         mov ecx,8
         .switch pascal edi
         .case T_AL:  mov ecx,1
         .case T_AX:  mov ecx,2
         .case T_EAX: mov ecx,4
         .endsw
-
         .if ( size <= ecx )
-
             mov ecx,T_MOV
             .if ( isfloat )
                 mov ecx,T_MOVSS
@@ -323,9 +286,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
                 mov edi,T_XMM0
             .endif
             AddLineQueueX( " %r %r, %s", ecx, esi, rax )
-
         .elseif ( op == T_MOV )
-
             mov rsi,src
             mov edi,size
             .if regz == 8
@@ -339,13 +300,10 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
             .else
                 InlineMove( dst, rsi, edi )
             .endif
-
             xor ebx,ebx
             mov rax,comma
             mov byte ptr [rax],','
-
         .elseif ( size == 8 && ecx == 4 )
-
             mov rbx,src
             mov edi,op
             mov esi,edi
@@ -379,7 +337,6 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
             .return asmerr( 2070 )
         .endif
     .endif
-
     .if ( rbx )
         .if ( isfloat )
             mov rcx,comma
@@ -393,8 +350,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
     .endif
     RetLineQueue()
     ret
-
-mem2mem endp
+    endp
 
     assume rdi:token_t
 
@@ -414,7 +370,6 @@ immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
             add ecx,1
         .endif
     .endf
-
     inc ecx
     mov count,ecx
     mov eax,16
@@ -422,19 +377,14 @@ immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
     idiv ecx
     mov size,eax
     mul ecx
-
     .if ( eax != 16 )
-
         asmerr( 2036, CurrSource )
         mov count,1
         mov size,4
     .endif
-
     Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
     mov TokenCount,eax
-
     .for ( i = 0, rdi = result : count : count--, i++ )
-
         .break .ifd EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR
         .if opnd.mem_type & MT_FLOAT
             quad_resize(&opnd, size)
@@ -443,14 +393,11 @@ immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
         mov ecx,size
         rep movsb
     .endf
-
     tstrcpy( CurrSource, &oldtok )
     Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
     mov TokenCount,eax
-
-   .return( 16 )
-
-immarray16 endp
+    .return( 16 )
+    endp
 
 
 imm2xmm proc __ccall uses rsi rdi rbx tokenarray:token_t, opnd:expr_t, size:uint_t
@@ -461,12 +408,9 @@ imm2xmm proc __ccall uses rsi rdi rbx tokenarray:token_t, opnd:expr_t, size:uint
 
     ldr rdi,tokenarray
     ldr rcx,opnd
-
     mov esi,[rdi].tokval
     .if ( size == 16 && [rcx].expr.mem_type == MT_EMPTY )
-
         immarray16(rdi, rcx)
-
 
     ; added v2.34.73 - movxx reg,0.0
 
@@ -503,21 +447,17 @@ endif
     .endif
     RetLineQueue()
     ret
-
-imm2xmm endp
+    endp
 
     assume rdi:nothing
 
 ; Handle C-type RECORD fields
 
 Const64Field proc __ccall private uses rsi rdi rbx inst:uint_t, type:uint_t, name:string_t, offs:uint_t, value:qword
-
    .new notinst:int_t = 0
-
     ldr ebx,inst
     ldr rsi,name
     ldr edi,offs
-
     .if ( ebx == T_AND )
         mov notinst,T_NOT
     .endif
@@ -531,8 +471,7 @@ Const64Field proc __ccall private uses rsi rdi rbx inst:uint_t, type:uint_t, nam
         AddLineQueueX( " %r %r ptr %s[%d], %r 0x%x", ebx, type, rsi, edi, notinst, ecx )
     .endif
     ret
-
-Const64Field endp
+    endp
 
 CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr expr
 
@@ -556,9 +495,7 @@ CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr 
         xchg rbx,rdi
         inc reverse
     .endif
-
     .if ( [rbx].expr.indirect )
-
         mov rcx,[rbx].expr.base_reg
         mov rdx,[rbx].expr.idx_reg
         .if ( rdx )
@@ -570,7 +507,6 @@ CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr 
         mov rcx,[rbx].expr.sym
         tstrcpy( &name, [rcx].asym.name )
     .endif
-
     mov rdx,rdi
     mov rdi,[rbx].expr.mbr
     .if ( [rdi].asym.bitexpr )
@@ -593,13 +529,10 @@ CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr 
     .endsw
     mov type,ecx
     mov ecx,dist
-
     .if ( bits == 8 || bits == 16 || bits == 32 )
-
         .for ( edi = 0 : edi < ecx : edi+=bits )
         .endf
         .if ( ecx == edi )
-
             mov eax,bits
             shr eax,3
             shr ecx,3
@@ -617,15 +550,12 @@ CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr 
     .endif
     mov size,eax
     mov dist,ecx
-
     .if ( !aligned )
-
         mov eax,ecx
         and ecx,-8
         sub eax,ecx
         add eax,bits
         .if ( eax <= 32 )
-
             sub dist,ecx
             shr ecx,3
             add offs,ecx
@@ -642,7 +572,6 @@ CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr 
             .endif
         .endif
     .endif
-
     mov eax,1
     mov ecx,bits
 ifdef _WIN64
@@ -775,9 +704,7 @@ compare_reg:
         mov eax,[rcx+rax].special_item.sflags
         and eax,SFR_SIZMSK
         mov regsize,eax
-
         .if ( !reverse )
-
             .if ( eax > size )
                 mov esi,get_register( esi, size )
             .elseif ( eax < size )
@@ -810,19 +737,14 @@ else
             mov dword ptr mask[4],0
 endif
         .endif
-
         .if ( eax < size )
-
             mov esi,get_register( esi, 4 )
             mov regsize,4
             mov eax,4
         .endif
-
 usereg:
-
         mov edx,T_MOV
         .if ( size < eax )
-
             mov edx,T_MOVZX
             .if ( eax == 8 )
                 mov esi,get_register( esi, 4 )
@@ -834,11 +756,9 @@ usereg:
             .endif
         .endif
         AddLineQueueX( " %r %r, %r ptr %s[%d]", edx, esi, type, &name, offs )
-
         mov  ecx,dword ptr mask[0]
         mov  edx,dword ptr mask[4]
         .if ( ecx || edx )
-
             imul edi,regsize,8
             sub  edi,dist
             .if ( edx == 0 )
@@ -871,7 +791,6 @@ mem_const:
 mem_reg:
     AddLineQueueX( " %r %r ptr %s[%d], %r", edx, type, &name, offs, esi )
     jmp done
-
-CRecordField endp
+    endp
 
     end

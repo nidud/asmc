@@ -9,7 +9,7 @@ args_x macro
     endm
 
     option dllimport:<msvcrt>
-    wcslen proto :ptr byte
+    externdef import wcslen:ptr
     option dllimport:<kernel32>
     MEM_COMMIT equ 0x1000
     MEM_RELEASE equ 0x8000
@@ -42,39 +42,27 @@ size_s  equ 4096 ; maximum data size
 TEST_OVERLAP equ 1
 
 validate_x proc uses rsi rdi rbx x:dword
-
     lea rax,proc_p
     mov rsi,[rax+rcx*8]
-
     .if !rsi
-
         .if ReadProc(ecx)
-
             mov rsi,proc_x
         .endif
     .endif
-
     .if rsi
-
         .for edi = 0: edi < 200: edi+=2
-
             lea  rcx,str_1[size_s]
             sub  rcx,rdi
             call rsi
             mov  ecx,edi
             shr  ecx,1
-
             .if eax != ecx
-
                 printf("error: eax = %d (%d) proc_%d\n", eax, ecx, x)
                 inc nerror
             .endif
         .endf
-
 ifdef TEST_OVERLAP
-
         .if VirtualAlloc(0, 4096, MEM_COMMIT, PAGE_READWRITE)
-
             mov rbx,rax
             mov rdi,rax
             mov ecx,4096
@@ -87,34 +75,27 @@ ifdef TEST_OVERLAP
                 mov word ptr [rbx+rdi],0
                 mov rcx,rbx
                 call rsi
-
             .until edi == 4096 - 66 - 30
             sub rbx,30
             VirtualFree(rbx, 0, MEM_RELEASE)
         .endif
 endif
-
     .else
         printf("error load: %d.asm\n", x)
         inc nerror
     .endif
     ret
-
-validate_x ENDP
+    endp
 
 main proc
-
     lea rdi,str_1
     mov ecx,size_s
     mov al,'x'
     rep stosb
     xor eax,eax
     stosd
-
-    wcslen(&str_1)
-    mov rax,__imp_wcslen
+    mov rax,wcslen
     mov proc_p,rax
-
     procs
         validate_x(x)
         .if nerror
@@ -123,12 +104,10 @@ main proc
            .return 1
         .endif
         endm
-
     GetCycleCount(0, 10, 2, 8000)
     GetCycleCount(10, 80, 16, 5000)
     GetCycleCount(600, 1000, 200, 1000)
     ret
-
-main endp
+    endp
 
     end start

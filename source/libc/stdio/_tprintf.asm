@@ -10,7 +10,6 @@ include tchar.inc
     .code
 
 _tprintf proc uses rbx format:tstring_t, argptr:VARARG
-
     mov ebx,_stbuf( stdout )
     _toutput( stdout, format, &argptr )
     mov ecx,ebx
@@ -18,7 +17,6 @@ _tprintf proc uses rbx format:tstring_t, argptr:VARARG
     _ftbuf( ecx, stdout )
     mov eax,ebx
     ret
-
-_tprintf endp
+    endp
 
     end

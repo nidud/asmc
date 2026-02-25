@@ -30,27 +30,20 @@ define swap     <exchange>
 
 ifdef _WIN64
 tqsort proc __ccall uses rsi rdi rbx r12 r13 r14 p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
-
     define lo    <rsi>
     define hi    <rdi>
     define loguy <r12>
     define higuy <r13>
     define stkptr <r14d>
-
     xor r14d,r14d
-
 else
 tqsort proc __ccall uses esi edi ebx p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
-
     define lo <esi>
     define hi <edi>
-
    .new loguy:ptr
    .new higuy:ptr
    .new stkptr:int_t = 0
-
 endif
-
    .new lostk[STKSIZ]:ptr
    .new histk[STKSIZ]:ptr
 
@@ -58,15 +51,12 @@ endif
     ldr edx,n
 
     .if ( edx > 1 )
-
         lea eax,[rdx-1]
         mul w
         mov lo,rcx
         lea rax,[rcx+rax]
         mov hi,rax
-
         .while 1
-
             mov ecx,w
             mov rax,hi
             add rax,rcx ; middle from (hi - lo) / 2
@@ -79,7 +69,6 @@ endif
             .endif
             mov rbx,lo
             add rbx,rax
-
             .ifsd compare(lo, rbx) > 0
                 swap(lo, rbx, w)
             .endif
@@ -89,28 +78,20 @@ endif
             .ifsd compare(rbx, hi) > 0
                 swap(rbx, hi, w)
             .endif
-
             mov loguy,lo
             mov higuy,hi
-
             .while 1
-
                 mov ecx,w
                 add loguy,rcx
                 .if loguy < hi
-
                     .continue .ifsd compare(loguy, rbx) <= 0
                 .endif
-
                 .while 1
-
                     mov ecx,w
                     sub higuy,rcx
-
                     .break .if higuy <= rbx
                     .break .ifsd compare(higuy, rbx) <= 0
                 .endw
-
                 mov rcx,higuy
                 mov rax,loguy
                 .if rcx < rax
@@ -121,75 +102,55 @@ endif
                 .endif
                 swap(rcx, rax, w)
             .endw
-
             mov eax,w
             add higuy,rax
-
             .if ( rbx < higuy )
-
                 .while 1
-
                     mov eax,w
                     sub higuy,rax
-
                     .break .if higuy <= rbx
                     .break .ifd compare(higuy, rbx)
                 .endw
             .endif
-
             .if ( rbx >= higuy )
-
                 .while 1
-
                     mov eax,w
                     sub higuy,rax
-
                     .break .if higuy <= lo
                     .break .ifd compare(higuy, rbx)
                 .endw
             .endif
-
             mov rdx,loguy
             mov rax,higuy
             sub rax,lo
             mov rcx,hi
             sub rcx,rdx
-
             .if rax < rcx
-
                 .if rdx < hi
-
                     mov ecx,stkptr
                     mov lostk[rcx*size_t],rdx
                     mov histk[rcx*size_t],hi
                     inc stkptr
                 .endif
-
                 mov rax,higuy
                 .if lo < rax
-
                     mov hi,rax
                    .continue
                 .endif
             .else
-
                 mov rax,higuy
                 .if lo < rax
-
                     mov ecx,stkptr
                     mov histk[rcx*size_t],rax
                     mov lostk[rcx*size_t],lo
                     inc stkptr
                 .endif
-
                 .if rdx < hi
-
                     mov lo,rdx
                    .continue
                 .endif
             .endif
             .break .if !stkptr
-
             dec stkptr
             mov ecx,stkptr
             mov lo,lostk[rcx*size_t]
@@ -203,7 +164,6 @@ endif
 tstrupr proc fastcall string:string_t
     mov rdx,rcx
     .repeat
-
         .if ( isllower( [rcx] ) )
             and byte ptr [rcx],not 0x20
         .endif

@@ -17,11 +17,8 @@ ifdef _WIN64
     imul    rdx
 else
     .if ( !edx && !ecx )
-
         mul ebx
-
     .else
-
         push    eax
         push    edx
         mul     ecx
@@ -32,12 +29,10 @@ else
         pop     eax
         mul     ebx
         add     edx,ecx
-
     .endif
 endif
     ret
-
-allmul endp
+    endp
 
 ifndef _WIN64
 __llmul:: ; PellesC
@@ -51,5 +46,4 @@ _allmul::
     pop     ebx
     ret     16
 endif
-
     end

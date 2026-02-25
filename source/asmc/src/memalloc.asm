@@ -60,47 +60,34 @@ currfree    uint_t 0   ; free memory left in current block; to be moved to Modul
     .code
 
 MemInit proc
-
     mov pBase,0
     mov currfree,0
 ifndef __UNIX__
     mov ProcessHeap,GetProcessHeap()
 endif
     ret
-
-MemInit endp
+    endp
 
 ifdef __UNIX__
-
 MemAlloc proc fastcall uses rsi rdi rbx len:uint_t
-
     mov ebx,ecx
-
     .if malloc( ecx )
-
         mov ecx,ebx
         mov rdx,rax
         mov rdi,rax
         xor eax,eax
         rep stosb
         mov rax,rdx
-
     .else
-
 else
-
 MemAlloc proc fastcall len:uint_t
-
     .if ( HeapAlloc( ProcessHeap, HEAP_ZERO_MEMORY, rcx ) == NULL )
-
 endif
-
         mov currfree,eax
         asmerr( 1018 )
     .endif
     ret
-
-MemAlloc endp
+    endp
 
 
 ifdef _LIN64
@@ -114,61 +101,47 @@ else
     HeapFree( ProcessHeap, 0, rcx )
 endif
     ret
-
-MemFree endp
+    endp
 
 
 MemFini proc uses rbx
-
     mov rbx,pBase
     .while rbx
-
         mov rcx,rbx
         mov rbx,[rbx]
         MemFree(rcx)
     .endw
     mov pBase,rbx
     ret
-
-MemFini endp
+    endp
 
 
 LclAlloc proc fastcall size:uint_t
-
     mov rax,pCurr
     add ecx,_GRANULARITY-1
     and ecx,-_GRANULARITY
-
     .if ( ecx <= currfree )
-
         sub currfree,ecx
         add pCurr,rcx
-
     .else
-
         mov currfree,ecx
         mov eax,( _HEAP_GROWSIZE - _GRANULARITY )
         .if ( ecx > eax )
             mov eax,ecx
         .endif
         add eax,_GRANULARITY
-
         .if ( MemAlloc( eax ) == NULL )
-
             mov currfree,eax
             asmerr( 1018 )
         .endif
-
         mov rcx,pBase
         mov [rax],rcx
         mov pBase,rax
-
         add rax,_GRANULARITY
         mov ecx,currfree
         mov edx,ecx
         add rdx,rax
         mov pCurr,rdx
-
         mov edx,( _HEAP_GROWSIZE - _GRANULARITY )
         .if ( ecx > edx )
             mov edx,ecx
@@ -177,35 +150,25 @@ LclAlloc proc fastcall size:uint_t
         mov currfree,edx
     .endif
     ret
-
-LclAlloc endp
+    endp
 
 
 LclDup proc fastcall uses rbx string:string_t
-
     mov rbx,rcx
     lea rcx,[tstrlen( rcx ) + 1]
-
-   .return( tstrcpy( LclAlloc( ecx ), rbx ) )
-
-LclDup endp
+    .return( tstrcpy( LclAlloc( ecx ), rbx ) )
+    endp
 
 
 MemDup proc fastcall uses rbx string:string_t
-
     mov rbx,rcx
     lea rcx,[tstrlen( rcx ) + 1]
-
-   .return( tstrcpy( MemAlloc( ecx ), rbx ) )
-
-MemDup endp
+    .return( tstrcpy( MemAlloc( ecx ), rbx ) )
+    endp
 
 ifndef _WIN64
-
     option stackbase:esp
-
 alloca proc byte_count:UINT
-
     mov     ecx,[esp]   ; return address
     mov     eax,[esp+4] ; size to probe
     add     esp,8
@@ -223,10 +186,6 @@ alloca proc byte_count:UINT
     sub     esp,4
     or      dword ptr [esp],0
     jmp     ecx
-
-alloca endp
-
+    endp
 endif
-
     end
-

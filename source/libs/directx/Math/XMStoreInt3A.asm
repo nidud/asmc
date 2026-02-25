@@ -16,7 +16,6 @@ XMStoreInt3A proc XM_CALLCONV pDestination:ptr uint32_t, V:FXMVECTOR
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2, 2, 2, 2))
     _mm_store_ss([rcx][8], xmm0)
     ret
-
-XMStoreInt3A endp
+    endp
 
     end

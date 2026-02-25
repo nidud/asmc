@@ -12,7 +12,6 @@ include tchar.inc
     option dotname
 
 _tcsrchr proc string:tstring_t, chr:int_t
-
     ldr     rcx,string
     ldr     edx,chr
     sub     rcx,tchar_t
@@ -27,7 +26,6 @@ _tcsrchr proc string:tstring_t, chr:int_t
     jmp     .0
 .1:
     ret
-
-_tcsrchr endp
+    endp
 
     end

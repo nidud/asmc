@@ -39,7 +39,6 @@ XMLoadFloat3SE proc XM_CALLCONV pSource:ptr XMFLOAT3SE
     movq     xmm1,rax
     shufps   xmm0,xmm1,01000100B
     ret
-
-XMLoadFloat3SE endp
+    endp
 
     end

@@ -35,7 +35,6 @@ XMVectorInBoundsR proc XM_CALLCONV pCR:ptr uint32_t, V:FXMVECTOR, Bounds:FXMVECT
     .endif
     mov [rcx],edx
     ret
-
-XMVectorInBoundsR endp
+    endp
 
     end

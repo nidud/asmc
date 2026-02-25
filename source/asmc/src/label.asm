@@ -29,21 +29,17 @@ endif
 .code
 
 LabelInit proc __ccall
-
     mov MODULE.anonymous_label,0
     ret
-
-LabelInit endp
+    endp
 
 
 GetAnonymousLabel proc __ccall buffer:string_t, value:int_t
-
     mov eax,MODULE.anonymous_label
     add eax,value
     tsprintf( buffer, "L&_%04u", eax )
-   .return( buffer )
-
-GetAnonymousLabel endp
+    .return( buffer )
+    endp
 
 
 ; define a (code) label.
@@ -59,7 +55,6 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
   local buffer[20]:char_t
 
     .if ( CurrSeg == NULL )
-
         asmerr( 2034 )
        .return( NULL )
     .endif
@@ -72,23 +67,18 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
     and al,MT_SPECIAL_MASK
     .if ( al == MT_ADDRESS )
         .if ( SegAssumeTable[ASSUME_CS*assume_info].error ) ; CS assumed to ERROR?
-
             asmerr( 2108 )
            .return( NULL )
         .endif
     .endif
-
     mov rsi,name
     mov eax,[rsi]
     and eax,0x00FFFFFF
-
     .if ( eax == '@@' )
-
         lea rsi,buffer
         inc MODULE.anonymous_label
         tsprintf( rsi, "L&_%04u", MODULE.anonymous_label )
     .endif
-
     .if ( bLocal )
         SymLookupLocal( rsi )
     .else
@@ -97,32 +87,25 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
     mov rdi,rax
 
     .if ( Parse_Pass == PASS_1 )
-
         .if( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.weak )
-
+            ;
             ; don't accept EXTERNDEF for a local label!
-
+            ;
             .if ( [rdi].asym.isproc || ( bLocal && CurrProc ) )
-
                 asmerr( 2005, name )
                .return( NULL )
             .endif
-
+            ;
             ; ensure that type of symbol is compatible!
-
+            ;
             .if ( [rdi].asym.mem_type != MT_EMPTY && [rdi].asym.mem_type != mem_type )
                 asmerr( 2004, rsi )
             .endif
-
             sym_ext2int( rdi )
-
         .elseif ( [rdi].asym.state == SYM_UNDEFINED )
-
             sym_remove_table( &SymTables[TAB_UNDEF], rdi )
             mov [rdi].asym.state,SYM_INTERNAL
-
         .else
-
             asmerr(2005, rsi )
            .return( NULL )
         .endif
@@ -132,7 +115,6 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
 
         mov rcx,CurrSeg
         mov rcx,[rcx].asym.seginfo
-
         mov [rdi].asym.next,[rcx].seg_info.label_list
         mov [rcx].seg_info.label_list,rdi
 
@@ -141,35 +123,25 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
         .if ( [rdi].asym.langtype == LANG_NONE )
             mov [rdi].asym.langtype,MODULE.langtype
         .endif
-
         assume rbx:ptr qualified_type
         mov rbx,ti
 
         ; v2.05: added to accept type prototypes
 
         .if ( mem_type == MT_PROC )
-
             .if ( !( [rdi].asym.isproc ) )
-
                 CreateProc( rdi, NULL, SYM_INTERNAL )
                 CopyPrototype( rdi, [rbx].symtype )
             .endif
-
             mov rcx,[rbx].symtype
             mov mem_type,[rcx].asym.mem_type
             mov [rbx].symtype,NULL
         .endif
-
         mov [rdi].asym.mem_type,mem_type
-
         .if ( rbx )
-
             .if ( mem_type == MT_TYPE )
-
                 mov [rdi].asym.type,[rbx].symtype
-
             .else
-
                 mov [rdi].asym.Ofssize,[rbx].Ofssize
                 mov [rdi].asym.is_ptr,[rbx].is_ptr
                 mov [rdi].asym.is_far,[rbx].is_far
@@ -178,12 +150,11 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
             .endif
         .endif
     .else
-
+        ;
         ; save old offset
-
+        ;
         mov adr,[rdi].asym.offs
     .endif
-
     mov [rdi].asym.isdefined,1
 
     ; v2.05: the label may be "data" - due to the way struct initialization
@@ -194,15 +165,12 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
         mov [rdi].asym.asmpass,Parse_Pass
     .endif
     SetSymSegOfs( rdi )
-
     .if ( Parse_Pass != PASS_1 && [rdi].asym.offs != adr )
         mov MODULE.PhaseError,TRUE
     .endif
-
     BackPatch( rdi )
-   .return( rdi )
-
-CreateLabel endp
+    .return( rdi )
+    endp
 
 
 ; LABEL directive.
@@ -222,7 +190,6 @@ endif
     .if ( i != 1 ) ; LABEL must be preceded by an ID
         .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
-
     inc i
     mov ti.size,0
     mov ti.is_ptr,0
@@ -231,14 +198,11 @@ endif
     mov ti.ptr_memtype,MT_EMPTY
     mov ti.symtype,NULL
     mov ti.Ofssize,MODULE.Ofssize
-
     .ifd ( GetQualifiedType( &i, tokenarray, &ti ) == ERROR )
         .return
     .endif
-
     imul ebx,i,asm_tok
     add rbx,tokenarray
-
 if LABELARRAY
     mov length,-1
 endif
@@ -247,7 +211,6 @@ endif
 
     mov al,ti.mem_type
     and al,MT_SPECIAL_MASK
-
     .if (  al == MT_ADDRESS )
 
         ; dont allow near16/far16/near32/far32 if size won't match
@@ -257,22 +220,15 @@ endif
         .endif
 
 if LABELARRAY
-
-    .elseif ( [rbx].token == T_COLON && [rbx+asm_tok].token != T_FINAL &&
-            Options.strict_masm_compat == FALSE )
-
+    .elseif ( [rbx].token == T_COLON && [rbx+asm_tok].token != T_FINAL && Options.strict_masm_compat == FALSE )
        .new opnd:expr
         inc i
-
         .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .return
         .endif
-
         imul ebx,i,asm_tok
         add rbx,tokenarray
-
         .if ( opnd.kind != EXPR_CONST )
-
             mov rcx,opnd.sym
             .if ( rcx && [rcx].asym.state == SYM_UNDEFINED )
                 mov opnd.value,1
@@ -280,16 +236,12 @@ if LABELARRAY
                 .return( asmerr( 2026 ) )
             .endif
         .endif
-
         mov length,opnd.value
 endif
-
     .endif
-
     .if ( [rbx].token != T_FINAL )
         .return( asmerr( 2008, [rbx].tokpos ) ) ; v2.10: display tokpos
     .endif
-
     .if ( MODULE.list )
         LstWrite( LSTTYPE_LABEL, 0, NULL )
     .endif
@@ -306,12 +258,9 @@ endif
         mov rcx,rax
         mov al,[rcx].asym.mem_type
         and al,MT_SPECIAL_MASK
-
         .if ( !( [rcx].asym.isdata ) && al != MT_ADDRESS )
-
 if LABELARRAY
             .if ( length != -1 )
-
                 mov eax,ti.size
                 mul length
                 mov [rcx].asym.total_size,eax
@@ -329,8 +278,7 @@ endif
         .return( NOT_ERROR )
     .endif
     .return( ERROR )
-
-LabelDirective endp
+    endp
 
     end
 

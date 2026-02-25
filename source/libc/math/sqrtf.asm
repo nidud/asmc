@@ -16,7 +16,6 @@ else
     fsqrt
 endif
     ret
-
-sqrtf endp
+    endp
 
     end

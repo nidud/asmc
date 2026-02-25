@@ -9,7 +9,6 @@ include string.inc
     .code
 
 memchr proc p:ptr, c:int_t, count:size_t
-
     ldr     eax,c
 if defined(_WIN64) and defined(__UNIX__)
     mov     rcx,rdx
@@ -33,7 +32,6 @@ else
     .endif
 endif
     ret
-
-memchr endp
+    endp
 
     end

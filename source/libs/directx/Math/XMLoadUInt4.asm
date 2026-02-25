@@ -35,7 +35,6 @@ XMLoadUInt4 proc XM_CALLCONV pSource:ptr XMUINT4
     _mm_and_ps(xmm0, g_XMFixUnsigned)
     _mm_add_ps(xmm0, xmm1)
     ret
-
-XMLoadUInt4 endp
+    endp
 
     end

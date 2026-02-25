@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorSplatOne proc XM_CALLCONV
-
     _mm_store_ps(xmm0, g_XMOne)
     ret
-
-XMVectorSplatOne endp
+    endp
 
     end

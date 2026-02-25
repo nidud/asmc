@@ -15,7 +15,6 @@ XMMatrixTranslation proc XM_CALLCONV OffsetX:float, OffsetY:float, OffsetZ:float
     _mm_store_ps(xmm1, g_XMIdentityR1.v)
     _mm_store_ps(xmm2, g_XMIdentityR2.v)
     ret
-
-XMMatrixTranslation endp
+    endp
 
     end

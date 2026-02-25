@@ -12,11 +12,9 @@ _cvtbuf string_t NULL
 .code
 
 __initcvtbuf proc private
-
     mov _cvtbuf,malloc(_CVTBUFSIZE)
     ret
-
-__initcvtbuf endp
+    endp
 
 .pragma init(__initcvtbuf, 90)
 

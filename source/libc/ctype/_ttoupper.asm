@@ -14,23 +14,17 @@ externdef _pcumap:string_t
     .code
 
 _ttoupper proc c:int_t
-
     ldr eax,c
     .if ( eax < 256 )
-
         add   rax,_pcumap
         movzx eax,byte ptr [rax]
-
 if defined(_UNICODE) and (WINVER GE 0x0600)
-
     .else
         LCMapStringEx( LOCALE_NAME_USER_DEFAULT, LCMAP_UPPERCASE, &c, 1, &c, 1, 0, 0, 0 )
         mov eax,c
-
 endif
     .endif
     ret
-
-_ttoupper endp
+    endp
 
     end

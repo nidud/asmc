@@ -29,6 +29,6 @@ else
     fstp    st(1)
 endif
     ret
-fmodf endp
+    endp
 
     end

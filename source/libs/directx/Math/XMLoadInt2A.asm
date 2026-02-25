@@ -13,7 +13,6 @@ XMLoadInt2A proc XM_CALLCONV pSource:ptr uint32_t
 
     _mm_loadl_epi64(rcx)
     ret
-
-XMLoadInt2A endp
+    endp
 
     end

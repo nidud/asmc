@@ -54,21 +54,18 @@ GetOperator proc __ccall token:token_t
     .case '%' : .return T_MOD
     .endsw
     .return 0
-
-GetOperator endp
+    endp
 
 
 GetOpType proc __ccall uses rbx oper:token_t, string:string_t
-
     ldr rbx,oper
     .if ( GetOperator(rbx) == 0 )
         .return ERROR
     .endif
     add rbx,rcx
     GetResWName(eax, string)
-   .return rbx
-
-GetOpType endp
+    .return rbx
+    endp
 
 
 ;
@@ -84,59 +81,46 @@ OperatorParam proc __ccall uses rsi rdi rbx tokenarray:token_t, param:string_t
     ldr rbx,tokenarray
     mov rdi,tstrcat( param, "_" )
     add rdi,tstrlen(rdi)
-
     .while ( [rbx].token == T_BINARY_OPERATOR && [rbx].tokval == T_PTR )
-
         GetResWName( T_PTR, rdi )
         add rdi,tstrlen( rdi )
         add rbx,asm_tok
     .endw
-
     .if ( [rbx].token == T_STYPE )
-
         GetResWName( [rbx].tokval, rdi )
        .return
     .endif
     .return .if ( [rbx].token != T_ID )
-
     mov rcx,[rbx].string_ptr
     mov eax,[rcx]
     or  eax,0x202020
     .if ( eax == 'sba' )
-
         tstrcat(rdi, "abs")
        .return
     .endif
 
    .new i:int_t = 0
    .new ti:qualified_type = {0}
-
    .return .ifd ( GetQualifiedType( &i, rbx, &ti ) == ERROR )
 
     .if ( ti.mem_type == MT_PTR )
-
         .while ( ti.is_ptr )
-
             GetResWName(T_PTR, rdi)
             add rdi,tstrlen(rdi)
             dec ti.is_ptr
         .endw
     .endif
-
     mov rsi,ti.symtype
     .if ( rsi && [rsi].asym.state == SYM_TYPE )
         tstrcat(rdi, [rsi].asym.name)
     .endif
     ret
-
-OperatorParam endp
+    endp
 
 
 GetArgs proc __ccall private uses rsi rbx tokenarray:token_t
-
     mov rsi,rbx
     .for ( : [rbx].token != T_FINAL : rbx += asm_tok )
-
         .if ( [rbx].token == T_OP_BRACKET )
             .for ( rbx += asm_tok, edx = 1 : [rbx].token != T_FINAL : rbx += asm_tok )
                 .if ( [rbx].token == T_OP_BRACKET )
@@ -165,8 +149,7 @@ GetArgs proc __ccall private uses rsi rbx tokenarray:token_t
     xor edx,edx
     div ecx
     ret
-
-GetArgs endp
+    endp
 
 
 ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:token_t
@@ -336,8 +319,7 @@ ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:token_t
         InsertLineQueue()
     .endif
     .return NOT_ERROR
-
-ProcessOperator endp
+    endp
 
 
     assume rsi:expr_t, rbx:ptr opinfo
@@ -366,11 +348,9 @@ EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:toke
         .return ERROR
     .endif
 
-
     mov rsi,opnd1
     mov rcx,[rsi].type
     mov rax,[rsi].sym
-
     .if ( !rcx && rax )
         .if ( [rax].asym.mem_type == MT_TYPE )
             mov rax,[rax].asym.type
@@ -416,12 +396,10 @@ EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:toke
         mov [rsi].op,rax
     .endif
     .return NOT_ERROR
-
-EvalOperator endp
+    endp
 
 
 GetArgs2 proc fastcall private opnd:ptr expr
-
     mov eax,[rcx].expr.kind
     .switch eax
     .case EXPR_FLOAT
@@ -443,8 +421,7 @@ GetArgs2 proc fastcall private opnd:ptr expr
        .endc
     .endsw
     ret
-
-GetArgs2 endp
+    endp
 
 
 ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
@@ -549,8 +526,7 @@ ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
         RunLineQueue()
     .endif
     .return NOT_ERROR
-
-ParseOperator endp
+    endp
 
     end
 

@@ -21,7 +21,6 @@ fread proc uses rbx r12 buffer:string_t, size:int_t, num:int_t, fp:LPFILE
 else
 fread proc uses rsi rdi rbx buffer:string_t, size:int_t, num:int_t, fp:LPFILE
 endif
-
   local total:uint_t   ; total bytes to read
   local count:uint_t   ; num bytes left to read
   local bufsize:uint_t ; size of stream buffer
@@ -29,18 +28,14 @@ endif
     ldr rdi,buffer
     ldr rbx,fp
     ldr eax,size
-
     mul ldr(num)
     .if ( eax == 0 )
         .return
     .endif
-
     mov count,eax
     mov total,eax
-
     mov eax,_MAXIOBUF
     .if ( [rbx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF )
-
         mov eax,[rbx]._bufsiz ; already has buffer, use its size
     .endif
     mov bufsize,eax
@@ -49,13 +44,10 @@ endif
 
         mov eax,count
         mov ecx,[rbx]._cnt
-
         .if ( [rbx]._flag & _IOMYBUF or _IOYOURBUF && ecx )
-
             .if ( eax < ecx )
                 mov ecx,eax
             .endif
-
             mov rsi,[rbx]._ptr
             sub count,ecx
             sub [rbx]._cnt,ecx
@@ -79,10 +71,8 @@ endif
                 mov eax,count
                 sub eax,edx
             .endif
-
             reg r12,rdi
             .ifsd ( _read( [rbx]._file, rdi, rax ) <= 0 )
-
                 or [rbx]._flag,_IOEOF
                 mov eax,total
                 sub eax,count
@@ -96,16 +86,13 @@ endif
             add rdi,rax
 ifdef STDZIP
             .if ( [rbx]._flag & _IOCRC32 )
-
                 _crc32( [rbx]._crc32, rcx, eax )
                 mov [rbx]._crc32,eax
             .endif
 endif
         .else
-
             reg r12,rdi
             .ifd ( _filbuf( rbx ) == -1 )
-
                 mov eax,total
                 sub eax,count
                 xor edx,edx
@@ -120,7 +107,6 @@ endif
         .endif
     .until !count
     .return( num )
-
-fread endp
+    endp
 
     end

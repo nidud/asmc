@@ -1736,6 +1736,32 @@ endif
 
     assume rsi:segment_t
 
+pe_assignRVA proc __ccall uses rsi rdi rbx cp:ptr calc_param, malign:int_t, falign:int_t
+
+    .for ( rdi = SymTables[TAB_SEG].head, ebx = -1 : rdi : rdi = [rdi].asym.next )
+
+        mov rsi,[rdi].asym.seginfo
+        mov rdx,cp
+        .if ( [rsi].lname_idx == SEGTYPE_ERROR || [rsi].lname_idx != ebx )
+            mov ebx,[rsi].lname_idx
+            mov [rdx].calc_param.alignment,falign
+            mov eax,malign
+        .else
+            mov eax,1
+            mov cl,[rsi].alignment
+            shl eax,cl
+            mov [rdx].calc_param.alignment,0
+        .endif
+        lea ecx,[rax-1]
+        neg eax
+        add ecx,[rdx].calc_param.rva
+        and eax,ecx
+        mov [rdx].calc_param.rva,eax
+        CalcOffset( rdi, rdx )
+    .endf
+    ret
+    endp
+
 pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
 
    .new i:int_t
@@ -1795,12 +1821,6 @@ pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
     mov rcx,pe
     movzx eax,[rcx].IMAGE_PE_HEADER32.FileHeader.Characteristics
     mov characteristics,eax
-    ;
-    ; IMAGE_FILE_RELOCS_STRIPPED is removed from the 64-bit header.
-    ;
-    .if ( MODULE.defOfssize == USE64 )
-        or eax,IMAGE_FILE_RELOCS_STRIPPED
-    .endif
 
     .if ( !( eax & IMAGE_FILE_RELOCS_STRIPPED ) )
 
@@ -1863,31 +1883,12 @@ endif
 
     mov falign,get_bit( GHF( OptionalHeader.FileAlignment ) )
     mov malign,GHF( OptionalHeader.SectionAlignment )
+    mov rbx,cp
 
     ; assign RVAs to sections
 
-    .for ( rdi = SymTables[TAB_SEG].head, ebx = -1 : rdi : rdi = [rdi].asym.next )
+    pe_assignRVA(rbx, eax, falign)
 
-        mov rsi,[rdi].asym.seginfo
-        mov rdx,cp
-        .if ( [rsi].lname_idx == SEGTYPE_ERROR || [rsi].lname_idx != ebx )
-            mov ebx,[rsi].lname_idx
-            mov [rdx].calc_param.alignment,falign
-            mov eax,malign
-        .else
-            mov eax,1
-            mov cl,[rsi].alignment
-            shl eax,cl
-            mov [rdx].calc_param.alignment,0
-        .endif
-        lea ecx,[rax-1]
-        neg eax
-        add ecx,[rdx].calc_param.rva
-        and eax,ecx
-        mov [rdx].calc_param.rva,eax
-        CalcOffset( rdi, rdx )
-    .endf
-    mov rbx,cp
     mov rcx,reloc
     .if ( rcx )
         pe_set_base_relocs( rcx )
@@ -1905,7 +1906,14 @@ endif
         .else
             mov rdx,objtab
             sub [rdx].asym.max_offset,IMAGE_SECTION_HEADER
-            sub [rbx].calc_param.rva,IMAGE_BASE_RELOCATION ; v2.16: added
+            ;
+            ; v2.37.80: just recalculate the whole thing..
+            ;
+            mov [rbx].calc_param.rva,0
+            mov [rbx].calc_param.fileoffset,0
+            mov [rbx].calc_param.alignment,0
+            mov [rbx].calc_param.first,TRUE
+            pe_assignRVA(rbx, malign, falign)
         .endif
     .endif
 

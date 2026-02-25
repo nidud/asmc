@@ -11,11 +11,9 @@ include tchar.inc
     .code
 
 _tfreopen proc file:tstring_t, mode:tstring_t, fp:LPFILE
-
     fclose(fp)
     _topenfile(file, mode, SH_DENYNO, fp)
     ret
-
-_tfreopen endp
+    endp
 
     end

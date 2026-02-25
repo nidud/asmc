@@ -26,7 +26,6 @@ else
     _mm_xor_ps(xmm0, xmm3)
 endif
     ret
-
-XMVectorRound endp
+    endp
 
     end

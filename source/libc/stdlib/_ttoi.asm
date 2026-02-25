@@ -10,9 +10,8 @@ include tchar.inc
     .code
 
 _ttoi proc string:tstring_t
-
-   .return( _ttol( ldr(string) ) )
-
-_ttoi endp
+    _ttol( ldr(string) )
+    ret
+    endp
 
     end

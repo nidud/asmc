@@ -20,7 +20,6 @@ XMStoreShortN2 proc XM_CALLCONV pDestination:ptr XMSHORTN2, V:FXMVECTOR
     _mm_packs_epi32(xmm0, xmm0)
     _mm_store_ss([rcx], _mm_castsi128_ps(xmm0))
     ret
-
-XMStoreShortN2 endp
+    endp
 
     end

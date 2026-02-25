@@ -8,10 +8,8 @@ include fltintrn.inc
     .code
 
 __cvtq_ld proc __ccall uses rsi rdi rbx ld:ptr ldouble_t, q:ptr qfloat_t
-
     ldr     rax,ld
     ldr     rdi,q
-
     xor     ecx,ecx
     mov     ebx,[rdi+6]
     mov     edx,[rdi+10]
@@ -21,10 +19,7 @@ __cvtq_ld proc __ccall uses rsi rdi rbx ld:ptr ldouble_t, q:ptr qfloat_t
     neg     esi
     rcr     edx,1
     rcr     ebx,1
-
-    ; round result
-
-    .ifc
+    .ifc ; round result
         .if ( ebx == -1 && edx == -1 )
             xor ebx,ebx
             mov edx,0x80000000
@@ -34,7 +29,6 @@ __cvtq_ld proc __ccall uses rsi rdi rbx ld:ptr ldouble_t, q:ptr qfloat_t
             adc edx,0
         .endif
     .endif
-
     mov [rax],ebx
     mov [rax+4],edx
     .if ( rax == rdi )
@@ -44,7 +38,6 @@ __cvtq_ld proc __ccall uses rsi rdi rbx ld:ptr ldouble_t, q:ptr qfloat_t
         mov [rax+8],cx
     .endif
     ret
-
-__cvtq_ld endp
+    endp
 
     end

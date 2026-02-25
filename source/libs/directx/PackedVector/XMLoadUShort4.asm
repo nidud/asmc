@@ -40,7 +40,6 @@ XMLoadUShort4 proc XM_CALLCONV pSource:ptr XMUSHORT4
 
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,1,2,0))
     ret
-
-XMLoadUShort4 endp
+    endp
 
     end

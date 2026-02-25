@@ -8,7 +8,6 @@ include fltintrn.inc
     .code
 
 __cvta_q proc __ccall number:ptr qfloat_t, strptr:string_t, endptr:ptr string_t
-
     _strtoflt( strptr )
     mov rcx,endptr
     .if rcx
@@ -20,7 +19,6 @@ __cvta_q proc __ccall number:ptr qfloat_t, strptr:string_t, endptr:ptr string_t
     mov [rcx],[rdx].U128.u128
     mov rax,rcx
     ret
-
-__cvta_q endp
+    endp
 
     end

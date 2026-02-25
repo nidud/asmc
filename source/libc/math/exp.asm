@@ -46,7 +46,6 @@ ifdef _WIN64
     movsd   xmm0,x
 endif
     ret
-
-exp endp
+    endp
 
     end

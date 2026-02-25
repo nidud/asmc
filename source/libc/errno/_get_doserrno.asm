@@ -9,15 +9,12 @@ include errno.inc
     .code
 
 _get_doserrno proc pValue:ptr uint_t
-
     ldr rcx,pValue
-
     mov eax,_doserrno
     .if rcx
         mov [rcx],eax
     .endif
     ret
-
-_get_doserrno endp
+    endp
 
     end

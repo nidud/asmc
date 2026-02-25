@@ -17,12 +17,10 @@ include lqueue.inc
     assume rbx:token_t
 
 SkipSQBackets proc fastcall private uses rbx tok:token_t
-
     .for ( rbx = rcx,
            edx = 0, ; brackets
            ecx = 1, ; SQ-brackets
            rbx +=asm_tok : ecx && [rbx].token != T_FINAL : rbx += asm_tok )
-
         mov al,[rbx].token
         .if ( al == T_OP_BRACKET )
             inc edx
@@ -39,17 +37,13 @@ SkipSQBackets proc fastcall private uses rbx tok:token_t
         .endif
     .endf
     .return( 0 )
-
-SkipSQBackets endp
+    endp
 
 
 GetSQBackets proc fastcall private uses rsi rdi tok:token_t, buffer:string_t
-
     mov rdi,rdx
     mov rsi,rcx
-
     .if SkipSQBackets(rcx)
-
         mov rcx,[rax].asm_tok.tokpos
         mov rsi,[rsi].asm_tok.tokpos
         sub rcx,rsi
@@ -57,24 +51,18 @@ GetSQBackets proc fastcall private uses rsi rdi tok:token_t, buffer:string_t
         mov byte ptr [rdi],0
     .endif
     ret
-
-GetSQBackets endp
+    endp
 
 
 FindDotSymbol proc fastcall uses rsi rdi rbx tok:token_t
 
-    mov rbx,rcx
-
-    .while ( [rbx-asm_tok].token != T_COMMA && [rbx-asm_tok].token != T_DIRECTIVE )
-        sub rbx,asm_tok
-    .endw
+    .for ( rbx = rcx : [rbx-asm_tok].token != T_COMMA && [rbx-asm_tok].token != T_DIRECTIVE : rbx -= asm_tok )
+    .endf
     .return .if !SymFind( [rbx].string_ptr )
 
     mov rsi,rax
     add rbx,asm_tok
-
     .while ( [rbx].token != T_FINAL )
-
         .if ( [rbx].token == T_COMMA )
             .return 0
         .endif
@@ -85,7 +73,6 @@ FindDotSymbol proc fastcall uses rsi rdi rbx tok:token_t
         xor eax,eax
         .break .if ( [rbx].token != T_DOT )
         add rbx,asm_tok
-
         .if ( [rsi].asym.mem_type == MT_TYPE )
             mov rsi,[rsi].asym.type
         .endif
@@ -94,26 +81,22 @@ FindDotSymbol proc fastcall uses rsi rdi rbx tok:token_t
         .endif
         .break .if ( !rsi )
         .break .if ( [rsi].asym.state != SYM_TYPE )
-
         mov rsi,SearchNameInStruct( rsi, [rbx].string_ptr, 0, 0 )
         .break .if ( !rsi )
         .break .if ( rbx == tok )
         add rbx,asm_tok
     .endw
     ret
-
-FindDotSymbol endp
+    endp
 
 
 AddIndirection proc __ccall private uses rsi rdi sym:asym_t, reg:int_t
 
    .new buffer[128]:sbyte
-
     ldr rsi,sym
     ldr edi,reg
 
     .if ( [rbx].token == T_OP_SQ_BRACKET )
-
         .if !GetSQBackets( rbx, &buffer )
             .return
         .endif
@@ -147,8 +130,7 @@ AddIndirection proc __ccall private uses rsi rdi sym:asym_t, reg:int_t
     AddLineQueueX( " %r %r, [%r].%s.%s", ecx, edi, edi, [rdx].asym.name, [rbx].string_ptr )
     mov rax,rsi
     ret
-
-AddIndirection endp
+    endp
 
 
 AssignPointer proc __ccall uses rsi rdi rbx sym:asym_t, reg:int_t, tok:token_t,
@@ -192,16 +174,12 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:asym_t, reg:int_t, tok:token_t,
         .case LANG_ASMCALL
             add eax,MODULE.accumulator
         .endsw
-
         .if ( eax )
-
             mov ecx,reg
             mov reg,eax
             mov edi,eax
             mov vreg,ecx
-
             add rbx,asm_tok
-
             .if ( AddIndirection(rsi, edi) == NULL )
                 .return( rsi )
             .endif
@@ -220,8 +198,7 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:asym_t, reg:int_t, tok:token_t,
         AddLineQueueX( " mov %r, [%r]", vreg, reg )
     .endif
     .return( rsi )
-
-AssignPointer endp
+    endp
 
 
 ifdef USE_INDIRECTION
@@ -243,21 +220,15 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:asym_t, tokenarray:token_t, 
 
     mov reg,MODULE.accumulator
     AddLineQueueX( " mov %r, %s", eax, [rbx].string_ptr )
-
     add rbx,asm_tok
     mov rsi,sym
-
     .while ( [rbx].token != T_FINAL && [rbx].token != T_COMMA )
-
         .if ( [rbx].token == T_OP_SQ_BRACKET )
-
             .break .if !GetSQBackets( rbx, &buffer )
-
             mov rbx,rax
             AddLineQueueX( " lea %r, [%r]%s", reg, reg, &buffer )
         .endif
         .break .if ( [rbx].token != T_DOT )
-
         .if ( pos )
             .if ( [rbx+asm_tok*2].token == T_OP_SQ_BRACKET )
                 .break .if ( !SkipSQBackets( &[rbx+asm_tok*2] ) )
@@ -285,7 +256,6 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:asym_t, tokenarray:token_t, 
         add rbx,asm_tok*2
         mov rsi,rdi
     .endw
-
     .if ( [rsi].asym.mem_type == MT_TYPE )
         mov rsi,[rsi].asym.type
     .endif
@@ -297,12 +267,8 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:asym_t, tokenarray:token_t, 
     .else
         AddLineQueueX( " %r %r, [%r].%s.%s", inst, dest, reg, [rsi].asym.name, [rbx+asm_tok].tokpos )
     .endif
-
     RetLineQueue()
     ret
-
-HandleIndirection endp
-
+    endp
 endif
-
     end

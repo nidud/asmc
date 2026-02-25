@@ -115,24 +115,19 @@ endif
 ; v2.12: function added - _splitpath()/_makepath() removed
 
 GetFNamePart proc fastcall fname:string_t
-
     .for ( rax = rcx : byte ptr [rcx] : rcx++ )
-
         .if ISPC( byte ptr [rcx] )
             lea rax,[rcx+1]
         .endif
     .endf
     ret
-
-GetFNamePart endp
+    endp
 
 
 ; fixme: if the dot is at pos 0 of filename, ignore it
 
 GetExtPart proc fastcall fname:string_t
-
     .for ( eax = NULL : byte ptr [rcx] : rcx++ )
-
         .if ( byte ptr [rcx] == '.' )
             mov rax,rcx
         .elseif ISPC( byte ptr [rcx] )
@@ -143,8 +138,7 @@ GetExtPart proc fastcall fname:string_t
         mov rax,rcx
     .endif
     ret
-
-GetExtPart endp
+    endp
 
 
 ; check if a file is in the array of known files.
@@ -155,16 +149,13 @@ GetExtPart endp
 ; the filenames are stored in the "local" heap.
 
 AddFile proc __ccall private uses rsi rbx name:string_t
-
     mov rsi,MODULE.FNames
     .for ( ebx = 0 : ebx < MODULE.cnt_fnames : ebx++ )
         .if ( filecmp( name, [rsi+rbx*string_t] ) == 0 )
             .return( ebx )
         .endif
     .endf
-
     .if ( !( ebx & 64-1 ) )
-
         mov MODULE.FNames,MemAlloc( &[rbx*string_t+64*string_t] )
         .if ( rsi != NULL )
             lea ecx,[rbx*string_t]
@@ -172,23 +163,19 @@ AddFile proc __ccall private uses rsi rbx name:string_t
             MemFree( rsi )
         .endif
     .endif
-
     inc MODULE.cnt_fnames
     mov rsi,MODULE.FNames
     mov [rsi+rbx*string_t],LclDup( name )
-   .return( ebx )
-
-AddFile endp
+    .return( ebx )
+    endp
 
 
 GetFName proc fastcall index:uint_t
-
     and ecx,0xFFFF
     mov rax,MODULE.FNames
     mov rax,[rax+rcx*size_t]
     ret
-
-GetFName endp
+    endp
 
 
 ; free the file array.
@@ -201,13 +188,11 @@ FreeFiles proc __ccall private
 
     mov MODULE.src_stack,NULL
     .if ( MODULE.FNames )
-
         MemFree( MODULE.FNames )
         mov MODULE.FNames,NULL
     .endif
     ret
-
-FreeFiles endp
+    endp
 
 
 ; clear input source stack (include files and open macros).
@@ -227,11 +212,9 @@ ClearSrcStack proc __ccall uses rsi rdi rbx
 
     mov rbx,MODULE.src_stack
     .new next:ptr
-    .for( : [rbx].next : rbx = next )
-
+    .for ( : [rbx].next : rbx = next )
         mov next,[rbx].next
         .if [rbx].type == SIT_FILE
-
             fclose([rbx].file)
         .endif
         mov [rbx].next,SrcFree
@@ -239,8 +222,7 @@ ClearSrcStack proc __ccall uses rsi rdi rbx
     .endf
     mov MODULE.src_stack,rbx
     ret
-
-ClearSrcStack endp
+    endp
 
     assume rbx:nothing
 
@@ -249,13 +231,10 @@ UpdateFileCur proc fastcall private path:string_t
 
     mov rdx,FileCur
     mov [rdx].asym.string_ptr,rcx
-
     lea rdx,strFILE
     mov byte ptr [rdx],'"'
     inc rdx
-
     .while ( byte ptr [rcx] )
-
         mov al,[rcx]
         mov [rdx],al
         inc rcx
@@ -267,35 +246,28 @@ UpdateFileCur proc fastcall private path:string_t
     .endw
     mov word ptr [rdx],'"'
     ret
-
-UpdateFileCur endp
+    endp
 
 
 ; get/set value of predefined symbol @Line
 
 UpdateLineNumber proc fastcall sym:asym_t, p:ptr
-
     .for ( rax = MODULE.src_stack: rax : rax = [rax].src_item.next )
-
         .if ( [rax].src_item.type == SIT_FILE )
-
             mov [rcx].asym.value,[rax].src_item.line_num
            .break
         .endif
     .endf
     ret
-
-UpdateLineNumber endp
+    endp
 
 
 GetLineNumber proc __ccall
-
     UpdateLineNumber( LineCur, NULL )
     mov rax,LineCur
     mov eax,[rax].asym.uvalue
     ret
-
-GetLineNumber endp
+    endp
 
 
 ; read one line from current source file.
@@ -313,9 +285,7 @@ my_fgets proc __ccall private uses rsi rdi rbx buffer:string_t, max:int_t, fp:LP
     ldr edx,max
 
     lea rsi,[rdi+rdx]
-
     .while ( rdi < rsi )
-
 ifdef __UNIX__
 ifdef _WIN64
        .new _rsi:qword = rsi
@@ -328,7 +298,6 @@ ifdef _WIN64
 endif
 else
         .if ( [rbx].FILE._cnt > 0 )
-
             dec [rbx].FILE._cnt
             mov rdx,[rbx].FILE._ptr
             inc [rbx].FILE._ptr
@@ -365,20 +334,15 @@ endif
     mov byte ptr [rdi-1],0
     mov rax,buffer
     ret
-
-my_fgets endp
+    endp
 
 
 if FILESEQ
-
 AddFileSeq proc __ccall file:uint_t
-
     LclAlloc( ldr(file) )
-
     mov ecx,file
     mov [rax].file_seq.file,ecx
     .if ( FileSeq.head == NULL )
-
         mov FileSeq.head,rax
         mov FileSeq.tail,rax
     .else
@@ -387,9 +351,7 @@ AddFileSeq proc __ccall file:uint_t
         mov FileSeq.tail,rax
     .endif
     ret
-
-AddFileSeq endp
-
+    endp
 endif
 
 
@@ -397,7 +359,6 @@ endif
 ; type: SIT_FILE or SIT_MACRO
 
 PushSrcItem proc __ccall private type:char_t, pv:ptr
-
     mov rax,SrcFree
     .if ( rax )
         mov rcx,[rax].src_item.next
@@ -414,51 +375,41 @@ PushSrcItem proc __ccall private type:char_t, pv:ptr
     mov [rax].src_item.content,rcx
     mov [rax].src_item.line_num,0
     ret
-
-PushSrcItem endp
+    endp
 
 
 ; push a macro onto the source stack.
 
 PushMacro proc fastcall mi:ptr macro_instance
-
     PushSrcItem( SIT_MACRO, rcx )
     ret
-
-PushMacro endp
+    endp
 
 
 get_curr_srcfile proc __ccall
-
     .for ( rax = MODULE.src_stack: rax : rax = [rax].src_item.next )
-
         .if ( [rax].src_item.type == SIT_FILE )
             movzx eax,[rax].src_item.srcfile
            .return
         .endif
     .endf
     .return( MODULE.srcfile )
-
-get_curr_srcfile endp
+    endp
 
 
 set_curr_srcfile proc fastcall file:uint_t, line:uint_t
-
     mov rax,MODULE.src_stack
     mov [rax].src_item.srcfile,cx
     mov [rax].src_item.line_num,edx
     ret
-
-set_curr_srcfile endp
+    endp
 
 
 SetLineNumber proc fastcall line:uint_t
-
     mov rax,MODULE.src_stack
     mov [rax].src_item.line_num,ecx
     ret
-
-SetLineNumber endp
+    endp
 
 if 0
 ; for error listing, render the current source file and line
@@ -468,16 +419,12 @@ if 0
     assume rcx:ptr src_item
 
 GetCurrSrcPos proc fastcall private uses rbx buffer:string_t
-
     .for ( rbx = rcx, rcx = MODULE.src_stack: rcx : rcx = [rcx].next )
-
         .if ( [rcx].type == SIT_FILE )
-
             movzx eax,[rcx].srcfile
             mov rax,MODULE.FNames
             mov rax,[rdx+rax*string_t]
             lea rdx,@CStr("%s : ")
-
             .if ( MODULE.EndDirFound == FALSE )
                 lea rdx,@CStr("%s(%u) : ")
             .endif
@@ -487,9 +434,7 @@ GetCurrSrcPos proc fastcall private uses rbx buffer:string_t
     xor eax,eax
     mov [rbx],al
     ret
-
-GetCurrSrcPos endp
-
+    endp
     assume rcx:nothing
 endif
 
@@ -508,28 +453,19 @@ print_source_nesting_structure proc __ccall uses rsi rdi rbx
     .if ( rbx == NULL || [rbx].next == NULL )
         .return
     .endif
-
     .for ( edi = 1 : [rbx].next : rbx = [rbx].next, edi++ )
-
         .if ( [rbx].type == SIT_FILE )
-
             mov name,GetFName( [rbx].srcfile )
             PrintNote( NOTE_INCLUDED_BY, edi, "", name, [rbx].line_num )
-
         .else
-
             mov rax,[rbx].mi
             mov rcx,[rax].macro_instance._macro
             mov rax,[rcx].asym.name
-
             .if ( byte ptr [rax] == 0 )
-
                 mov edx,[rcx].asym.value
                 inc edx
-                PrintNote( NOTE_ITERATION_MACRO_CALLED_FROM, edi, "",
-                    "MacroLoop", [rbx].line_num, edx )
+                PrintNote( NOTE_ITERATION_MACRO_CALLED_FROM, edi, "", "MacroLoop", [rbx].line_num, edx )
             .else
-
                 mov name,rax
                 mov rdx,[rcx].asym.macroinfo
                 mov eax,[rdx].macro_info.srcfile
@@ -541,9 +477,7 @@ print_source_nesting_structure proc __ccall uses rsi rdi rbx
     mov name,GetFName( [rbx].srcfile )
     PrintNote( NOTE_MAIN_LINE_CODE, edi, "", name, [rbx].line_num )
     ret
-
-print_source_nesting_structure endp
-
+    endp
     assume rbx:nothing
 
 
@@ -559,9 +493,7 @@ open_file_in_include_path proc __ccall private uses rsi rdi rbx name:string_t, f
     mov namelen,tstrlen( rax )
 
     .for ( eax = 0, rbx = MODULE.IncludePath : rbx && !rax : rbx = next )
-
         mov next,tstrchr( rbx, INC_PATH_DELIM )
-
         .if ( rax )
             sub rax,rbx
             inc next ; skip path delimiter char (; or :)
@@ -580,7 +512,6 @@ open_file_in_include_path proc __ccall private uses rsi rdi rbx name:string_t, f
             .continue
         .endif
         tmemcpy( fullpath, rbx, edi )
-
         mov cl,[rax+rdi-1]
 ifndef __UNIX__
         .if ( cl != '/' && cl != BSLASH && cl != ':' )
@@ -590,14 +521,12 @@ endif
             mov byte ptr [rax+rdi],DIR_SEPARATOR
             inc edi
         .endif
-
         mov rcx,fullpath
         tstrcpy( &[rcx+rdi], name )
         fopen( fullpath, "rb" )
     .endf
     ret
-
-open_file_in_include_path endp
+    endp
 
 
 ; the worker behind the INCLUDE directive. Also used
@@ -618,21 +547,16 @@ SearchFile proc __ccall uses rsi rdi rbx path:string_t, queue:int_t
     ; v2.11: various changes because field fullpath has been removed.
 
     .if ( isabs == 0 )
-
         .for ( rbx = MODULE.src_stack: rbx : rbx = [rbx].next )
-
             .if ( [rbx].type == SIT_FILE )
-
                 mov rsi,GetFName( [rbx].srcfile )
-
                 .if ( rsi != GetFNamePart( rsi ) )
-
                     sub rax,rsi
-
+                    ;
                     ; v2.10: if there's a directory part, add it to the directory part of the current file.
                     ; fixme: check that both parts won't exceed FILENAME_MAX!
                     ; fixme: 'path' is relative, but it may contain a drive letter!
-
+                    ;
                     lea rdi,fullpath
                     mov ecx,eax
                     rep movsb
@@ -641,7 +565,6 @@ SearchFile proc __ccall uses rsi rdi rbx path:string_t, queue:int_t
                         lodsb
                         stosb
                     .until !al
-
                     mov file,fopen( &fullpath, "rb" )
                     .if rax
                         mov path,&fullpath
@@ -651,18 +574,15 @@ SearchFile proc __ccall uses rsi rdi rbx path:string_t, queue:int_t
             .endif
         .endf
     .endif
-
     .if ( file == NULL )
-
         mov fullpath,0
         mov file,fopen( path, "rb" )
-
+        ;
         ; if the file isn't found yet and include paths have been set,
         ; and NO absolute path is given, then search include dirs
-
+        ;
         .if ( file == NULL && MODULE.IncludePath != NULL && !isabs )
             .if ( open_file_in_include_path( path, &fullpath ) )
-
                 mov file,rax
                 mov path,&fullpath
             .endif
@@ -676,7 +596,6 @@ SearchFile proc __ccall uses rsi rdi rbx path:string_t, queue:int_t
     ; assembly files usually are, but binary files ( INCBIN ) aren't.
 
     .if ( queue )
-
         mov rbx,PushSrcItem( SIT_FILE, file )
         AddFile( path )
         mov [rbx].srcfile,ax
@@ -688,8 +607,7 @@ if FILESEQ
 endif
     .endif
     .return( file )
-
-SearchFile endp
+    endp
 
 
 ; get the next source line from file or macro.
@@ -699,13 +617,9 @@ SearchFile endp
 ; now return NULL in any case.
 
 GetTextLine proc __ccall uses rsi rdi rbx buffer:string_t
-
     mov rbx,MODULE.src_stack
-
     .if ( [rbx].type == SIT_FILE )
-
         .if my_fgets( buffer, MaxLineLength, [rbx].file )
-
             inc [rbx].line_num
            .return( buffer )
         .endif
@@ -713,9 +627,7 @@ GetTextLine proc __ccall uses rsi rdi rbx buffer:string_t
         ; don't close and remove main source file
 
         .if ( [rbx].next )
-
             fclose( [rbx].file )
-
             mov MODULE.src_stack,[rbx].next
             mov [rbx].next,SrcFree
             mov SrcFree,rbx
@@ -726,17 +638,13 @@ GetTextLine proc __ccall uses rsi rdi rbx buffer:string_t
         .for ( rbx = MODULE.src_stack: [rbx].type != SIT_FILE: rbx = [rbx].next )
         .endf
         UpdateFileCur( GetFName( [rbx].srcfile ) )
-
 if FILESEQ
         .if ( Options.line_numbers && Parse_Pass == PASS_1 )
             AddFileSeq( [rbx].srcfile )
         .endif
 endif
-
     .else
-
         assume rdi:ptr macro_instance
-
         mov rdi,[rbx].mi
         .if ( [rdi].currline )
             mov rcx,[rdi].currline
@@ -745,16 +653,13 @@ endif
             mov rax,[rdi].startline
         .endif
         mov [rdi].currline,rax
-
         .if ( rax )
-
+            ;
             ; if line contains placeholders, replace them by current values
-
+            ;
             .if ( [rax].srcline.ph_count )
-
                 lea rdx,[rax].srcline.line
-                fill_placeholders( buffer, rdx, [rdi].parmcnt,
-                                  [rdi].localstart, [rdi].parm_array )
+                fill_placeholders( buffer, rdx, [rdi].parmcnt, [rdi].localstart, [rdi].parm_array )
             .else
                 tstrcpy( buffer, &[rax].srcline.line )
             .endif
@@ -766,8 +671,7 @@ endif
         mov SrcFree,rbx
     .endif
     .return( NULL ) ; end of file or macro reached
-
-GetTextLine endp
+    endp
 
 
 ; add a string to the include path.
@@ -776,17 +680,11 @@ GetTextLine endp
 ; it is stored in the standard C heap.
 
 AddStringToIncludePath proc __ccall uses rsi rdi rbx string:string_t
-
     mov rsi,tstrstart( string )
-
     .if ( tstrlen( rsi ) )
-
         .if ( MODULE.IncludePath == NULL )
-
             mov MODULE.IncludePath,MemDup( rsi )
-
         .else
-
             mov edi,eax
             mov rbx,MODULE.IncludePath
             tstrlen( rbx )
@@ -796,8 +694,7 @@ AddStringToIncludePath proc __ccall uses rsi rdi rbx string:string_t
         .endif
     .endif
     ret
-
-AddStringToIncludePath endp
+    endp
 
 
 ; input buffers
@@ -822,7 +719,6 @@ SIZE_STRINGBUFFER equ ( MAX_LINE_LEN * MAX_MACRO_NESTING )
     assume rbx:ptr input_status
 
 GetInputState proc __ccall uses rbx p:ptr InputState
-
     ldr rbx,p
     mov rax,CurrSource
     sub rax,srclinebuffer
@@ -838,11 +734,9 @@ GetInputState proc __ccall uses rbx p:ptr InputState
     mov [rbx].str_pos,eax
     mov rax,rbx
     ret
-
-GetInputState endp
+    endp
 
 SetInputState proc __ccall p:ptr InputState
-
     ldr rbx,p
     mov eax,[rbx].scr_pos
     add rax,srclinebuffer
@@ -858,13 +752,10 @@ SetInputState proc __ccall p:ptr InputState
     mov StringBufferEnd,rax
     mov rax,rbx
     ret
-
-SetInputState endp
+    endp
 
 PushInputStatus proc __ccall uses rbx oldstat:ptr input_status
-
     ldr rbx,oldstat
-
     mov [rbx].flags,MODULE.line_flags
     mov [rbx].tok_cnt,TokenCount
     mov rax,CurrSource
@@ -884,13 +775,11 @@ PushInputStatus proc __ccall uses rbx oldstat:ptr input_status
 
     mov rax,CurrComment
     .if ( rax )
-
         tstrlen( CurrSource )
         add rax,CurrSource
         tstrcpy( rax, CurrComment )
     .endif
     mov [rbx].currcomment,rax
-
     mov StringBuffer,StringBufferEnd
     mov  eax,TokenCount
     inc  eax
@@ -898,9 +787,8 @@ PushInputStatus proc __ccall uses rbx oldstat:ptr input_status
     add  TokenArray,rax
     tstrlen( CurrSource )
     mov CurrSource,GetAlignedPointer( CurrSource, eax )
-   .return( TokenArray )
-
-PushInputStatus endp
+    .return( TokenArray )
+    endp
 
 PopInputStatus proc __ccall uses rbx newstat:ptr input_status
 
@@ -908,7 +796,6 @@ PopInputStatus proc __ccall uses rbx newstat:ptr input_status
 
     mov MODULE.line_flags,[rbx].flags ; v2.08
     mov TokenCount,[rbx].tok_cnt
-
     mov eax,[rbx].scr_pos
     add rax,srclinebuffer
     mov CurrSource,rax
@@ -921,9 +808,7 @@ PopInputStatus proc __ccall uses rbx newstat:ptr input_status
     mov ecx,[rbx].end_off
     add rax,rcx
     mov StringBufferEnd,rax
-
     .if ( [rbx].currcomment )
-
         mov CurrComment,CommentBuffer
         tstrcpy(rax, [rbx].currcomment)
         mov rax,[rbx].currcomment
@@ -932,8 +817,7 @@ PopInputStatus proc __ccall uses rbx newstat:ptr input_status
         mov CurrComment,NULL
     .endif
     ret
-
-PopInputStatus endp
+    endp
 
 ;
 ; Input:
@@ -970,8 +854,7 @@ AllocInput proc __ccall private uses rsi rdi
     sub     rcx,rdx
     mov     CommentBuffer,rcx
     ret
-
-AllocInput endp
+    endp
 
 
 ; Initializer, called once for each module.
@@ -979,38 +862,31 @@ AllocInput endp
     assume rsi:ptr src_item
 
 InputInit proc __ccall uses rsi
-
     mov SrcFree,NULL ;; v2.11
 if FILESEQ
     mov FileSeq.head,NULL
 endif
     mov MaxLineLength,MAX_LINE_LEN
-
     AllocInput()
-
     mov rsi,PushSrcItem( SIT_FILE, CurrFile[TASM] )
     AddFile( CurrFName[TASM] )
     mov [rsi].srcfile,ax
     mov MODULE.srcfile,eax
-
     UpdateFileCur( GetFName( eax ) )
     ret
-
-InputInit endp
+    endp
 
 
 ; init for each pass
 
 InputPassInit proc __ccall
-
     mov rax,MODULE.src_stack
     mov [rax].src_item.line_num,0
     mov CurrSource,srclinebuffer
     mov byte ptr [rax],0
     mov StringBufferEnd,StringBuffer
     ret
-
-InputPassInit endp
+    endp
 
 
     assume rsi:ptr line_status
@@ -1028,11 +904,9 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
         mov eax,_HEAP_GROWSIZE
     .endif
     add MaxLineLength,eax
-
     mov rax,srclinebuffer
     ldr rsi,p
     .if ( [rsi].start != rax )
-
         mov rbx,LclAlloc( MaxLineLength )
         mov rdx,[rsi].start
         sub [rsi].input,rdx
@@ -1043,17 +917,14 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
         mov rsi,rdx
         rep movsb
     .endif
-
     mov rsi,srclinebuffer
     mov ebx,oldsize
-
     AllocInput()
     ;
     ; copy source line buffer, token buffer, and string buffer
     ;
     mov  rdi,srclinebuffer
     mov  CurrSource,rdi
-
     imul ecx,ebx,MAX_MACRO_NESTING + 1
     rep  movsb
     mov  rdi,TokenArray
@@ -1067,7 +938,6 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
     add  StringBufferEnd,rax
     imul ecx,ebx,MAX_MACRO_NESTING
     rep  movsb
-
     mov rsi,p
     mov rax,[rsi].outbuf
     .if ( rax == oldstrings )
@@ -1075,16 +945,13 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
         mov [rsi].outbuf,StringBuffer
         add [rsi].output,rax
     .endif
-
     mov rax,[rsi].start
     .if ( rax == oldsrcline )
         sub [rsi].input,rax
         mov [rsi].start,srclinebuffer
         add [rsi].input,rax
     .endif
-
     .if ( oldtok == [rsi].tokenarray )
-
         mov rdx,TokenArray
         mov [rsi].tokenarray,rdx
         mov index,[rsi].index
@@ -1095,11 +962,8 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
         sub rsi,rax
         imul ebx,ebx,MAX_MACRO_NESTING+1
         add rbx,rax
-
         assume rdx:token_t
-
         .for ( ecx = 0 : ecx <= index : ecx++, rdx += asm_tok )
-
             add [rdx].tokpos,rdi
             .if ( [rdx].string_ptr >= rax && [rdx].string_ptr <= rbx )
                 add [rdx].string_ptr,rsi
@@ -1108,22 +972,18 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
         MemFree( oldsrcline )
     .endif
     .return( TRUE )
-
-InputExtend endp
+    endp
 
 
 ; release input buffers for a module
 
 InputFini proc __ccall
-
     mov rcx,MODULE.IncludePath
     .if ( rcx )
-
         MemFree( rcx )
     .endif
     mov rcx,srclinebuffer
     .if ( rcx )
-
         MemFree( rcx )
         mov srclinebuffer,NULL
     .endif
@@ -1133,7 +993,6 @@ InputFini proc __ccall
     FreeFiles()
     mov TokenArray,NULL
     ret
-
-InputFini endp
+    endp
 
     end

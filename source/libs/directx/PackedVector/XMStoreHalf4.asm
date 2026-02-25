@@ -26,7 +26,6 @@ XMStoreHalf4 proc XM_CALLCONV uses rbx pDestination:ptr XMHALF4, V:FXMVECTOR
     mov [rbx+6],ax
     mov rax,rbx
     ret
-
-XMStoreHalf4 endp
+    endp
 
     end

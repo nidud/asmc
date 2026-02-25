@@ -8,8 +8,8 @@ args_x macro
     exitm<>
     endm
 
-    option  dllimport:<msvcrt>
-    strcpy  proto :ptr, :ptr
+    option dllimport:<msvcrt>
+    externdef import strcpy:ptr
 
 include ../timeit.inc
 
@@ -31,8 +31,6 @@ info_4  db "32 byte (AVX)",0
 ;-------------------------------------------------------------------------------
 
 validate_x proc uses rsi rdi rbx r12 x:qword
-
-    mov x,rcx
     lea rax,proc_p
     mov r12,[rax+rcx*8]
     .if !r12
@@ -41,45 +39,34 @@ validate_x proc uses rsi rdi rbx r12 x:qword
         .endif
     .endif
     .if r12
-
         .for ( ebx = 0 : ebx < 70 && nerror < 20 : ebx++ )
-
-
             lea rdi,dst_1
             lea ecx,[rbx+2]
             mov eax,9
             rep stosb
-
             lea rdx,str_1[size_s-1]
             sub rdx,rbx
             lea rcx,dst_1
             call r12
             mov rsi,rax
-
             .if ( byte ptr [rdi-1] != 9 )
-
                 lea rcx,str_1[size_s-1]
                 sub rcx,rbx
                 movzx edx,byte ptr [rdi-1]
                 printf("error: %d [9] (%d) %p %d.asm\n", edx, ebx, rcx, x)
                 inc nerror
             .endif
-
             lea rdi,dst_1
             .if rdi != rsi
-
                 printf("error: %p [%p] %d.asm\n", rsi, rdi, x)
                 inc nerror
             .endif
-
             lea rsi,str_1[size_s-1]
             sub rsi,rbx
             mov rax,rsi
             lea ecx,[rbx+1]
             repz cmpsb
-
             .ifnz; ecx
-
                 printf("error: %s [%s] %d.asm\n", &dst_1, rax, x)
                 inc nerror
             .endif
@@ -89,17 +76,12 @@ validate_x proc uses rsi rdi rbx r12 x:qword
         inc nerror
     .endif
     ret
-
-validate_x endp
+    endp
 
 main proc
-
-    strcpy(&dst_1, &str_1)
-    mov rax,__imp_strcpy
+    mov rax,strcpy
     mov proc_p,rax
-
     .repeat
-
         procs
             validate_x(x)
             .if nerror
@@ -108,14 +90,11 @@ main proc
                 .break
             .endif
         endm
-
-
         GetCycleCount(0,    32, 1, 1000)
         GetCycleCount(33,   64, 1, 1000)
         GetCycleCount(200, 204, 1, 500)
     .until 1
     ret
-
-main endp
+    endp
 
     end start

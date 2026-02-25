@@ -21,7 +21,6 @@ endif
         StringCopyWorker(pszDest, cchDest, NULL, pszSrc, STRSAFE_MAX_LENGTH)
     .endif
     ret
-
-StringCchCat endp
+    endp
 
     end

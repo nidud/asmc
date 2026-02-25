@@ -16,7 +16,6 @@ XMLoadFloat3A proc XM_CALLCONV pSource:ptr XMFLOAT3A
     _mm_load_ps([rcx])
     _mm_and_ps(xmm0, g_XMMask3)
     ret
-
-XMLoadFloat3A endp
+    endp
 
     end

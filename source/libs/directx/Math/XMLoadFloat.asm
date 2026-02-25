@@ -13,7 +13,6 @@ XMLoadFloat proc XM_CALLCONV pSource:ptr float
 
     _mm_load_ss([rcx])
     ret
-
-XMLoadFloat endp
+    endp
 
     end

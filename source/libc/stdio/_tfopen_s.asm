@@ -11,9 +11,7 @@ include tchar.inc
 .code
 
 _tfopen_s proc pFile:ptr LPFILE, filename:tstring_t, mode:tstring_t
-
     .if ( _tfopen( filename, ldr(mode) ) == NULL )
-
         mov eax,errno
     .else
         mov rcx,pFile
@@ -21,7 +19,6 @@ _tfopen_s proc pFile:ptr LPFILE, filename:tstring_t, mode:tstring_t
         xor eax,eax
     .endif
     ret
-
-_tfopen_s endp
+    endp
 
     end

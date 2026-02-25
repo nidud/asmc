@@ -24,7 +24,6 @@ XMVectorTanH proc XM_CALLCONV V:FXMVECTOR
     _mm_sub_ps(xmm2, xmm1)
     _mm_store_ps(xmm0, xmm2)
     ret
-
-XMVectorTanH endp
+    endp
 
     end

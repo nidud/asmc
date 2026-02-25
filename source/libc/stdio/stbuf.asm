@@ -16,7 +16,6 @@ externdef _stdbuf:string_t
 _stbuf proc uses rbx fp:LPFILE
 
    .new p:string_t
-
     ldr rbx,fp
 
     xor eax,eax
@@ -27,6 +26,7 @@ _stbuf proc uses rbx fp:LPFILE
         .endif
         add rdx,string_t
     .endif
+
     mov ecx,[rbx]._flag
     and ecx,_IOMYBUF or _IONBF or _IOYOURBUF
     .ifz
@@ -44,7 +44,6 @@ _stbuf proc uses rbx fp:LPFILE
         mov eax,1
     .endif
     ret
-
-_stbuf endp
+    endp
 
     end

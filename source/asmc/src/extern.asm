@@ -49,14 +49,12 @@ define mangle_type NULL
 ; sym must be NULL or of state SYM_UNDEFINED!
 
 CreateExternal proc fastcall private uses rsi sym:asym_t, name:string_t, weak:char_t
-
     mov rsi,rcx
     .if ( rsi == NULL )
         mov rsi,SymCreate( rdx )
     .else
         sym_remove_table( &SymTables[TAB_UNDEF], rsi )
     .endif
-
     .if ( rsi )
         mov [rsi].asym.state,SYM_EXTERNAL
         mov [rsi].asym.segoffsize,MODULE.Ofssize
@@ -68,24 +66,20 @@ CreateExternal proc fastcall private uses rsi sym:asym_t, name:string_t, weak:ch
         sym_add_table( &SymTables[TAB_EXT], rsi ) ; add EXTERNAL
     .endif
     .return( rsi )
-
-CreateExternal endp
+    endp
 
 
 ; create communal.
 ; sym must be NULL or of state SYM_UNDEFINED!
 
 CreateComm proc fastcall private uses rsi sym:asym_t, name:string_t
-
     mov rsi,rcx
     .if ( rsi == NULL )
         mov rsi,SymCreate( rdx )
     .else
         sym_remove_table( &SymTables[TAB_UNDEF], rsi )
     .endif
-
     .if ( rsi )
-
         mov [rsi].asym.state,SYM_EXTERNAL
         mov [rsi].asym.segoffsize,MODULE.Ofssize
         mov [rsi].asym.is_far,0
@@ -94,8 +88,7 @@ CreateComm proc fastcall private uses rsi sym:asym_t, name:string_t
         sym_add_table( &SymTables[TAB_EXT], rsi ) ; add EXTERNAL
     .endif
     .return( rsi )
-
-CreateComm endp
+    endp
 
 
 ; create a prototype.
@@ -116,27 +109,21 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, n
     .if ( rsi == NULL || [rsi].asym.state == SYM_UNDEFINED ||
           ( [rsi].asym.state == SYM_EXTERNAL && ( [rsi].asym.weak ) &&
             !( [rsi].asym.isproc ) ) )
-
         .if ( CreateProc( rsi, name, SYM_EXTERNAL ) == NULL )
             .return ; name was probably invalid
         .endif
         mov rsi,rax
-
     .elseif ( !( [rsi].asym.isproc ) )
         asmerr( 2005, [rsi].asym.name )
         .return( NULL )
     .endif
-
     imul ebx,i,asm_tok
     add rbx,tokenarray
-
     .if ( [rbx].token == T_ID )
-
         mov rdi,[rbx].string_ptr
         mov eax,[rdi]
         or  al,0x20
         .if ( ax == 'c' )
-
             mov [rbx].token,T_RES_ID
             mov [rbx].tokval,T_CCALL
             mov [rbx].bytval,1
@@ -146,7 +133,6 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, n
     ; a PROTO typedef may be used
 
     .if ( [rbx].token == T_ID )
-
         mov rdi,SymFind( [rbx].string_ptr )
         .if ( rax && [rax].asym.state == SYM_TYPE && [rax].asym.mem_type == MT_PROC )
             inc i
@@ -159,7 +145,6 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, n
            .return( rsi )
         .endif
     .endif
-
     .if ( Parse_Pass == PASS_1 )
         .ifd ( ParseProc( rsi, i, tokenarray, FALSE, langtype ) == ERROR )
             .return( NULL )
@@ -169,8 +154,7 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, n
         mov [rsi].asym.isdefined,1
     .endif
     .return( rsi )
-
-CreateProto endp
+    endp
 
 
 ; externdef [ attr ] [IMPORT|EXPORT] symbol :type [, symbol:type,...]
@@ -194,7 +178,6 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov langtype,MODULE.langtype
         GetLangType( &i, tokenarray, &langtype )
-
         imul ebx,i,asm_tok
         add rbx,tokenarray
 
@@ -202,9 +185,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; v2.37.77: allow IMPORT
 
         .if ( [rbx].token == T_ID )
-
             .ifd ( tstricmp([rbx].string_ptr, "EXPORT") == 0 )
-
                 mov isexport,1
                 inc i
                 add rbx,asm_tok
@@ -233,7 +214,6 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         inc i
         add rbx,asm_tok
         mov rsi,SymFind( rdi )
-
         mov ti.mem_type,MT_EMPTY
         mov ti.size,0
         mov ti.is_ptr,0
@@ -241,16 +221,12 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov ti.ptr_memtype,MT_EMPTY
         mov ti.symtype,NULL
         mov ti.Ofssize,MODULE.Ofssize
-
         mov rcx,[rbx].string_ptr
         mov eax,[rcx]
         or  eax,0x202020
-
         .if ( [rbx].token == T_ID && eax == 'sba' )
-
             inc i
             add rbx,asm_tok
-
         .elseif ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_PROTO )
 
             ; dont scan this line further!
@@ -263,21 +239,15 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .return( NOT_ERROR )
             .endif
             .return( ERROR )
-
         .elseif ( [rbx].token != T_FINAL && [rbx].token != T_COMMA )
-
             .return .ifd ( GetQualifiedType( &i, tokenarray, &ti ) == ERROR )
-
             imul ebx,i,asm_tok
             add rbx,tokenarray
         .endif
-
         mov isnew,FALSE
         .if ( rsi == NULL || [rsi].asym.state == SYM_UNDEFINED )
-
             mov rsi,CreateExternal( rsi, rdi, TRUE )
             mov isnew,TRUE
-
         .elseif ( [rsi].asym.state != SYM_INTERNAL && [rsi].asym.state != SYM_EXTERNAL )
 
             ; v2.16: externdef must be intern or extern
@@ -288,21 +258,17 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; new symbol?
 
         mov rdi,ti.symtype
-
         .if ( isnew )
 
             ; v2.05: added to accept type prototypes
 
             .if ( ti.is_ptr == 0 && rdi && [rdi].asym.isproc )
-
                 CreateProc( rsi, NULL, SYM_EXTERNAL )
                 CopyPrototype( rsi, rdi )
                 mov ti.mem_type,[rdi].asym.mem_type
                 mov ti.symtype,NULL
             .endif
-
             .switch ( ti.mem_type )
-
             .case MT_EMPTY
                 .endc
             .case MT_FAR
@@ -318,12 +284,9 @@ endif
             .default
                 mov [rsi].asym.segm,CurrSeg
             .endsw
-
             mov [rsi].asym.Ofssize,ti.Ofssize
 ;           mov al,ti.Ofssize
-
             .if ( ti.is_ptr == 0 && al != MODULE.Ofssize )
-
                 mov [rsi].asym.segoffsize,al
                 mov rcx,[rsi].asym.segm
                 .if ( rcx )
@@ -333,7 +296,6 @@ endif
                     .endif
                 .endif
             .endif
-
             mov [rsi].asym.mem_type,ti.mem_type
             mov [rsi].asym.is_ptr,ti.is_ptr
             mov [rsi].asym.is_far,ti.is_far
@@ -348,7 +310,6 @@ endif
             ; v2.04: only set language if there was no previous definition
 
             SetMangler( rsi, langtype, mangle_type )
-
         .elseif ( Parse_Pass == PASS_1 )
 
             ; v2.05: added to accept type prototypes
@@ -368,9 +329,7 @@ endif
                 ; then the definition, will make Masm complain, however
 
                 asmerr( 8004, [rsi].asym.name )
-
             .elseif ( [rsi].asym.mem_type == MT_TYPE && [rsi].asym.type != ti.symtype )
-
                 mov rcx,rsi
 
                 ; skip alias types and compare the base types
@@ -402,7 +361,6 @@ if 1
             ; externdef doesn't care. But that's what masm (6/8) does...
 
             .if ( [rsi].asym.state == SYM_INTERNAL && !( [rsi].asym.ispublic ) )
-
                 mov [rsi].asym.ispublic,1
                 AddPublicData( rsi )
             .endif
@@ -417,7 +375,6 @@ endif
                 mov [rsi].asym.dll,MODULE.CurrDll
             .endif
         .endif
-
 if 0
         ; v2.18: removed, because it's a bug.
         ; 1. adding a public after pass one is something that should NOT be done.
@@ -479,8 +436,7 @@ ProtoDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
         mov eax,ERROR
     .endif
     ret
-
-ProtoDirective endp
+    endp
 
 
 ; helper for EXTERN directive.
@@ -488,13 +444,10 @@ ProtoDirective endp
 ; sym must be NULL or of state SYM_UNDEFINED!
 
 MakeExtern proc __ccall name:string_t, mem_type:byte, vartype:asym_t, sym:asym_t, Ofssize:byte
-
     .if ( CreateExternal( sym, name, FALSE ) == NULL )
-
         .return
     .endif
     mov rcx,rax
-
     .if ( mem_type != MT_EMPTY &&
         ( Options.masm_compat_gencode == FALSE || mem_type != MT_FAR ) )
         mov [rcx].asym.segm,CurrSeg
@@ -505,8 +458,7 @@ MakeExtern proc __ccall name:string_t, mem_type:byte, vartype:asym_t, sym:asym_t
     mov [rcx].asym.type,vartype
     mov rax,rcx
     ret
-
-MakeExtern endp
+    endp
 
 
 ; handle optional alternate names in EXTERN directive
@@ -524,7 +476,6 @@ HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:asym_t
         .if ( [rsi].asym.altname && [rsi].asym.altname != rdi )
             .return( asmerr( 2005, [rsi].asym.name ) )
         .endif
-
         .if ( Parse_Pass > PASS_1 )
             .if ( [rdi].asym.state == SYM_UNDEFINED )
                 asmerr( 2006, altname )
@@ -542,7 +493,6 @@ HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:asym_t
                 .endif
             .endif
         .else
-
             .if ( rdi )
                 .if ( [rdi].asym.state != SYM_INTERNAL &&
                       [rdi].asym.state != SYM_EXTERNAL &&
@@ -570,8 +520,7 @@ HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:asym_t
         .endif
     .endif
     .return( NOT_ERROR )
-
-HandleAltname endp
+    endp
 
 
 ; syntax: EXT[E]RN [lang_type] name (altname) :type [, ...]
@@ -758,9 +707,7 @@ endif
 
         mov [rdi].asym.isdefined,1
         mov [rdi].asym.Ofssize,ti.Ofssize
-
         .if ( ti.is_ptr == 0 && al != MODULE.Ofssize )
-
             mov [rdi].asym.segoffsize,al
             mov rcx,[rdi].asym.segm
             .if ( rcx )
@@ -770,7 +717,6 @@ endif
                 mov [rdi].asym.segm,NULL
             .endif
         .endif
-
         mov [rdi].asym.mem_type,ti.mem_type
         mov [rdi].asym.is_ptr,ti.is_ptr
         mov [rdi].asym.is_far,ti.is_far
@@ -780,10 +726,8 @@ endif
         .else
             mov [rdi].asym.target_type,ti.symtype
         .endif
-
         HandleAltname( altname, rdi )
         SetMangler( rdi, langtype, mangle_type )
-
         imul ebx,i,asm_tok
         add rbx,tokenarray
         .if ( [rbx].token != T_FINAL )
@@ -795,10 +739,9 @@ endif
                 .return( asmerr( 2008, [rbx].string_ptr ) )
             .endif
         .endif
-     .until ( i >= TokenCount )
-     .return( NOT_ERROR )
-
-ExternDirective endp
+    .until ( i >= TokenCount )
+    .return( NOT_ERROR )
+    endp
 
 
 ; helper for COMM directive
@@ -807,7 +750,6 @@ MakeComm proc __ccall private uses rdi name:string_t, sym:asym_t, size:dword, co
 
     mov rdi,CreateComm( sym, name )
     .return .if ( rdi == NULL )
-
     mov [rdi].asym.total_length,count
     mov [rdi].asym.is_far,isfar
 
@@ -816,7 +758,6 @@ MakeComm proc __ccall private uses rdi name:string_t, sym:asym_t, size:dword, co
     .if ( Options.masm_compat_gencode == FALSE || isfar == FALSE )
         mov [rdi].asym.segm,CurrSeg
     .endif
-
     MemtypeFromSize( size, &[rdi].asym.mem_type )
 
     ; v2.04: warning added ( Masm emits an error )
@@ -833,8 +774,7 @@ MakeComm proc __ccall private uses rdi name:string_t, sym:asym_t, size:dword, co
     mul count
     mov [rdi].asym.total_size,eax
     .return( rdi )
-
-MakeComm endp
+    endp
 
 
 ; define "communal" items
@@ -1003,8 +943,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
     .endf
     .return( NOT_ERROR )
-
-CommDirective endp
+    endp
 
 
 ; syntax: PUBLIC [lang_type] [EXPORT] name [, ...]
@@ -1028,7 +967,6 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         imul ebx,i,asm_tok
         add rbx,tokenarray
-
         .if ( [rbx].token != T_ID )
             .return( asmerr( 2008, [rbx].string_ptr ) )
         .endif
@@ -1104,7 +1042,6 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 SetMangler( rdi, langtype, mangle_type )
             .endif
         .endif
-
         .if ( [rbx].token != T_FINAL )
             .if ( [rbx].token == T_COMMA )
                 mov ecx,i
@@ -1118,7 +1055,6 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
     .until ( i >= TokenCount )
     .return( NOT_ERROR )
-
-PublicDirective endp
+    endp
 
     end

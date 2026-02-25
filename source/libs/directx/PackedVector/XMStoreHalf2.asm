@@ -19,7 +19,6 @@ XMStoreHalf2 proc XM_CALLCONV uses rbx pDestination:ptr XMHALF2, V:FXMVECTOR
     XMConvertFloatToHalf(xmm0)
     mov [rbx].XMHALF2.y,ax
     ret
-
-XMStoreHalf2 endp
+    endp
 
     end

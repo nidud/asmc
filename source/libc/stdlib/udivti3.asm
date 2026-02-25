@@ -13,7 +13,6 @@ ifdef _WIN64
     option dotname
 
 __udivti3 proc dividend:uint128_t, divisor:uint128_t
-
     mov     rax,rcx
     test    r9,r9
     jnz     .2
@@ -22,7 +21,6 @@ __udivti3 proc dividend:uint128_t, divisor:uint128_t
     inc     r8
     cmp     r8,rdx
     ja      .0
-
     mov     r9,rcx
     mov     rax,rdx
     xor     edx,edx
@@ -101,9 +99,7 @@ __udivti3 proc dividend:uint128_t, divisor:uint128_t
     mov     rax,r10
     mov     rdx,r11
     jmp     .1
-
-__udivti3 endp
-
+    endp
 else
     int     3
 endif

@@ -8,14 +8,11 @@ include fltintrn.inc
     .code
 
 __cvti32_q proc __ccall q:ptr qfloat_t, l:int_t
-
   local flt:STRFLT
-
     _itoflt( &flt, l )
     _fltpackfp( q, &flt )
     ret
-
-__cvti32_q endp
+    endp
 
     end
 

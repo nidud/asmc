@@ -10,7 +10,6 @@ include tchar.inc
 .code
 
 _tcsmove proc dst:tstring_t, src:tstring_t
-
     _tcslen(src)
     inc eax
 ifdef _UNICODE
@@ -18,7 +17,6 @@ ifdef _UNICODE
 endif
     memmove(dst, src, eax)
     ret
-
-_tcsmove endp
+    endp
 
     end

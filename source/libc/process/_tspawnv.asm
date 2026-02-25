@@ -17,10 +17,8 @@ endif
 .code
 
 _tspawnv proc mode:int_t, name:tstring_t, argv:tarray_t
-
     _tspawnve( ldr(mode), ldr(name), ldr(argv), _tenviron )
     ret
-
-_tspawnv endp
+    endp
 
     end

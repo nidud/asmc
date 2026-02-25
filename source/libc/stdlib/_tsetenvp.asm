@@ -14,22 +14,14 @@ endif
 
 define MAXCOUNT 256
 
-    .code
+.code
 
 ifndef __UNIX__
-
 _tsetenvp proc uses rsi rdi rbx envp:tarray_t
-
     .new offs[MAXCOUNT]:int_t
-
-    .for ( rdi = _tenvptr,
-           rsi = rdi,
-           eax = 0,
-           ebx = 0,
+    .for ( rdi = _tenvptr, rsi = rdi, eax = 0, ebx = 0,
            ecx = -1 : tchar_t ptr [rdi] && ebx < MAXCOUNT : )
-
         .if ( tchar_t ptr [rdi] != '=' )
-
             mov  rdx,rdi
             sub  rdx,rsi
             mov  offs[rbx*int_t],edx
@@ -37,16 +29,12 @@ _tsetenvp proc uses rsi rdi rbx envp:tarray_t
         .endif
         repnz _tscasb
     .endf
-
     inc rbx
     malloc(&[rbx*size_t])
     mov rcx,envp
     mov [rcx],rax
-
     .if ( rax )
-
         .for ( rdi = rax, ebx--, ecx = 0 : ecx < ebx : ecx++ )
-
             mov eax,offs[rcx*int_t]
             add rax,rsi
             mov [rdi+rcx*size_t],rax
@@ -56,9 +44,6 @@ _tsetenvp proc uses rsi rdi rbx envp:tarray_t
         mov rax,rdi
     .endif
     ret
-
-_tsetenvp endp
-
+    endp
 endif
-
     end

@@ -42,7 +42,6 @@ XMStoreU555 proc XM_CALLCONV pDestination:ptr XMU555, V:FXMVECTOR
     or  edx,eax
     mov [rcx].XMU555.v,dx
     ret
-
-XMStoreU555 endp
+    endp
 
     end

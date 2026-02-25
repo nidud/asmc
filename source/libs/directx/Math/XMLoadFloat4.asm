@@ -13,7 +13,6 @@ XMLoadFloat4 proc XM_CALLCONV pSource:ptr XMFLOAT4
 
     _mm_loadu_ps([rcx])
     ret
-
-XMLoadFloat4 endp
+    endp
 
     end

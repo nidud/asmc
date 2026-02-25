@@ -17,7 +17,6 @@ else
     fld x
 endif
     ret
-
-_chgsign endp
+    endp
 
     end

@@ -26,7 +26,6 @@ ifndef _WIN64
     pop     eax
     xor     eax,edx
     and     eax,ecx
-
     .ifnz
 endif
         xor eax,eax
@@ -70,22 +69,17 @@ ifndef _WIN64
     .endif
 endif
     .if eax & SSE_XGETBV
-
         xor ecx,ecx
         xgetbv
         .if eax & 6 ; AVX support by OS?
             or sselevel,SSE_AVXOS
         .endif
-
         and eax,0xE0
         .if eax == 0xE0
-
             xor ecx,ecx
             mov eax,7
             cpuid
-
             .if ebx & 1 shl 16      ; SSE_AVX512F ?
-
                 xor eax,eax
                 bt  ebx,30          ; SSE_AVX512BW
                 adc eax,eax         ; into bit 28
@@ -126,7 +120,6 @@ endif
                 shl eax,11
                 or  eax,SSE_AVX512F ; into bit 10
                 or  sselevel,eax
-
                 mov ecx,1
                 mov eax,7
                 cpuid

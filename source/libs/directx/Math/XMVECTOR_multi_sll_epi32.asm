@@ -48,7 +48,6 @@ XMVECTOR_multi_sll_epi32 proc vectorcall this:XMVECTOR, V:XMVECTOR
     _mm_shuffle_ps(xmm2, xmm0, _MM_SHUFFLE(2,0,2,0))
     _mm_store_ps(xmm0, xmm2)
     ret
-
-XMVECTOR_multi_sll_epi32 endp
+    endp
 
     end

@@ -26,7 +26,6 @@ XMVectorCosH proc XM_CALLCONV V:FXMVECTOR
     XMVectorExp(V)
     _mm_add_ps(xmm0, V[16])
     ret
-
-XMVectorCosH endp
+    endp
 
     end

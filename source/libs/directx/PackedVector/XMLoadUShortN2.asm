@@ -37,7 +37,6 @@ XMLoadUShortN2 proc XM_CALLCONV pSource:ptr XMUSHORTN2
 
     _mm_mul_ps(xmm0, _mm_get_epi32(1.0 / 65535.0, 1.0 / (65535.0 * 65536.0), 0.0, 0.0))
     ret
-
-XMLoadUShortN2 endp
+    endp
 
     end

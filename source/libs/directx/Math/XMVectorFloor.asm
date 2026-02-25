@@ -28,7 +28,6 @@ else
     _mm_or_ps(xmm0, xmm1)
 endif
     ret
-
-XMVectorFloor endp
+    endp
 
     end

@@ -24,27 +24,21 @@ else
   local argv[MAXARGCOUNT]:tstring_t
   local buffer:tstring_t
   local i:int_t
-
     ldr rcx,argc
     ldr rsi,cmdline
-
     mov dword ptr [rcx],0
     mov buffer,malloc(MAXARGSIZE*tchar_t)
     mov rdi,rax
     movzx eax,tchar_t ptr [rsi]
     add rsi,tchar_t
-
     .while eax
-
         xor ecx,ecx     ; Add a new argument
         xor edx,edx     ; "quote from start" in EDX - remove
         mov [rdi],cx
-
         .for ( : eax == ' ' || ( eax >= 9 && eax <= 13 ) : )
              _tlodsb
         .endf
         .break .if !eax ; end of command string
-
         .if eax == '"'
             _tlodsb
             inc edx
@@ -53,11 +47,8 @@ else
             _tlodsb
             inc ecx
         .endw
-
         .while eax
-
             .break .if ( !edx && !ecx && ( eax == ' ' || ( eax >= 9 && eax <= 13 ) ) )
-
             .if eax == '"'
                 .if ecx
                     dec ecx
@@ -74,14 +65,12 @@ else
             .endif
             _tlodsb
         .endw
-
         xor ecx,ecx
         mov [rdi],ecx
         lea rbx,[rdi+tchar_t]
         mov rdi,buffer
         movzx ecx,tchar_t ptr [rdi]
        .break .if !ecx
-
         mov i,eax
         sub rbx,rdi
         memcpy(malloc(rbx), rdi, rbx)
@@ -92,7 +81,6 @@ else
         mov eax,i
        .break .if !( ecx < MAXARGCOUNT )
     .endw
-
     xor eax,eax
     mov rdx,argc
     mov ebx,[rdx]
@@ -104,7 +92,6 @@ else
     memcpy(rsi, rdi, rbx)
 endif
     ret
-
-_tsetargv endp
+    endp
 
     end

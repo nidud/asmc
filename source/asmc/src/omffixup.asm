@@ -37,7 +37,6 @@ endif
 ifndef ASMC64
 
 putIndex proc watcall private p:ptr byte, index:word
-
     .if ( dx > 0x7f )
         or  dh,0x80
         mov [rax],dh
@@ -46,30 +45,24 @@ putIndex proc watcall private p:ptr byte, index:word
     mov [rax],dl
     inc rax
     ret
-
-putIndex endp
+    endp
 
 
 put16 proc watcall private p:ptr byte, value:word
-
     WriteU16( rax, edx )
     add rax,2
     ret
-
-put16 endp
+    endp
 
 
 put32 proc watcall private p:ptr byte, value:dword
-
     WriteU32( rax, edx )
     add rax,4
     ret
-
-put32 endp
+    endp
 
 
 putFrameDatum proc fastcall private p:ptr byte, method:byte, datum:word
-
     .switch dl
     .case FRAME_SEG
     .case FRAME_GRP
@@ -82,15 +75,12 @@ endif
     .endsw
     ; for FRAME_LOC & FRAME_TARG ( & FRAME_NONE ) there's no datum to write.
     .return( rcx )
-
-putFrameDatum endp
+    endp
 
 
 putTargetDatum proc fastcall private p:ptr byte, method:byte, datum:word
-
     .return( putIndex( rcx, datum ) )
-
-putTargetDatum endp
+    endp
 
 
 ; translate logref to FIXUP subrecord ( without Locat field ).
@@ -150,8 +140,7 @@ TranslateLogref proc __ccall private uses rsi rdi rbx lr:ptr logref, buf:ptr byt
     mov rax,rdi
     sub rax,buf
     ret
-
-TranslateLogref endp
+    endp
 
 endif
 
@@ -204,8 +193,7 @@ ifndef ASMC64
 else
     .return 0
 endif
-
-OmfFixGenFixModend endp
+    endp
 
 
 ; fill a logref from a fixup's info
@@ -353,8 +341,7 @@ endif
         mov [rsi].frame_meth,FRAME_TARG
     .endif
     .return( 1 )
-
-omf_set_logref endp
+    endp
 
 endif
 
@@ -466,7 +453,6 @@ ifndef ASMC64
 else
    .return 0
 endif
-
-OmfFixGenFix endp
+    endp
 
     end

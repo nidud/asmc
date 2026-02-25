@@ -37,7 +37,6 @@ XMLoadColor proc XM_CALLCONV pSource:ptr XMCOLOR
 
     _mm_mul_ps(xmm0, g_XMNormalizeA8R8G8B8)
     ret
-
-XMLoadColor endp
+    endp
 
     end

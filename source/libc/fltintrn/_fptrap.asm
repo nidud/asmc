@@ -11,10 +11,8 @@ include fltintrn.inc
     .code
 
 _fptrap proc
-
     _write( 1, "floating point not loaded\n", 26 )
     _exit( 1 )
-
-_fptrap endp
+    endp
 
     end

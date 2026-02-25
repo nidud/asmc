@@ -8,12 +8,9 @@ include DirectXMath.inc
     .code
 
 XMVectorReplicatePtr proc XM_CALLCONV pValue:ptr float
-
     ldr rcx,pValue
-
     _mm_load_ps1([rcx])
     ret
-
-XMVectorReplicatePtr endp
+    endp
 
     end

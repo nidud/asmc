@@ -29,14 +29,11 @@ public  _init_387_emulator
     .code
 
 _fltinit proc private
-
     fninit
     fwait
-
     fldcw _8087cw
     ret
-
-_fltinit endp
+    endp
 
 .pragma init(_fltinit, 20)
 

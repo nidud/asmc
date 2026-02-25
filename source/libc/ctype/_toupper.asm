@@ -9,13 +9,11 @@ include tchar.inc
     .code
 
 _totupper proc c:int_t
-
     ldr eax,c
     .if ( eax >= 'a' && eax <= 'z' )
         sub eax,'a' - 'A'
     .endif
     ret
-
-_totupper endp
+    endp
 
     end

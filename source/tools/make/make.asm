@@ -15,6 +15,7 @@
 ; 2017-02-25 - added .EXTENSIONS and .SUFFIXES
 ; 2017-02-25 - added include path : %ASMCDIR%\lib | %DZ%\lib
 ;
+
 include winbase.inc
 include stdio.inc
 include stdlib.inc
@@ -112,26 +113,20 @@ errorlevel      int_t 0
     .code
 
 strstart proc string:string_t
-
     ldr rax,string
-
     .while ( byte ptr [rax] == ' ' || byte ptr [rax] == 9 )
         inc rax
     .endw
     ret
-
-strstart endp
+    endp
 
 
 strspace proc string:string_t
-
     ldr rcx,string
-
     .repeat
         mov al,[rcx]
         inc rcx
         .if ( al == ' ' || al == 9 )
-
             lea rax,[rcx-1]
             movzx ecx,byte ptr [rax]
            .return
@@ -140,37 +135,29 @@ strspace proc string:string_t
     dec rcx
     xor eax,eax
     ret
-
-strspace endp
+    endp
 
 
 strtrim proc string:string_t
-
     .if strlen(string)
-
         mov ecx,eax
         add rcx,string
         .repeat
-
             dec rcx
             .break .if byte ptr [rcx] > ' '
-
             mov byte ptr [rcx],0
             dec eax
         .untilz
     .endif
     ret
-
-strtrim endp
+    endp
 
 
 strmove proc dst:string_t, src:string_t
-
     inc strlen(src)
     memmove(dst, src, eax)
     ret
-
-strmove endp
+    endp
 
 
 memstri proc uses rsi rdi rbx s1:string_t, l1:int_t, s2:string_t, l2:int_t
@@ -186,11 +173,8 @@ memstri proc uses rsi rdi rbx s1:string_t, l1:int_t, s2:string_t, l2:int_t
     and bl,'a'-'A'
     add bl,al
     add bl,'A'
-
     .while 1
-
         .return ecx .if !ecx
-
         dec ecx
         mov al,[rdi]
         inc rdi
@@ -201,23 +185,16 @@ memstri proc uses rsi rdi rbx s1:string_t, l1:int_t, s2:string_t, l2:int_t
         add al,bh
         add al,'A'
         cmp al,bl
-
         .continue .if al != bl
-
         mov edx,l2
         dec edx
-
         .break .ifz
         .return 0 .ifs ecx < edx
-
         .repeat
-
             dec edx
             .break(1) .ifl
-
             mov al,[rsi+rdx+1]
             .continue(0) .if al == [rdi+rdx]
-
             mov ah,[rdi+rdx]
             sub ax,'AA'
             cmp al,'Z'-'A' + 1
@@ -232,31 +209,24 @@ memstri proc uses rsi rdi rbx s1:string_t, l1:int_t, s2:string_t, l2:int_t
             cmp al,ah
         .until al != ah
     .endw
-
     mov rax,rdi
     dec rax
     ret
-
-memstri endp
+    endp
 
 
 strstri proc uses rbx dst:string_t, src:string_t
-
     mov ebx,strlen(dst)
     memstri(dst, ebx, src, strlen(src))
     ret
-
-strstri endp
+    endp
 
 
 strxchg proc uses rsi rdi rbx dst:string_t, old:string_t, new:string_t
-
     ldr rdi,dst
     mov esi,strlen(new)
     mov ebx,strlen(old)
-
     .while strstri(rdi, old)    ; find token
-
         mov rdi,rax             ; EDI to start of token
         lea rcx,[rax+rsi]
         add rax,rbx
@@ -266,17 +236,14 @@ strxchg proc uses rsi rdi rbx dst:string_t, old:string_t, new:string_t
     .endw
     mov rax,dst
     ret
-
-strxchg endp
+    endp
 
 
 strfcat proc uses rsi rdi buffer:string_t, path:string_t, file:string_t
-
     mov rdx,buffer
     mov rsi,path
     xor eax,eax
     mov ecx,-1
-
     .if rsi
         mov rdi,rsi
         repne scasb
@@ -287,7 +254,6 @@ strfcat proc uses rsi rdi buffer:string_t, path:string_t, file:string_t
         mov rdi,rdx
         repne scasb
     .endif
-
     dec rdi
     .if rdi != rdx
         mov al,[rdi-1]
@@ -297,41 +263,32 @@ strfcat proc uses rsi rdi buffer:string_t, path:string_t, file:string_t
         .endif
     .endif
     mov rsi,file
-
     .repeat
         lodsb
         stosb
     .until !eax
     mov rax,rdx
     ret
-
-strfcat endp
+    endp
 
 
 strfn proc path:string_t
-
     ldr rcx,path
     .for ( rax = rcx, dl = [rcx] : dl : rcx++, dl=[rcx] )
-
         .if ( dl == '\' || dl == '/' )
-
             .if ( byte ptr [rcx+1] )
-
                 lea rax,[rcx+1]
             .endif
         .endif
     .endf
     ret
-
-strfn endp
+    endp
 
 
 strtoken proc string:string_t
-
     ldr rax,string
     mov rcx,curr_token
     .if rax
-
         mov rcx,rax
         xor eax,eax
     .endif
@@ -343,9 +300,7 @@ strtoken proc string:string_t
         .return
     .endif
     .while 1
-
         .if islspace([rcx])
-
             mov [rcx],ah
             inc rcx
            .break
@@ -356,12 +311,10 @@ strtoken proc string:string_t
     mov rax,curr_token
     mov curr_token,rcx
     ret
-
-strtoken endp
+    endp
 
 
 strext proc uses rbx string:string_t
-
     ldr rbx,string
     mov rbx,strfn(rbx)
     .if strrchr(rax, '.')
@@ -370,36 +323,29 @@ strext proc uses rbx string:string_t
         .endif
     .endif
     ret
-
-strext endp
+    endp
 
 
 setfext proc path:string_t, ext:string_t
-
     .if strext(path)
         mov byte ptr [rax],0
     .endif
     strcat(path, ext)
     ret
-
-setfext endp
+    endp
 
 
 strpath proc uses rbx string:string_t
-
     ldr rbx,string
     .if strfn(rbx) != rbx
-
         mov byte ptr [rax-1],0
         mov rax,rbx
     .endif
     ret
-
-strpath endp
+    endp
 
 
 filexist proc file:string_t
-
     .ifd ( GetFileAttributes(file) == -1 )
         .return( 0 )
     .endif
@@ -407,8 +353,7 @@ filexist proc file:string_t
     shr eax,4           ; 2 = subdir
     inc eax
     ret
-
-filexist endp
+    endp
 
 
 MAXCMDL equ 0x8000
@@ -424,7 +369,6 @@ system proc uses rdi rsi rbx string:LPSTR
     .if !GetEnvironmentVariable("Comspec", rbx, MAXCMDL)
         SearchPath(rax, "cmd.exe", rax, MAXCMDL, rbx, rax)
     .endif
-
     strcat(rbx, " /C ")
     mov rdi,string
     mov edx,' '
@@ -458,7 +402,6 @@ system proc uses rdi rsi rbx string:LPSTR
         strcat(rbx, rsi)
     .endif
     strcat(rbx, rdi)
-
     xor eax,eax
     mov errorlevel,eax
     lea rdi,ProcessInfo
@@ -481,58 +424,43 @@ system proc uses rdi rsi rbx string:LPSTR
     free(rbx)
     mov eax,edi
     ret
-
-system endp
+    endp
 
 
 expenviron proc uses rsi rdi string:string_t
-
     mov rsi,malloc(0x8000)
     ExpandEnvironmentStrings(string, rsi, 0x8000-1)
-
     mov rdi,rsi
     .while strchr(rdi, '%')
-
         mov rdi,rax
         .break .if !strchr(&[rax+1], '%')
-
         strcpy(rdi, &[rax+1])
     .endw
     mov rdi,strcpy(string, rsi)
     free(rsi)
     mov rax,rdi
     ret
-
-expenviron endp
+    endp
 
 
 ltoken proc uses rsi rdi string:string_t
-
     ldr rcx,string
     mov rsi,token
     .if rcx
         mov rsi,rcx
     .endif
-
     mov rsi,strstart(rsi)
     mov token,rsi
-
     xor eax,eax
-
     .while 1
-
         lodsb
-
         .switch
-
         .case !eax
             lea rcx,[rsi-1]
            .break .if rcx == token
-
             mov rax,token
             mov token,rcx
            .break
-
         .case eax == '='
             lea rcx,[rsi-1]
             lea rax,token_equal
@@ -550,7 +478,6 @@ ltoken proc uses rsi rdi string:string_t
             mov byte ptr [rsi],'='
             mov token,rsi
            .break
-
         .case islspace(eax)
             mov rax,token
             mov token,rsi
@@ -558,53 +485,39 @@ ltoken proc uses rsi rdi string:string_t
         .endsw
     .endw
     ret
-
-ltoken endp
+    endp
 
 
 istarget proc uses rdi rbx line:string_t
-
     .if !strspace(strstart(line))
-
         .return( 1 ) .if byte ptr [rcx-1] == ':'
         mov rax,rcx
     .endif
-
     mov bl,[rax]
     mov rdi,rax
-
     .return( &[rax+1] ) .if byte ptr [ strstart(rax) ] == ':'
-
     mov eax,':'
     mov [rdi],ah
     strchr(line, eax)
-
     mov [rdi],bl
     .return .if !rax
-
     movzx eax,byte ptr [rax+1]
     .return( 1 ) .if !eax
-
     .if islspace(eax)
         mov eax,1
     .else
         xor eax,eax
     .endif
     ret
-
-istarget endp
+    endp
 
 
 findsymbol proc uses rsi rdi rbx symbol:string_t
-
     ldr rdi,symbol
     mov rsi,symbol_table
     mov ebx,symbol_count
-
     .repeat
-
         .return ebx .if !ebx
-
         dec ebx
         mov rax,[rsi]
         add rsi,size_t
@@ -614,64 +527,50 @@ findsymbol proc uses rsi rdi rbx symbol:string_t
         or  cx,0x2020
        .continue( 0 ) .if dx != cx
     .until !_stricmp(rax, rdi)
-
     sub rsi,size_t
     mov rdx,rsi
     mov rcx,[rdx]
     mov rax,[rdx+MAXSYMBOLS*size_t]
     ret
-
-findsymbol endp
+    endp
 
 
 alloc_string proc uses rsi rdi value:string_t
-
     mov rdi,malloc(MAXTARGET)
     ExpandEnvironmentStrings(value, rdi, MAXTARGET-1)
     mov rsi,_strdup(rdi)
     free(rdi)
     mov rax,rsi
     ret
-
-alloc_string endp
+    endp
 
 
 addsymbol proc uses rdi symbol:string_t, value:string_t
-
     .repeat
-
         .if findsymbol(symbol)
-
             mov rdi,rdx
             free(rax)
             .return .if !alloc_string(value)
-
         .else
-
             mov rdi,symbol_table
             mov eax,symbol_count
             .break .if eax >= MAXSYMBOLS-1
-
             lea rdi,[rdi+rax*size_t]
             inc eax
             mov symbol_count,eax
             .break .if !_strdup(symbol)
-
             mov [rdi],rax
             mov rax,value
             .return .if !rax
             .break .if !alloc_string(rax)
         .endif
-
         mov [rdi+MAXSYMBOLS*size_t],rax
        .return
     .until 1
-
     perror("To many symbols..")
     exit(1)
     ret
-
-addsymbol endp
+    endp
 
 
 expandsymbol proc uses rsi rdi rbx string:string_t
@@ -689,17 +588,12 @@ expandsymbol proc uses rsi rdi rbx string:string_t
     strcpy(rsi, string)
     mov rdi,rax
     strtrim(rax)
-
     .repeat
-
         .while 1
-
             .break(1) .if !strchr(rdi, '$')
             lea rdi,[rax+1]
             .continue(0) .if byte ptr [rdi] != '('
-
             mov rbx,rax
-
             .if ( memcmp(rdi, "(error ", 7) == 0 )
                 .if strrchr(rdi, ')')
                     mov byte ptr [rax],0
@@ -707,39 +601,29 @@ expandsymbol proc uses rsi rdi rbx string:string_t
                 perror( &[rdi+7] )
                 exit(1)
             .endif
-
             mov rdx,symbol_macro
             mov rcx,symbol_name
-
             mov ax,[rbx]
             mov [rdx],ax
             add rbx,2
             add rdx,2
-
             .repeat
-
                 mov al,[rbx]
                 inc rbx
                 .continue(0) .if al == ' '
                 .continue(0) .if al == 9
-
                 mov [rcx],al
                 mov [rdx],al
                 inc rcx
                 inc rdx
-
                 .break(1) .if !al
-
             .until al == ')'
-
             xor eax,eax
             mov [rcx-1],al
             mov [rdx],al
-
             .if !findsymbol(symbol_name)
                 lea rax,null_string
             .endif
-
             strxchg(rsi, symbol_macro, rax)
             dec rdi
         .endw
@@ -750,8 +634,7 @@ expandsymbol proc uses rsi rdi rbx string:string_t
     free(rsi)
     mov rax,rbx
     ret
-
-expandsymbol endp
+    endp
 
 
 ;-------------------------------------------------------------------------------
@@ -772,7 +655,6 @@ gnumake proc string:string_t
     or  edx,0x20202020
     or  ecx,0x20202020
     xor eax,eax
-
     .switch
     .case ecx == 'qefi'
     .case ecx == 'esle'
@@ -813,30 +695,22 @@ gnumake proc string:string_t
         .endc
     .endsw
     ret
-
-gnumake endp
+    endp
 
 
 skipiftag proc uses rsi rdi
-
     lea rsi,line_buf
     .repeat
-
         .if !fgets(rsi, MAXLINE, line_fp)
-
             perror("Missing !else or !endif")
             exit(1)
         .endif
-
         inc line_id
         .continue(0) .if !strtrim(rax)
-
         strstart(rsi)
         mov rdi,rax
         mov eax,[rax]
-
         .if ( al != '!' )
-
             gnumake(rsi)
             .if ( !eax || eax == 4 )
                 .continue(0)
@@ -845,21 +719,15 @@ skipiftag proc uses rsi rdi
             inc rdi
         .endif
         strstart(rdi)
-
         mov eax,[rax]
         or  eax,0x20202020
-
         .if eax == 'esle'
-
             movzx eax,if_level
             lea rcx,if_state
             .continue(0) .if byte ptr [rcx+rax-1] == 0
-
         .elseif eax == 'idne'
-
             dec if_level
         .else
-
             .continue(0) .if ax != 'fi'
             movzx eax,if_level
             lea rcx,if_state
@@ -870,20 +738,16 @@ skipiftag proc uses rsi rdi
         .endif
     .until 1
     ret
-
-skipiftag endp
+    endp
 
 
 syntax_error proc syntax:string_t
-
     perror(syntax)
     exit(1)
-
-syntax_error endp
+    endp
 
 
 find_and_compare proc
-
     .if findsymbol(rdi)
         mov rdi,rax
     .endif
@@ -892,8 +756,7 @@ find_and_compare proc
     .endif
     _stricmp(rdi, rsi)
     ret
-
-find_and_compare endp
+    endp
 
 
 readline proc uses rsi rdi rbx
@@ -904,58 +767,42 @@ readline proc uses rsi rdi rbx
     mov base,malloc(MAXTARGET)
     add rax,MAXTARGET-256
     mov symbol,rax
-
     .while 1
-
         mov rax,line_fp
         .break .if !rax
-
         mov rsi,line_ptr
         mov rdi,rsi
-
         .if !fgets(rdi, MAXLINE, rax)
-
             fclose(line_fp)
             lea rcx,line_fp
             memcpy(rcx, addr [rcx+size_t], MAXMAKEFILES*size_t)
            .continue
         .endif
-
         inc line_id
         .continue .if !strtrim(rax)
-
-
         mov rdi,strstart(rsi)               ; EDI to start of line
         mov rsi,ltoken(strcpy(base, rax))   ; ESI to first token
         mov eax,[rdi]
         .continue .if al == '#'
-
         .if al != '!'
-
             .if ( gnumake(line_ptr) == 0 )
                 mov rax,rdi
                .break
             .endif
             dec rdi
         .endif
-
         mov rdi,expandsymbol(&[rdi+1])
         strcpy(base, rdi)
         mov rdi,strstart(rdi)
-
         .switch
-
         .case !_strnicmp(rdi, "include", 7)
-
             mov rbx,expandsymbol(strstart(addr [rdi+8]))
             .if !fopen(rax, "rt") && includepath
-
                 fopen(strfcat(addr currentfile, addr includepath, rbx), "rt")
             .endif
             xchg rbx,rax
             free(rax)
             .if !rbx
-
                 perror(rdi)
                 exit(1)
             .endif
@@ -963,41 +810,29 @@ readline proc uses rsi rdi rbx
             memmove(addr [rdi+size_t], rdi, MAXMAKEFILES*size_t-size_t)
             mov [rdi],rbx
            .continue
-
         .case !_strnicmp(rdi, "endif", 5)
-
             dec if_level
            .continue
-
         .case !_strnicmp(rdi, "else", 4)
-
             movzx ebx,if_level
             lea rcx,if_state
             .if byte ptr [rcx+rbx-1] == 0
-
                 skipiftag()
             .endif
             .continue
         .endsw
-
         mov ax,[rdi]
         or  ax,0x2020
         .if ax != 'fi'
-
             syntax_error(rdi)
         .endif
-
         movzx ebx,if_level
         lea rcx,if_state
         mov byte ptr [rcx+rbx],1
         inc if_level
-
         .if !_strnicmp(rdi, "ifdef", 5)
-
             .if ltoken(addr [rdi+6])
-
                 .if !findsymbol(rax)
-
                     skipiftag()
                 .else
                     lea rcx,if_state
@@ -1005,18 +840,13 @@ readline proc uses rsi rdi rbx
                 .endif
                 .continue
             .endif
-
             syntax_error(rdi)
         .endif
-
         .if !_strnicmp(rdi,"ifndef", 6)
-
             .if !ltoken(addr [rdi+7])
-
                 syntax_error(rdi)
             .endif
             .if findsymbol(rax)
-
                 skipiftag()
             .else
                 lea rcx,if_state
@@ -1024,18 +854,14 @@ readline proc uses rsi rdi rbx
             .endif
             .continue
         .endif
-
         .if !_strnicmp(rdi, "ifeq", 4)
-
             mov rdi,expenviron(rdi)
-
             .return syntax_error(rdi) .if strtoken(&[rdi+5]) == NULL
             mov rdi,rax
             .return syntax_error(rdi) .if strtoken(0) == NULL
             mov rsi,rax
             jmp if_a_eq_b
         .endif
-
         mov al,[rdi+2]
         .if al != ' ' && al != 9
             syntax_error(rdi)
@@ -1043,13 +869,9 @@ readline proc uses rsi rdi rbx
         .if !strtoken(&[rdi+3])
             syntax_error(rdi)
         .endif
-
         mov rdi,expenviron(rax)
-
         .while 1 ; !if <> == <> || <> ..
-
             .if !strtoken(0)
-
                 .if !findsymbol(rdi)
                     mov rax,rdi
                 .endif
@@ -1061,82 +883,59 @@ readline proc uses rsi rdi rbx
                 .endif
                 .break
             .endif
-
             mov rsi,rax
             .if !strtoken(0)
                 syntax_error(rdi)
             .endif
-
             xchg rdi,rax
             mov eax,[rax]
             .if al < 2
                 syntax_error(rdi)
             .endif
-
             .switch al
-
             .case TRUE
-
                 .if strtoken(0) == NULL || byte ptr [rax] == '|'
-
                     lea rcx,if_state
                     mov byte ptr [rcx+rbx],0
-
                 .elseif byte ptr [rax] == '&'
-
                     .return syntax_error(rdi) .if !strtoken(0)
                      mov rdi,rax
                     .continue
                 .endif
                 .break
-
             .case FALSE
-
                 .if strtoken(0) == NULL || byte ptr [rax] != '|'
-
                     skipiftag()
                    .break
                 .endif
                 .return syntax_error(rdi) .if !strtoken(0)
                  mov rdi,rax
                 .continue
-
             .case <if_a_eq_b> '='
-
                 .ifd !find_and_compare()
                     .gotosw(TRUE)
                 .endif
                 .gotosw(FALSE)
-
             .case '<'
-
                 .ifsd ( find_and_compare() < 0 )
                     .gotosw(TRUE)
                 .endif
                 .gotosw(FALSE)
-
             .case '>'
-
                 .ifsd ( find_and_compare() > 0 )
                     .gotosw(TRUE)
                 .endif
                 .gotosw(FALSE)
-
             .case '&'
-
                 .gotosw(FALSE) .if !findsymbol(rdi) || byte ptr [rax] == '0'
                 .gotosw(FALSE) .if !findsymbol(rsi) || byte ptr [rax] == '0'
                 .gotosw(TRUE)
-
             .case '|'
-
                 .gotosw(FALSE) .if !findsymbol(rdi)
                 .gotosw(TRUE)  .if byte ptr [rax] != '0'
                 .gotosw(FALSE) .if !findsymbol(rsi) || byte ptr [rax] == '0'
                 .gotosw(TRUE)
-
             .default
-
                 syntax_error(rdi)
             .endsw
         .endw
@@ -1145,14 +944,11 @@ readline proc uses rsi rdi rbx
     free(base)
     mov rax,rdi
     ret
-
-readline endp
+    endp
 
 
 issymbol proc uses rsi line:string_t
-
     .if strchr(line, '=')
-
         mov rsi,rax
         mov byte ptr [rax],0
         strspace(line)
@@ -1168,8 +964,7 @@ issymbol proc uses rsi line:string_t
         mov rax,rsi
     .endif
     ret
-
-issymbol endp
+    endp
 
 
 getline proc uses rsi rdi rbx
@@ -1180,16 +975,11 @@ getline proc uses rsi rdi rbx
     mov base,malloc(MAXTARGET)
     add rax,MAXTARGET-256
     mov symbol,rax
-
     .while 1
-
         .break .if !readline()
-
         mov rdi,rax ; EDI to start of line
         mov eax,[rdi]
-
         .if al == '.'
-
             .switch
             .case !_strnicmp(rdi, ".DEFAULT", 8)    ; define default rule to build target
             .case !_strnicmp(rdi, ".DONE", 5)       ; target to build, after all other targets are build
@@ -1243,58 +1033,39 @@ getline proc uses rsi rdi rbx
             mov rax,rdi
            .break
         .endif
-
         .if issymbol(rdi)
-
             mov rdx,base
             xor ecx,ecx
             mov [rdx],cl
             mov [rax],cl
             lea rsi,[rax+1]
-
             .if byte ptr [rax-1] == '+' ; case '+='
-
                 mov [rax-1],cl
                 strtrim(rdi)
-
                 .if findsymbol(rdi)
-
                     strcat(strcpy(base, rax), " ")
                 .endif
             .endif
-
             strtrim(rdi)
             strcpy(symbol, rdi)
             strtoken(rsi)
-
             mov rsi,base
             .while rax
-
                 .while 1
-
                     mov cx,[rax]
-
                     .break .if cx == '\'
                     .break .if cx == '&'
-
                     strcat(rsi, rax)
                     strcat(rsi, " ")
-
                     .break(1) .if !strtoken(0)
-
                 .endw
-
                 .break .if !readline()
                 strtoken(rax)
-
             .endw
-
             strtrim(rsi)
             addsymbol(symbol, rsi)
             .continue
-
         .endif
-
         mov rax,rdi
        .break
     .endw
@@ -1302,8 +1073,7 @@ getline proc uses rsi rdi rbx
     free(base)
     mov rax,rdi
     ret
-
-getline endp
+    endp
 
 
 addtarget proc uses rsi rdi rbx target:string_t
@@ -1320,9 +1090,7 @@ addtarget proc uses rsi rdi rbx target:string_t
     mov rsi,target
     strtrim(rsi)
     mov byte ptr [rdi],0
-
     .while byte ptr [rsi+rax-1] == '\'
-
         mov byte ptr [rsi+rax-1],0
         strcat(rdi, rsi)
         mov byte ptr [rsi],0
@@ -1332,47 +1100,34 @@ addtarget proc uses rsi rdi rbx target:string_t
     .endw
     strcat(rdi, rsi)
     mov rsi,rdi
-
     .repeat
-
         .if !_strdup(strstart(rdi))
-
             perror("To many targets..")
             exit(1)
         .endif
         mov target_string,rax
-
         ltoken(rdi)
         .if !strrchr(rdi, ':')
-
             perror(rsi)
             exit(1)
         .endif
-
         mov byte ptr [rax],0
         strtrim(rdi)
-
         mov target_name,expandsymbol(rdi)
         mov rsi,line_ptr
         xor eax,eax
         mov target_srcpath,rax
         mov target_command,rax
-
         mov [rsi],al
         mov ah,[rdi]
         mov [rdi],al
-
         .if ah == '{'
-
             mov rbx,target_name
-
             .if strchr(rbx, '}')
-
                 mov byte ptr [rax],0
                 lea rdx,[rax+1]
                 mov p,rdx
                 .if !_strdup(addr [rbx+1])
-
                     perror("To many targets..")
                     exit(1)
                 .endif
@@ -1380,60 +1135,45 @@ addtarget proc uses rsi rdi rbx target:string_t
                 strcpy(rbx, strstart(p))
             .endif
         .endif
-
         .while getline()
-
             .break .if istarget(rsi)
             strcat(rdi, strstart(rsi))
             strcat(rdi, linefeed)
         .endw
         .if !rax
-
             mov [rsi],al
         .endif
-
         .if byte ptr [rdi]
-
             .if !_strdup(rdi)
-
                 perror("To many targets..")
                 exit(1)
             .endif
             mov target_command,rax
         .endif
-
         .if !malloc(TARGET)
-
             perror("To many targets..")
             exit(1)
         .endif
-
         mov rbx,rax
         assume rbx:target_t
-
         mov [rbx].next,target_table
         mov [rbx].prev,0
         .if rax
             mov [rax].TARGET.prev,rbx
         .endif
-
         mov [rbx].target, target_name
         mov [rbx].string, target_string
         mov [rbx].command,target_command
         mov [rbx].srcpath,target_srcpath
         inc target_count
         mov target_table,rbx
-
         .if !_stricmp(target_name, "all")
-
             mov [rbx].type,T_ALL
            .break
         .endif
-
         mov [rbx].TARGET.type,T_TARGET
         mov rax,target_name
         .break .if byte ptr [rax] != '.'
-
         inc rax
         mov p,rsi
         lea rsi,suffixes
@@ -1446,20 +1186,16 @@ addtarget proc uses rsi rdi rbx target:string_t
             add rsi,size_t
         .endw
         mov rsi,p
-
         .break .if !rax
         mov [rbx].type,T_METHOD
     .until 1
-
     assume rbx:nothing
-
     .if istarget(rsi)
         addtarget(rsi)
     .endif
     free(base)
     ret
-
-addtarget endp
+    endp
 
 
 ;-------------------------------------------------------------------------------
@@ -1467,7 +1203,6 @@ addtarget endp
 ;-------------------------------------------------------------------------------
 
 findtarget proc uses rsi rdi rbx target:string_t
-
     mov rdi,expandsymbol(target)
     mov rsi,target_table
     xor ebx,ebx
@@ -1484,12 +1219,10 @@ findtarget proc uses rsi rdi rbx target:string_t
         .break .if !_stricmp(rax, rdi)
         xor ebx,ebx
     .until !rsi
-
     free(rdi)
     mov rax,rbx
     ret
-
-findtarget endp
+    endp
 
 
 build_object proc uses rsi rdi rbx object:string_t
@@ -1503,48 +1236,36 @@ build_object proc uses rsi rdi rbx object:string_t
     lea rdi,srcfile
     lea rsi,extensions
     .if strext(strcpy(rbx, object))
-
         mov byte ptr [rax],0
     .endif
-
     lea rbx,suffixes
-
     .repeat
-
         mov rax,[rbx]
         .if !rax
             perror(&srcname)
             exit(1)
         .endif
-
         mov p,rax
         add rbx,size_t
         lea rsi,extensions
-
         .repeat
-
             mov rax,[rsi]
             add rsi,size_t
             .continue(01) .if !rax
             mov q,rax
-
             .continue(0) .if !findtarget(strcat(strcpy(rdi, rax), p))
-
             mov r,rax
             strcat(strcpy(rdi, &srcname), q)
             mov rdx,r
             mov rcx,[rdx].TARGET.srcpath
             .if rcx
-
                 strcpy(rdi, strfcat(&command, rcx, rdi))
             .endif
-
             filexist(rax)
             mov rdx,r
             dec eax
         .untilz
     .until 1
-
     lea rbx,srcname
     lea rsi,command
     mov rax,[rdx].TARGET.command
@@ -1552,40 +1273,27 @@ build_object proc uses rsi rdi rbx object:string_t
         perror(rdi)
         exit(1)
     .endif
-
     strxchg(strcpy(rsi, rax), "$*", rbx)
     strxchg(rsi, "$<", rdi)
-
     setfext(rdi, suffixes)
     strxchg(rsi, "$@", rdi)
-
     mov rsi,expandsymbol(rsi)
-
     .if option_d
-
         printf("%s\n", rsi)
-
     .else
-
         .while strchr(rsi, 10)
-
             lea rbx,[rax+1]
             mov byte ptr [rax],0
             .if !option_s
-
                 printf("\t%s\n", rsi)
             .endif
-
             system(rsi)
             mov byte ptr [rbx-1],10
             mov rsi,rbx
         .endw
-
         .if !option_s
-
             printf("\t%s\n", rsi)
         .endif
-
         system(rsi)
         dec eax
         .if eax || eax != errorlevel
@@ -1596,14 +1304,11 @@ build_object proc uses rsi rdi rbx object:string_t
         .endif
     .endif
     ret
-
-build_object endp
+    endp
 
 
 opentemp proc buffer:string_t, ext:string_t
-
   local t:SYSTEMTIME
-
     GetLocalTime(&t)
     GetTickCount()
     movzx ecx,t.wMilliseconds
@@ -1612,12 +1317,10 @@ opentemp proc buffer:string_t, ext:string_t
     sprintf(buffer, "%s\\$%06X$.%s", envtemp, ecx, ext)
     fopen(buffer, "wt+")
     ret
-
-opentemp endp
+    endp
 
 
 build_target proc uses rsi rdi rbx target:target_t
-
   local base:string_t,
         target_path:string_t,
         target_name:string_t,
@@ -1631,16 +1334,12 @@ build_target proc uses rsi rdi rbx target:target_t
     mov rsi,target
     mov rsi,expandsymbol([rsi].TARGET.string)
     mov target_string,rax
-
     .while 1
-
         lodsb
         stosb
-
         .break .if !al
         .break .if al == ':' && byte ptr [rsi] != '\'
     .endw
-
     mov byte ptr [rdi],0
     mov rdi,base
     _strdup(rdi)
@@ -1651,20 +1350,16 @@ build_target proc uses rsi rdi rbx target:target_t
     .if strrchr(rax, ':')
         mov byte ptr [rax],0
     .endif
-
     strtrim(rbx)
     _strdup(strfn(rbx))
     mov target_file,rax
     .if strext(rax)
         mov byte ptr [rax],0
     .endif
-
     .while 1
-
         mov ax,[rsi-1]
         .break .if al == 0
         .break .if ah == 0
-
         .repeat
             lodsb
         .until al != ' ' && al != 9
@@ -1674,7 +1369,6 @@ build_target proc uses rsi rdi rbx target:target_t
             lodsb
         .endw
         mov byte ptr [rdi],0
-
         mov rdi,base
         .if findtarget(rdi)
             .return .if build_target(rax)
@@ -1682,67 +1376,50 @@ build_target proc uses rsi rdi rbx target:target_t
             build_object(rdi)
         .endif
     .endw
-
     free(target_string)
     mov rsi,target
     mov rax,[rsi].TARGET.command
-
     .return .if !rax ; all: <target1> [<target2>] ... or <no command>
-
     mov rsi,expandsymbol(rax)
     mov rdi,strcpy(base, rax)
     free(rsi)
     strxchg(rdi, "$@", target_name)
     strxchg(rdi, "$*", target_file)
-
     mov rsi,rdi
-
     .repeat
-
         .break .if !strstr(rsi, "@<<")
-
         lea rbx,[rax+3]
         mov byte ptr [rbx-2],0
         .if !strchr(rbx, 10)
             perror("Make execution terminated")
             exit(1)
         .endif
-
         lea rbx,[rax+1]
         .break .if !strstr(rbx, "<<")
-
         mov byte ptr [rax],0
         lea rdi,[rax+2]
         .if !opentemp(&responsefile, "$$$")
             perror("Make execution terminated")
             exit(1)
         .endif
-
         mov fp,rax
         fprintf(rax, rbx)
         fclose(fp)
-
         .if option_d
-
             printf("%s:\n%s\n", addr responsefile, rbx)
         .endif
         strcat(rsi, addr responsefile)
         .break .if !strchr(rdi, 10)
         strcat(rsi, rax)
     .until 1
-
     .if option_d
-
         printf("%s\n", rsi)
         xor eax,eax
     .else
         .if !option_s
-
             mov rdi,rsi
             printf("%s\n", target_path)
-
             .while strchr(rdi, 10)
-
                 lea rbx,[rax+1]
                 mov byte ptr [rax],0
                 printf("\t%s\n", rdi)
@@ -1751,7 +1428,6 @@ build_target proc uses rsi rdi rbx target:target_t
             .endw
             printf("\t%s\n", rdi)
         .endif
-
         xor edi,edi
         .if opentemp(&commandfile, "cmd")
             mov rbx,rax
@@ -1772,8 +1448,7 @@ build_target proc uses rsi rdi rbx target:target_t
     free(base)
     mov eax,edi
     ret
-
-build_target endp
+    endp
 
 
 ;-------------------------------------------------------------------------------
@@ -1781,25 +1456,17 @@ build_target endp
 ;-------------------------------------------------------------------------------
 
 addtargetarg proc uses rbx target:string_t
-
     .if strlen(target)
-
         .if malloc(&[rax+1+ARGS])
-
             mov rbx,rax
             mov [rbx].ARGS.name,strcpy(&[rbx+ARGS], target)
             xor eax,eax
             mov [rbx].ARGS.next,rax
-
             mov rcx,target_args
             .if rcx == 0
-
                 mov target_args,rbx
-
             .else
-
                 .while rax != [rcx].ARGS.next
-
                     mov rcx,[rcx].ARGS.next
                 .endw
                 mov [rcx].ARGS.next,rbx
@@ -1807,52 +1474,35 @@ addtargetarg proc uses rbx target:string_t
         .endif
     .endif
     ret
-
-addtargetarg endp
+    endp
 
 
 make proc uses rsi rdi rbx file:string_t, target:string_t
-
-
     .if !fopen(file, "rt")
-
         perror(file)
         exit(1)
     .endif
-
     mov line_fp,rax
-
     .while getline()
-
         mov rsi,rax
         .break .if !istarget(rsi)
-
         addtarget(rsi)
     .endw
-
     mov rsi,target_args
-
     .if !rsi
-
         .if !target_count
-
             perror("Missing target..")
             exit(1)
         .endif
-
         .for eax = 0,
              ebx = 0,
              edi = 0,
              rcx = target_table : [rcx].TARGET.next : rcx = [rcx].TARGET.next
         .endf
-
         .for ( : rcx && !eax : rcx = [rcx].TARGET.prev )
-
             mov rdi,rcx
             mov eax,[rcx].TARGET.type
-
             .break .if eax == T_ALL
-
             .if eax == T_METHOD
                 mov rbx,rcx
                 xor eax,eax
@@ -1860,28 +1510,19 @@ make proc uses rsi rdi rbx file:string_t, target:string_t
                 mov rax,[rcx].TARGET.command
             .endif
         .endf
-
         .if  !rax && !rbx
-
             perror([rdi].TARGET.target)
             exit(1)
         .endif
-
         addtargetarg([rdi].TARGET.target)
-
         mov rsi,target_args
     .endif
-
-
     .for ( : rsi : rsi = [rsi].ARGS.next )
-
         .break .if !findtarget([rsi].ARGS.name)
-
         build_target(rax)
     .endf
     ret
-
-make endp
+    endp
 
 
 ;-------------------------------------------------------------------------------
@@ -1889,25 +1530,18 @@ make endp
 ;-------------------------------------------------------------------------------
 
 AddMakefile proc uses rbx file:string_t
-
     .if strlen(file)
-
         .if malloc(&[rax+1+ARGS])
-
             mov rbx,rax
             strcpy(&[rbx+ARGS], file)
             mov [rbx].ARGS.name,rax
-
             xor eax,eax
             mov [rbx].ARGS.next,rax
             mov rcx,file_args
-
             .if !rcx
-
                 mov file_args,rbx
             .else
                 .while rax != [rcx].ARGS.next
-
                     mov rcx,[rcx].ARGS.next
                 .endw
                 mov [rcx].ARGS.next,rbx
@@ -1915,8 +1549,7 @@ AddMakefile proc uses rbx file:string_t
         .endif
     .endif
     ret
-
-AddMakefile endp
+    endp
 
 
 print_copyright proc
@@ -1926,7 +1559,7 @@ print_copyright proc
         __ASMC__ / 100, __ASMC__ mod 100
     )
     ret
-print_copyright endp
+    endp
 
 
 ; Create vars32.bat and vars64.bat
@@ -1938,7 +1571,6 @@ install proc uses rsi rdi rbx
 
     lea rsi,base
     lea rdi,path
-
     GetModuleFileNameA(0, rsi, _MAX_PATH)
     strpath(strpath(rsi))
     .return .if !fopen(strfcat(rdi, rsi, "bin\\envars32.bat"), "wt")
@@ -1960,20 +1592,14 @@ install proc uses rsi rdi rbx
     fprintf(rbx, "set LIB=%s\\lib\\x64;%%LIB%%\n", rsi)
     fclose(rbx)
     ret
-
-install endp
+    endp
 
 main proc argc:int_t, argv:array_t
-
     .if getenv("TEMP")
-
         mov envtemp,rax ; default to .
     .endif
-
     mov symbol_table,malloc(MAXSYMBOLS*size_t*2)
-
     .if !getenv("ASMCDIR")
-
         mov rcx,argv
         mov rax,[rcx]
         strcpy(&line_buf, rax)
@@ -1982,30 +1608,21 @@ main proc argc:int_t, argv:array_t
         SetEnvironmentVariable("ASMCDIR", rax)
         lea rax,line_buf
     .endif
-
     strcpy(&includepath, rax)
     strcat(rax, "\\lib")
-
 ifdef _WIN64
     lea r15,_ltype
 endif
-
     .for rsi = argv, edi = argc : edi > 1 :
-
         dec edi
         add rsi,size_t
         mov rbx,[rsi]
         mov eax,[rbx]
-
         .switch al
-
         .case '/'
         .case '-'
-
             shr eax,8
-
             .switch al
-
             .case 'a': inc option_a: .endc
             .case 'd': inc option_d: .endc
             .case 'h': inc option_h: .endc
@@ -2017,7 +1634,6 @@ endif
                     strcpy(&includepath, &[rbx+2])
                 .endif
                 .endc
-
             .case 'f'
                 add rbx,2
                 .if eax & 0xFF00
@@ -2030,14 +1646,11 @@ endif
                 dec edi
                .break .ifz
                .endc
-
             .case 'i'
                 .if eax == 'sni'
-
                     install()
                     .return 0
                 .endif
-
             .default
                 print_copyright()
                 printf(
@@ -2054,7 +1667,6 @@ endif
                 .return 0
             .endsw
             .endc
-
           .default
             .if strchr(rbx, '=')
                 mov byte ptr [rax],0
@@ -2065,28 +1677,20 @@ endif
             .endif
         .endsw
     .endf
-
     .if !option_h && !option_s
-
         print_copyright()
     .endif
-
     mov rsi,file_args
-
     .if !rsi
-
         AddMakefile("makefile")
         mov rsi,file_args
     .endif
-
     .while rsi
-
         .break .if make([rsi].ARGS.name, target_args)
         mov rsi,[rsi].ARGS.next
     .endw
     xor eax,eax
     ret
-
-main endp
+    endp
 
     end _tstart

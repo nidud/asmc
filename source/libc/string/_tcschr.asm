@@ -12,12 +12,9 @@ include tchar.inc
     option dotname
 
 _tcschr proc string:tstring_t, chr:int_t
-
     ldr     rax,string
     ldr     edx,chr
-
 if defined(__AVX__) and defined(_WIN64) and not defined(_UNICODE)
-
     movzx       edx,dl
     imul        edx,edx,0x01010101
     movd        xmm1,edx
@@ -58,9 +55,7 @@ if defined(__AVX__) and defined(_WIN64) and not defined(_UNICODE)
 .2:
     xor         eax,eax
 .3:
-
 else
-
 .3:
     cmp     _tdl,[rax]
     je      .0
@@ -84,11 +79,8 @@ else
 .1:
     add     rax,tchar_t
 .0:
-
 endif
-
     ret
-
-_tcschr endp
+    endp
 
     end

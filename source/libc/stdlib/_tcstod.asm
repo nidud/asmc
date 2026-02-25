@@ -11,14 +11,11 @@ include tchar.inc
     .code
 
 _tcstod proc string:tstring_t, endptr:tarray_t
-
     ldr rcx,string
-
 ifdef _UNICODE
     .new buffer[128]:char_t
     .new i:int_t = 0
     .for ( rdx = &buffer : i < lengthof(buffer) - 1 : i++, rdx++, rcx += 2 )
-
         mov ax,[rcx]
        .break .if ( !ax || ax > 0x7F )
         mov [rdx],al
@@ -26,7 +23,6 @@ ifdef _UNICODE
     mov byte ptr [rdx],0
     lea rcx,buffer
 endif
-
     _strtoflt( rcx )
     __cvtq_sd( rax, rax )
 ifdef __SSE__
@@ -34,9 +30,7 @@ ifdef __SSE__
 else
     fld real8 ptr [rax]
 endif
-
     .if ( endptr )
-
         mov rdx,[rax].STRFLT.string
 ifdef _UNICODE
         lea rcx,buffer
@@ -48,7 +42,6 @@ endif
         mov [rcx],rdx
     .endif
     ret
-
-_tcstod endp
+    endp
 
     end

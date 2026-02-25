@@ -105,27 +105,21 @@ ifndef __UNIX__
     add     ecx,cmd_size
 
     .if ( malloc(ecx) == NULL )
-
         dec rax
        .return
     .endif
     mov cmd,rax
-
     mov rsi,_tcscpy(rax, [rbx])
     .for ( rbx+=tarray_t : tarray_t ptr [rbx] : rbx+=tarray_t )
-
         _tcscat(rsi, " ")
         _tcscat(rsi, [rbx])
     .endf
-
     mov rbx,envp
     .if ( rbx )
-
         mov eax,cmd_size
         add rax,cmd
         mov env,rax
         .for ( rdi = rax : tarray_t ptr [rbx] : rbx += tarray_t )
-
             mov rsi,[rbx]
             .repeat
                 _tlodsb
@@ -153,9 +147,7 @@ ifndef __UNIX__
     lea     rsi,[rdi+rcx]
 
     .for ( rbx = __pioinfo, ecx = 0 : ecx < nh : ecx++, rdi++, rsi+=intptr_t, rbx+=ioinfo )
-
         .if ( [rbx].ioinfo.osfile & FNOINHERIT || ( background && ecx < 3 ) )
-
             mov byte ptr [rdi],0
             mov intptr_t ptr [rsi],INVALID_HANDLE_VALUE
         .else
@@ -163,12 +155,9 @@ ifndef __UNIX__
             mov [rsi],[rbx].ioinfo.osfhnd
         .endif
     .endf
-
     .if ( background )
-
         or fdwCreate,DETACHED_PROCESS
     .endif
-
     SetErrorMode(_ermode)
     mov rbx,GetStdHandle(STD_INPUT_HANDLE)
     GetConsoleMode(rbx, &ConsoleMode)
@@ -178,18 +167,13 @@ ifndef __UNIX__
     free( cmd )
     SetConsoleMode( rbx, ConsoleMode )
     SetErrorMode( SEM_FAILCRITICALERRORS )
-
     .if ( !CreateProcessStatus )
-
        .return( _dosmaperr(dosretval) )
     .endif
-
 endif
-
     .if ( mode == _P_OVERLAY )
 ifdef __UNIX__
         .ifs ( sys_execve(name, argv, envp) < 0 )
-
             neg eax
             mov retval,_set_errno( eax )
         .else
@@ -199,20 +183,14 @@ else
         _exit( 0 )
 endif
     .elseif ( mode == _P_WAIT )
-
 ifdef __UNIX__
         mov pid,fork()
         .if ( pid == 0 )
-
             ; child process
-
             sys_execve(name, argv, envp)
             exit(EXIT_SUCCESS)
-
         .elseif ( pid > 0 )
-
             ; parent process
-
             waitpid(pid, &exitcode, 0)
             mov retval,exitcode
         .else
@@ -225,15 +203,12 @@ else
         CloseHandle(ProcessInformation.hProcess)
 endif
     .elseif ( mode == _P_DETACH )
-
-ifdef __UNIX__
-else
+ifndef __UNIX__
         CloseHandle(ProcessInformation.hProcess)
         mov retval,0
 endif
     .else
-ifdef __UNIX__
-else
+ifndef __UNIX__
         mov retval,ProcessInformation.hProcess
 endif
     .endif
@@ -242,7 +217,6 @@ ifndef __UNIX__
 endif
     mov rax,retval
     ret
-
-_tspawnve endp
+    endp
 
     end

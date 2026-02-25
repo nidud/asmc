@@ -25,7 +25,6 @@ XMLoadFloat4x3 proc XM_CALLCONV pSource:ptr XMFLOAT4X3
     _mm_shuffle_ps(xmm1, xmm1, _MM_SHUFFLE(1,1,0,2))
     _mm_and_ps(xmm1, xmm4)
     ret
-
-XMLoadFloat4x3 endp
+    endp
 
     end

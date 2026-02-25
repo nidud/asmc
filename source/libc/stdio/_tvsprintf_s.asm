@@ -20,11 +20,9 @@ _vstprintf_s proc string:tstring_t, sizeInBytes:size_t, format:tstring_t, vargs:
     ldr rdx,sizeInBytes
 
     .if ( rax == NULL || ( rcx == NULL && rdx > 0 ) )
-
         .return _set_errno(EINVAL)
     .endif
     .if ( rdx > INT_MAX )
-
         mov edx,INT_MAX
     .endif
 ifdef _UNICODE
@@ -35,9 +33,7 @@ endif
     mov o._ptr,rcx
     mov o._base,rcx
     _toutput(&o, rax, vargs)
-
     .if ( string != NULL )
-
         mov rcx,o._ptr
         .if ( o._cnt <= 0 )
             .if ( rcx > o._base )
@@ -48,7 +44,6 @@ endif
         .endif
     .endif
     ret
-
-_vstprintf_s endp
+    endp
 
     end

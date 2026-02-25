@@ -15,14 +15,10 @@ ifdef __UNIX__
     _set_errno( ENOSYS )
     xor eax,eax
 else
-
   local directory[1024]:char_t
-
     .if GetCurrentDirectoryA( 1024, &directory )
-
         mov ax,word ptr directory
         .if ( ah == ':' )
-
             movzx eax,al
             or    al,0x20
             sub   al,'a' - 1 ; A: == 1
@@ -34,7 +30,6 @@ else
     .endif
 endif
     ret
-
-_getdrive endp
+    endp
 
     end

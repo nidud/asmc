@@ -25,7 +25,6 @@ endif
         inc eax
     .endif
     ret
-
-_isnan endp
+    endp
 
     end

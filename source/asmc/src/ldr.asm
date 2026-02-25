@@ -36,7 +36,6 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
     mov al,[get_fasttype([rcx].asym.segoffsize, [rcx].asym.langtype)].fc_info.flags
     and al,_P_FASTCALL
     mov fc,al
-
     .if ( [rbx].token != T_REG )
         .if ( [rbx].token != T_ID || [rbx+asm_tok].token != T_COMMA )
             jmp move_param
@@ -44,19 +43,15 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
         mov string,[rbx].string_ptr
         mov reg,0
     .endif
-
     .for ( : [rbx].token != T_COMMA && [rbx].token != T_FINAL : rbx+=asm_tok )
     .endf
     .if ( [rbx].token != T_COMMA )
         .return asmerr( 2008, [rbx].string_ptr )
     .endif
     add rbx,asm_tok
-
     .if ( [rbx].token == T_REG )
-
         mov ecx,[rbx].tokval
         .if ( reg == 0 )
-
             AddLineQueueX( " %r %s, %r", T_MOV, string, ecx )
            .return( NOT_ERROR )
         .elseif ( ecx == reg )
@@ -68,13 +63,9 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
     .elseif ( MODULE.Ofssize == USE16 && [rbx].token == T_OP_SQ_BRACKET )
         jmp move_param
     .endif
-
     .if ( SymFind( [rbx].string_ptr ) == NULL )
-
         .return asmerr( 2008, [rbx].string_ptr )
-
     .elseif ( fc && [rax].asym.regparam )
-
         movzx ecx,[rax].asym.param_reg
         .if ( reg == 0 )
             AddLineQueueX( " %r %s, %r", T_MOV, string, ecx )
@@ -100,7 +91,6 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
     ; v2.37.12: added for DOS near/far param -- assume ds:si and es:r16
 
     .if ( MODULE.Ofssize == USE16 && reg && [rax].asym.is_ptr )
-
         mov cl,MODULE._model
         .if ( [rax].asym.total_size == 4 || ( [rax].asym.state == SYM_EXTERNAL &&
               ( cl == MODEL_COMPACT || cl == MODEL_LARGE || cl == MODEL_HUGE ) ) )
@@ -110,26 +100,19 @@ LoadRegister proc __ccall private uses rbx i:int_t, tokenarray:token_t
             .endif
         .endif
     .endif
-
 move_param:
-
     AddLineQueueX( " %r %s", inst, tokpos )
     xor eax,eax
     ret
-
-LoadRegister endp
+    endp
 
 
 LdrDirective proc __ccall i:int_t, tokenarray:token_t
-
   local rc:int_t
-
     .if ( CurrProc == NULL )
         .return asmerr( 2012 )
     .endif
-
     mov rc,LoadRegister( i, tokenarray )
-
     .if MODULE.list
         LstWrite(LSTTYPE_DIRECTIVE, GetCurrOffset(), 0)
     .endif
@@ -137,7 +120,6 @@ LdrDirective proc __ccall i:int_t, tokenarray:token_t
         RunLineQueue()
     .endif
     .return( rc )
-
-LdrDirective endp
+    endp
 
     end

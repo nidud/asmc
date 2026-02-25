@@ -11,20 +11,15 @@ include stdio.inc
     assume rbx:LPFILE
 
 fflush proc uses rbx fp:LPFILE
-
    .new size:uint_t
    .new retval:size_t = 0
-
     ldr rbx,fp
-
     mov eax,[rbx]._flag
-
 ifdef STDZIP
     .if !( eax & _IOMEMBUF )
 endif
         and eax,_IOREAD or _IOWRT
         .if ( eax == _IOWRT && [rbx]._flag & _IOMYBUF or _IOYOURBUF )
-
             mov rax,[rbx]._ptr
             sub rax,[rbx]._base
             mov size,eax
@@ -52,7 +47,6 @@ ifdef STDZIP
     .endif
 endif
     .return( retval )
-
-fflush endp
+    endp
 
     end

@@ -9,15 +9,12 @@ include errno.inc
     .code
 
 _get_errno proc pValue:ptr int_t
-
     ldr rcx,pValue
-
     mov eax,errno
     .if rcx
         mov [rcx],eax
     .endif
     ret
-
-_get_errno endp
+    endp
 
     end

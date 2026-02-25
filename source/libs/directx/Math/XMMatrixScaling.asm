@@ -24,7 +24,6 @@ XMMatrixScaling proc XM_CALLCONV ScaleX:float, ScaleY:float, ScaleZ:float
     _mm_store_ps(xmm2, z)
     _mm_store_ps(xmm3, g_XMIdentityR3.v)
     ret
-
-XMMatrixScaling endp
+    endp
 
     end

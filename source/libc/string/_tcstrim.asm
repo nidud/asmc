@@ -15,11 +15,8 @@ include tchar.inc
     .code
 
 _tcstrim proc uses rdi rbx string:tstring_t
-
     ldr rbx,string
-
     .for ( rdi = &[rbx+_tcslen(rbx)*tchar_t-tchar_t], rcx = _pctype : eax : eax--, rdi-=tchar_t )
-
         movzx edx,tchar_t ptr [rdi]
 ifdef _UNICODE
        .break .if ( edx > ' ' )
@@ -29,7 +26,6 @@ endif
     .endf
     mov rcx,rbx
     ret
-
-_tcstrim endp
+    endp
 
     END

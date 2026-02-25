@@ -35,71 +35,53 @@ _tsearchenv_s proc uses rbx fname:tstring_t, env_var:tstring_t, path:tstring_t, 
     ldr rbx,path
     ldr rax,size
     .if ( !rax || !rbx )
-
         _set_errno(EINVAL)
         .return( EINVAL )
     .endif
-
     ldr rcx,fname
     .if ( !rcx )
-
         mov tchar_t ptr [rbx],0
         _set_errno(EINVAL)
         .return( EINVAL )
     .endif
-
     .if ( tchar_t ptr [rcx] == 0 )
-
         mov tchar_t ptr [rbx],0
         _set_errno(ENOENT)
         .return( ENOENT )
     .endif
-
     _get_errno(&save_errno)
     mov acc,_taccess(fname, 0)
     _set_errno(save_errno)
-
     .if ( acc == 0 )
-
         .if ( _tfullpath(rbx, fname, size) == NULL )
-
             mov tchar_t ptr [rbx],0
             .return( _get_errno(0) )
         .endif
         .return( 0 )
     .endif
-
     .if ( _tdupenv_s(&envbuf, NULL, env_var) || envbuf == NULL )
-
         mov tchar_t ptr [rbx],0
         _set_errno(ENOENT)
         .return( ENOENT )
     .endif
-
     mov env_p,envbuf
     mov fnamelen,_tcslen(fname)
     mov pbuf,&pathbuf
     mov buflen,_countof(pathbuf)
-
     .if ( fnamelen >= buflen )
-
         _tcslen(env_p)
         add rax,fnamelen
         add rax,2
         mov buflen,rax
         mov pbuf,calloc( buflen, sizeof(tchar_t) )
-
         .if ( rax == NULL )
-
             mov tchar_t ptr [rbx],0
             mov retvalue,ENOMEM
             jmp cleanup
         .endif
     .endif
     _get_errno(&save_errno)
-
     .while ( env_p )
-
         mov save_env_p,env_p
         mov rcx,buflen
         sub rcx,fnamelen
@@ -108,15 +90,12 @@ _tsearchenv_s proc uses rbx fname:tstring_t, env_var:tstring_t, path:tstring_t, 
         mov ecx,errno
         lea rax,pathbuf
         .if ( env_p == NULL && rax == pbuf && ecx == ERANGE )
-
             _tcslen(save_env_p)
             add rax,fnamelen
             add rax,2
             mov buflen,rax
             mov pbuf,calloc( buflen, sizeof(tchar_t) )
-
             .if ( rax == NULL )
-
                 mov tchar_t ptr [rbx],0
                 mov retvalue,ENOMEM
                 jmp cleanup
@@ -125,12 +104,10 @@ _tsearchenv_s proc uses rbx fname:tstring_t, env_var:tstring_t, path:tstring_t, 
             sub rcx,fnamelen
             mov env_p,_tgetpath(save_env_p, pbuf, rcx)
         .endif
-
         mov rcx,pbuf
         .if ( env_p == NULL || tchar_t ptr [rcx] == 0 )
             .break
         .endif
-
         mov rcx,_tcslen(pbuf)
 ifdef _UNICODE
         add rax,rax
@@ -153,15 +130,11 @@ endif
         sub rax,pbuf
         mov rcx,buflen
         sub rcx,rax
-
         .break .ifd _tcscpy_s(p, rcx, fname)
-
         .ifd ( _taccess(pbuf, 0) == 0 )
-
             mov rax,len
             add rax,fnamelen
             .if ( rax >= size )
-
                 mov tchar_t ptr [rbx],0
                 _set_errno(ERANGE)
                 mov retvalue,ERANGE
@@ -173,11 +146,9 @@ endif
             jmp cleanup
         .endif
     .endw
-
     mov tchar_t ptr [rbx],0
     _set_errno(ENOENT)
     mov retvalue,ENOENT
-
 cleanup:
     lea rax,pathbuf
     .if ( rax != pbuf )
@@ -186,15 +157,12 @@ cleanup:
     free(envbuf)
     mov eax,retvalue
     ret
-
-_tsearchenv_s endp
+    endp
 
 
 _tsearchenv proc fname:tstring_t, env_var:tstring_t, path:tstring_t
-
     _tsearchenv_s(ldr(fname), ldr(env_var), ldr(path), _MAX_PATH)
     ret
-
-_tsearchenv endp
+    endp
 
     end

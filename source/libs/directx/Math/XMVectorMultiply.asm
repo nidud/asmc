@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorMultiply proc XM_CALLCONV V1:FXMVECTOR, V2:FXMVECTOR
-
     _mm_mul_ps(xmm0, xmm1)
     ret
-
-XMVectorMultiply endp
+    endp
 
     end

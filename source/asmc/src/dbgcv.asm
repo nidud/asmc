@@ -104,7 +104,6 @@ GetTyperef proc fastcall uses rsi rdi _sym:asym_t, _Ofssize:byte
 
     mov rsi,rcx
     movzx edi,dl
-
     mov cl,[rsi].asym.mem_type
     .if ( !( cl & MT_SPECIAL ) )
         SizeFromMemtype( cl, edi, [rsi].asym.type )
@@ -200,19 +199,15 @@ GetTyperef proc fastcall uses rsi rdi _sym:asym_t, _Ofssize:byte
         .endsw
     .endif
     .return( ST_NOTYPE )
-
-GetTyperef endp
+    endp
 
 
 SetPrefixName proc fastcall p:ptr byte, name:ptr byte, len:dword
-
     xchg rdx,rsi
     mov rax,rdi
     mov rdi,rcx
     mov ecx,len
-
     .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-
         mov [rdi],cl
         inc rdi
         rep movsb
@@ -224,8 +219,7 @@ SetPrefixName proc fastcall p:ptr byte, name:ptr byte, len:dword
     xchg rdi,rax
     mov rsi,rdx
     ret
-
-SetPrefixName endp
+    endp
 
 
 ; calc size of a codeview item in symbols segment
@@ -279,8 +273,7 @@ if EQUATESYMS
     .endif
 endif
     .return( sizeof( DATASYM32 ) - 1 )
-
-GetStructLen endp
+    endp
 
 .enum {
     SYM_NOTYPE,
@@ -291,7 +284,6 @@ GetStructLen endp
 sym_type proc fastcall sym:ptr asym
 
     ldr rcx,sym
-
     .if ( [rcx].asym.state != SYM_TYPE || [rcx].asym.cvtyperef ||
           [rcx].asym.total_size == 0 || [rcx].asym.name_size == 0 ||
         ( [rcx].asym.typekind != TYPE_STRUCT && [rcx].asym.typekind != TYPE_UNION ) )
@@ -302,10 +294,8 @@ sym_type proc fastcall sym:ptr asym
     .endif
     .for ( rcx = [rcx].asym.structinfo,
            rcx = [rcx].struct_info.head : rcx : rcx = [rcx].asym.next )
-
         mov rdx,[rcx].asym.type
         .if ( rdx && [rdx].asym.state == SYM_TYPE && [rdx].asym.cvtyperef == 0 )
-
             xor eax,eax
             .if ( [rdx].asym.typekind == TYPE_STRUCT || [rdx].asym.typekind == TYPE_UNION )
                 mov rax,rdx
@@ -323,8 +313,7 @@ sym_type proc fastcall sym:ptr asym
         .endif
     .endf
     .return( SYM_SIMPLE )
-
-sym_type endp
+    endp
 
 
 ; flush the segment buffer for symbols and types.
@@ -337,35 +326,28 @@ sym_type endp
     assume rbx:ptr dbgcv
 
 dbgcv::flushpt proc fastcall uses rbx size:dword
-
     mov rbx,rcx
     mov rcx,[rbx].types
     mov rax,[rcx].asym.seginfo
     mov [rbx].pt,[rax].seg_info.flushfunc( rcx, [rbx].pt, edx, [rbx].param )
     ret
-
-dbgcv::flushpt endp
+    endp
 
 
 dbgcv::flushps proc fastcall uses rbx size:dword
-
     mov rbx,rcx
     mov rcx,[rbx].symbols
     mov rax,[rcx].asym.seginfo
     mov [rbx].ps,[rax].seg_info.flushfunc( rcx, [rbx].ps, edx, [rbx].param )
     ret
-
-dbgcv::flushps endp
+    endp
 
 
 dbgcv::padbytes proc fastcall curr:ptr byte
-
     mov rcx,[rcx].dbgcv.types
     mov rcx,[rcx].asym.seginfo
     mov rcx,[rcx].seg_info.CodeBuffer
-
     .for ( :: rdx++ )
-
         mov rax,rdx
         sub rax,rcx
         .break .if ( !( eax & 3 ) )
@@ -375,22 +357,17 @@ dbgcv::padbytes proc fastcall curr:ptr byte
         mov [rdx],al
     .endf
     ret
-
-dbgcv::padbytes endp
+    endp
 
 
 dbgcv::alignps proc fastcall
-
     mov rdx,[rcx].dbgcv.section
     mov eax,[rdx].cvsection.length
     and eax,3
     .ifnz
-
         mov edx,4
         sub edx,eax
-
         .while ( edx )
-
             mov rax,[rcx].dbgcv.ps
             mov byte ptr [rax],0
             inc [rcx].dbgcv.ps
@@ -398,8 +375,7 @@ dbgcv::alignps proc fastcall
         .endw
     .endif
     .return( [rcx].dbgcv.ps )
-
-dbgcv::alignps endp
+    endp
 
 
 ; write a bitfield to $$TYPES
@@ -418,7 +394,6 @@ dbgcv::write_bitfield proc __ccall uses rsi rdi rbx types:asym_t, sym:asym_t
     mov [rcx].asym.cvtyperef,[rbx].currtype
     mov al,[rcx].asym.bitf_bits
     mov cl,[rcx].asym.bitf_offs
-
     .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov [rdi].CV_BITFIELD_16t.length,al
         mov [rdi].CV_BITFIELD_16t.position,cl
@@ -436,8 +411,7 @@ dbgcv::write_bitfield proc __ccall uses rsi rdi rbx types:asym_t, sym:asym_t
     inc [rbx].currtype
     add [rbx].pt,rsi
     ret
-
-dbgcv::write_bitfield endp
+    endp
 
 
 dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:asym_t, elemtype:dword, Ofssize:byte
@@ -448,7 +422,6 @@ dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:asym_t, elemtype:dword
     .if ( elemtype == 0 )
         mov elemtype,GetTyperef( rdi, Ofssize )
     .endif
-
     xor esi,esi
     .if ( [rdi].asym.total_size >= LF_NUMERIC )
         add esi,sizeof( uint_32 )
@@ -457,18 +430,14 @@ dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:asym_t, elemtype:dword
     .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov eax,sizeof( CV_ARRAY_16t )
     .endif
-
     lea edi,[rsi+rax+sizeof(uint_16)+1+3]
     and edi,not 3
     [rbx].flushpt(edi)
-
     mov ecx,edi
     mov rdi,rax
     add [rbx].pt,rcx
-
     sub ecx,sizeof(uint_16)
     mov [rdi].CV_ARRAY_16t.size,cx
-
     mov eax,elemtype
     .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov [rdi].CV_ARRAY_16t.elemtype,ax
@@ -482,7 +451,6 @@ dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:asym_t, elemtype:dword
         mov eax,LF_ARRAY
     .endif
     mov [rdi].CV_ARRAY.leaf,ax
-
     mov rcx,sym
     mov eax,[rcx].asym.total_size
     .if ( esi )
@@ -497,8 +465,7 @@ dbgcv::write_array_type proc __ccall uses rsi rdi rbx sym:asym_t, elemtype:dword
     inc rdx
     [rbx].padbytes(rdx)
     ret
-
-dbgcv::write_array_type endp
+    endp
 
 
 ; create a pointer type for procedure params and locals.
@@ -583,8 +550,7 @@ dbgcv::write_ptr_type proc __ccall uses rsi rdi rbx sym:asym_t
     mov eax,[rbx].currtype
     inc [rbx].currtype
     ret
-
-dbgcv::write_ptr_type endp
+    endp
 
 
 ; field enumeration callback, does:
@@ -628,7 +594,6 @@ dbgcv::cntproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr cou
     .elseif ( [rdi].asym.mem_type == MT_BITS && [rdi].asym.cvtyperef == 0 )
         [rbx].write_bitfield( type, rdi )
     .endif
-
     .if ( [rdi].asym.isarray )
 
         ; temporarily (mis)use ext_idx1 member to store the type;
@@ -639,8 +604,7 @@ dbgcv::cntproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr cou
         [rbx].write_array_type( rdi, 0, USE16 )
     .endif
     ret
-
-dbgcv::cntproc endp
+    endp
 
 
 ; field enumeration callback, does:
@@ -655,7 +619,6 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr 
     ldr rsi,cc
     ldr rdi,mbr
     ldr rcx,type
-
     xor eax,eax
     xor edx,edx
     .if ( [rcx].asym.typekind != TYPE_RECORD )
@@ -667,16 +630,13 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr 
         add eax,sizeof( uint_32 )
     .endif
     mov typelen,eax
-
     mov edx,sizeof( CV_MEMBER )
     .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov edx,sizeof( CV_MEMBER_16t )
     .endif
     add eax,edx
-
     mov ecx,[rdi].asym.name_size
     lea esi,[rax+rcx+2+1+3]
-
     and esi,not 3
     mov rdi,[rbx].flushpt(esi)
     add [rbx].pt,rsi
@@ -685,19 +645,14 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr 
         mov eax,LF_MEMBER_16t
     .endif
     mov [rdi].CV_MEMBER_16t.leaf,ax
-
     mov rsi,mbr
-
     .if ( [rsi].asym.isarray )
-
         movzx eax,[rsi].asym.ext_idx1
         mov [rsi].asym.ext_idx1,0 ; reset the temporarily used field
     .else
         GetTyperef( rsi, USE16 )
     .endif
-
     .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
-
         mov [rdi].CV_MEMBER_16t.index,ax
         mov [rdi].CV_MEMBER_16t.attr,CV_public or ( CV_MTvanilla shl 2 )
         lea rcx,[rdi].CV_MEMBER_16t.offs
@@ -706,7 +661,6 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr 
         mov [rdi].CV_MEMBER.attr,CV_public or ( CV_MTvanilla shl 2 )
         lea rcx,[rdi].CV_MEMBER.offs
     .endif
-
     mov eax,offs
     .if ( typelen == 0 )
         mov [rcx],ax
@@ -719,8 +673,7 @@ dbgcv::memberproc proc __ccall uses rsi rdi rbx type:asym_t, mbr:asym_t, cc:ptr 
     SetPrefixName( rcx, [rsi].asym.name, [rsi].asym.name_size )
     [rbx].padbytes(rax)
     ret
-
-dbgcv::memberproc endp
+    endp
 
 
 ; field enumeration function.
@@ -798,8 +751,7 @@ dbgcv::enum_fields proc __ccall uses rsi rdi rbx symb:asym_t, enumfunc:cv_enum_f
         .endif
     .endf
     ret
-
-dbgcv::enum_fields endp
+    endp
 
 
 ; write a LF_PROCEDURE & LF_ARGLIST type for procedures
@@ -837,14 +789,12 @@ dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:asym_t, cnt:int_t
         mov esi,sizeof( CV_ARGLIST )
         mov eax,CV_typ_t
     .endif
-
     mul cnt
     add esi,eax
     mov rdi,[rbx].flushpt(esi)
     add [rbx].pt,rsi
     sub esi,sizeof( uint_16 )
     mov [rdi].CV_ARGLIST_16t.size,si
-
     .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
         mov [rdi].CV_ARGLIST_16t.leaf,LF_ARGLIST_16t
         mov [rdi].CV_ARGLIST_16t.count,cnt
@@ -859,9 +809,7 @@ dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:asym_t, cnt:int_t
 
     mov rsi,sym
     mov rsi,[rsi].asym.procinfo
-
     .for ( rsi = [rsi].proc_info.paralist: rsi: rsi = [rsi].asym.nextparam )
-
         movzx eax,[rsi].asym.ext_idx1
         .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
             stosw
@@ -875,8 +823,7 @@ dbgcv::write_type_procedure proc __ccall uses rsi rdi rbx sym:asym_t, cnt:int_t
     .endf
     inc [rbx].currtype
     ret
-
-dbgcv::write_type_procedure endp
+    endp
 
 
 ; write a type. Items are dword-aligned,
@@ -1112,7 +1059,6 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:asym_t
         inc [rbx].currtype
        .endc
     .endsw
-
     mov rdx,sym
     mov eax,[rdx].asym.total_size
     .if ( typelen == 0 )
@@ -1133,13 +1079,11 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:asym_t
     mov [rsi].asym.cvtyperef,[rbx].currtype
     inc [rbx].currtype
     ret
-
-dbgcv::write_type endp
+    endp
 
 ; get register values for S_REGISTER
 
 getregister proc fastcall uses rsi rdi rbx sym:asym_t
-
     mov rsi,rcx
     .for ( edi = 0, ebx = 0: ebx < 2: ebx++ )
         movzx edx,[rsi].asym.regist[rbx*2]
@@ -1160,8 +1104,7 @@ getregister proc fastcall uses rsi rdi rbx sym:asym_t
         .endif
     .endf
     .return( edi )
-
-getregister endp
+    endp
 
 ;
 ;  convert register number
@@ -1172,7 +1115,6 @@ getregister endp
 ;
 
 get_x64_regno proc fastcall regno:dword
-
     .if ( ecx >= T_RAX && ecx <= T_RDI )
         lea rax,reg64
         movzx eax,byte ptr [rax+rcx-T_RAX]
@@ -1186,8 +1128,7 @@ get_x64_regno proc fastcall regno:dword
     ; it's a 32-bit register r8d-r15d
     lea eax,[rcx-T_R8D+CV_AMD64_R8D]
     ret
-
-get_x64_regno endp
+    endp
 
 
 ; write a symbol
@@ -1795,10 +1736,8 @@ endif
                             mov size,GetRegNo( ecx )
                             add size,CV_REG_EAX
                         .endif
-
                         mov rdx,[rbx].ps
                         .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
-
                             mov [rdx].REGREL32_16t.off,[rsi].asym.offs
                             mov [rdx].REGREL32_16t.typind,[rsi].asym.ext_idx1
                             mov [rdx].REGREL32_16t.reg,size
@@ -1807,29 +1746,23 @@ endif
                             mov [rdx].REGREL32.typind,[rsi].asym.ext_idx1
                             mov [rdx].REGREL32.reg,size
                         .endif
-
                     .else
-
                         mov len,sizeof( BPRELSYM32 ) - 1
                         mov leaf,S_BPREL32
                         .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
                             mov len,sizeof( BPRELSYM32_16t ) - 1
                             mov leaf,S_BPREL32_16t
                         .endif
-
                         mov edx,[rsi].asym.name_size
                         add edx,len
                         inc edx
                         mov rdx,[rbx].flushps(edx)
-
                         mov eax,[rsi].asym.name_size
                         add eax,len
                         lea eax,[rax-sizeof(uint_16)+1]
                         mov [rdx].BPRELSYM32_16t.reclen,ax
                         mov [rdx].BPRELSYM32_16t.rectyp,leaf
-
                         .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
-
                             mov [rdx].BPRELSYM32_16t.off,[rsi].asym.offs
                             mov [rdx].BPRELSYM32_16t.typind,[rsi].asym.ext_idx1
                         .else
@@ -1838,21 +1771,17 @@ endif
                         .endif
                     .endif
                 .endif
-
                 mov [rsi].asym.ext_idx1,0 ; to be safe, clear the temp. used field
                 mov eax,len
                 add [rbx].ps,rax
                 mov [rbx].ps,SetPrefixName( [rbx].ps, [rsi].asym.name, [rsi].asym.name_size )
-
                 .if ( [rbx].cv_type == CV_SIGNATURE_C13 )
-
                     mov eax,[rsi].asym.name_size
                     add eax,len
                     inc eax
                     mov rcx,[rbx].section
                     add [rcx].cvsection.length,eax
                 .endif
-
                 .if ( MODULE.defOfssize == USE64 && i == 0 )
                     .for ( ecx = 1, j--, rsi = locals[0] : j > ecx : ecx++,
                            rsi = [rsi].asym.nextparam )
@@ -1860,7 +1789,6 @@ endif
                 .endif
             .endf
         .endf
-
         [rbx].flushps( sizeof( ENDARGSYM ) )
         mov [rax].ENDARGSYM.reclen,sizeof( ENDARGSYM ) - sizeof(uint_16)
         mov [rax].ENDARGSYM.rectyp,S_END
@@ -1871,8 +1799,7 @@ endif
         .endif
     .endif
     ret
-
-dbgcv::write_symbol endp
+    endp
 
 
 ; flush section header and return memory address
@@ -1888,7 +1815,6 @@ dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
     mov eax,ex
     lea rcx,[rsi+rax+sizeof(qditem)+sizeof(cvsection)]
     mov rdi,LclAlloc( ecx )
-
     mov [rdi].qditem.next,NULL
     lea rax,[rsi+sizeof(cvsection)]
     add eax,ex
@@ -1897,9 +1823,7 @@ dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
     mov [rbx].section,rcx
     mov [rcx].cvsection.signature,signature
     mov [rcx].cvsection.length,ex
-
     .if ( esi )
-
         mov ecx,esi
         lea rdx,[rdi+sizeof(qditem)]
         mov rax,[rbx].ps
@@ -1909,11 +1833,9 @@ dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
         mov rdi,rdx
         mov rsi,rax
     .endif
-
     mov rdx,[rbx].param
     lea rcx,[rdx].coffmod.SymDeb[dbg_section]
     mov rdx,[rcx].dbg_section.s
-
     .if rdx != [rbx].symbols
         sub rcx,sizeof( dbg_section )
     .endif
@@ -1925,7 +1847,6 @@ dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
         mov [rdx].qditem.next,rdi
         mov [rcx].dbg_section.q.tail,rdi
     .endif
-
     mov rdx,[rbx].symbols
     mov rcx,[rdx].asym.seginfo
     mov eax,[rcx].seg_info.start_loc
@@ -1935,8 +1856,7 @@ dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
     mov [rcx].seg_info.start_loc,eax
     mov rax,[rbx].section
     ret
-
-dbgcv::flush_section endp
+    endp
 
     assume rbx:nothing
 
@@ -2104,25 +2024,17 @@ MD5_TRANSFORM macro a, b, c, d, r ; register arguments used
     add [rdx+0x04],b
     add [rdx+0x08],c
     add [rdx+0x0C],d
-
     endm
 
 ifdef _WIN64
-
 MD5Transform proc fastcall buf:ptr dword, inp:ptr byte
-
     MD5_TRANSFORM eax, r8d, r9d, r10d, r11
-
 else
-
 MD5Transform proc fastcall uses esi edi ebx ebp buf:ptr dword, inp:ptr byte
-
     MD5_TRANSFORM ecx, edi, ebx, ebp, esi
-
 endif
     ret
-
-MD5Transform endp
+    endp
 
 
     assume rbx:ptr MD5_CTX
@@ -2132,30 +2044,23 @@ MD5Update proc fastcall uses rsi rdi rbx ctx:ptr MD5_CTX, buf:ptr byte, len:dwor
     mov rbx,rcx
     mov rsi,rdx
     mov edi,len
-
     mov ecx,[rbx].count[0]
     mov eax,edi
     shl eax,3
     add [rbx].count[0],eax
     adc [rbx].count[4],0
-
     mov eax,edi
     shr eax,29
     add [rbx].count[4],eax
-
     mov eax,ecx
     shr eax,3
     and eax,0x3f
-
     .ifnz
-
         lea rdi,[rbx].buffer[rax]
         mov ecx,64
         sub ecx,eax
         mov eax,ecx
-
         .if ( len < ecx )
-
             mov ecx,len
             rep movsb
            .return
@@ -2163,28 +2068,22 @@ MD5Update proc fastcall uses rsi rdi rbx ctx:ptr MD5_CTX, buf:ptr byte, len:dwor
         rep movsb
         mov edi,len
         sub edi,eax
-
         MD5Transform( &[rbx].state, &[rbx].buffer )
     .endif
-
     .while ( edi >= 64 )
-
         lea  rdx,[rbx].buffer
         xchg rdx,rdi
         mov  ecx,64
         rep  movsb
         mov  edi,edx
-
         MD5Transform( &[rbx].state, &[rbx].buffer )
         sub edi,64
     .endw
-
     mov ecx,edi
     lea rdi,[rbx].buffer
     rep movsb
     ret
-
-MD5Update endp
+    endp
 
 
 ; MD5 finalization. Ends an MD5 message-digest operation, writing the
@@ -2204,71 +2103,52 @@ MD5Final proc fastcall uses rsi rdi rbx ctx:ptr MD5_CTX
     sub eax,ecx
     mov ecx,eax
     xor eax,eax
-
     .if ( ecx < 8 )
-
         rep stosb
-
         MD5Transform( &[rbx].state, rsi )
-
         mov rdi,rsi
         mov ecx,56
         xor eax,eax
         rep stosb
     .else
-
         sub ecx,8
         rep stosb
     .endif
-
     mov [rsi+14*4],[rbx].count
     mov [rsi+15*4],[rbx].count[4]
-
     MD5Transform( &[rbx].state, rsi )
-
     lea rsi,[rbx].state
     lea rdi,[rbx].digest
     mov ecx,16/4
     rep movsd
     ret
-
-MD5Final endp
+    endp
 
     assume rbx:nothing
 
 calc_md5 proc __ccall uses rsi rdi rbx filename:string_t, sum:ptr byte
-
    .new ctx:MD5_CTX
    .new fp:ptr FILE = fopen( filename, "rb" )
    .return .if ( rax == NULL )
-
     mov rbx,MemAlloc( MD5BUFSIZ )
-
     mov ctx.state[0x00],0x67452301
     mov ctx.state[0x04],0xefcdab89
     mov ctx.state[0x08],0x98badcfe
     mov ctx.state[0x0C],0x10325476
     mov ctx.count[0x00],0
     mov ctx.count[0x04],0
-
-    .while 1
-
-       .break .if !fread( rbx, 1, MD5BUFSIZ, fp )
-
+    .while fread( rbx, 1, MD5BUFSIZ, fp )
         MD5Update( &ctx, rbx, eax )
     .endw
-
     fclose( fp )
     MD5Final( &ctx )
     MemFree( rbx )
-
     mov rdi,sum
     lea rsi,ctx.digest
     mov ecx,16/4
     rep movsd
    .return( true )
-
-calc_md5 endp
+    endp
 
 else
 
@@ -2867,7 +2747,6 @@ endif
     mov [rdi].asym.max_offset,eax
     mov [rdx].seg_info.start_loc,0 ; required for COFF
     ret
-
-cv_write_debug_tables endp
+    endp
 
     end

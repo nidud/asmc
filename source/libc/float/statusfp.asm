@@ -8,13 +8,10 @@ include float.inc
 .code
 
 _statusfp proc
-
   local cw:word
-
     fstcw cw
     movzx ecx,cw
     xor eax,eax
-
     .if ecx & 0x1
         or eax,_SW_INVALID
     .endif
@@ -34,7 +31,6 @@ _statusfp proc
         or eax,_SW_INEXACT
     .endif
     ret
-
-_statusfp endp
+    endp
 
     end

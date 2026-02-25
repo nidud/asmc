@@ -43,7 +43,6 @@ externdef list_pos:uint_t
 ; and the precompiled lines are used for assembly then.
 
 SaveState proc __ccall private uses rsi rdi
-
     mov modstate.head,NULL
     mov modstate.tail,NULL
     mov StoreState,1
@@ -58,19 +57,16 @@ SaveState proc __ccall private uses rsi rdi
     AssumeSaveState()
     ContextSaveState()  ; save pushcontext/popcontext stack
     ret
-
-SaveState endp
+    endp
 
 
 StoreLine proc __ccall uses rsi rdi rbx sline:string_t
-
     xor eax,eax
     .return .if ( eax != NoLineStore )
 
     ; don't store generated lines!
 
     .if ( eax == MODULE.GeneratedCode )
-
         .if ( eax == StoreState ) ; line store already started?
             SaveState()
         .endif
@@ -83,7 +79,6 @@ StoreLine proc __ccall uses rsi rdi rbx sline:string_t
         mov [rsi].line_item.next,0
         GetLineNumber()
         mov [rsi].line_item.lineno,eax
-
         get_curr_srcfile()
         mov [rsi].line_item.srcfile,eax
         mov [rsi].line_item.macro_level,MacroLevel
@@ -97,9 +92,7 @@ StoreLine proc __ccall uses rsi rdi rbx sline:string_t
         .while islspace( [rcx] )
             inc rcx
         .endw
-
         .if ( al == '%' )
-
             mov edx,[rcx+1]
             and edx,0xFFFFFF
             or  edx,0x202020
@@ -107,7 +100,6 @@ StoreLine proc __ccall uses rsi rdi rbx sline:string_t
                 mov byte ptr [rcx],' '
             .endif
         .endif
-
         .if ( LineStore.head )
             mov rax,LineStore.tail
             mov [rax].line_item.next,rsi
@@ -117,29 +109,24 @@ StoreLine proc __ccall uses rsi rdi rbx sline:string_t
         mov LineStore.tail,rsi
     .endif
     ret
-
-StoreLine endp
+    endp
 
 
 ; an error has been detected in pass one. it should be
 ; reported in pass 2, so ensure that a full source scan is done then
 
 SkipSavedState proc
-
     mov ReqSavedState,0
     ret
-
-SkipSavedState endp
+    endp
 
 DefSavedState proc
-
     mov eax,StoreState
     and eax,ReqSavedState
     mov UseSavedState,eax
     mov StoreState,FALSE
     ret
-
-DefSavedState endp
+    endp
 
 
 ; for FASTPASS, just pass 1 is a full pass, the other passes
@@ -153,7 +140,6 @@ DefSavedState endp
 ; - it was defined when StoreState() is called
 ;
 SaveVariableState proc fastcall uses rsi rdi _sym:asym_t
-
     mov rsi,rcx
     mov [rsi].asym.issaved,1
     mov rdi,LclAlloc(equ_item)
@@ -175,8 +161,7 @@ SaveVariableState proc fastcall uses rsi rdi _sym:asym_t
         mov modstate.tail,rdi
     .endif
     ret
-
-SaveVariableState endp
+    endp
 
 
 RestoreState proc
@@ -219,12 +204,10 @@ RestoreState proc
         SymSetCmpFunc()
     .endif
     .return( LineStore.head )
-
-RestoreState endp
+    endp
 
 
 FastpassInit proc
-
     mov StoreState,0
     mov modstate.init,0
     mov LineStore.head,NULL
@@ -232,7 +215,6 @@ FastpassInit proc
     mov UseSavedState,0
     mov ReqSavedState,TRUE
     ret
-
-FastpassInit endp
+    endp
 
     END

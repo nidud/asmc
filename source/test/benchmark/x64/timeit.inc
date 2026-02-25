@@ -25,7 +25,6 @@
     endif
     endm
     PCOUNT = PCOUNT + 1
-
     size_p  equ 4096         ; max proc size
     p_size  dq PCOUNT dup(0) ; proc size
     result  dq PCOUNT dup(0) ; time
@@ -66,48 +65,36 @@ ReadProc proc uses rbx rsi rdi ID
     .endif
     mov file_name,rax
     mov rdi,proc_x
-
     FlushInstructionCache( GetCurrentProcess(), rdi, size_p )
-
     xor eax,eax
     mov ecx,size_p/8
     rep stosq
-
     xor edi,edi
     .ifd CreateFileA( &file_name, 0x80000000, edi, rdi, 3, edi, rdi ) != -1
-
         mov rbx,rax
         .ifd ReadFile( rbx, proc_x, size_p, &read_size, 0 )
-
             mov rdi,read_size
         .endif
         CloseHandle(rbx)
     .endif
-
     .if !rdi
-
         printf("error reading: %s\n", &file_name)
     .endif
     mov rax,rdi
     ret
-
-ReadProc endp
+    endp
 
 
 TestProc proc uses rsi rdi rbx r12 count, proc_id
 
     mov esi,edx         ; proc id 0..9
     xor eax,eax
-
     lea rbx,p_size
     lea rbx,[rbx+rdx*8]
     mov [rbx],eax       ; proc size
-
     lea rax,proc_p
     mov rax,[rax+rdx*8] ; proc
-
     .if !rax
-
         ReadProc(edx)
         mov [rbx],eax
         mov ecx,eax
@@ -118,7 +105,6 @@ TestProc proc uses rsi rdi rbx r12 count, proc_id
     ; spin up..
 
     .for r12 = rax, ebx = 4 : ebx : ebx--
-
         args_x()
         call r12
     .endf
@@ -129,38 +115,31 @@ TestProc proc uses rsi rdi rbx r12 count, proc_id
     NORMAL_PRIORITY_CLASS   equ 0x20
     PAGE_EXECUTE_READ       equ 0x20
     PAGE_EXECUTE_READWRITE  equ 0x40
-
     SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)
 
     xor eax,eax
     cpuid
     rdtsc
     mov edi,eax
-
     xor eax,eax
     cpuid
     .for ecx = count, ecx <<= 10 : ecx : ecx -= 1
     .endf
-
     xor eax,eax
     cpuid
     rdtsc
     sub eax,edi
     mov edi,eax
-
     xor eax,eax
     cpuid
     rdtsc
     mov esi,eax
     xor rax,rax
     cpuid
-
     .for ebx = count, ebx <<= 10 : ebx : ebx--
-
         args_x()
         call r12
     .endf
-
     xor eax,eax
     cpuid
     rdtsc
@@ -178,7 +157,6 @@ TestProc proc uses rsi rdi rbx r12 count, proc_id
     mov r9,[r9+rsi*8]
     lea rax,info_p
     mov rax,[rax+rsi*8]
-
     .if esi > 9
         add esi,7+'a'-'A'
     .endif
@@ -186,16 +164,13 @@ TestProc proc uses rsi rdi rbx r12 count, proc_id
     printf("%9i cycles, rep(%i), code(%3i) %c.asm: %s\n", edi, count, r9, esi, rax)
     mov eax,1
     ret
-
-TestProc endp
+    endp
 
 GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
 
     mov rbx,rcx
     mov rdi,rdx
-
     .while edi >= ebx
-
         mov step_x,ebx
         printf("-- test(%i)\n", ebx)
         procs
@@ -203,17 +178,13 @@ GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
         endm
         add ebx,step
     .endw
-
     lea rsi,result
     lea rdi,total
-
     .while 1
-
         xor ebx,ebx
         xor edx,edx
         xor ecx,ecx
         dec rdx
-
         .repeat
             mov rax,[rsi+rcx*8]
             .if eax && eax < edx
@@ -222,24 +193,18 @@ GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
             .endif
             inc rcx
         .until ecx == PCOUNT
-
         mov eax,[rsi+rbx*8]
         .break .if !eax
-
         add [rdi+rbx*8],eax
         xor eax,eax
         mov [rsi+rbx*8],eax
     .endw
-
     printf("\ntotal [%i .. %i], %i++\n", l1, l2, step)
-
     .while 1
-
         xor r8d,r8d
         xor edx,edx
         xor ecx,ecx
         dec rdx
-
         .repeat
             mov eax,[rdi+rcx*8]
             .if eax && eax < edx
@@ -248,13 +213,10 @@ GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
             .endif
             inc ecx
         .until ecx == PCOUNT
-
         mov edx,[rdi+r8*8]
         .break .if !edx
-
         xor eax,eax
         mov [rdi+r8*8],eax
-
         lea rcx,info_p
         mov r9,[rcx+r8*8]
         .if r8d > 9
@@ -263,7 +225,6 @@ GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
         add r8d,'0'
         printf("%9i cycles %c.asm: %s\n", edx, r8d, r9)
     .endw
-
     printf("hit any key to continue...\r")
     _getch()
     printf("\n")
@@ -308,7 +269,6 @@ SSE_AVX512BF16          equ 0x20000000
 SSE_AVXOS               equ 0x40000000
 
 setsselevel proc uses rbx
-
     pushfq
     pop     rax
     mov     ecx,0x200000
@@ -320,9 +280,7 @@ setsselevel proc uses rbx
     pop     rax
     xor     rax,rdx
     and     rax,rcx
-
     .ifnz
-
         xor eax,eax
         cpuid
         .if rax
@@ -361,24 +319,18 @@ setsselevel proc uses rbx
             .endif
         .endif
     .endif
-
     .if eax & SSE_XGETBV
-
         xor ecx,ecx
         xgetbv
         .if eax & 6 ; AVX support by OS?
             or sselev,SSE_AVXOS
         .endif
-
         and eax,0xE0
         .if eax == 0xE0
-
             xor ecx,ecx
             mov eax,7
             cpuid
-
             .if ebx & 1 shl 16      ; SSE_AVX512F ?
-
                 xor eax,eax
                 bt  ebx,30          ; SSE_AVX512BW
                 adc eax,eax         ; into bit 28
@@ -419,7 +371,6 @@ setsselevel proc uses rbx
                 shl eax,11
                 or  eax,SSE_AVX512F ; into bit 10
                 or  sselev,eax
-
                 mov ecx,1
                 mov eax,7
                 cpuid
@@ -431,37 +382,28 @@ setsselevel proc uses rbx
     .endif
     mov eax,sselev
     ret
-
-setsselevel endp
+    endp
 
 
 main proto
 
 start proc
-
   local lpflOldProtect:qword, cpustring[80]:byte
-
     .ifd !( setsselevel() & SSE_SSE2 )
-
         printf("CPU error: Need SSE2 level\n")
         exit(0)
     .endif
-
     .for ( r8 = &cpustring, r9d = 0 : r9d < 3 : r9d++, r8 += 16 )
-
         lea rax,[r9+0x80000002]
         cpuid
-
         mov [r8+0x00],eax
         mov [r8+0x04],ebx
         mov [r8+0x08],ecx
         mov [r8+0x0C],edx
     .endf
-
     .for rax = &cpustring: byte ptr [rax] == ' ' : rax++
     .endf
     printf("%s (", rax)
-
     mov eax,sselev
     .switch
     .case eax & SSE_AVX512F: printf("AVX512") : .endc
@@ -475,17 +417,13 @@ start proc
         printf( "SSE2" )
     .endsw
     printf( ")\n----------------------------------------------\n" )
-
     lea rax,proc_b
     and rax,-64
     mov proc_x,rax
-
     .ifd !VirtualProtect(proc_x, size_p, PAGE_EXECUTE_READWRITE, &lpflOldProtect)
-
         printf("VirtualProtect error..\n")
         exit(1)
     .endif
     exit(main())
     ret
-
-start endp
+    endp

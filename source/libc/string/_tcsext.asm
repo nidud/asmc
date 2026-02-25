@@ -12,18 +12,13 @@ include tchar.inc
     .code
 
 _tcsext proc uses rbx string:tstring_t
-
     mov rbx,_tcsfn( ldr(string) )
-
     .if _tcsrchr( rbx, '.' )
-
         .if ( rax == rbx )
-
             xor eax,eax
         .endif
     .endif
     ret
-
-_tcsext endp
+    endp
 
     end

@@ -83,7 +83,6 @@ XMStoreFloat3SE proc XM_CALLCONV pDestination:ptr XMFLOAT3SE, V:FXMVECTOR
     shl eax,18
     or  [rcx],eax
     ret
-
-XMStoreFloat3SE endp
+    endp
 
     end

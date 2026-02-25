@@ -8,9 +8,7 @@ include fltintrn.inc
     .code
 
 __cvtld_q proc __ccall x:ptr qfloat_t, ld:ptr ldouble_t
-
 ifdef _WIN64
-
     mov     rax,[rdx]
     movzx   edx,word ptr [rdx+8]
     add     dx,dx
@@ -21,9 +19,7 @@ ifdef _WIN64
     mov     [rcx],rax
     mov     [rcx+8],rdx
     mov     rax,rcx
-
 else
-
     mov     eax,x
     mov     ecx,ld
     mov     dx,[ecx+8]
@@ -37,10 +33,8 @@ else
     xor     ecx,ecx
     mov     [eax],ecx
     mov     [eax+4],cx
-
 endif
     ret
-
-__cvtld_q endp
+    endp
 
     end

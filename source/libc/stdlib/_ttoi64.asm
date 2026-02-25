@@ -15,26 +15,21 @@ ifndef _WIN64
     push edi
     push ebx
 endif
-
     ldr rcx,string
     .repeat
-
         movzx eax,tchar_t ptr [rcx]
         add rcx,tchar_t
        .continue(0) .if eax == ' '
     .until 1
-
 ifdef _WIN64
     mov r8d,eax
 else
     push eax
 endif
     .if ( eax == '-' || eax == '+' )
-
         movzx eax,tchar_t ptr [rcx]
         add rcx,tchar_t
     .endif
-
 ifdef _WIN64
     mov edx,eax
 else
@@ -42,25 +37,18 @@ else
     xor edx,edx
 endif
     xor eax,eax
-
     .while 1
-
 ifdef _WIN64
-
         sub edx,'0'
-
         .break .ifc
         .break .if ( edx > 9 )
-
         lea rdx,[rax*8+rdx]
         lea rax,[rax*2+rdx]
         movzx edx,tchar_t ptr [rcx]
 else
         sub ebx,'0'
-
         .break .ifc
         .break .if ( ebx > 9 )
-
         mov esi,edx
         mov edi,eax
         shld edx,eax,3
@@ -75,7 +63,6 @@ else
 endif
         add rcx,tchar_t
     .endw
-
 ifdef _WIN64
     .if ( r8d == '-' )
         neg rax
@@ -91,7 +78,6 @@ else
 endif
     .endif
     ret
-
-_ttoi64 endp
+    endp
 
     end

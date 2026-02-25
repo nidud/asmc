@@ -14,7 +14,6 @@ XMMatrixIdentity proc XM_CALLCONV
     _mm_store_ps(xmm2, g_XMIdentityR2.v)
     _mm_store_ps(xmm3, g_XMIdentityR3.v)
     ret
-
-XMMatrixIdentity endp
+    endp
 
     end

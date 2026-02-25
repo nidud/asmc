@@ -28,7 +28,6 @@ XMVectorSwizzle proc XM_CALLCONV V:FXMVECTOR, E0:uint32_t, E1:uint32_t, E2:uint3
     _mm_store_ps(xmm0, V)
  endif
     ret
-
-XMVectorSwizzle endp
+    endp
 
     end

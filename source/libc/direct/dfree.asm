@@ -12,11 +12,8 @@ include malloc.inc
     assume rbx:PDIRENT
 
 _dfree proc uses rbx d:PDIRENT
-
     ldr rbx,d
-
     .while ( [rbx].count )
-
         dec [rbx].count
         mov ecx,[rbx].count
         mov rdx,[rbx].fcb
@@ -28,7 +25,6 @@ _dfree proc uses rbx d:PDIRENT
         free(rcx)
     .endif
     ret
-
-_dfree endp
+    endp
 
     end

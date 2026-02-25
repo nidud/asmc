@@ -8,7 +8,7 @@ args_x macro
     endm
 
     option  dllimport:<msvcrt>
-    memcpy  proto :ptr, :ptr, :qword
+    externdef import memcpy:ptr
 
 include ../timeit.inc
 
@@ -18,7 +18,6 @@ size_s  equ 4096 ; maximum data size
 str_1   db size_s dup(?)
 align   16
 dst_1   db size_s dup(?)
-
 .data
 info_0  db "msvcrt.memcpy()",0
 info_1  db "switch 32 SSE",0
@@ -92,7 +91,7 @@ validate_x PROC USES rsi rdi rbx x:QWORD
         inc nerror
     .endif
     ret
-validate_x ENDP
+    endp
 
 main proc
 
@@ -102,31 +101,24 @@ main proc
     rep stosb
     xor eax,eax
     stosb
-    memcpy(&dst_1, &str_1, 1)
-    mov rax,__imp_memcpy
+    mov rax,memcpy
     lea rcx,proc_p
     mov [rcx],rax
-
     procs
         validate_x(x)
         cmp nerror,0
         jne error
     endm
-    ;
-    ; A jump table is created if number of cases >= 8
-    ;
     GetCycleCount(1, 4, 1, 1000)
     GetCycleCount(127, 129, 1, 1000)
     GetCycleCount(511, 513, 1, 1000)
     GetCycleCount(1023, 1025, 1, 1000)
-
 toend:
     ret
 error:
     printf("hit any key to continue...\n")
     _getch()
     jmp toend
-
-main endp
+    endp
 
     end start

@@ -9,15 +9,14 @@ args_x macro
     exitm<>
     endm
 
-    option  dllimport:<msvcrt>
-    strchr  proto :ptr, :dword
+    option dllimport:<msvcrt>
+    externdef import strchr:ptr
 
 include ../timeit.inc
 
 size_s  equ 4096 ; maximum data size
 
 .data
-
 str_1   db size_s-2 dup('x')
 arg_2   db 1,0
 
@@ -33,7 +32,6 @@ info_3  db "AVX",0
 ;-------------------------------------------------------------------------------
 
 validate_x PROC USES rsi rdi rbx x
-
     lea rax,proc_p
     mov rsi,[rax+rcx*8]
     .if !rsi
@@ -41,17 +39,13 @@ validate_x PROC USES rsi rdi rbx x
             mov rsi,proc_x
         .endif
     .endif
-
     .if rsi
-
         mov ebx,2
         .repeat
-
             lea rcx,str_1[size_s]
             sub rcx,rbx
             mov edx,1
             call rsi
-
             lea rdx,arg_2
             .if rdx != rax
                 mov rcx,rax
@@ -66,17 +60,13 @@ validate_x PROC USES rsi rdi rbx x
         inc nerror
     .endif
     ret
-validate_x ENDP
+    endp
 
 main proc
-
-    strchr(&str_1, 0)
-    mov rax,__imp_strchr
+    mov rax,strchr
     lea rcx,proc_p
     mov [rcx],rax
-
     .repeat
-
         procs
             validate_x(x)
             .if nerror
@@ -90,7 +80,6 @@ main proc
         GetCycleCount(127, 129, 1, 1000)
     .until 1
     ret
-
-main endp
+    endp
 
     end start

@@ -9,11 +9,9 @@ include errno.inc
     .code
 
 _set_doserrno proc value:uint_t
-
     ldr ecx,value
     mov _doserrno,ecx
     ret
-
-_set_doserrno endp
+    endp
 
     end

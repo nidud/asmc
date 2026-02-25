@@ -18,7 +18,6 @@ else
     fabs
 endif
     ret
-
-_fabs endp
+    endp
 
     end

@@ -60,7 +60,6 @@ XMVectorSinCosEst proc XM_CALLCONV pSin:ptr XMVECTOR, pCos:ptr XMVECTOR, Value:F
     _mm_store_ps([rcx], xmm0)
     _mm_store_ps([rdx], xmm1)
     ret
-
-XMVectorSinCosEst endp
+    endp
 
     end

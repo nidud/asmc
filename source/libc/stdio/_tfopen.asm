@@ -39,13 +39,10 @@ include tchar.inc
     .code
 
 _tfopen proc file:tstring_t, mode:tstring_t
-
     .if _getst()
-
         _topenfile( file, mode, SH_DENYNO, rax )
     .endif
     ret
-
-_tfopen endp
+    endp
 
     end

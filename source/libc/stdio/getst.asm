@@ -6,32 +6,26 @@
 
 include stdio.inc
 
-    .code
-
-    assume rcx:LPFILE
+.code
 
 _getst proc
-
     .for ( eax = 0, rcx = stdin, edx = 0 : edx < _nstream : edx++, rcx+=FILE )
-
-        .if ( !( [rcx]._flag & _IOREAD or _IOWRT or _IORW ) )
-
-            mov [rcx]._cnt,eax
-            mov [rcx]._flag,eax
-            mov [rcx]._bitcnt,eax
-            mov [rcx]._ptr,rax
-            mov [rcx]._base,rax
+        .if ( !( [rcx].FILE._flag & _IOREAD or _IOWRT or _IORW ) )
+            mov [rcx].FILE._cnt,eax
+            mov [rcx].FILE._flag,eax
+            mov [rcx].FILE._bitcnt,eax
+            mov [rcx].FILE._ptr,rax
+            mov [rcx].FILE._base,rax
             dec eax
-            mov [rcx]._file,eax
+            mov [rcx].FILE._file,eax
 ifdef STDZIP
-            mov [rcx]._crc32,eax
+            mov [rcx].FILE._crc32,eax
 endif
             mov rax,rcx
            .break
         .endif
     .endf
     ret
-
-_getst endp
+    endp
 
     end

@@ -12,16 +12,12 @@ include tchar.inc
     .code
 
 _tcsfcat proc uses rsi rdi rbx buffer:tstring_t, path:tstring_t, file:tstring_t
-
     ldr rsi,path
     ldr rbx,file
     ldr rdx,buffer
-
     xor eax,eax
     mov ecx,-1
-
     .if ( rsi )
-
         mov   rdi,rsi ; overwrite buffer
         repne _tscasb
         mov   rdi,rdx
@@ -32,30 +28,24 @@ _tcsfcat proc uses rsi rdi rbx buffer:tstring_t, path:tstring_t, file:tstring_t
         repne _tscasb
     .endif
     sub rdi,tchar_t
-
     .if ( rdi != rdx ) ; add slash if missing
-
         movzx eax,tchar_t ptr [rdi-tchar_t]
 ifdef __UNIX__
         .if ( eax != '/' )
-
             mov eax,'/'
 else
         .if ( !( eax == BSLASH || eax == '/' ) )
-
             mov eax,BSLASH
 endif
            _tstosb
         .endif
     .endif
-
     mov rsi,rbx ; add file name
     .repeat
        _tlodsb
        _tstosb
     .until !eax
     .return(rdx)
-
-_tcsfcat endp
+    endp
 
     end

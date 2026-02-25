@@ -8,7 +8,6 @@ include DirectXMath.inc
     .code
 
 XMVectorModAngles proc XM_CALLCONV V:FXMVECTOR
-
     _mm_store_ps(xmm5, xmm0)
     ;;
     ;; Modulo the range of the given angles such that -XM_PI <= Angles < XM_PI
@@ -22,7 +21,6 @@ XMVectorModAngles proc XM_CALLCONV V:FXMVECTOR
     _mm_sub_ps(xmm5, xmm0)
     _mm_store_ps(xmm0, xmm5)
     ret
-
-XMVectorModAngles endp
+    endp
 
     end

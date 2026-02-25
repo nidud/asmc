@@ -22,7 +22,6 @@ endif
 _getpid proc
 ifdef __UNIX__
     .ifsd ( sys_getpid() < 0 )
-
         neg eax
         _set_errno( eax )
     .endif
@@ -30,7 +29,6 @@ else
     GetCurrentProcessId()
 endif
     ret
-
-_getpid endp
+    endp
 
     end

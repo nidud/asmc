@@ -16,7 +16,6 @@ XMVectorGetByIndex proc XM_CALLCONV V:FXMVECTOR, i:size_t
     _mm_store_ps(U.v, xmm0)
     _mm_store_ss(xmm0, U.f[rdx*4])
     ret
-
-XMVectorGetByIndex endp
+    endp
 
     end

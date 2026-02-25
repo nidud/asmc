@@ -23,7 +23,6 @@ XMVectorSetInt proc XM_CALLCONV C0:uint32_t, C1:uint32_t, C2:uint32_t, C3:uint32
     mov x.y,edx
     _mm_store_ps(xmm0, x)
     ret
-
-XMVectorSetInt endp
+    endp
 
     end

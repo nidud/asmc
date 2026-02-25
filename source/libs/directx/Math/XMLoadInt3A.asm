@@ -16,7 +16,6 @@ XMLoadInt3A proc XM_CALLCONV pSource:ptr uint32_t
     _mm_load_si128([rcx])
     _mm_and_si128(xmm0, g_XMMask3)
     ret
-
-XMLoadInt3A endp
+    endp
 
     end

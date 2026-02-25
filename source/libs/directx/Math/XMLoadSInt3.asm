@@ -18,7 +18,6 @@ XMLoadSInt3 proc XM_CALLCONV pSource:ptr XMINT3
     _mm_movelh_ps(xmm0, xmm2)
     _mm_cvtepi32_ps(_mm_castps_si128(xmm0))
     ret
-
-XMLoadSInt3 endp
+    endp
 
     end

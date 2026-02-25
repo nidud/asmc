@@ -22,7 +22,6 @@ ifdef _WIN64
     movss   xmm0,x
 endif
     ret
-
-tanf endp
+    endp
 
     end

@@ -13,7 +13,6 @@ XMMatrixLookAtRH proc XM_CALLCONV EyePosition:FXMVECTOR, FocusPosition:FXMVECTOR
     XMVectorSubtract(xmm0, xmm1)
     XMMatrixLookToLH(xmm0, xmm3, xmm2)
     ret
-
-XMMatrixLookAtRH endp
+    endp
 
     end

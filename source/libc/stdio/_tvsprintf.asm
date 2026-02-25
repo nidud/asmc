@@ -11,9 +11,7 @@ include tchar.inc
     .code
 
 _vstprintf proc string:tstring_t, format:tstring_t, vargs:ptr
-
   local o:_iobuf
-
     ldr rcx,string
     ldr rax,format
     mov o._flag,_IOWRT or _IOSTRG
@@ -24,7 +22,6 @@ _vstprintf proc string:tstring_t, format:tstring_t, vargs:ptr
     mov rcx,o._ptr
     mov tchar_t PTR [rcx],0
     ret
-
-_vstprintf endp
+    endp
 
     end

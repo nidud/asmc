@@ -23,7 +23,6 @@ ifdef _WIN64
     movsd   xmm0,x
 endif
     ret
-
-log endp
+    endp
 
     end

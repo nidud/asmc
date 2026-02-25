@@ -10,11 +10,9 @@ include tchar.inc
 .code
 
 _tcsxchg proc uses rbx dst:tstring_t, old:tstring_t, new:tstring_t
-
    .new lnew:int_t
    .new lold:int_t
     ldr rbx,dst
-
     _tcslen(new)
 ifdef _UNICODE
     add eax,eax
@@ -25,9 +23,7 @@ ifdef _UNICODE
     add eax,eax
 endif
     mov lold,eax
-
     .while _tcsistr(rbx, old)   ; find token
-
         mov rbx,rax             ; RBX to start of token
         mov ecx,lnew
         add rcx,rax
@@ -39,8 +35,7 @@ endif
     .endw                       ; $++
     mov rax,dst
     ret
-
-_tcsxchg endp
+    endp
 
     end
 

@@ -20,43 +20,30 @@ define FL_READDIGIT 8 ; we've read at least one correct digit
 .code
 
 strtoxl proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base:int_t, flags:int_t
-
     ldr rbx,strSource
     ldr rsi,endptr
     ldr edi,base
-
     .if ( rsi )
-
         mov [rsi],rbx ; store beginning of string
     .endif
-
     .if ( rbx == NULL || ( edi != 0 && ( edi < 2 || edi > 36 ) ) )
-
         _set_errno(EINVAL)
         .return( 0 )
     .endif
-
     movzx eax,tchar_t ptr [rbx]
     .while ( eax == ' ' || eax == 9 )
-
         add rbx,tchar_t
         movzx eax,tchar_t ptr [rbx]
     .endw
-
     .if ( eax == '-' || eax == '+' )
-
         .if ( eax == '-' )
-
             or flags,FL_NEG
         .endif
         add rbx,tchar_t
         movzx eax,tchar_t ptr [rbx]
     .endif
-
     .if ( edi == 0 )
-
         ; determine base based on first two chars of string
-
         movzx ecx,tchar_t ptr [rbx+tchar_t]
         .if ( eax != '0' )
             mov edi,10
@@ -66,18 +53,14 @@ strtoxl proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base
             mov edi,8
         .endif
     .endif
-
     .if ( edi == 16 && eax == '0' )
-
         movzx eax,tchar_t ptr [rbx+tchar_t]
         .if ( eax == 'x' || eax == 'X' )
             add rbx,2*tchar_t
         .endif
     .endif
-
     xor eax,eax
     .while 1
-
         movzx ecx,tchar_t ptr [rbx]
         .if ( ecx >= '0' && ecx <= '9' )
             sub cl,'0'
@@ -89,34 +72,25 @@ strtoxl proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base
             .break
         .endif
         .break .if ecx >= edi
-
         or  flags,FL_READDIGIT
         mul edi
         add eax,ecx
         adc edx,0
         .if ( edx )
-
             or flags,FL_OVERFLOW
            .break .if ( !rsi )
         .endif
         add rbx,tchar_t
     .endw
-
     .if ( !( flags & FL_READDIGIT ) )
-
         ; no number there
-
        .return
     .endif
-
     .if ( rsi )
-
         mov [rsi],rbx
     .endif
-
     mov ebx,flags
     .if ( !( ebx & FL_UNSIGNED ) && !( ebx & FL_OVERFLOW ) )
-
         .if ( ebx & FL_NEG )
             .if ( eax > -LONG_MIN )
                 or ebx,FL_OVERFLOW
@@ -125,11 +99,8 @@ strtoxl proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base
             or ebx,FL_OVERFLOW
         .endif
     .endif
-
     .if ( ebx & FL_OVERFLOW  )
-
         ; overflow occurred
-
         _set_errno(ERANGE)
         .if ( ebx & FL_UNSIGNED )
             mov eax,ULONG_MAX
@@ -143,21 +114,16 @@ strtoxl proc private uses rsi rdi rbx strSource:tstring_t, endptr:tarray_t, base
         neg eax
     .endif
     ret
-
-strtoxl endp
+    endp
 
 _tcstol proc nptr:tstring_t, endptr:tarray_t, ibase:int_t
-
     strtoxl(nptr, endptr, ibase, 0)
     ret
-
-_tcstol endp
+    endp
 
 _tcstoul proc nptr:tstring_t, endptr:tarray_t, ibase:int_t
-
     strtoxl(nptr, endptr, ibase, FL_UNSIGNED)
     ret
-
-_tcstoul endp
+    endp
 
     end

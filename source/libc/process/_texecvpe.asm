@@ -18,20 +18,16 @@ endif
 .code
 
 _texecvpe proc path:tstring_t, argv:tarray_t, envp:tarray_t
-
     _texecve( ldr(path), ldr(argv), ldr(envp) )
-
 if 0
    .new retval:int_t = eax
     mov eax,errno
     .if ( retval != -1 || eax != ENOENT && eax != EINVAL )
-
         .return( retval )
     .endif
     ; ...
 endif
     ret
-
-_texecvpe endp
+    endp
 
     end

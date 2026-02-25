@@ -14,16 +14,12 @@ include stdlib.inc
     option dotname
 
 _wtoutf proc uses rdi rbx wc:wchar_t
-
     ldr ax,wc
-
     movzx eax,ax
     .if ( eax < 0x80 )
-
         mov ecx,1
        .return
     .endif
-
     mov     ebx,eax
     xor     edi,edi
     xor     eax,eax
@@ -46,7 +42,6 @@ _wtoutf proc uses rdi rbx wc:wchar_t
     or      al,bl
     lea     ecx,[rdi+1]
     ret
-
-_wtoutf endp
+    endp
 
     end

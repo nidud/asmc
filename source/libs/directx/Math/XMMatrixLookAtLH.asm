@@ -12,7 +12,6 @@ XMMatrixLookAtLH proc XM_CALLCONV EyePosition:FXMVECTOR, FocusPosition:FXMVECTOR
     _mm_sub_ps(xmm1, xmm0)
     XMMatrixLookToLH(xmm0, xmm1, xmm2)
     ret
-
-XMMatrixLookAtLH endp
+    endp
 
     end

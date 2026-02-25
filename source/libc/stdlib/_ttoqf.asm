@@ -11,16 +11,11 @@ include fltintrn.inc
     .code
 
 _ttoqf proc p:ptr real16, string:tstring_t
-
     ldr rcx,string
-
 ifdef _UNICODE
-
     .new buffer[128]:char_t
     .new i:int_t = 0
-
     .for ( rdx = &buffer : i < lengthof(buffer) - 1 : i++, rdx++, rcx += 2 )
-
         mov ax,[rcx]
        .break .if ( !ax || ax > 0x7F )
         mov [rdx],al
@@ -28,7 +23,6 @@ ifdef _UNICODE
     mov byte ptr [rdx],0
     lea rcx,buffer
 endif
-
     mov rdx,_strtoflt( rcx )
     mov rcx,p
     xor eax,eax
@@ -39,7 +33,6 @@ ifndef _WIN64
     mov [ecx+12],eax
 endif
     .if ( [rdx].STRFLT.flags & _ST_OVERFLOW )
-
         mov eax,_OVERFLOW
     .elseif ( [rdx].STRFLT.flags & _ST_UNDERFLOW )
         mov eax,_UNDERFLOW
@@ -48,7 +41,6 @@ endif
         xor eax,eax
     .endif
     ret
-
-_ttoqf endp
+    endp
 
     end

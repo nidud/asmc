@@ -189,7 +189,6 @@ XMStoreFloat3PK proc XM_CALLCONV uses rsi rdi rbx pDestination:ptr XMFLOAT3PK, V
     mov rax,pDestination
     mov [rax].XMFLOAT3PK.v,esi
     ret
-
-XMStoreFloat3PK endp
+    endp
 
     end

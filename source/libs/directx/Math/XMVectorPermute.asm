@@ -114,7 +114,6 @@ else
     _mm_store_ps(xmm0, result)
 endif
     ret
-
-XMVectorPermute endp
+    endp
 
     end

@@ -13,7 +13,6 @@ XMLoadInt4 proc XM_CALLCONV pSource:ptr uint32_t
 
     _mm_loadu_si128([rcx])
     ret
-
-XMLoadInt4 endp
+    endp
 
     end

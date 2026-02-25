@@ -41,7 +41,6 @@ XMVectorSetBinaryConstant proc XM_CALLCONV uses rbx C0:uint32_t, C1:uint32_t, C2
     ;;
     _mm_and_si128(xmm0, g_XMOne)
     ret
-
-XMVectorSetBinaryConstant endp
+    endp
 
     end

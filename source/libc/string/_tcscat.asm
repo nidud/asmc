@@ -13,7 +13,6 @@ include tchar.inc
     assume rdx:ptr tchar_t
 
 _tcscat proc dst:tstring_t, src:tstring_t
-
     ldr     rcx,dst
     ldr     rdx,src
 ifdef _WIN64
@@ -37,7 +36,6 @@ else
     mov     eax,dst
 endif
     ret
-
-_tcscat endp
+    endp
 
     end

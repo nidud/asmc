@@ -8,11 +8,9 @@ include DirectXMath.inc
     .code
 
 XMVectorSetIntByIndex proc XM_CALLCONV V:FXMVECTOR, x:uint32_t, i:size_t
-
     mov    dword ptr V[r8*4],edx
     movaps xmm0,V
     ret
-
-XMVectorSetIntByIndex endp
+    endp
 
     end

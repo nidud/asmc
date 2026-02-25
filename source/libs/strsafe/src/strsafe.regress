@@ -11,19 +11,15 @@ include tchar.inc
     .assert:on
 
 assert_exit proc
-
     mov rdx,[rsp+@ReservedStack+8]
     printf( "assert failed: %s\nrax: %p, rcx: %p\n", rdx, rax, rcx )
     exit( 1 )
-
-assert_exit endp
+    endp
 
 except proc
-
     printf( "exception: exit(1)\n" )
     exit( 1 )
-
-except endp
+    endp
 
 _tmain proc frame:except
 
@@ -764,7 +760,6 @@ _tmain proc frame:except
 
     _tprintf( "Everything is okay\n" )
     .return( 0 )
-
-_tmain endp
+    endp
 
     end _tstart

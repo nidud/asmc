@@ -11,9 +11,7 @@ doexit proto :int_t, :int_t, :int_t
     .code
 
 _exit_app proc
-
     doexit(0, 0, 0) ; full term, return to caller
-
-_exit_app endp
+    endp
 
     end

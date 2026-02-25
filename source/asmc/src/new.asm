@@ -51,11 +51,8 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
         cc[256] : char_t            ; class_class
 
     mov rsi,tstrcat( tstrcat( tstrcpy( &cc, class ), "_" ), class )
-
     mov csym,SymFind( rsi )
-
     .if ( Parse_Pass > PASS_1 && rax )
-
         .if ( [rax].asym.state == SYM_UNDEFINED )
 
             ; x::x proto
@@ -69,19 +66,13 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
 
     xor ecx,ecx
     mov reg,ecx
-
     .if ( rax && [rax].asym.state == SYM_MACRO )
-
         mov ecx,T_ECX
         mov reg,T_ECX
-
         .if ( MODULE.Ofssize == USE64 )
-
             mov ecx,T_EDI
             mov reg,T_RDI
-
             .if ( [rax].asym.langtype != LANG_SYSCALL )
-
                 mov ecx,T_ECX
                 mov reg,T_RCX
             .endif
@@ -90,7 +81,6 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
 
     xor eax,eax
     mov rbx,argtok
-
     mov edx,ClNew
     .if ( [rbx-asm_tok].token == T_COLON )
         mov rdx,sym
@@ -103,21 +93,17 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
         mov edx,ClPtr
     .endif
     mov cltype,edx
-
     .if ( [rbx-asm_tok].token != T_COLON || edx == ClPtr )
-
         inc eax
         .if ( type == NULL )
             inc eax
         .endif
     .endif
-
     mov rdi,[rbx+asm_tok*2].tokpos
     mov rdx,endtok
     mov rbx,[rdx]
 
     .if ( [rbx-asm_tok*2].token != T_OP_BRACKET )
-
         add eax,3
         mov rbx,[rbx-asm_tok].tokpos
         mov byte ptr [rbx],0
@@ -125,7 +111,6 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
         xor ebx,ebx
     .endif
     mov rdx,name
-
     .if ecx
         mov callid,eax
         .switch eax
@@ -210,13 +195,10 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
         .if ( reg )
             mov acc,reg
         .endif
-
         .while ( [rbx].token == T_ID && [rbx+asm_tok].token == T_OP_BRACKET )
-
             mov rdx,[rbx].string_ptr
             add rbx,asm_tok*2
             mov rdi,[rbx].tokpos
-
             .for ( eax = 1 : [rbx].token != T_FINAL : rbx += asm_tok )
                 .if ( [rbx].token == T_OP_BRACKET )
                     inc eax
@@ -225,15 +207,11 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
                    .break .ifz
                 .endif
             .endf
-
             .if ( [rbx].token != T_CL_BRACKET )
-
                 .return asmerr( 2008, [rbx].string_ptr )
             .endif
-
             mov rsi,[rbx].tokpos
             mov byte ptr [rsi],0
-
             .if ( cltype == ClMem )
                 AddLineQueueX( " mov %s.%s, %s", name, rdx, rdi )
             .else
@@ -249,8 +227,7 @@ ConstructorCall proc __ccall private uses rsi rdi rbx \
         mov [rdx],rbx
     .endif
     ret
-
-ConstructorCall endp
+    endp
 
 
 ; case = {0,2,..}
@@ -265,24 +242,17 @@ AssignString proc __ccall private uses rsi rdi rbx name:string_t, fp:asym_t, str
     ldr rdx,fp
     mov ebx,[rdx].asym.total_size
     mov rdi,[rdx].asym.name
-
     .repeat
-
         .break .if ebx <= 4
-
         mov esi,TokenCount
         add esi,1
         mov i,esi
         mov edx,Tokenize( string, esi, TokenArray, TOK_DEFAULT )
-
         imul eax,esi,asm_tok
         add rax,TokenArray
-
         .break .if [rax].asm_tok.token != T_NUM && [rax].asm_tok.token != T_FLOAT
         .break .ifd EvalOperand( &i, TokenArray, edx, &opndx, 0 ) == ERROR
-
         .if ( opndx.kind == EXPR_FLOAT )
-
             mov opndx.kind,EXPR_CONST
             .if ( ebx != 16 )
                 quad_resize(&opndx, ebx)
@@ -290,7 +260,6 @@ AssignString proc __ccall private uses rsi rdi rbx name:string_t, fp:asym_t, str
         .endif
         .break .if opndx.kind != EXPR_CONST
         .break .if ebx == 8 && opndx.l64_h == 0 && MODULE.Ofssize == USE64
-
         .switch ebx
         .case 16
             AddLineQueueX(
@@ -309,8 +278,7 @@ AssignString proc __ccall private uses rsi rdi rbx name:string_t, fp:asym_t, str
     .until 1
     AddLineQueueX( " mov %s.%s, %s", name, rdi, string )
     ret
-
-AssignString endp
+    endp
 
 
 AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, string:string_t
@@ -324,65 +292,44 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
     ldr rdx,sym
     ldr rax,string
     lea rsi,[rax+1]
-
     .if ( rdx )
-
         .while ( [rdx].asym.state == SYM_TYPE && [rdx].asym.type )
-
             .break .if ( rdx == [rdx].asym.type )
-
             mov rdx,[rdx].asym.type
         .endw
-
         mov rcx,[rdx].asym.structinfo
         mov rbx,[rcx].struct_info.head
     .else
         inc array
     .endif
-
     .while 1
-
         lodsb
-
         .continue(0) .if al == ' '
         .continue(0) .if al == 9
         .break .if al == '}'
-
         dec rsi
         .break .if !al
-
         lea rdi,val
         .if ( byte ptr [rsi] == '{' )
-
             tstrcpy( rdi, name )
             mov rcx,[rbx].asym.name
-
             .if ( byte ptr [rcx] )
-
                 tstrcat( rdi, "." )
                 tstrcat( rdi, [rbx].asym.name )
             .endif
-
             mov rsi,AssignStruct( rdi, [rbx].asym.type, rsi )
-
             .break .if !eax
             .while ( byte ptr [rsi] == ' ' || byte ptr [rsi] == 9 )
-
                 add rsi,1
             .endw
-
         .else
-
             xor eax,eax
             xor edx,edx
             mov brackets,al
             mov [rdi],al
             lea rcx,[rdi+255]
-
             .while ( rdi < rcx )
-
                 mov al,[rsi]
-
                 .switch al
                 .case 0
                     .break
@@ -402,36 +349,25 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
                 .endif
                 movsb
             .endw
-
             xor eax,eax
             mov [rdi],al
-
             .for ( rcx = &val : rcx < rdi && ( byte ptr [rdi-1] == ' ' || byte ptr [rdi-1] == 9 ) : )
-
                 dec edx
                 dec rdi
                 mov byte ptr [rdi],0
             .endf
-
             .if ( edx == 0 )
-
                 mov rdi,rcx
-
                 .if SymFind( rdi )
-
                     .if ( [rax].asym.state == SYM_TMACRO )
-
                         mov rcx,[rax].asym.string_ptr
-
                         .if ( byte ptr [rcx] == '{' && !array && [rbx].asym.isarray )
-
                             mov     rdx,rax
                             xor     eax,eax
                             mov     rdi,rsi
                             mov     ecx,-1
                             repne   scasb
                             not     ecx
-
                             mov     edi,[rdx].asym.total_size
                             lea     rax,[rdi+rcx+15]
                             and     rax,-16
@@ -450,9 +386,7 @@ ifdef _WIN64
                             sub     rsp,@ReservedStack
 endif
                            .continue(0)
-
                         .else
-
                             mov rdx,rsi
                             mov rsi,rcx
                             mov ecx,[rax].asym.total_size
@@ -464,11 +398,8 @@ endif
                     .endif
                 .endif
             .endif
-
             .if ( val )
-
                 .if ( array )
-
                     mov eax,[rbx].asym.total_size
                     xor edx,edx
                     div [rbx].asym.total_length
@@ -477,28 +408,21 @@ endif
                     mul ecx
                     mov ecx,eax
                 .endif
-
                 .if ( val == '"' || ( val == 'L' && val[1] == '"' ) )
-
                     .if ( array )
                         AddLineQueueX( " mov %s[%d], &@CStr(%s)", name, ecx, &val )
                     .else
                         AddLineQueueX( " mov %s.%s, &@CStr(%s)", name, [rbx].asym.name, &val )
                     .endif
-
                 .elseif ( array )
-
                     mov index,ecx
                     mov fltproc,0 ; v2.37.26 ...
-
                     .if ( [rbx].asym.mem_type & MT_FLOAT && islabel0( val ) )
-
                         lea rdi,val[1]
                         .while islabel( [rdi] )
                             inc rdi
                         .endw
                         .if ( byte ptr [rdi] == '(' )
-
                             mov byte ptr [rdi],0
                             SymFind( &val )
                             mov byte ptr [rdi],'('
@@ -507,7 +431,6 @@ endif
                             .endif
                         .endif
                     .endif
-
                     mov edx,T_MOV ; v2.37.21 added
                     .if ( fltproc )
                         .if ( [rbx].asym.mem_type == MT_REAL4 )
@@ -524,11 +447,9 @@ endif
                 .endif
             .endif
         .endif
-
         .break .if ( byte ptr [rsi] == 0 )
          lodsb
         .break .if ( al != ',' ) ; == '}'
-
         .if ( array )
             inc array
         .else
@@ -537,8 +458,7 @@ endif
         .break .if !rbx
     .endw
     .return( rsi )
-
-AssignStruct endp
+    endp
 
 
 ; case = {...},{...},
@@ -548,38 +468,30 @@ AssignId proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, type:a
   local Id[128]:char_t, size:int_t, f:asym
 
     .if ( type == NULL )
-
         mov rsi,sym
         lea rdi,f
         mov ecx,asym
         rep movsb
         mov f.next,NULL
         lea rbx,f
-
        .return AssignStruct( name, NULL, string )
     .endif
-
     mov rdi,sym
     .if !( [rdi].asym.isarray )
-
         .return AssignStruct( name, type, string )
     .endif
-
     mov rsi,string
     inc rsi
     .while ( byte ptr [rsi] == ' ' || byte ptr [rsi] == 9 )
         add rsi,1
     .endw
-
     mov eax,[rdi].asym.total_size
     mov ebx,[rdi].asym.total_length
     xor edx,edx
     div ebx
     mov size,eax
     xor edi,edi
-
     .for ( : ebx : ebx--, edi += size )
-
         tsprintf( &Id, "%s[%d]", name, edi )
         mov rsi,AssignStruct( &Id, type, rsi )
         lodsb
@@ -593,8 +505,7 @@ AssignId proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, type:a
         .break .if al != '{'
     .endf
     .return( rsi )
-
-AssignId endp
+    endp
 
 
     assume rbx:token_t
@@ -608,21 +519,17 @@ ClearStruct proc __ccall uses rsi rdi rbx name:string_t, sym:asym_t
 
     ldr rsi,name
     ldr rdx,sym
-
     mov edi,[rdx].asym.total_size
     mov eax,MODULE.accumulator
     .if ( eax == T_RAX )
         mov eax,T_EAX
     .endif
     AddLineQueueX( " xor %r, %r", eax, eax )
-
     mov eax,16
     .if ( MODULE.Ofssize == USE64 )
         mov eax,32
     .endif
-
     .if ( edi > eax && MODULE.Ofssize != USE16 )
-
         mov ecx,T_CX
         mov edx,T_DI
         mov ebx,ecx
@@ -635,7 +542,6 @@ ClearStruct proc __ccall uses rsi rdi rbx name:string_t, sym:asym_t
             mov edx,T_RDI
             mov ebx,T_ECX
         .endif
-
         AddLineQueueX(
             " push %r\n"
             " push %r\n"
@@ -644,9 +550,7 @@ ClearStruct proc __ccall uses rsi rdi rbx name:string_t, sym:asym_t
             " rep stosb\n"
             " pop %r\n"
             " pop %r", edx, ecx, edx, rsi, ebx, edi, ecx, edx )
-
     .else
-
         mov chunk,2
         mov type,T_WORD
         .if ( MODULE.Ofssize == USE32 )
@@ -669,8 +573,7 @@ ClearStruct proc __ccall uses rsi rdi rbx name:string_t, sym:asym_t
         .endf
     .endif
     ret
-
-ClearStruct endp
+    endp
 
 
     assume rsi:ptr qualified_type
@@ -688,37 +591,27 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
     imul ebx,i,asm_tok
     add  rbx,tokenarray
     ldr  rsi,ti
-
 if 0
     mov rax,[rsi].symtype
     .if ( rax && [rax].asym.operator )
-
         AddLineQueueX( " %s %s", name, [rbx-asm_tok].tokpos )
         imul eax,TokenCount,asm_tok
         add rax,tokenarray
         .return
     .endif
 endif
-
     mov l2,0
     mov unicode,0
-
     .if ( [rbx].token == T_STRING && [rbx].bytval == '{' )
-
         .if ( SymFind( name ) == NULL )
-
             .return asmerr( 2008, [rbx].tokpos )
         .endif
-
         xor edx,edx
         mov rcx,[rbx].string_ptr
-
         .while ( byte ptr [rcx] == ' ' || byte ptr [rcx] == 9 )
             inc rcx
         .endw
-
         .if ( byte ptr [rcx] == '0' )
-
             inc rcx
             .while ( byte ptr [rcx] == ' ' || byte ptr [rcx] == 9 )
                 inc rcx
@@ -727,7 +620,6 @@ endif
                 inc rdx
             .endif
         .endif
-
         .if edx
             ClearStruct( name, rax )
         .else
@@ -741,9 +633,7 @@ endif
 
     lea rdi,cc
     mov eax,T_MOV
-
     .if ( [rbx].token != T_FLOAT && [rbx].token != '-' )
-
         .if ( [rsi].mem_type == MT_REAL4 )
             mov eax,T_MOVSS
         .elseif ( [rsi].mem_type == MT_REAL8 )
@@ -753,18 +643,13 @@ endif
         .endif
     .endif
     tsprintf( rdi, " %r ", eax )
-
     mov eax,[rsi].size
     mov rdx,[rbx].string_ptr
-
     .if ( [rsi].is_ptr && [rbx].token == T_ID && word ptr [rdx] == 'L' &&
           [rbx+asm_tok].token == T_STRING && [rbx+asm_tok].bytval == '"' )
-
         add rbx,asm_tok
         inc unicode
-
     .elseif ( eax >= 8 )
-
         .if ( eax == 8 && [rsi].Ofssize == USE32 && [rbx].IsProc &&
               ( [rsi].mem_type == MT_QWORD || [rsi].mem_type == MT_SQWORD ) )
         .elseif ( eax == 16 && [rsi].Ofssize == USE64 && [rbx].IsProc &&
@@ -773,33 +658,25 @@ endif
                   ( [rbx].IsProc || word ptr [rdx] == '&' ) )
         .elseif ( MODULE.class_reg )
         .elseifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) != ERROR )
-
             mov eax,[rsi].size
             .if ( eax == 8 && opndx.kind == EXPR_CONST )
-
                 .if ( [rsi].Ofssize == USE32 ||
                       ( [rbx].token != T_STRING && ( opndx.hvalue > 0 || opndx.hvalue < -1 ) ) )
-
                     AddLineQueueX(
                         " mov dword ptr %s[0], %u\n"
                         " mov dword ptr %s[4], %u",
                         name, opndx.l64_l, name, opndx.l64_h )
-
                     imul eax,i,asm_tok
                     add  rax,tokenarray
                    .return
                 .endif
-
             .elseif ( opndx.kind == EXPR_FLOAT && ( eax == 8 || eax == 10 || eax == 16 ) )
-
                 .if ( eax == 8 )
                     AddLineQueueX(
                         " mov dword ptr %s[0], LOW32(%s)\n"
                         " mov dword ptr %s[4], HIGH32(%s)",
                         name, [rbx].tokpos, name, [rbx].tokpos )
-
                 .elseif ( eax == 10 )
-
                      __cvtq_ld(&opndx, &opndx)
                     AddLineQueueX(
                         " mov dword ptr %s[0], %u\n"
@@ -808,9 +685,7 @@ endif
                         name, opndx.l64_l,
                         name, opndx.l64_h,
                         name, opndx.h64_l )
-
                 .else
-
                     AddLineQueueX(
                         " mov dword ptr %s[0], %u\n"
                         " mov dword ptr %s[4], %u\n"
@@ -821,21 +696,16 @@ endif
                         name, opndx.h64_l,
                         name, opndx.h64_h )
                 .endif
-
                 imul eax,i,asm_tok
                 add  rax,tokenarray
                .return
             .endif
         .endif
     .endif
-
     add rdi,tstrlen( tstrcat( tstrcat( rdi, name ), ", " ) )
     mov brackets,0
-
     assume rsi:nothing
-
     .while 1
-
         movzx eax,[rbx].token
         .switch eax
         .case T_FINAL
@@ -850,13 +720,9 @@ endif
             dec brackets
            .endc
         .endsw
-
         .if ( !brackets && [rbx].token == T_STRING && [rbx].bytval == '"' )
-
             .if SymFind( name )
-
                 .if ( [rax].asym.mem_type & MT_PTR )
-
                     lea rsi,@CStr("&@CStr(")
                     mov ecx,7
                     rep movsb
@@ -890,8 +756,7 @@ endif
         AddLineQueue( &l2 )
     .endif
     .return( rbx )
-
-AssignValue endp
+    endp
 
 
 AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
@@ -912,51 +777,37 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov  ctype,0
 
     .while 1
-
         .if ( [rbx].token != T_ID )
-
             .return asmerr( 2008, [rbx].string_ptr )
         .endif
-
         mov name,[rbx].string_ptr
         mov type,NULL
-
         mov ti.symtype,NULL
         mov ti.is_ptr,0
         mov ti.ptr_memtype,MT_EMPTY
-
         mov cl,MODULE._model
         mov eax,1
         shl eax,cl
-
         .if ( eax & SIZE_DATAPTR )
             mov ti.is_far,TRUE
         .else
             mov ti.is_far,FALSE
         .endif
-
         mov ti.Ofssize,MODULE.Ofssize
-
         mov creat,0
-
         .if !SymFind(name)
-
             SymLCreate(name)
             mov creat,1
         .endif
         .return ERROR .if !rax ; if it failed, an error msg has been written already
-
         mov sym,rax
-
         .if creat
-
             mov [rax].asym.state,SYM_STACK
             mov [rax].asym.isdefined,1
             mov [rax].asym.total_length,1
         .elseif ( [rax].asym.state != SYM_STACK && !( [rax].asym.isclass ) )
             .return( asmerr( 2005, [rax].asym.name ) )
         .endif
-
         .if ti.Ofssize == USE16
             .if creat
                 mov [rax].asym.mem_type,MT_WORD
@@ -968,13 +819,11 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
             mov ti.size,dword
         .endif
-
         add rbx,asm_tok ; go past name
 
         ; .new name<[xx]>
 
         .if [rbx].token == T_OP_SQ_BRACKET
-
             add rbx,asm_tok ; go past '['
             mov rdi,rbx
             sub rdi,tokenarray
@@ -984,28 +833,20 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
             div ecx
             mov edi,eax
             mov i,edi
-
             .for ( rsi = rbx : edi < TokenCount: edi++, rbx += asm_tok )
                 .break .if [rbx].token == T_COMMA || [rbx].token == T_COLON
             .endf
-
             .return .ifd EvalOperand( &i, tokenarray, edi, &opndx, 0 ) == ERROR
-
             .if ( opndx.kind != EXPR_CONST )
-
                 asmerr( 2026 )
                 mov opndx.value,1
             .endif
-
             imul ebx,i,asm_tok
             add  rbx,tokenarray
-
             mov rcx,sym
             mov [rcx].asym.total_length,opndx.value
             mov [rcx].asym.isarray,1
-
             .if ( [rbx].token == T_CL_SQ_BRACKET )
-
                 add rbx,asm_tok ; go past ']'
             .else
                 asmerr( 2045 )
@@ -1018,7 +859,6 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; .new name[xx]:<type>
 
         .if ( [rbx].token == T_COLON )
-
             mov type,[rbx+asm_tok].string_ptr
             sub rbx,tokenarray
             mov ecx,asm_tok
@@ -1028,12 +868,9 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov ebx,eax
             inc ebx
             mov i,ebx
-
             .return .ifd GetQualifiedType(&i, tokenarray, &ti) == ERROR
-
             imul ebx,i,asm_tok
             add rbx,tokenarray
-
             .if ( creat )
                 mov cti,ti
                 mov ctype,1
@@ -1044,9 +881,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
             .else
                 mov [rsi].target_type,ti.symtype
             .endif
-
         .elseif ( ctype && creat )
-
             mov ti,cti
             mov [rsi].mem_type,ti.mem_type
             .if ( ti.mem_type == MT_TYPE )
@@ -1055,9 +890,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov [rsi].target_type,ti.symtype
             .endif
         .endif
-
         .if ( creat )
-
             mov [rsi].is_ptr,ti.is_ptr
             mov [rsi].is_far,ti.is_far
             mov [rsi].Ofssize,ti.Ofssize
@@ -1070,18 +903,12 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
         assume rsi:nothing
 
         .if ( creat && Parse_Pass == PASS_1 )
-
             mov rax,CurrProc
             mov rdx,[rax].asym.procinfo
-
             .if ( [rdx].proc_info.locallist == NULL )
-
                 mov [rdx].proc_info.locallist,rsi
-
             .else
-
                 mov rcx,[rdx].proc_info.locallist
-
                 .for ( : [rcx].asym.nextlocal : rcx = [rcx].asym.nextlocal )
                 .endf
                 mov [rcx].asym.nextlocal,rsi
@@ -1089,9 +916,7 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
 
         .if ( [rbx].token != T_FINAL  )
-
             .if ( [rbx].token == T_COMMA )
-
                 mov rax,rbx
                 sub rax,tokenarray
                 xor edx,edx
@@ -1101,13 +926,10 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .if eax < TokenCount
                     add rbx,asm_tok
                 .endif
-
             .elseif ( [rbx].token == T_OP_BRACKET )
-
                 lea rdi,[rbx-asm_tok]
                 mov rsi,[rbx-asm_tok].string_ptr
                 add rbx,asm_tok ; go past '('
-
                 .for ( eax = 1 : [rbx].token != T_FINAL : rbx += asm_tok )
                     .if ( [rbx].token == T_OP_BRACKET )
                         inc eax
@@ -1116,14 +938,11 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
                         .break .ifz
                     .endif
                 .endf
-
                 .if ( [rbx].token != T_CL_BRACKET )
                     .return asmerr( 2045 )
                 .endif
-
                 add rbx,asm_tok ; go past ')'
                 mov endtok,rbx
-
                 .if ( SymFind( rsi ) )
                     mov rcx,rax
                     .if ( [rcx].asym.state == SYM_TYPE )
@@ -1139,15 +958,12 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .endif
                 ConstructorCall( name, &endtok, rdi, rsi, type, rax )
                 mov rbx,endtok
-
             .elseif ( [rbx].token == T_DIRECTIVE && [rbx].dirtype == DRT_EQUALSGN )
-
                 mov rbx,AssignValue(name, i, tokenarray, &ti)
             .else
                 .return asmerr( 2065, "," )
             .endif
         .endif
-
         mov rax,rbx
         sub rax,tokenarray
         xor edx,edx
@@ -1155,17 +971,14 @@ AddLocalDir proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t
         div ecx
        .break .if eax >= TokenCount
     .endw
-
     .if ( creat && Parse_Pass == PASS_1 )
-
         mov rax,CurrProc
         mov rcx,[rax].asym.procinfo
         mov [rcx].proc_info.localsize,0
         SetLocalOffsets(rcx)
     .endif
     .return( NOT_ERROR )
-
-AddLocalDir endp
+    endp
 
 
 NewDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
@@ -1176,10 +989,8 @@ NewDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         ldr ecx,i
         ldr rbx,tokenarray
-
         imul eax,ecx,asm_tok
         .if ( [rbx+rax+asm_tok].token == T_OP_BRACKET )
-
             lea rbx,[rbx+rax+asm_tok*2]
             SymFind( [rbx].string_ptr )
             .if ( rax && [rax].asym.state == SYM_TMACRO )
@@ -1192,7 +1003,6 @@ NewDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     .endw
                 .endif
                 .if ( [rax].asym.hasvtable )
-
                     mov rsi,rax
                     xor edi,edi
                     .if ( [rbx+asm_tok].token == T_COMMA && [rbx+asm_tok*2].token != T_CL_BRACKET )
@@ -1215,7 +1025,6 @@ NewDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         RunLineQueue()
     .endif
     .return( rc )
-
-NewDirective endp
+    endp
 
     END

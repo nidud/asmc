@@ -42,16 +42,13 @@ extern SegOverride:asym_t
 CreateFixup proc __ccall uses rsi rdi rbx sym:asym_t, type:fixup_types, options:fixup_options
 
     ldr rsi,sym
-
     mov rbx,LclAlloc( sizeof( fixup ) )
 
     ; add the fixup to the symbol's linked list (used for backpatch)
     ; this is done for pass 1 only.
 
     .if ( Parse_Pass == PASS_1 )
-
         .if ( rsi && !( [rsi].asym.isdefined ) ) ; changed v1.96
-
             mov [rbx].nextbp,[rsi].asym.bp_fixup
             mov [rsi].asym.bp_fixup,rbx
         .endif

@@ -11,30 +11,21 @@ define MAX_EXP_INDEX 13
     .code
 
 _fltscale proc __ccall uses rsi rdi rbx fp:ptr STRFLT
-
     ldr rbx,fp
     mov edi,[rbx].STRFLT.exponent
     lea rsi,_fltpowtable
     .ifs ( edi < 0 )
-
         neg edi
         add rsi,( EXTFLOAT * MAX_EXP_INDEX )
     .endif
-
     .if ( edi )
-
         .for ( ebx = 0 : edi && ebx < MAX_EXP_INDEX : ebx++, edi >>= 1, rsi += EXTFLOAT )
-
             .if ( edi & 1 )
-
                 _fltmul( fp, rsi )
             .endif
         .endf
-
         .if ( edi != 0 )
-
             ; exponent overflow
-
             xor eax,eax
             mov rbx,fp
 ifdef _WIN64
@@ -50,7 +41,6 @@ endif
         .endif
     .endif
     .return( fp )
-
-_fltscale endp
+    endp
 
     end

@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorXorInt proc XM_CALLCONV V1:FXMVECTOR, V2:FXMVECTOR
-
     _mm_xor_si128(xmm0, xmm1)
     ret
-
-XMVectorXorInt endp
+    endp
 
     end

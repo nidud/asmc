@@ -9,7 +9,6 @@ include string.inc
     .code
 
 wmemset proc uses rdi dst:ptr, chr:int_t, size:size_t
-
     ldr     rdi,dst
     ldr     eax,chr
     ldr     rcx,size
@@ -17,7 +16,6 @@ wmemset proc uses rdi dst:ptr, chr:int_t, size:size_t
     rep     stosw
     mov     rax,rdx
     ret
-
-wmemset endp
+    endp
 
     end

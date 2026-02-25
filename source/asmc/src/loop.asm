@@ -364,10 +364,8 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endf
         .endsw
     .endif
-
     ReleaseMacroData( rdi )
-   .return( NOT_ERROR )
-
-LoopDirective endp
+    .return( NOT_ERROR )
+    endp
 
     end

@@ -20,7 +20,6 @@ XMStoreFloat4x4 proc XM_CALLCONV pDestination:ptr XMFLOAT4X4, V0:XMVECTOR, V1:XM
     _mm_storeu_ps([rcx][0x20], xmm2)
     _mm_storeu_ps([rcx][0x30], xmm3)
     ret
-
-XMStoreFloat4x4 endp
+    endp
 
     end

@@ -19,7 +19,6 @@ __cvtsd_q proc __ccall uses rbx q:ptr qfloat_t, d:ptr double_t
     shl     eax,11
     sar     ecx,32-12
     and     cx,0x7FF
-
     .ifnz
         .if ( cx != 0x7FF )
             add cx,0x3FFF-0x03FF
@@ -46,12 +45,10 @@ __cvtsd_q proc __ccall uses rbx q:ptr qfloat_t, d:ptr double_t
             rcl edx,1
         .untilcxz
     .endif
-
     add     ecx,ecx
     rcr     cx,1
     shl     eax,1
     rcl     edx,1
-
     xchg    rax,rbx
     mov     [rax+6],ebx
     mov     [rax+10],edx
@@ -60,7 +57,6 @@ __cvtsd_q proc __ccall uses rbx q:ptr qfloat_t, d:ptr double_t
     mov     [rax],ebx
     mov     [rax+4],bx
     ret
-
-__cvtsd_q endp
+    endp
 
     end

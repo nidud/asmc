@@ -12,10 +12,8 @@ include tchar.inc
     .code
 
 _ui64tot proc val:uint64_t, buffer:tstring_t, radix:int_t
-
     _txtoa( ldr(val), ldr(buffer), ldr(radix), 0 )
     ret
-
-_ui64tot endp
+    endp
 
     end

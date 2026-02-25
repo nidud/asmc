@@ -90,7 +90,6 @@ XMVectorATan2 proc XM_CALLCONV Y:FXMVECTOR, X:FXMVECTOR
     _mm_store_ps(R2, _mm_add_ps(xmm0, R1))
     XMVectorSelect(Result, R2, ATanResultValid)
     ret
-
-XMVectorATan2 endp
+    endp
 
     end

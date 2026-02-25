@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorReciprocalEst proc XM_CALLCONV V:FXMVECTOR
-
     _mm_rcp_ps(xmm0)
     ret
-
-XMVectorReciprocalEst endp
+    endp
 
     end

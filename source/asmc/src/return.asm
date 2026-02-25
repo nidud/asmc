@@ -45,28 +45,20 @@ GetValue proc __ccall private uses rsi rdi rbx \
         ; .return real4(1.0)
 
         .if ( al == T_STYPE && [rbx+asm_tok].token == T_OP_BRACKET )
-
             mov al,T_OP_BRACKET
-
             mov [rcx],rbx
             add rbx,asm_tok
             mov rcx,i
             inc dword ptr [rcx]
         .endif
-
         .if ( al == T_DIRECTIVE )
-
             inc esi
         .else
-
             mov rdi,rbx
             inc edx
             add rbx,asm_tok
-
             .if ( al == T_OP_BRACKET )
-
                 .for ( ecx = 1, al = [rbx].token : al != T_FINAL : rbx += asm_tok, al = [rbx].token, edx++ )
-
                     .if ( al == T_OP_BRACKET )
                             inc ecx
                     .elseif ( al == T_CL_BRACKET )
@@ -91,8 +83,6 @@ GetValue proc __ccall private uses rsi rdi rbx \
             .endif
         .endif
     .endif
-
-
     mov rax,count
     mov [rax],edx
     mov rax,rbx
@@ -101,8 +91,7 @@ GetValue proc __ccall private uses rsi rdi rbx \
     mov rbx,retval
     mov [rbx],edi
     ret
-
-GetValue endp
+    endp
 
 AssignReturnValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:token_t, type:token_t, count:int_t
 
@@ -116,24 +105,18 @@ AssignReturnValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:
 
     ldr rsi,i
     ldr rdx,tokenarray
-
     imul ebx,[rsi],asm_tok
     add rbx,rdx
     lea rdi,buffer
     mov reg,MODULE.accumulator
     mov op,T_MOV
-
     .ifd ( ExpandHllProc( rdi, [rsi], tokenarray ) != ERROR )
-
         .if ( byte ptr [rdi] )
-
             QueueTestLines( rdi )
             GetValue( rsi, tokenarray, &type, &count, &directive, &retval )
         .endif
     .endif
-
     .if ( count )
-
         imul eax,count,asm_tok
         mov  rcx,[rbx+rax].tokpos
         sub  rcx,[rbx].tokpos
@@ -145,78 +128,55 @@ AssignReturnValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:
         mov  rdi,rax
         mov  rsi,rdx
     .else
-
         tstrcpy( rdi, [rbx].string_ptr )
     .endif
-
     mov address,0
     mov ecx,[rsi]
     add ecx,count
-
     .if ( [rbx].token == '(' && [rbx+asm_tok].token == '&' )
-
         .while ( byte ptr [rdi] != '&' )
             inc rdi
         .endw
         inc rdi
-
         .for ( rdx = rdi : byte ptr [rdx] : rdx++ )
         .endf
-
         .while ( byte ptr [rdx-1] <= ' ' )
-
             mov byte ptr [rdx-1],0
             dec rdx
         .endw
-
         .if ( byte ptr [rdx-1] == ')' )
             mov byte ptr [rdx-1],0
         .endif
         inc address
         add dword ptr [rsi],2
-
     .elseif ( byte ptr [rdi] == '&' )
-
         inc rdi
         inc address
         inc dword ptr [rsi]
     .endif
-
     .ifd ( EvalOperand( rsi, tokenarray, ecx, &opnd, EXPF_NOUNDEF ) == NOT_ERROR )
-
         mov esi,1
-
         .if ( address )
-
             mov op,T_LEA
-
         .elseif ( opnd.kind == EXPR_CONST )
-
             mov rdx,opnd.quoted_string
-
             .if ( rdx && [rdx].asm_tok.token == T_STRING )
-
                 AddLineQueueX( " lea %r, @CStr(%s)", reg, [rdx].asm_tok.string_ptr )
                 dec esi
-
             .else
-
                 mov eax,opnd.value
                 mov edx,opnd.hvalue
 
                 ; v2.36.18 - removed sign test
 
                 .if ( !edx && eax )
-
                     mov ecx,reg
                     .if ecx == T_RAX
                         mov ecx,T_EAX
                     .endif
                     AddLineQueueX( " mov %r, %d", ecx, eax )
                     dec esi
-
                 .elseif ( !eax && !edx )
-
                     mov eax,reg
                     .if eax == T_RAX
                         mov eax,T_EAX
@@ -225,35 +185,26 @@ AssignReturnValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:
                     dec esi
                 .endif
             .endif
-
         .elseif ( opnd.kind == EXPR_REG && !( opnd.indirect ) )
-
             mov rbx,opnd.base_reg
             mov eax,[rbx].tokval
-
             .if ( eax == T_EAX || eax == T_RAX )
-
                 dec esi
             .else
-
                 .switch pascal SizeFromRegister(eax)
                   .case 2: mov reg,T_AX
                   .case 4: mov reg,T_EAX
                   .case 8: mov reg,T_RAX
                 .endsw
             .endif
-
         .elseif ( opnd.kind == EXPR_FLOAT )
-
             .if ( type == NULL && ( ( [rbx].token == T_FLOAT && [rbx].floattype ) ||
                   ( [rbx].token == T_OP_BRACKET && [rbx+asm_tok].token == T_FLOAT &&
                     [rbx+asm_tok].floattype && [rbx+2*asm_tok].token == T_CL_BRACKET ) ) )
 
                 ; .return [(] 3F800000r [)] [[ .if ]]
-
                 SizeFromMemtype(opnd.mem_type, USE_EMPTY, 0 )
             .else
-
                 mov rdx,type
                 .if rdx
                     mov ecx,[rdx].asm_tok.tokval
@@ -263,7 +214,6 @@ AssignReturnValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:
                 .endif
                 SizeFromMemtype(al, USE_EMPTY, 0 )
             .endif
-
             .switch eax
             .case 2
                 AddLineQueueX(
@@ -284,14 +234,11 @@ AssignReturnValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:
                 mov op,T_MOVAPS
                .endc
             .endsw
-
             mov reg,T_XMM0
             lea rdi,buffer
             mov ecx,eax
             CreateFloat( ecx, &opnd, rdi )
-
         .elseif ( opnd.kind == EXPR_ADDR )
-
             mov al,opnd.mem_type
             .switch al
             .case MT_BYTE
@@ -335,15 +282,11 @@ AssignReturnValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:
                 mov op,T_MOVAPS
                .endc
             .endsw
-
         .elseif ( opnd.kind == EXPR_EMPTY && byte ptr [rdi] == '{' )
-
             AddLineQueueX( "movaps xmm0,%s", rdi )
             xor esi,esi
         .endif
-
         .if ( esi )
-
             AddLineQueueX( "%r %r,%s", op, reg, rdi )
         .endif
     .endif
@@ -364,10 +307,8 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .if ( CurrProc == NULL )
         .return asmerr( 2012 )
     .endif
-
     mov rsi,MODULE.RetStack
     .if ( !rsi )
-
         mov rsi,LclAlloc(hll_item)
         mov MODULE.RetStack,rax
         mov [rsi].cmd,HLL_RETURN
@@ -379,14 +320,10 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     inc i
     lea rdi,buffer
-
     GetValue( &i, tokenarray, &type, &count, &directive, &retval )
     GetLabelStr( [rsi].labels[LEXIT*4], rdi )
-
     .if ( directive )
-
         .if ( retval )
-
             mov ebx,i
             add i,count
             mov [rsi].labels[LSTART*4],GetHllLabel()
@@ -401,11 +338,9 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
     .else
         .if ( retval )
-
             AssignReturnValue( &i, tokenarray, type, count )
             RunLineQueue()
         .endif
-
         .if ( SymFind( rdi ) ) ; v2.37.3: added - removed ORG 2 + RET
 
             ; this need a fix:
@@ -428,7 +363,6 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             AddLineQueueX( " %r %s", T_JMP, rdi )
         .endif
     .endif
-
     .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
@@ -436,7 +370,6 @@ ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         RunLineQueue()
     .endif
     .return( NOT_ERROR )
-
-ReturnDirective endp
+    endp
 
     end

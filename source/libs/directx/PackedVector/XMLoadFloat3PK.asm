@@ -169,7 +169,6 @@ XMLoadFloat3PK proc XM_CALLCONV pSource:ptr XMFLOAT3PK
     movd    xmm1,eax
     shufps  xmm0,xmm1,01000100B
     ret
-
-XMLoadFloat3PK endp
+    endp
 
     end

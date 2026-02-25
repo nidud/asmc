@@ -8,14 +8,10 @@ include float.inc
 .code
 
 _control87 proc newval:uint_t, unmask:uint_t
-
   local cw:word
-
     fstcw cw
     movzx eax,cw
-
     ; Convert into mask constants
-
     xor ecx,ecx
     .if eax & 0x1
         or ecx,_EM_INVALID
@@ -35,7 +31,6 @@ _control87 proc newval:uint_t, unmask:uint_t
     .if eax & 0x20
         or ecx,_EM_INEXACT
     .endif
-
     mov edx,eax
     and eax,0xC00
     .switch eax
@@ -43,7 +38,6 @@ _control87 proc newval:uint_t, unmask:uint_t
       .case 0x800: or ecx,_RC_UP:             .endc
       .case 0x400: or ecx,_RC_DOWN:           .endc
     .endsw
-
     mov eax,edx
     and eax,0x300
     .switch eax
@@ -51,7 +45,6 @@ _control87 proc newval:uint_t, unmask:uint_t
       .case 0x200: or ecx,_PC_53: .endc
       .case 0x300: or ecx,_PC_64: .endc
     .endsw
-
     .if edx & 0x1000
         or ecx,_IC_AFFINE
     .endif
@@ -86,7 +79,6 @@ _control87 proc newval:uint_t, unmask:uint_t
     .if ecx & _EM_INEXACT
         or eax,0x20
     .endif
-
     mov edx,ecx
     and edx,_RC_UP or _RC_DOWN
     .switch pascal edx
@@ -94,7 +86,6 @@ _control87 proc newval:uint_t, unmask:uint_t
       .case _RC_UP:             or eax,0x800
       .case _RC_DOWN:           or eax,0x400
     .endsw
-
     mov edx,ecx
     and edx,_PC_24 or _PC_53
     .switch pascal edx
@@ -102,15 +93,12 @@ _control87 proc newval:uint_t, unmask:uint_t
       .case _PC_53: or eax,0x200
       .case _PC_24: or eax,0x0
     .endsw
-
     .if ecx & _IC_AFFINE
         or eax,0x1000
     .endif
-
     mov cw,ax
     fldcw cw
     ret
-
-_control87 endp
+    endp
 
     end

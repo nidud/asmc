@@ -9,7 +9,6 @@ include string.inc
     .code
 
 wmemchr proc p:ptr, c:int_t, count:size_t
-
 ifdef _WIN64
     ldr     rcx,p
     ldr     r8,count
@@ -37,7 +36,6 @@ else
     .endif
 endif
     ret
-
-wmemchr endp
+    endp
 
     end

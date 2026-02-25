@@ -9,11 +9,8 @@ include winbase.inc
 .code
 
 _fpreset proc __cdecl
-
   local cw:word
-
     mov cw,0x027F
-
     fninit
     fldcw cw
 ifdef __UNIX__
@@ -23,13 +20,11 @@ ifdef _WIN64
 endif
 else
     .if IsProcessorFeaturePresent( PF_XMMI64_INSTRUCTIONS_AVAILABLE )
-
         mov cw,0x1F80
         fldcw cw
     .endif
 endif
     ret
-
-_fpreset endp
+    endp
 
     end

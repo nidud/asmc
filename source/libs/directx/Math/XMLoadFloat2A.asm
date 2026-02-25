@@ -13,7 +13,6 @@ XMLoadFloat2A proc XM_CALLCONV pSource:ptr XMFLOAT2A
 
     _mm_loadl_epi64(rcx)
     ret
-
-XMLoadFloat2A endp
+    endp
 
     end

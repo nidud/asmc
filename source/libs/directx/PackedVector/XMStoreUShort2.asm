@@ -31,7 +31,6 @@ XMStoreUShort2 proc XM_CALLCONV pDestination:ptr XMUSHORT2, V:FXMVECTOR
     movd    edx,xmm0
     mov     [rcx].XMUSHORT2.y,dx
     ret
-
-XMStoreUShort2 endp
+    endp
 
     end

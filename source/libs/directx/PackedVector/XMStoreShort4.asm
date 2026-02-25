@@ -27,7 +27,6 @@ XMStoreShort4 proc XM_CALLCONV pDestination:ptr XMSHORT4, V:FXMVECTOR
     _mm_packs_epi32(xmm0, xmm0)
     _mm_store_sd([rcx], _mm_castsi128_pd(xmm0))
     ret
-
-XMStoreShort4 endp
+    endp
 
     end

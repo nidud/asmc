@@ -76,7 +76,6 @@ Options global_options {
     option proc:private
 
 define_cpu proc fastcall cpu:int_t
-
     .switch ecx
     .case CPU_64    : define_name( "__P64__", "1" )
     .case CPU_SSE2  : define_name( "__SSE2__", "1" )
@@ -91,34 +90,27 @@ define_cpu proc fastcall cpu:int_t
     .case CPU_86    : define_name( "__P86__", "1" )
     .endsw
     ret
-
-define_cpu endp
+    endp
 
 
 set_cpu proc fastcall _cpu:int_t, pm:int_t
-
     lea rax,cpu_option
     mov eax,[rax+rcx*int_t]
-
     and Options.cpu,not ( P_CPU_MASK or P_EXT_MASK or P_PM )
     or  Options.cpu,eax
     .if ( edx && Options.cpu >= P_286 )
         or Options.cpu,P_PM
     .endif
     .return define_cpu( ecx )
-
-set_cpu endp
+    endp
 
 
 init_win64 proc public
-
     set_cpu( CPU_64, 1 )
     define_name( "_WIN64", "1" )
-
     mov Options.sub_format,SFORMAT_64BIT
     mov Options._model,MODEL_FLAT
     mov Options.switch_regax,1
-
 ifdef __UNIX__
     define_name( "__UNIX__", "1" )
     mov Options.output_format,OFORMAT_ELF
@@ -130,34 +122,27 @@ else
     mov Options.fctype,FCT_WIN64
 endif
     ret
-
-init_win64 endp
+    endp
 
 
 ; current cmdline string is done, get the next one!
 
 getnextcmdstring proc fastcall cmdline:array_t
-
     mov rax,[rcx+string_t]
     .if ( rax )
-
         .for ( rdx = rax : rdx : rcx += string_t )
-
             mov [rcx],rdx
             mov rdx,[rcx+string_t*2]
         .endf
         mov [rcx],rdx
     .endif
     ret
-
-getnextcmdstring endp
+    endp
 
 
 getfilearg proc fastcall args:array_t, p:string_t ; -Fo<file> or -Fo <file>
-
     mov rax,rdx
     mov rdx,[rcx]
-
     .if ( byte ptr [rax] == 0 )
          getnextcmdstring( rcx )
     .elseif ( byte ptr [rax] == '=' )
@@ -167,22 +152,18 @@ getfilearg proc fastcall args:array_t, p:string_t ; -Fo<file> or -Fo <file>
         asmerr( 1006, rdx )
     .endif
     ret
-
-getfilearg endp
+    endp
 
 
 GetNumber proc fastcall p:string_t
-
     .for ( eax = 0, edx = 0, al = [rcx] : al >= '0' && al <= '9' : rcx++, al = [rcx] )
-
         imul edx,edx,10
         sub al,'0'
         add edx,eax
     .endf
     mov OptValue,edx
-   .return rcx
-
-GetNumber endp
+    .return rcx
+    endp
 
 ;
 ; queue a text macro, include path or "forced" include files.
@@ -190,11 +171,9 @@ GetNumber endp
 ;
 
 queue_item proc __ccall uses rsi i:int_t, string:string_t
-
     mov rsi,MemAlloc( &[ tstrlen( string ) + sizeof( qitem )] )
     mov [rsi].qitem.next,NULL
     tstrcpy( &[rsi].qitem.value, string )
-
     mov ecx,i
     lea rdx,Options
     mov rax,[rdx].global_options.queues[rcx*string_t]
@@ -206,8 +185,7 @@ queue_item proc __ccall uses rsi i:int_t, string:string_t
         mov [rdx].global_options.queues[rcx*string_t],rsi
     .endif
     ret
-
-queue_item endp
+    endp
 
 
 get_fname proc __ccall uses rsi rdi rbx type:int_t, token:string_t
@@ -227,9 +205,7 @@ get_fname proc __ccall uses rsi rdi rbx type:int_t, token:string_t
     ;
     lea rdx,DefaultDir
     .if ( byte ptr [rdi] == 0 )
-
         .if ( rbx < NUM_FILE_TYPES && byte ptr [rsi] )
-
             mov rcx,[rdx+rbx*string_t]
             mov rdi,rdx
             .if ( rcx )
@@ -250,12 +226,10 @@ get_fname proc __ccall uses rsi rdi rbx type:int_t, token:string_t
     MemFree([rdi])
     mov [rdi],MemDup(&name)
     ret
-
-get_fname endp
+    endp
 
 
 set_option_n_name proc fastcall uses rsi rdi idx:int_t, name:string_t
-
     mov rdi,rdx
     movzx eax,byte ptr [rdi]
     .if ( al != '.' )
@@ -272,8 +246,7 @@ set_option_n_name proc fastcall uses rsi rdi idx:int_t, name:string_t
         asmerr( 1006, rdx )
     .endif
     ret
-
-set_option_n_name endp
+    endp
 
 
 ;
@@ -282,20 +255,14 @@ set_option_n_name endp
 ;
 
 ReadParamFile proc fastcall uses rsi rdi rbx name:string_t
-
     .new fp:ptr FILE = fopen( rcx, "rb" )
-
     .if ( rax == NULL )
-
         asmerr( 1000, name )
        .return( NULL )
     .endif
-
     .new retval:ptr = NULL
     .if ( fseek( fp, 0, SEEK_END ) == 0 )
-
         .if ( ftell( fp ) )
-
             mov rbx,rax
             mov retval,MemAlloc( &[rax+1] )
             mov byte ptr [rax+rbx],0
@@ -303,11 +270,9 @@ ReadParamFile proc fastcall uses rsi rdi rbx name:string_t
             fread( retval, 1, ebx, fp )
         .endif
     .endif
-
     fclose(fp)
-   .return( retval )
-
-ReadParamFile endp
+    .return( retval )
+    endp
 
 
 ;
@@ -325,16 +290,12 @@ GetNameToken proc __ccall uses rsi rdi rbx dst:string_t, string:string_t, max:in
     ldr rdi,dst
 
 is_quote:
-
     mov al,[rsi]
     .if al == '"'
-
         inc rsi
-        .for( : max && byte ptr [rsi]: max-- )
-
+        .for ( : max && byte ptr [rsi]: max-- )
             mov eax,[rsi]
             .if al == '"'
-
                 inc rsi
                 .break
             .endif
@@ -342,14 +303,13 @@ is_quote:
             ; handle the \"" case
 
             .if al == BSLASH && ah == '"'
-
                 inc rsi
             .endif
             movsb
         .endf
     .else
 
-        .for( : max: max-- )
+        .for ( : max: max-- )
 
             ; v2.10: don't stop for white spaces
 
@@ -369,15 +329,11 @@ else
                 .break .if ( al == '-' || al == '/' )
 endif
             .endif
-
             .if ( al == '=' && type == '$' && equatefound == FALSE )
-
                 mov equatefound,TRUE
                 movsb
                 mov al,[rsi]
-
                 .if (al == '"')
-
                     jmp is_quote
                 .endif
             .endif
@@ -386,15 +342,12 @@ endif
     .endif
      mov byte ptr [rdi],0
     .return(rsi)
-
-GetNameToken endp
+    endp
 
 ifdef _EXEC_LINK
 
 CollectLinkNode proc __ccall uses rbx arg:string_t, node:ptr anode
-
     ldr rbx,arg
-
     MemAlloc( &[tstrlen(rbx)+anode] )
     mov rdx,node
     mov rcx,[rdx]
@@ -408,22 +361,17 @@ CollectLinkNode proc __ccall uses rbx arg:string_t, node:ptr anode
     mov [rax].anode.next,NULL
     tstrcpy( &[rax].anode.name, rbx )
     ret
-
-CollectLinkNode endp
+    endp
 
 CollectLinkOption proc fastcall public arg:string_t
-
     CollectLinkNode( rcx, &Options.link_options )
     ret
-
-CollectLinkOption endp
+    endp
 
 CollectLinkObject proc fastcall public arg:string_t
-
     CollectLinkNode( rcx, &Options.link_objects )
     ret
-
-CollectLinkObject endp
+    endp
 
 endif
 
@@ -1019,15 +967,12 @@ endif
     .case 'tn'          ; -nt<name>
         .return set_option_n_name(OPTN_TEXT_SEG, rdi)
     .endsw
-
     mov [rsi],GetNameToken( rdi, &[rbx+2], 256, '@' )
     .if ( j == 'lF' )           ; -Fl[file]
         mov Options.write_listing,1
         .return get_fname(OPTN_LST_FN, rdi)
     .endif
-
     .if getfilearg(cmdline, &[rbx+2])
-
         mov [rsi],GetNameToken( rdi, rax, 256, '@' )
         mov eax,j
         .if eax == 'lB'         ; -Bl<file>
@@ -1050,8 +995,7 @@ endif
     .endif
     asmerr( 1006, &[rbx-1] )
     ret
-
-ProcessOption endp
+    endp
 
 
     option proc:public
@@ -1064,7 +1008,6 @@ ParseCmdline proc __ccall uses rsi rdi rbx cmdline:ptr string_t, numargs:ptr int
     ldr rdi,numargs
 
     .for ( ebx = 0 : ebx < NUM_FILE_TYPES : ebx++ )
-
         lea rdx,Options
         mov rcx,[rdx].global_options.names[rbx*string_t]
         .if rcx
@@ -1072,11 +1015,7 @@ ParseCmdline proc __ccall uses rsi rdi rbx cmdline:ptr string_t, numargs:ptr int
             MemFree(rcx)
         .endif
     .endf
-
-    mov rbx,[rsi]
-
-    .for( : rbx : )
-
+    .for ( rbx = [rsi] : rbx : )
         mov eax,[rbx]
         .switch al
         .case 13
@@ -1099,7 +1038,6 @@ ParseCmdline proc __ccall uses rsi rdi rbx cmdline:ptr string_t, numargs:ptr int
                 mov rbx,ReadParamFile(&paramfile)
             .endif
             .endc
-
         .case '-'
 ifndef __UNIX__
         .case '/'
@@ -1133,9 +1071,8 @@ endif
         .endsw
     .endf
     mov [rsi],rbx
-   .return(NULL)
-
-ParseCmdline endp
+    .return( NULL )
+    endp
 
 
 CmdlineFini proc __ccall uses rsi rsi rbx
@@ -1147,9 +1084,7 @@ CmdlineFini proc __ccall uses rsi rsi rbx
     xor ebx,ebx
     lea rsi,DefaultDir
     lea rdi,Options
-
     .while ( ebx < NUM_FILE_TYPES )
-
         xor eax,eax
         mov rcx,[rsi+rbx*string_t]
         mov [rsi+rbx*string_t],rax
@@ -1157,10 +1092,8 @@ CmdlineFini proc __ccall uses rsi rsi rbx
         MemFree(rcx)
         inc ebx
     .endw
-
     xor ebx,ebx
     .while ebx < OPTQ_LAST
-
         lea rdx,Options
         mov rdi,[rdx].global_options.queues[rbx*string_t]
         .while rdi
@@ -1173,7 +1106,6 @@ CmdlineFini proc __ccall uses rsi rsi rbx
         inc ebx
     .endw
     ret
-
-CmdlineFini endp
+    endp
 
     end

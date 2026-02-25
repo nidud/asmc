@@ -51,21 +51,15 @@ externdef __lookuptable:byte
     .code
 
 write_char proc private uses rbx c:int_t, fp:LPFILE, pnumwritten:ptr int_t
-
     ldr rbx,pnumwritten
     ldr rdx,fp
     ldr ecx,c
-
     .if ( ( [rdx]._iobuf._flag & _IOSTRG ) && [rdx]._iobuf._base == NULL )
-
         mov eax,1
         add [rbx],eax
-
     .elseifd ( _fputtc( ecx, rdx ) == -1 )
-
         mov rdx,fp
         .if ( [rdx]._iobuf._flag & _IOSNPRINTF )
-
             mov eax,[rbx]
             inc eax
         .endif
@@ -74,32 +68,24 @@ write_char proc private uses rbx c:int_t, fp:LPFILE, pnumwritten:ptr int_t
         inc int_t ptr [rbx]
     .endif
     ret
-
-write_char endp
+    endp
 
 write_string proc private uses rbx string:tstring_t, len:int_t, fp:LPFILE, pnumwritten:ptr int_t
-
     ldr rbx,string
     .for ( : len > 0 : len-- )
-
         movzx ecx,tchar_t ptr [rbx]
         add rbx,tchar_t
-
        .break .ifd ( write_char( ecx, fp, pnumwritten ) == -1 )
     .endf
     ret
-
-write_string endp
+    endp
 
 write_multi_char proc private c:int_t, num:int_t, fp:LPFILE, pnumwritten:ptr int_t
-
     .for ( : num > 0 : num-- )
-
        .break .ifd ( write_char( c, fp, pnumwritten ) == -1 )
     .endf
     ret
-
-write_multi_char endp
+    endp
 
 
 _va_arg macro ap
@@ -877,7 +863,6 @@ endif
         .endif
     .endw
     .return( charsout ) ; return value = number of characters written
-
-_toutput endp
+    endp
 
     end

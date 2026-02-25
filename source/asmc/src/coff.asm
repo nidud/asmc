@@ -66,25 +66,19 @@ szdrectve equ <".drectve">
 
 Coff_AllocString proc __ccall uses rsi rdi rbx cm:ptr coffmod, string:string_t, len:int_t
 
-
     ldr rsi,string
     ldr rbx,cm
     mov edi,[rbx].size
-
     mov ecx,len
     lea eax,[rcx+1]
     add [rbx].size,eax
-
     LclAlloc( &[rax + sizeof( stringitem ) - 1] )
-
     mov ecx,len
     mov edx,edi
     lea rdi,[rax].stringitem.string
     inc ecx
     rep movsb
-
     .if ( [rbx].head )
-
         mov rcx,[rbx].tail
         mov [rcx].stringitem.next,rax
         mov [rbx].tail,rax
@@ -93,20 +87,17 @@ Coff_AllocString proc __ccall uses rsi rdi rbx cm:ptr coffmod, string:string_t, 
         mov [rbx].tail,rax
     .endif
     .return( edx )
-
-Coff_AllocString endp
+    endp
 
 
 ; return number of line number items
 
 GetLinnumItems proc fastcall q:ptr qdesc
-
     .for ( eax = 0, rdx = [rcx].qdesc.head: rdx: eax++ )
         mov rdx,[rdx].line_num_info.next
     .endf
     ret
-
-GetLinnumItems endp
+    endp
 
 
 ; write COFF section table
@@ -134,7 +125,6 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
         mov rdx,[rdi].asym.seginfo
         mov rax,[rdx].seg_info.aliasname
         .if ( rax == NULL )
-
             ConvertSectionName( rdi, &segtype, &buffer )
         .endif
         mov rbx,rax
@@ -147,13 +137,11 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
         .else
             tsprintf( &ish.Name, "/%u", Coff_AllocString( cm, rbx, eax ) )
         .endif
-
         mov ish.SizeOfRawData,[rdi].asym.max_offset
         .if ( eax )
             mov eax,esi
         .endif
         mov ish.PointerToRawData,eax
-
         xor eax,eax
         mov ish.Misc.PhysicalAddress,eax
         mov ish.VirtualAddress,eax
@@ -167,9 +155,7 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
         mov rdx,[rdi].asym.seginfo
         assume rdx:segment_t
-
         .if ( [rdx].information )
-
             ; v2.09: set "remove" flag for .drectve section, as it was done in v2.06 and earlier
             mov rcx,cm
             .if ( rdi == [rcx].coffmod.directives )
@@ -177,34 +163,24 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
             .else
                 mov ish.Characteristics, ( IMAGE_SCN_LNK_INFO or IMAGE_SCN_CNT_INITIALIZED_DATA )
             .endif
-
         .else
-
             .if ( [rdx].alignment != MAX_SEGALIGNMENT ) ; ABS not possible
-
                 movzx eax,[rdx].alignment
                 inc eax
                 shl eax,20
                 or ish.Characteristics,eax
             .endif
-
             .if ( [rdx].comdatselection )
-
                 or ish.Characteristics,IMAGE_SCN_LNK_COMDAT
             .endif
-
             xor ecx,ecx
             .if [rdx].clsym
-
                 mov rax,[rdx].clsym
                 mov rax,[rax].asym.name
-
                 .if dword ptr [rax] == 'SNOC' && word ptr [rax+4] == 'T'
-
                     inc ecx
                 .endif
             .endif
-
             .if ( [rdx].segtype == SEGTYPE_CODE )
                 or ish.Characteristics,IMAGE_SCN_CNT_CODE or IMAGE_SCN_MEM_EXECUTE or IMAGE_SCN_MEM_READ
             .elseif ( [rdx].readonly )
@@ -231,16 +207,13 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
         ; manual characteristics set?
 
         .if ( [rdx].characteristics )
-
             and ish.Characteristics,0x1FFFFFF ; clear the IMAGE_SCN_MEM flags
             movzx eax,[rdx].characteristics
             and eax,0xFE
             shl eax,24
             or ish.Characteristics,eax
         .endif
-
         .if ( ish.PointerToRawData )
-
             add esi,ish.SizeOfRawData
         .endif
 
@@ -253,13 +226,9 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
         mov rcx,[rdx].head
         .if ( rcx )
-
             .for ( : rcx : rcx = [rcx].nextrlc )
-
                 .if ( [rcx].sym == NULL )
-
                     .if ( [rcx].type == FIX_RELOFF32 )
-
                         mov eax,[rcx].locofs
                         sub eax,[rdx].start_loc
                         add rax,[rdx].CodeBuffer
@@ -273,7 +242,6 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
                 .endif
                 inc [rdx].num_relocs
             .endf
-
             inc esi
             and esi,not 1
             mov ish.PointerToRelocations,esi
@@ -282,7 +250,6 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
             imul eax,[rdx].num_relocs,sizeof( IMAGE_RELOCATION )
             add esi,eax
-
             .if ( [rdx].num_relocs <= 0xffff )
                 mov eax,[rdx].num_relocs
                 mov ish.NumberOfRelocations,ax
@@ -300,7 +267,6 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
         ; set fields PointerToLinenumbers/NumberOfLinenumbers; update 'fileoffset'
 
         .if ( [rdx].LinnumQueue && Options.debug_symbols != 4 )
-
             mov ish.PointerToLinenumbers,esi
             mov ish.NumberOfLinenumbers,GetLinnumItems( [rdx].LinnumQueue )
             movzx eax,ish.NumberOfLinenumbers
@@ -320,8 +286,7 @@ ifdef _LIN64
 endif
     .endf
     .return( NOT_ERROR )
-
-coff_write_section_table endp
+    endp
 
 
 ;
@@ -331,17 +296,14 @@ coff_write_section_table endp
     assume rdx:nothing, rcx:asym_t
 
 CoffGetType proc fastcall sym:asym_t
-
     .return( 0x20 ) .if ( [rcx].isproc )
     .return( IMAGE_SYM_TYPE_NULL )
-
-CoffGetType endp
+    endp
 
 
 ; get value for field 'class' ( IMAGE_SYM_CLASS_x ) in symbol table.
 
 CoffGetClass proc fastcall sym:asym_t
-
     .if ( [rcx].state == SYM_EXTERNAL )
         .if ( !( [rcx].iscomm ) && [rcx].altname )
             .return( IMAGE_SYM_CLASS_WEAK_EXTERNAL )
@@ -350,14 +312,12 @@ CoffGetClass proc fastcall sym:asym_t
         .endif
     .elseif ( [rcx].ispublic )
         .return( IMAGE_SYM_CLASS_EXTERNAL )
-
     ; v2.09: don't declare private procs as label
     .elseif ( [rcx].mem_type == MT_NEAR && !( [rcx].isproc ) )
         .return( IMAGE_SYM_CLASS_LABEL )
     .endif
     .return( IMAGE_SYM_CLASS_STATIC )
-
-CoffGetClass endp
+    endp
 
     assume rcx:nothing, rdi:nothing
 
@@ -367,16 +327,12 @@ CoffGetClass endp
 ;
 
 GetFileAuxEntries proc __ccall file:uint_16, fname:ptr string_t
-
     GetFName( file )
-
     .if ( fname )
-
         mov rcx,fname
         mov [rcx],rax
     .endif
     tstrlen( rax )
-
     cdq
     mov     ecx,IMAGE_AUX_SYMBOL
     div     ecx
@@ -384,18 +340,14 @@ GetFileAuxEntries proc __ccall file:uint_16, fname:ptr string_t
     mov     eax,0
     setnz   al
     ret
-
-GetFileAuxEntries endp
+    endp
 
 
 CRC32Comdat proc __ccall uses rsi rbx lpBuffer:ptr byte, dwBufLen:uint_32, dwCRC:uint_32
-
     .if ( !CRC32_Init )
-
         mov CRC32_Init,TRUE
         .for ( ecx = 0: ecx < 256: ecx++ )
             .for ( edx = 0, eax = ecx: edx < 8: edx++ )
-
                 mov ebx,eax
                 and ebx,1
                 imul ebx,ebx,0xEDB88320
@@ -406,13 +358,10 @@ CRC32Comdat proc __ccall uses rsi rbx lpBuffer:ptr byte, dwBufLen:uint_32, dwCRC
             mov [rdx+rcx*4],eax
         .endf
     .endif
-
     mov eax,dwCRC
     mov rcx,lpBuffer
-
     .if ( rcx ) ; v2.11: lpBuffer may be NULL ( uninitialized data segs )
         .for ( ebx = dwBufLen, edx = 0 : ebx : ebx-- )
-
             mov dl,[rcx]
             inc rcx
             xor dl,al
@@ -422,8 +371,7 @@ CRC32Comdat proc __ccall uses rsi rbx lpBuffer:ptr byte, dwBufLen:uint_32, dwCRC
         .endf
     .endif
     ret
-
-CRC32Comdat endp
+    endp
 
 
 ; write COFF symbol table
@@ -456,12 +404,10 @@ coff_write_symbol proc __ccall uses rsi rdi name:string_t, strpos:dword, value:d
         WriteError()
     .endif
     ret
-
-coff_write_symbol endp
+    endp
 
 
 coff_write_aux proc __ccall uses rsi rdi sym:ptr, name:string_t
-
     .if ( name )
         tstrncpy( sym, name, IMAGE_AUX_SYMBOL )
     .endif
@@ -469,8 +415,7 @@ coff_write_aux proc __ccall uses rsi rdi sym:ptr, name:string_t
         WriteError()
     .endif
     ret
-
-coff_write_aux endp
+    endp
 
 
 GetStartLabel proc __ccall uses rbx buffer:string_t, msg:dword
@@ -479,22 +424,15 @@ GetStartLabel proc __ccall uses rbx buffer:string_t, msg:dword
 
     lea rbx,mangle
     xor eax,eax
-
     .if ( MODULE.start_label )
-
         Mangle( MODULE.start_label, rbx )
-
         .if ( !Options.entry_decorated )
-
             mov rdx,MODULE.start_label
             movzx eax,[rdx].asym.langtype
             .if ( eax != LANG_C && eax != LANG_STDCALL && eax != LANG_SYSCALL )
-
                 mov rdx,[rdx].asym.name
                 .if ( byte ptr [rdx] != '_' )
-
                     .if ( msg && ( MODULE.defOfssize != USE64 ) )
-
                         asmerr( 8011, rdx )
                     .endif
                 .else
@@ -508,8 +446,7 @@ GetStartLabel proc __ccall uses rbx buffer:string_t, msg:dword
         add eax,8 ; == size of " -entry:"
     .endif
     ret
-
-GetStartLabel endp
+    endp
 
 
 coff_write_symbols proc __ccall uses rsi rdi rbx cm:ptr coffmod
@@ -811,8 +748,7 @@ endif
         inc cntSymbols
     .endf
     .return( cntSymbols )
-
-coff_write_symbols endp
+    endp
 
 
 ; callback to flush contents of codeview symbolic debug info sections
@@ -829,9 +765,7 @@ coff_flushfunc proc __ccall uses rsi rdi rbx s:asym_t, curr:ptr uint_8, size:dwo
     add eax,ebx
 
     .if ( eax > SIZE_CV_SEGBUF )
-
         .if ( ebx )
-
             LclAlloc( &[rbx + sizeof( qditem )] )
             mov [rax].qditem.size,ebx
             mov rdx,rsi
@@ -840,14 +774,12 @@ coff_flushfunc proc __ccall uses rsi rdi rbx s:asym_t, curr:ptr uint_8, size:dwo
             mov rsi,[rsi].CodeBuffer
             rep movsb
             mov rsi,rdx
-
             mov rdx,pv
             lea rcx,[rdx].coffmod.SymDeb[dbg_section]
             mov rdi,[rcx].dbg_section.s
             .if rdi != s
                 sub rcx,sizeof( dbg_section )
             .endif
-
             .if ( [rcx].dbg_section.q.head == NULL )
                 mov [rcx].dbg_section.q.head,rax
                 mov [rcx].dbg_section.q.tail,rax
@@ -864,8 +796,7 @@ coff_flushfunc proc __ccall uses rsi rdi rbx s:asym_t, curr:ptr uint_8, size:dwo
         .return( [rsi].CodeBuffer )
     .endif
     .return( curr )
-
-coff_flushfunc endp
+    endp
 
     assume rsi:nothing
 
@@ -882,11 +813,9 @@ SetSymbolIndices proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
     xor esi,esi
     ldr rbx,cm
-
     mov lastfile,esi
     mov [rbx].lastproc,rsi
     mov [rbx].start_files,esi ;; v2.11: added
-
 if COMPID
     .if ( Options.debug_symbols == 4 )
         inc esi
@@ -900,7 +829,6 @@ endif
     ; count AUX entries for .file. Depends on sizeof filename
 
     .if ( Options.no_file_entry == FALSE )
-
         tstrlen( [rbx].dot_file_value )
         cdq
         mov ecx,IMAGE_AUX_SYMBOL
@@ -923,54 +851,36 @@ endif
     ; count externals and protos
 
     .for ( rdi = ExtTable : rdi : rdi = [rdi].asym.next )
-
         .continue .if ( !( [rdi].asym.iscomm ) && [rdi].asym.weak )
-
         mov [rdi].asym.ext_idx,esi
         inc esi
-
         ; weak externals need an additional aux entry
-
         .if ( !( [rdi].asym.iscomm ) && [rdi].asym.altname )
-
             inc esi
         .endif
     .endf
-
     mov index,esi
 
 if STATIC_PROCS
-
     ; v2.04: count private procedures (will become static symbols)
-
     .if ( Options.no_static_procs == FALSE )
-
         .for( rdi = ProcTable : rdi : rdi = [rdi].asym.nextproc )
-
             .if ( [rdi].asym.state == SYM_INTERNAL &&
                   !( [rdi].asym.ispublic ) &&
                   !( [rdi].asym.included ) )
-
                 mov [rdi].asym.included,1
                 AddPublicData( rdi )
             .endif
         .endf
     .endif
 endif
-
     ; count items in public queue
-
     .for ( rdi = MODULE.PubQueue.head: rdi: rdi = [rdi].qnode.next )
-
         mov rsi,[rdi].qnode.sym
-
         ; if line numbers are on, co, add 6 entries for procs
-
         .if ( Options.line_numbers && [rsi].asym.isproc && Options.debug_symbols != 4 )
-
             mov rdx,[rsi].asym.debuginfo
             mov rbx,cm
-
             .if (  [rdx].debug_info.file != lastfile )
                 .if ( [rbx].start_files == 0 )
                     mov [rbx].start_files,index
@@ -994,8 +904,7 @@ endif
         .endif
     .endf
     .return( index )
-
-SetSymbolIndices endp
+    endp
 
 
 ; write fixups for a section.
@@ -1007,13 +916,11 @@ coff_write_fixup proc __ccall uses rsi rdi adr:uint_32, index:uint_32, type:uint
     mov ir.VirtualAddress,adr
     mov ir.SymbolTableIndex,index
     mov ir.Type,type
-
     .ifd ( fwrite( &ir, 1, sizeof(ir), CurrFile[TOBJ] ) != sizeof(ir) )
         WriteError()
     .endif
     ret
-
-coff_write_fixup endp
+    endp
 
 
 coff_write_fixups proc __ccall uses rsi rdi rbx section:asym_t, poffset:ptr uint_32, pindex:ptr uint_32
@@ -1032,24 +939,17 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:asym_t, poffset:ptr uint
     ; v2.10: handle the reloc-overflow-case
 
     .if ( [rdi].seg_info.num_relocs > 0xffff )
-
         mov ecx,[rdi].seg_info.num_relocs
         inc ecx
         coff_write_fixup( ecx, 0, IMAGE_REL_I386_ABSOLUTE ) ; doesn't matter if 32- or 64-bit
         add offs,sizeof( IMAGE_RELOCATION )
     .endif
-
     assume rbx:ptr fixup
-
     mov [rdi].seg_info.num_relocs,0 ; reset counter
-
     .for ( rbx = [rdi].seg_info.head: rbx: rbx = [rbx].nextrlc )
-
         movzx eax,[rbx].type
         xor ecx,ecx
-
         .if ( [rdi].seg_info.Ofssize == USE64 )
-
             .switch eax
             .case FIX_VOID
                 .continue
@@ -1078,9 +978,7 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:asym_t, poffset:ptr uint
                 mov ecx,IMAGE_REL_AMD64_SECTION ;; ???
                 .endc
             .endsw
-
         .else
-
             .switch eax
             .case FIX_VOID
                 .continue
@@ -1106,19 +1004,14 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:asym_t, poffset:ptr uint
                 mov ecx,IMAGE_REL_I386_SECTION ;; ???
                 .endc
             .endsw
-
         .endif
-
         .if ( !ecx ) ; v2.03: skip this fixup
-
             mov rcx,section
             asmerr( 3014, [rbx].type, [rcx].asym.name, [rbx].locofs )
             .continue
         .endif
-
         mov type,cx
         mov rcx,[rbx].sym
-
         .if ( [rcx].asym.isvariable )
 
             ; just use the segment entry. This approach requires
@@ -1127,11 +1020,7 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:asym_t, poffset:ptr uint
 
             mov [rbx].sym,[rbx].segment_var
             mov rcx,rax
-
-        .elseif ( ( [rcx].asym.state == SYM_INTERNAL ) &&
-                   !( [rcx].asym.ispublic ) &&
-                   !( [rcx].asym.included ) )
-
+        .elseif ( ( [rcx].asym.state == SYM_INTERNAL ) && !( [rcx].asym.ispublic ) && !( [rcx].asym.included ) )
             mov [rcx].asym.included,1
             AddPublicData( rcx )
             mov rcx,[rbx].sym
@@ -1141,21 +1030,16 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:asym_t, poffset:ptr uint
                 add esi,6
             .endif
         .endif
-
         coff_write_fixup( [rbx].locofs, [rcx].asym.ext_idx, type )
-
         add offs,sizeof( IMAGE_RELOCATION )
         inc [rdi].seg_info.num_relocs
-
     .endf
-
     mov rdx,poffset
     mov [rdx],offs
     mov rdx,pindex
     mov [rdx],esi
     ret
-
-coff_write_fixups endp
+    endp
 
 
 ; write section data
@@ -1173,16 +1057,11 @@ coff_write_data proc __ccall uses rsi rdi rbx cm:ptr coffmod
     ; fill the SafeSEH array
 
     assume rbx:ptr coffmod
-
     mov rbx,cm
-
     .if ( MODULE.SafeSEHQueue.head )
-
         mov rax,[rbx].sxdata
         mov rax,[rax].asym.seginfo
-
         .for ( rdx = MODULE.SafeSEHQueue.head, rcx = [rax].seg_info.CodeBuffer : rdx : rcx += 4 )
-
             mov rax,[rdx].qnode.elmt
             mov eax,[rax].asym.ext_idx
             mov [rcx],eax
@@ -1191,7 +1070,6 @@ coff_write_data proc __ccall uses rsi rdi rbx cm:ptr coffmod
     .endif
 
     .for ( ecx = 0, rdi = SegTable : rdi : ecx++, rdi = [rdi].asym.next )
-
         mov eax,[rbx].sectionstart
         add eax,ecx
         mov [rdi].asym.ext_idx,eax
@@ -1207,7 +1085,6 @@ coff_write_data proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
     assume rsi:segment_t
     .for ( rdi = SegTable: rdi : rdi = [rdi].asym.next )
-
         mov ebx,[rdi].asym.max_offset
         mov rsi,[rdi].asym.seginfo
 
@@ -1225,22 +1102,17 @@ endif
                 inc offs
                 inc ebx
             .endif
-
             .if ( [rsi].CodeBuffer == NULL )
                 fseek( CurrFile[TOBJ], ebx, SEEK_CUR )
             .else
-
                 ; if there was an ORG, the buffer content will
                 ; start with the ORG address. The bytes from
                 ; 0 - ORG must be written by moving the file pointer!
-
                 mov eax,[rsi].start_loc
                 .if ( eax )
 
                     ; v2.19: write null bytes instead of fseek()
-
                     ;fseek( CurrFile[TOBJ], [rsi].start_loc, SEEK_CUR )
-
                     .new nullbyt:char_t = NULLC
                     .for ( i = eax : i : i-- )
                         fwrite( &nullbyt, 1, 1, CurrFile[TOBJ] )
@@ -1261,7 +1133,6 @@ ifdef _LIN64
 endif
             coff_write_fixups( rdi, &offs, &index )
         .endif
-
         mov rbx,cm
 
         ; v2.07: the following block has beem moved outside of "if(size)" block,
@@ -1290,19 +1161,14 @@ endif
             mov rsi,[rax].qdesc.head
 
             .for ( : rsi: rsi = [rsi].next )
-
                 .if ( [rsi].number == 0 )
-
                     mov last,[rsi].sym
-
                     .if ( [rbx].lastproc )
-
                         mov rcx,[rbx].lastproc
                         mov rcx,[rcx].asym.debuginfo
                         mov edx,[rax].asym.ext_idx
                         mov [rcx].debug_info.next_proc,edx
                     .endif
-
                     mov [rbx].lastproc,rax
                     mov rcx,[rax].asym.debuginfo
                     mov [rcx].debug_info.next_proc,0
@@ -1312,9 +1178,7 @@ endif
                     mov eax,[rbx].start_data
                     add eax,offs
                     mov [rcx].debug_info.ln_fileofs,eax
-
                 .else
-
                     mov rcx,last
                     mov rcx,[rcx].asym.debuginfo
                     mov eax,[rsi].number
@@ -1329,12 +1193,10 @@ endif
                     .endif
                     mov il.Type.VirtualAddress,[rsi].offs
                 .endif
-
                 mov rcx,last
                 mov rcx,[rcx].asym.debuginfo
                 inc [rcx].debug_info.line_numbers
                 mov [rcx].debug_info.end_line,[rsi].number
-
 ifdef _LIN64
                 mov _rsi,rsi
                 mov _rdi,rdi
@@ -1349,18 +1211,14 @@ endif
                 add offs,sizeof(il)
                 inc line_numbers
             .endf
-
             mov rdx,[rdi].asym.seginfo
             mov [rdx].seg_info.num_linnums,line_numbers
         .endif
-
     .endf
-
     mov rbx,cm
     mov [rbx].size_data,offs
-   .return( NOT_ERROR )
-
-coff_write_data endp
+    .return( NOT_ERROR )
+    endp
 
 
 ;
@@ -1376,7 +1234,6 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
     ; does a proc exist with the EXPORT attribute?
 
     .for ( rdi = MODULE.PubQueue.head : rdi : rdi = [rdi].qnode.next )
-
         mov rcx,[rdi].qnode.sym
         .break .if ( [rcx].asym.isexport )
     .endf
@@ -1387,15 +1244,10 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
     ; - a library is included       and/or
     ; - a proc is exported          and/or
 
-    .if ( MODULE.start_label != NULL ||
-          MODULE.LibQueue.head != NULL ||
-          exp != NULL || MODULE.LinkQueue.head != NULL )
-
+    .if ( MODULE.start_label != NULL || MODULE.LibQueue.head != NULL || exp != NULL || MODULE.LinkQueue.head != NULL )
          mov rbx,cm
          mov [rbx].directives,CreateIntSegment( szdrectve, "", MAX_SEGALIGNMENT, MODULE.Ofssize, FALSE )
-
         .if ( rax )
-
             xor ebx,ebx
             mov rdi,[rax].asym.seginfo
             mov [rdi].seg_info.information,1
@@ -1405,14 +1257,11 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
             ; 1. exports
 
             .for ( rdi = exp : rdi : rdi = [rdi].qnode.next )
-
                 mov rcx,[rdi].qnode.sym
                 .if ( [rcx].asym.isexport )
-
                     Mangle( rcx, &buffer )
                     lea rbx,[rbx+rax+9]
                     .if ( Options.no_export_decoration == TRUE )
-
                         mov rcx,[rdi].qnode.sym
                         add ebx,[rcx].asym.name_size
                         inc ebx
@@ -1444,11 +1293,9 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
             ; 4. pragma comment(linker,"/..")
 
             .for ( rdi = MODULE.LinkQueue.head: rdi: rdi = [rdi].qitem.next )
-
                 tstrlen( &[rdi].qitem.value )
                 lea rbx,[rbx+rax+1]
             .endf
-
             mov ecx,ebx
             mov rbx,cm
             mov rdx,[rbx].directives
@@ -1457,7 +1304,6 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
             inc ecx
             mov [rdi].seg_info.CodeBuffer,LclAlloc( ecx )
             mov rbx,rax
-
             assume rbx:nothing
 
             ; copy the data
@@ -1465,10 +1311,8 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
             ; 1. exports
 
             .for ( rdi = exp : rdi : rdi = [rdi].qnode.next )
-
                 mov rcx,[rdi].qnode.sym
                 .if ( [rcx].asym.isexport )
-
                     Mangle( rcx, &buffer )
                     .if ( Options.no_export_decoration == FALSE )
                         add rbx,tsprintf( rbx, "-export:%s ", &buffer )
@@ -1482,7 +1326,6 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
             ; 2. libraries
 
             .for ( rdi = MODULE.LibQueue.head : rdi : rdi = [rdi].qitem.next )
-
                 .if ( tstrchr( &[rdi].qitem.value, ' ') && [rdi].qitem.value != '"' )
                     add rbx,tsprintf( rbx, "-defaultlib:\"%s\" ", &[rdi].qitem.value )
                 .else
@@ -1505,8 +1348,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx cm:ptr coffmod
         .endif
     .endif
     ret
-
-coff_create_drectve endp
+    endp
 
     assume rsi:nothing
 
@@ -1538,10 +1380,8 @@ coff_write_module proc uses rsi rdi rbx
 
             imul edi,ebx,dbg_section
             lea rcx,SymDebName
-
             mov cm.SymDeb[rdi].s,CreateIntSegment( [rcx+rbx*string_t], "", 0, USE32, TRUE )
-           .break .if ( eax == NULL )
-
+            .break .if ( eax == NULL )
             mov rcx,[rax].asym.seginfo
             mov [rcx].seg_info.characteristics,( IMAGE_SCN_MEM_READ or IMAGE_SCN_MEM_DISCARDABLE ) shr 24
 
@@ -1549,34 +1389,27 @@ coff_write_module proc uses rsi rdi rbx
 
             imul eax,ebx,SIZE_CV_SEGBUF
             add rax,CurrSource
-
             mov [rcx].seg_info.CodeBuffer,rax
             mov [rcx].seg_info.flushfunc,&coff_flushfunc
             mov cm.SymDeb[rdi].q.head,NULL
         .endf
 
         .if ( ebx == DBGS_MAX )
-
-            cv_write_debug_tables( cm.SymDeb[DBGS_SYMBOLS*dbg_section].s,
-                    cm.SymDeb[DBGS_TYPES*dbg_section].s, &cm )
+            cv_write_debug_tables( cm.SymDeb[DBGS_SYMBOLS*dbg_section].s, cm.SymDeb[DBGS_TYPES*dbg_section].s, &cm )
 
             ; the contents have been written in queues. now
             ; copy all queue items in ONE buffer.
 
             .for ( ebx = 0 : ebx < DBGS_MAX : ebx++ )
-
                 imul edi,ebx,dbg_section
-
                 mov rcx,cm.SymDeb[rdi].s
                 mov rsi,[rcx].asym.seginfo
-
                 .if ( [rcx].asym.max_offset )
                     .if ( [rcx].asym.max_offset > SIZE_CV_SEGBUF )
                         mov [rsi].seg_info.CodeBuffer,LclAlloc( [rcx].asym.max_offset )
                     .endif
                     mov rdx,[rsi].seg_info.CodeBuffer
                     mov rsi,cm.SymDeb[rdi].q.head
-
                     .for ( rdi = rdx: rsi: rsi = [rsi].qditem.next )
                         mov ecx,[rsi].qditem.size
                         lea rdx,[rsi+qditem]
@@ -1592,11 +1425,8 @@ coff_write_module proc uses rsi rdi rbx
     ;; if safeSEH procs are defined, add a .sxdata section
 
     .if ( MODULE.SafeSEHQueue.head )
-
         mov cm.sxdata,CreateIntSegment( ".sxdata", "", MAX_SEGALIGNMENT, MODULE.Ofssize, FALSE )
-
         .if ( rax )
-
             mov rdi,[rax].asym.seginfo
             mov [rdi].seg_info.information,1
 
@@ -1614,7 +1444,6 @@ coff_write_module proc uses rsi rdi rbx
     ; create .drectve section if necessary
 
     coff_create_drectve( &cm )
-
     .if ( MODULE.defOfssize == USE64 )
         mov ifh.Machine,IMAGE_FILE_MACHINE_AMD64
     .else
@@ -1637,12 +1466,9 @@ coff_write_module proc uses rsi rdi rbx
         add eax,cm.size_data
     .endif
     mov ifh.PointerToSymbolTable,eax
-
-    .ifd ( fwrite( &cm.size, 1, sizeof( cm.size ),
-            CurrFile[TOBJ] ) != sizeof( cm.size ) )
+    .ifd ( fwrite( &cm.size, 1, sizeof( cm.size ), CurrFile[TOBJ] ) != sizeof( cm.size ) )
         WriteError()
     .endif
-
     assume rbx:ptr stringitem
     .for ( rbx = cm.head : rbx : rbx = [rbx].next )
         inc tstrlen( &[rbx].string )
@@ -1665,15 +1491,12 @@ endif
         WriteError()
     .endif
     .return( NOT_ERROR )
-
-coff_write_module endp
+    endp
 
 
 coff_init proc public
-
     mov MODULE.WriteModule,&coff_write_module
     ret
-
-coff_init endp
+    endp
 
     end

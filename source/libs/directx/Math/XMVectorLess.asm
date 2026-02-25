@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorLess proc XM_CALLCONV V1:FXMVECTOR, V2:FXMVECTOR
-
     _mm_cmple_ps(xmm0, xmm1)
     ret
-
-XMVectorLess endp
+    endp
 
     end

@@ -11,12 +11,10 @@ _cfltcvt_tab PF0 0
 .code
 
 _fltinit proc
-
     lea rax,_fltconvert
     mov _cfltcvt_tab,rax
     ret
-
-_fltinit endp
+    endp
 
 .pragma init(_fltinit, 40)
 

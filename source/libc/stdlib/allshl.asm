@@ -20,7 +20,6 @@ ifdef _WIN64
     shl rax,cl
 else
     .if ( cl < 64 )
-
         .if ( cl < 32 )
             shld edx,eax,cl
             shl eax,cl
@@ -36,8 +35,7 @@ else
     .endif
 endif
     ret
-
-allshl endp
+    endp
 
 ifndef _WIN64
 _U8LS::
@@ -46,5 +44,4 @@ _I8LS::
     call    allshl
     ret
 endif
-
     end

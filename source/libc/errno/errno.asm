@@ -26,20 +26,15 @@ __errno_location::
 endif
 
 _errno proc
-
     lea rax,ErrorNoMem
     ret
-
-_errno endp
+    endp
 
 _set_errno proc value:int_t
-
     ldr ecx,value
-
     mov ErrorNoMem,ecx
     mov rax,-1
     ret
-
-_set_errno endp
+    endp
 
     end

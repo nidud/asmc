@@ -8,7 +8,7 @@ args_x macro
     endm
 
     option  dllimport:<msvcrt>
-    memset  proto :ptr, :dword, :qword
+    externdef import memset:ptr
 
 include ../timeit.inc
 
@@ -88,17 +88,14 @@ validate_x PROC USES rsi rdi rbx x:QWORD
         inc nerror
     .endif
     ret
-validate_x ENDP
+    endp
 
 main proc
 
-    memset(&str_1, 0, 1)
-    mov rax,__imp_memset
+    mov rax,memset
     lea rcx,proc_p
     mov [rcx],rax
-
     .repeat
-
         procs
             validate_x(x)
             .if nerror
@@ -117,10 +114,8 @@ main proc
         GetCycleCount(511, 513, 1, 1000)
         GetCycleCount(1023, 1025, 1, 1000)
         GetCycleCount(4023, 4025, 1, 1000)
-
     .until 1
     ret
-
-main endp
+    endp
 
     end start

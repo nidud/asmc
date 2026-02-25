@@ -249,16 +249,11 @@ endif
        .endc
 
     .case LSTTYPE_TMACRO
-
         mov ll.buffer[1],'='
         mov rcx,sym
-
         .for ( rsi = [rcx].asym.string_ptr, rdi = &ll.buffer[3], rbx = &ll : byte ptr [rsi] : )
-
             lea rax,[rbx].lstleft.buffer[28]
-
             .if ( rdi >= rax )
-
                 mov [rbx].lstleft.next,alloca( sizeof( lstleft ) )
                 mov rbx,rax
                 mov [rbx].lstleft.next,NULL
@@ -329,51 +324,39 @@ endif
     .endif
     fwrite( NLSTR, 1, NLSIZ, CurrFile[TLST] )
 
-
     ; write optional additional lines.
     ; currently works in pass one only.
 
     .for ( rbx = ll.next: rbx: rbx = [rbx].lstleft.next )
-
         fwrite( &[rbx].lstleft.buffer, 1, 32, CurrFile[TLST] )
         fwrite( NLSTR, 1, NLSIZ, CurrFile[TLST] )
-
         add list_pos,32 + NLSIZ
     .endf
     ret
-
-LstWrite endp
+    endp
 
 
 LstWriteSrcLine proc __ccall
-
     LstWrite( LSTTYPE_MACRO, 0, NULL )
     ret
-
-LstWriteSrcLine endp
+    endp
 
 
 LstPrintf proc __ccall format:string_t, args:vararg
-
     .if ( CurrFile[TLST] )
-
         add list_pos,tvfprintf( CurrFile[TLST], format, &args )
     .endif
     ret
-
-LstPrintf endp
+    endp
 
 
 LstNL proc __ccall uses rsi rdi
-
     .if ( CurrFile[TLST] )
-
         fwrite( NLSTR, 1, NLSIZ, CurrFile[TLST] )
         add list_pos,NLSIZ
     .endif
     ret
-
-LstNL endp
+    endp
 
 
 ; set the list file's position
@@ -381,26 +364,21 @@ LstNL endp
 ; executed BEFORE the original source line is listed.
 
 LstSetPosition proc __ccall uses rsi rdi
-
     .if ( CurrFile[TLST] && Parse_Pass > PASS_1 &&  UseSavedState && MODULE.GeneratedCode == 0 )
-
         mov rcx,LineStoreCurr
         mov list_pos,[rcx].line_item.list_pos
         fseek( CurrFile[TLST], list_pos, SEEK_SET )
         or MODULE.line_flags,LOF_SKIPPOS
     .endif
     ret
-
-LstSetPosition endp
+    endp
 
 
     option proc: private
 
 log_dots proc __ccall size:uint_t, name:string_t, offs:int_t
-
     ldr ecx,size
     ldr rdx,name
-
     add ecx,offs
     .if ( ecx >= DOTSMAX )
         xor eax,eax
@@ -411,12 +389,10 @@ log_dots proc __ccall size:uint_t, name:string_t, offs:int_t
     lea ecx,[rcx-DOTSMAX-7]
     LstPrintf( "%*s%s %*s", offs, 0, rdx, ecx, rax )
     ret
-
-log_dots endp
+    endp
 
 
 SimpleSizeString proc fastcall size:uint_t
-
     xor eax,eax
     .switch pascal ecx
     .case  1: mov eax,T_BYTE
@@ -430,12 +406,10 @@ SimpleSizeString proc fastcall size:uint_t
     .case 64: mov eax,T_ZWORD
     .endsw
     ret
-
-SimpleSizeString endp
+    endp
 
 
 SimpleTypeString proc fastcall mem_type:byte
-
     mov eax,ecx
     .if ecx == MT_ZWORD
         mov ecx,64
@@ -466,8 +440,7 @@ SimpleTypeString proc fastcall mem_type:byte
         .endsw
     .endif
     ret
-
-SimpleTypeString endp
+    endp
 
 
 ; called by log_and log_typedef
@@ -480,7 +453,6 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
 
     ldr rsi,sym
     ldr rbx,buffer
-
     .if ( !( [rsi].asym.mem_type & MT_SPECIAL) )
         .return( GetResWName( SimpleTypeString( [rsi].asym.mem_type ), rbx ) )
     .endif
@@ -491,7 +463,6 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
         mov al,MT_PTR
     .endif
     lea rdx,mtbuf
-
     .switch eax
     .case MT_PTR
         mov edi,T_NEAR
@@ -540,25 +511,20 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
         .return( "number" )
     .endsw
     .return( "?" )
-
-GetMemtypeString endp
+    endp
 
 
 GetLanguage proc fastcall sym:asym_t
-
     movzx eax,[rcx].asym.langtype
     .if ( eax > LANG_NONE && eax <= LANG_ASMCALL )
         .return( &[rax+T_CCALL-1] )
     .endif
     .return( 0 )
-
-GetLanguage endp
+    endp
 
 
 log_macro proc __ccall uses rbx sym:asym_t
-
     ldr rbx,sym
-
     log_dots( [rbx].asym.name_size, [rbx].asym.name, 0 )
     mov edx,T_PROC
     .if ( [rbx].asym.isfunc )
@@ -567,8 +533,7 @@ log_macro proc __ccall uses rbx sym:asym_t
     LstPrintf( "%r", edx )
     LstNL()
     ret
-
-log_macro endp
+    endp
 
 
 ; display STRUCTs and UNIONs
@@ -633,8 +598,7 @@ log_struct proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t, ofs:int_32
     .endf
     sub prefix,2
     ret
-
-log_struct endp
+    endp
 
 
 log_record proc __ccall uses rsi rdi rbx sym:asym_t
@@ -650,9 +614,7 @@ log_record proc __ccall uses rsi rdi rbx sym:asym_t
     imul ecx,[rdi].asym.total_size,8
     LstPrintf( "%6X  %7X", ecx, edx )
     LstNL()
-
     .for ( rbx = [rsi].struct_info.head: rbx: rbx = [rbx].next )
-
         log_dots( [rbx].name_size, [rbx].name, 2 )
         SetBitMask( rbx, &mask )
         lea rcx,[rbx].ivalue
@@ -667,9 +629,7 @@ log_record proc __ccall uses rsi rdi rbx sym:asym_t
         LstNL()
     .endf
     ret
-
-log_record endp
-
+    endp
 
     assume rbx:nothing
 
@@ -678,15 +638,11 @@ log_record endp
 log_typedef proc __ccall uses rsi rdi rbx sym:asym_t
 
     ldr rsi,sym
-
     log_dots( [rsi].asym.name_size, [rsi].asym.name, 0 )
-
     mov rdi,StringBufferEnd
     mov byte ptr [rdi],NULLC
     mov rbx,[rsi].asym.target_type
-
     .if ( [rsi].asym.mem_type == MT_PROC && rbx ) ; typedef proto?
-
         add rdi,tsprintf( rdi, "%r ", T_PROC )
         mov rcx,[rbx].asym.name
         .if ( byte ptr [rcx] ) ; the name may be ""
@@ -709,8 +665,7 @@ log_typedef proc __ccall uses rsi rdi rbx sym:asym_t
     LstPrintf( "%08X %s", [rsi].asym.total_size, StringBufferEnd )
     LstNL()
     ret
-
-log_typedef endp
+    endp
 
 
 log_segment proc __ccall uses rsi rdi rbx sym:asym_t, grp:asym_t
@@ -719,11 +674,8 @@ log_segment proc __ccall uses rsi rdi rbx sym:asym_t, grp:asym_t
 
     ldr rsi,sym
     mov rdi,[rsi].asym.seginfo
-
     .if ( [rdi].seg_info.sgroup == grp )
-
         log_dots( [rsi].asym.name_size, [rsi].asym.name, 0 )
-
         mov edx,16
         mov cl,[rdi].seg_info.Ofssize
         shl edx,cl
@@ -734,7 +686,6 @@ log_segment proc __ccall uses rsi rdi rbx sym:asym_t, grp:asym_t
         .else
             LstPrintf( "%04X     ", edx )
         .endif
-
         xor ecx,ecx
         xor edx,edx
         movzx eax,[rdi].seg_info.alignment
@@ -760,7 +711,6 @@ log_segment proc __ccall uses rsi rdi rbx sym:asym_t, grp:asym_t
         .else
             LstPrintf( "%-7s ", rcx )
         .endif
-
         xor edx,edx
         movzx eax,[rdi].seg_info.combine
         .switch pascal eax
@@ -785,8 +735,7 @@ log_segment proc __ccall uses rsi rdi rbx sym:asym_t, grp:asym_t
         LstNL()
     .endif
     ret
-
-log_segment endp
+    endp
 
 
 log_group proc __ccall uses rsi rdi grp:asym_t, segs:asym_t
@@ -810,8 +759,7 @@ log_group proc __ccall uses rsi rdi grp:asym_t, segs:asym_t
         .endf
     .endif
     ret
-
-log_group endp
+    endp
 
 
 get_proc_type proc fastcall sym:asym_t
@@ -826,12 +774,10 @@ get_proc_type proc fastcall sym:asym_t
         mov eax,T_FAR
     .endif
     ret
-
-get_proc_type endp
+    endp
 
 
 get_sym_seg_name proc watcall sym:asym_t
-
     mov rax,[rax].asym.segm
     .if ( rax )
         mov rax,[rax].asym.name
@@ -839,8 +785,7 @@ get_sym_seg_name proc watcall sym:asym_t
         lea rax,@CStr("no seg")
     .endif
     ret
-
-get_sym_seg_name endp
+    endp
 
 
 ; list Procedures and Prototypes
@@ -1021,8 +966,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
         .endf
     .endif
     ret
-
-log_proc endp
+    endp
 
 
 ; list symbols
@@ -1114,12 +1058,10 @@ log_symbol proc __ccall uses rsi rdi rbx sym:asym_t
        .endc
     .endsw
     ret
-
-log_symbol endp
+    endp
 
 
 LstCaption proc __ccall uses rsi caption:string_t, prefNL:int_t
-
     .for ( esi = prefNL : esi : esi-- )
         LstNL()
     .endf
@@ -1127,18 +1069,14 @@ LstCaption proc __ccall uses rsi caption:string_t, prefNL:int_t
     LstNL()
     LstNL()
     ret
-
-LstCaption endp
+    endp
 
 
 compare_syms proc fastcall p1:ptr, p2:ptr
-
     mov rcx,[rcx]
     mov rdx,[rdx]
-
-   .return( tstrcmp( [rcx].asym.name, [rdx].asym.name ) )
-
-compare_syms endp
+    .return( tstrcmp( [rcx].asym.name, [rdx].asym.name ) )
+    endp
 
 
     option proc: public
@@ -1291,12 +1229,9 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
 
     LstCaption( "Symbols:", 2 )
     LstCaption( "                N a m e                 Type     Value     Attr", 0 )
-
     .for ( ebx = 0: ebx < SymCount: ++ebx )
-
         mov rcx,syms
         mov rdi,[rcx+rbx*size_t]
-
         .if ( [rdi].asym.list && !( [rdi].asym.isproc ) )
             log_symbol( rdi )
         .endif
@@ -1307,8 +1242,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
 
     MemFree( syms )
     ret
-
-LstWriteCRef endp
+    endp
 
 
 ; .[NO|X]LIST, .[NO|X]CREF, .LISTALL,
@@ -1422,19 +1356,16 @@ ListingDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
             add rbx,asm_tok
         .endw
     .endsw
-
     .if ( [rbx].token != T_FINAL )
         .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
     .return( NOT_ERROR )
-
-ListingDirective endp
+    endp
 
 
 ; directives .[NO]LISTMACRO, .LISTMACROALL, .[X|L|S]ALL
 
 ListMacroDirective proc __ccall i:int_t, tokenarray:token_t
-
     imul ecx,i,asm_tok
     add rcx,tokenarray
     .if ( [rcx+asm_tok].asm_tok.token != T_FINAL )
@@ -1442,19 +1373,15 @@ ListMacroDirective proc __ccall i:int_t, tokenarray:token_t
     .endif
     mov MODULE.list_macro,GetSflagsSp( [rcx].asm_tok.tokval )
    .return( NOT_ERROR )
-
-ListMacroDirective endp
+    endp
 
 
 LstInit proc __ccall
-
     .new logo[64]:char_t
-
     .if ( Parse_Pass == PASS_1 )
         mov list_pos,0
     .endif
     .if ( Options.write_listing )
-
         tsprintf( &logo, &cp_logo, ASMC_MAJOR, ASMC_MINOR, ASMC_SUBVER )
         mov rdx,GetFName( MODULE.srcfile )
         lea rcx,@CStr("%s  %s %s\n%s\n")
@@ -1466,7 +1393,6 @@ LstInit proc __ccall
         LstPrintf( rcx, &logo, &szDate, &szTime, rdx )
     .endif
     ret
-
-LstInit endp
+    endp
 
     end

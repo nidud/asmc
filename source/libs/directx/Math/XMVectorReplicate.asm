@@ -8,12 +8,9 @@ include DirectXMath.inc
     .code
 
 XMVectorReplicate proc XM_CALLCONV Value:float
-
     ldr xmm0,Value
-
     XM_PERMUTE_PS()
     ret
-
-XMVectorReplicate endp
+    endp
 
     end

@@ -32,7 +32,6 @@ XMLoadHalf4 proc XM_CALLCONV pSource:ptr XMHALF4
     shufps  xmm3,xmm3,01011000B
     shufps  xmm0,xmm3,01000100B
     ret
-
-XMLoadHalf4 endp
+    endp
 
     end

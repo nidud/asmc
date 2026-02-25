@@ -30,16 +30,13 @@ LineQueue equ <MODULE.line_queue>
 ; free items of current line queue
 
 DeleteLineQueue proc __ccall uses rsi rdi
-
     .for ( rsi = LineQueue.head : rsi : rsi = rdi )
-
         mov rdi,[rsi].qitem.next
         MemFree(rsi)
     .endf
     mov LineQueue.head,NULL
     ret
-
-DeleteLineQueue endp
+    endp
 
 
 ; Add a line to the current line queue, "printf" format.
@@ -324,46 +321,35 @@ endif
     mov rax,rdi
     sub rax,buffer
     ret
-
-tvsprintf endp
+    endp
 
 
 tvfprintf proc __ccall uses rsi rdi file:ptr FILE, format:string_t, argptr:ptr
-
   local buffer[4096]:char_t
-
     tvsprintf( &buffer, format, argptr )
     fwrite( &buffer, 1, eax, file )
     ret
-
-tvfprintf endp
+    endp
 
 
 tfprintf proc __ccall file:ptr FILE, format:string_t, argptr:vararg
-
     tvfprintf( ldr(file), ldr(format), &argptr )
     ret
-
-tfprintf endp
+    endp
 
 
 tsprintf proc __ccall buffer:string_t, format:string_t, argptr:vararg
-
     tvsprintf( ldr(buffer), ldr(format), &argptr )
     ret
-
-tsprintf endp
+    endp
 
 
 tprintf proc __ccall uses rsi rdi format:string_t, argptr:vararg
-
   local buffer[4096]:char_t
-
     tvsprintf( &buffer, format, &argptr )
     _write( 1, &buffer, eax )
     ret
-
-tprintf endp
+    endp
 
 
 ; Add a line to the current line queue.
@@ -416,21 +402,17 @@ AddLineQueue proc fastcall uses rsi rdi rbx lineptr:string_t
 .4:
     mov     LineQueue.head,rax
     jmp     .1
-
-AddLineQueue endp
+    endp
 
 
 AddLineQueueX proc __ccall fmt:string_t, argptr:vararg
-
    .new buffer:string_t
-
     mov buffer,alloc_line()
     tvsprintf( buffer, fmt, &argptr )
     AddLineQueue(buffer)
     free_line(buffer)
     ret
-
-AddLineQueueX endp
+    endp
 
 
 ; RunLineQueue() is called whenever generated code is to be assembled. It
@@ -453,10 +435,8 @@ RunLineQueue proc __ccall uses rsi rdi
     ; Instead, the queue is processed directly here.
 
     .for ( rsi = LineQueue.head, LineQueue.head = NULL : rsi : )
-
         tstrcpy( CurrSource, &[rsi].lq_line.line )
         .if PreprocessLine( tokenarray )
-
             ParseLine( tokenarray )
         .endif
         mov rcx,rsi
@@ -466,8 +446,7 @@ RunLineQueue proc __ccall uses rsi rdi
     dec MODULE.GeneratedCode
     PopInputStatus( &oldstat )
     ret
-
-RunLineQueue endp
+    endp
 
 
 InsertLineQueue proc __ccall uses rsi rdi rbx
@@ -477,13 +456,10 @@ InsertLineQueue proc __ccall uses rsi rdi rbx
 
     mov ebx,MODULE.GeneratedCode
     mov tokenarray,PushInputStatus( &oldstat )
-
     mov MODULE.GeneratedCode,0
     .for ( rsi = LineQueue.head, LineQueue.head = NULL : rsi : )
-
         tstrcpy( CurrSource, &[rsi].lq_line.line )
         .if PreprocessLine( tokenarray )
-
             ParseLine( tokenarray )
         .endif
         mov rcx,rsi
@@ -493,7 +469,6 @@ InsertLineQueue proc __ccall uses rsi rdi rbx
     mov MODULE.GeneratedCode,ebx
     PopInputStatus( &oldstat )
     ret
-
-InsertLineQueue endp
+    endp
 
     end

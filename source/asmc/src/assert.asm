@@ -39,7 +39,6 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov eax,[rbx+rax].tokval
     mov cmd,eax
     inc i
-
     mov rsi,MODULE.HllFree
     .if ( !rsi )
         mov rsi,LclAlloc( hll_item )
@@ -49,65 +48,48 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov [rsi].labels[LEXIT*4],eax
     mov [rsi].flags,eax
     mov eax,cmd
-
     .switch eax
-
     .case T_DOT_ASSERT
-
         imul edx,i,asm_tok
         mov al,[rbx+rdx].asm_tok.token
-
         .if ( al == T_COLON )
-
             add i,2
             mov rdi,[rbx+rdx+asm_tok].asm_tok.string_ptr
             mov al,[rbx+rdx+asm_tok].asm_tok.token
-
             .if ( al == T_ID )
-
                 .if SymFind(rdi)
-
                     MemFree( MODULE.assert_proc )
                     mov MODULE.assert_proc,MemDup( rdi )
                    .endc
                 .endif
             .endif
-
             .ifd !tstricmp( rdi, "CODE" )
-
                 .if !( MODULE.assert )
-
                     CondPrepare( T_IF )
                     mov CurrIfState,BLOCK_DONE
                 .endif
                 .endc
             .endif
-
             .ifd !tstricmp( rdi, "ENDS" )
                 ;
                 ; Converted to ENDIF in Tokenize()
                 ;
                 .endc
             .endif
-
             .ifd !tstricmp( rdi, "PUSH" )
-
                 mov eax,MODULE.assert
                 mov ecx,MODULE.assert_pushf
                 shl ecx,1
                 or  eax,ecx
                 mov ecx,assert_stid
                 .if ( ecx < MAXSAVESTACK )
-
                     lea rdx,assert_stack
                     mov [rdx+rcx],al
                     inc assert_stid
                 .endif
                 .endc
             .endif
-
             .ifd !tstricmp( rdi, "POP" )
-
                 mov ecx,assert_stid
                 lea rdx,assert_stack
                 mov al,[rdx+rcx]
@@ -122,7 +104,6 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .endif
                 .endc
             .endif
-
             .ifd !tstricmp( rdi, "ON" )
                 mov MODULE.assert,1
                .endc
@@ -132,33 +113,24 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                .endc
             .endif
             .ifd !tstricmp( rdi, "PUSHF" )
-
                 mov MODULE.assert_pushf,1
                .endc
             .endif
             .ifd !tstricmp( rdi, "POPF" )
-
                 mov MODULE.assert_pushf,0
                .endc
             .endif
-
             asmerr( 2008, rdi )
            .endc
-
         .elseif ( al == T_FINAL || !( MODULE.assert ) )
-
             ;.if !Options.quiet
             ;.endif
             .endc
         .endif
-
         imul edx,i,asm_tok
         tstrcpy( &cmdstr, [rbx+rdx].tokpos )
-
         .if ( MODULE.assert_pushf )
-
             .if ( MODULE.Ofssize == USE64 )
-
                 AddLineQueue(
                     " pushfq\n"
                     " sub rsp,28h" )
@@ -166,7 +138,6 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 AddLineQueue( " pushfd" )
             .endif
         .endif
-
         mov [rsi].cmd,HLL_IF
         mov [rsi].labels[LSTART*4],0
         mov [rsi].labels[LTEST*4],GetHllLabel()
@@ -174,13 +145,9 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         GetLabelStr( GetHllLabel(), rcx )
         mov rc,EvaluateHllExpression( rsi, &i, rbx, LTEST, 0, rdi )
         .endc .if ( eax != NOT_ERROR )
-
         QueueTestLines( rdi )
-
         .if ( MODULE.assert_pushf )
-
             .if ( MODULE.Ofssize == USE64 )
-
                 AddLineQueue(
                     " add rsp,28h\n"
                     " popfq" )
@@ -191,11 +158,8 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         AddLineQueueX(
             "jmp %s\n"
             "%s%s", &buff, GetLabelStr( [rsi].labels[LTEST*4], rdi ), LABELQUAL )
-
         .if ( MODULE.assert_pushf )
-
             .if ( MODULE.Ofssize == USE64 )
-
                 AddLineQueue(
                     " add rsp,28h\n"
                     " popfq" )
@@ -203,26 +167,20 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 AddLineQueue( " popfd" )
             .endif
         .endif
-
         .endc .if BYTE PTR [rdi] == NULLC
         mov rax,MODULE.assert_proc
         .if ( !rax )
-
             lea rax,@CStr( "assert_exit" )
             mov MODULE.assert_proc,rax
         .endif
-
         AddLineQueueX( "%s()", rax )
         AddLineQueue ( "db @CatStr(!\",\%\@FileName,<(>,\%@Line,<): >,!\")" )
-
         lea rbx,cmdstr
         .while tstrchr( rbx, '"' )
-
             mov byte ptr [rax],0
             xchg rbx,rax
             inc rbx
             .if byte ptr [rax]
-
                 AddLineQueueX( "db \"%s\",22h", rax )
             .else
                 AddLineQueue( "db 22h" )
@@ -245,7 +203,6 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov [rsi].SizeDB,1
        .gotosw(T_DOT_ASSERT)
     .endsw
-
     .if ( MODULE.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
@@ -253,7 +210,6 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         RunLineQueue()
     .endif
     .return( rc )
-
-AssertDirective endp
+    endp
 
     END

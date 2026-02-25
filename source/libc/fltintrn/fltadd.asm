@@ -11,7 +11,6 @@ include fltintrn.inc
     option dotname
 
 _lc_fltadd proc __ccall private uses rsi rdi rbx A:ptr STRFLT, B:ptr STRFLT, negate:uint_t
-
 ifdef _WIN64
     mov     r11,rcx
     mov     rbx,[rdx].STRFLT.mantissa.l
@@ -28,7 +27,6 @@ else
 endif
     mov     si,[rdx].STRFLT.mantissa.e
     shl     esi,16
-
 ifdef _WIN64
     mov     rax,[rcx].STRFLT.mantissa.l
     mov     rdx,[rcx].STRFLT.mantissa.h
@@ -39,7 +37,6 @@ else
     mov     ebx,[ecx+0x8]
     mov     edi,[ecx+0xC]
 endif
-
     mov     si,[rcx].STRFLT.mantissa.e
     add     si,1
     jc      .nan_a
@@ -60,7 +57,6 @@ else
     or      ecx,edi
 endif
     jz      .zero_a
-
 if_zero_b:
 ifdef _WIN64
     mov     rcx,rbx
@@ -72,9 +68,7 @@ else
     or      ecx,b[0xC]
 endif
     jz      .zero_b
-
 calculate_exponent:
-
     mov     ecx,esi
     rol     esi,16
     sar     esi,16
@@ -272,13 +266,11 @@ endif
 .m4:
     test    si,si
     jz      .done
-
     test    ch,ch           ; if top bits are 0
     mov     ecx,r8d
     jnz     .validate
     rol     ecx,1           ; set carry from last sticky bit
     rol     ecx,1
-
 .dec_exponent:
     dec     si              ; preserve the state of the CF flag..
     jz      .denormal
@@ -289,9 +281,7 @@ ifndef _WIN64
     adc     edi,edi
 endif
     jnc     .dec_exponent
-
 .validate:
-
     inc     si
     cmp     si,Q_EXPMASK
     je      .overflow
@@ -320,11 +310,9 @@ endif
     inc     si
     cmp     si,Q_EXPMASK
     je      .overflow
-
 .denormal:
     add     esi,esi
     rcr     si,1
-
 .done:
 ifdef _WIN64
     mov     [r11].STRFLT.mantissa.l,rax
@@ -341,7 +329,6 @@ else
     mov     eax,ecx
 endif
     ret
-
 .zero_a:
     shl     si,1            ; place sign in carry
     jnz     .zero_a_0
@@ -376,7 +363,6 @@ endif
     test    esi,0x7FFF0000
     jz      .done
     jmp     calculate_exponent
-
 .nan:
     mov     esi,0xFFFF
 ifdef _WIN64
@@ -388,7 +374,6 @@ else
 endif
     xor     eax,eax
     jmp     .done
-
 .overflow:
 .infinity:
     mov     esi,0x7FFF
@@ -399,7 +384,6 @@ ifndef _WIN64
     xor     edi,edi
 endif
     jmp     .done
-
 .b:
 ifdef _WIN64
     mov     rax,rbx
@@ -412,7 +396,6 @@ else
 endif
     shr     esi,16
     jmp     .done
-
 .nan_a:
     dec     si
     add     esi,0x10000
@@ -463,7 +446,6 @@ else
 endif
     jna     .b
     jmp     .done
-
 .nan_b:
     sub     esi,0x10000
 ifdef _WIN64
@@ -481,8 +463,7 @@ endif
     xor     esi,ecx
     and     esi,0x80000000
     jmp     .b
-
-_lc_fltadd endp
+    endp
 
 
 _fltadd proc __ccall a:ptr STRFLT, b:ptr STRFLT
@@ -492,7 +473,7 @@ else
     _lc_fltadd( a, b, 0 )
 endif
     ret
-_fltadd endp
+    endp
 
 
 _fltsub proc __ccall a:ptr STRFLT, b:ptr STRFLT
@@ -502,6 +483,6 @@ else
     _lc_fltadd( a, b, 0x80000000 )
 endif
     ret
-_fltsub endp
+    endp
 
     end

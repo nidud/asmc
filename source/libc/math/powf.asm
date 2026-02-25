@@ -24,7 +24,6 @@ else
     pow(a, b)
 endif
     ret
-
-powf endp
+    endp
 
     end

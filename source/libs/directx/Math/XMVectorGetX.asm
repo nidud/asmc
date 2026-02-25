@@ -8,10 +8,8 @@ include DirectXMath.inc
     .code
 
 XMVectorGetX proc XM_CALLCONV V:FXMVECTOR
-
     _mm_cvtss_f32(xmm0)
     ret
-
-XMVectorGetX endp
+    endp
 
     end

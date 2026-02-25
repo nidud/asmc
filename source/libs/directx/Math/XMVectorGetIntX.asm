@@ -13,7 +13,6 @@ XMVectorGetIntX proc XM_CALLCONV V:FXMVECTOR
 
     _mm_cvtsi128_si32(xmm0)
     ret
-
-XMVectorGetIntX endp
+    endp
 
     end

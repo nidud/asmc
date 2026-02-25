@@ -13,23 +13,17 @@ include tchar.inc
     assume rbx:PDIRENT
 
 _dsearch proc uses rbx d:PDIRENT, name:tstring_t
-
    .new i:int_t
     ldr rbx,d
-
     .for ( i = 0 : i < [rbx].count : i++ )
-
         imul eax,i,size_t
         add  rax,[rbx].fcb
         mov  rcx,[rax]
-
         .ifd ( !_tcscmp(name, [rcx].FILENT.name) )
-
             .return( i )
         .endif
     .endf
     .return( -1 )
-
-_dsearch endp
+    endp
 
     end

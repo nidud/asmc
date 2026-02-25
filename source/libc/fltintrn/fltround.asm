@@ -14,22 +14,18 @@ include fltintrn.inc
     assume rcx:ptr STRFLT
 
 _fltround proc __ccall fp:ptr STRFLT
-
     ldr rcx,fp
 ifdef _WIN64
     mov rax,[rcx].mantissa.l
 else
     mov eax,dword ptr [ecx].mantissa.l[0]
 endif
-
     .if ( eax & 0x4000)
-
 ifdef _WIN64
         mov rdx,[rcx].mantissa.h
 else
         push esi
         push edi
-
         mov edx,dword ptr [ecx].mantissa.l[4]
         mov edi,dword ptr [ecx].mantissa.h[0]
         mov esi,dword ptr [ecx].mantissa.h[4]
@@ -41,7 +37,6 @@ ifndef _WIN64
         adc esi,0
 endif
         .ifc
-
 ifndef _WIN64
             rcr esi,1
             rcr edi,1
@@ -49,9 +44,7 @@ endif
             rcr rdx,1
             rcr rax,1
             inc [rcx].mantissa.e
-
             .if ( [rcx].mantissa.e == Q_EXPMASK )
-
                 mov [rcx].mantissa.e,0x7FFF
                 xor eax,eax
                 xor edx,edx
@@ -73,11 +66,8 @@ else
         pop esi
 endif
     .endif
-
-
 if 0
     .if ( current_rounding_mode )
-
         .switch current_rounding_mode
         .case rm_downward
             .endc
@@ -90,13 +80,12 @@ if 0
     .endif
 endif
     .return rcx
-
-_fltround endp
+    endp
 
 
 _fltgetrounding proc __ccall
     .return current_rounding_mode
-_fltgetrounding endp
+    endp
 
 
 _fltsetrounding proc __ccall mode:rounding_mode
@@ -106,6 +95,6 @@ endif
     mov eax,current_rounding_mode
     mov current_rounding_mode,ecx
     ret
-_fltsetrounding endp
+    endp
 
     end

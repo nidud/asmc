@@ -47,7 +47,6 @@ XMVectorATan proc XM_CALLCONV V:FXMVECTOR
     _mm_andnot_ps(xmm3, xmm5)
     _mm_or_ps(xmm0, xmm3)
     ret
-
-XMVectorATan endp
+    endp
 
     end

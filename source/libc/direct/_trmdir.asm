@@ -18,7 +18,6 @@ include tchar.inc
 _trmdir proc directory:tstring_t
 ifdef __UNIX__
     .ifsd ( sys_rmdir( ldr(directory) ) < 0 )
-
         neg eax
         _set_errno(eax)
     .endif

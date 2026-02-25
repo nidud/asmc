@@ -33,7 +33,6 @@ else
     movaps  xmm2,xmm5
 endif
     ret
-
-XMMatrixTranspose endp
+    endp
 
     end

@@ -29,7 +29,6 @@ else
     fstp    st(1)
 endif
     ret
-
-fmod endp
+    endp
 
     end

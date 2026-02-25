@@ -11,7 +11,6 @@ include string.inc
     option dotname
 
 memxchg proc uses rbx rdi dst:ptr, src:ptr, count:size_t
-
     ldr     rax,dst
     ldr     rcx,count
     ldr     rdx,src
@@ -37,7 +36,6 @@ memxchg proc uses rbx rdi dst:ptr, src:ptr, count:size_t
     mov     [rdx+rcx],bh
     jnz     .3
     jmp     .2
-
-memxchg endp
+    endp
 
     end

@@ -42,27 +42,22 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     mov rdx,rax
     xor ebx,ebx
     mov [rdx],rbx
-
     xor eax,eax
     .if ( MODULE.wstring )
         mov eax,1
     .endif
-
     .if ( W[rsi] == '"L' )
         mov MODULE.lstring,1
         mov eax,1
         add rsi,1
     .endif
-
     mov rcx,pUnicode
     mov [rcx],al
     mov Unicode,al
     movsb
 
     .while B[rsi]
-
         mov al,[rsi]
-
         .if ( al == BSLASH )
 
             ; escape char \\
@@ -109,21 +104,16 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
               .case '?'             ; Question mark (used to avoid trigraphs)
                 mov B[rdx],0x3F
                 mov eax,33362C22h   ; <",63>
-
                case_format:
-
                 mov rcx,buffer
                 add rcx,1
-
                 .if ( ( rcx == rdi && al == [rdi-1] ) || ( al == [rdi-1] && ah == [rdi-2] ) )
-
                     shr eax,16
                     sub rdi,1
                     stosw
                 .else
                     stosd
                 .endif
-
                 mov eax,222Ch
                 .if ( B[rdi-1] == ' ' )
                     sub rdi,1
@@ -131,7 +121,6 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                 stosb
                 mov [rdi],ah
                .endc
-
               .case 'U'
                 mov hex_count,8 ; takes 8 hexadecimal digits
                 jmp common_hex
@@ -142,10 +131,8 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                 mov hex_count,2
                 common_hex:
                 .if ( islxdigit( [rsi+1] ) )
-
                     xor ecx,ecx
                     .while ( islxdigit( [rsi+1] ) && hex_count )
-
                         inc rsi
                         shl ecx,4
                         and eax,not 30h
@@ -171,11 +158,8 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                     mov B[rdx],'x'
                 .endif
                 .endc
-
               .case '0'
-
                 .if ( !isldigit( [rsi+1] ) )
-
                     lea rax,[rdi-1]
                     .if rax == buffer
                         dec rdi
@@ -202,19 +186,14 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
               .case '7'
               .case '8'
               .case '9'
-
                 sub eax,'0'
                 mov ecx,eax
-
                 .if ( isldigit( [rsi+1] ) )
-
                     inc  rsi
                     sub  eax,'0'
                     imul ecx,ecx,8
                     add  ecx,eax
-
                     .if ( isldigit( [rsi+1] ) )
-
                         inc  rsi
                         sub  eax,'0'
                         imul ecx,ecx,8
@@ -224,24 +203,19 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                 mov [rdi],cl
                 mov [rdx],cl
                .endc
-
               .case '"'         ; <",'"',">
                 mov ah,','
                 mov rcx,buffer
                 add rcx,1
-
                 ; db '"',xx",'"',0
-
                 .if ( ( rcx == rdi && al == [rdi-1] ) || ( al == [rdi-1] && ah == [rdi-2] ) )
                     sub rdi,1
                 .else
                     stosw
                 .endif
-
                 mov eax,0x2C272227
                 stosd
                 mov al,'"'
-
               .default
                 mov [rdi],al
                 mov [rdx],al
@@ -283,41 +257,28 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     .if ( D[rdi-3] == 0x22222C )
         mov B[rdi-3],0
     .endif
-
     mov rax,pStringOffset
     mov [rax],rsi
-
     assume rsi:ptr str_item
-
     mov rax,sbuf
     sub rdx,rax
     mov rbx,rdx
-
     .for ( edi = 0, rsi = MODULE.StrStack : rsi : edi++, rsi = [rsi].next )
-
         mov cl,[rsi].unicode
         mov eax,[rsi].count
-
         .if ( eax >= ebx && cl == Unicode )
-
             mov rdx,[rsi].string
             .if ( eax > ebx )
-
                 add rdx,rax ; to end of string
                 sub rdx,rbx
             .endif
             .new tmp:string_t = rdx
-
             tmemcmp( sbuf, rdx, ebx )
             mov rdx,tmp
-
             .if ( eax == 0 )
-
                 mov eax,[rsi].index
                 sub rdx,[rsi].string
-
                 .if ( edx )
-
                     .if Unicode
                         add edx,edx
                     .endif
@@ -330,7 +291,6 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
             .endif
         .endif
     .endf
-
     tsprintf(lbuf, "D$%04X", edi)
     LclAlloc(&[rbx+str_item+1])
     mov [rax].str_item.count,ebx
@@ -344,15 +304,13 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     mov [rax].str_item.string,rcx
     tmemcpy(rcx, sbuf, &[rbx+1])
     free_line(sbuf)
-   .return 1
-
-ParseCString endp
+    .return 1
+    endp
 
 
     assume rsi:nothing
 
 GetCurrentSegment proc __ccall private buffer:string_t
-
     mov rax,MODULE.currseg
     .if ( rax )
         mov rdx,[rax].asym.name
@@ -368,8 +326,7 @@ GetCurrentSegment proc __ccall private buffer:string_t
         and MODULE.line_flags,NOT LOF_LISTED
     .endif
     ret
-
-GetCurrentSegment endp
+    endp
 
 
 GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
@@ -409,10 +366,8 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     ; proc( "", ( ... ), "", [..+""] )
     ;
     .while ( [rbx].asm_tok.token != T_FINAL )
-
         mov rcx,[rbx].asm_tok.string_ptr
         movzx ecx,W[rcx]
-
         .switch cl
         .case 'L'
             .endc .if ch != '"'
@@ -433,17 +388,13 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endsw
         add rbx,asm_tok
     .endw
-
     .return .if !eax
      xor eax,eax
     .return .if !edx
-
     inc eax
     mov rc,eax
-
     mov edi,MaxLineLength
     lea ecx,[rdi*4+64*2]
-
     .if ( edi > MAX_LINE_LEN )
         inc mem_alloc
         MemAlloc(ecx)
@@ -464,13 +415,10 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov b_seg,rax
     add rax,64
     mov b_label,rax
-
     mov edi,line_item.line
     add rdi,LineStoreCurr
     tstrcpy( b_line, rdi )
-
     .if ( Parse_Pass == PASS_1 )
-
         mov B[rdi],';'
         tstrcmp( rax, [rsi].asm_tok.tokpos )
     .else
@@ -480,12 +428,9 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov lineflags,MODULE.line_flags
 
     .while ( [rbx].asm_tok.token != T_FINAL )
-
         mov rcx,[rbx].asm_tok.tokpos
         mov ax,[rcx]
-
         .if ( al == '"' || ax == '"L' )
-
             mov rdi,rcx
             mov rsi,rcx
             mov q,rbx
@@ -557,21 +502,16 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                         mov rsi,StringOffset
                     .endif
                 .endif
-
                 .if tstrstr( b_line, b_data )
-
                     mov rdi,rax
                     mov ecx,size
                     tstrstart( &[rdi+rcx] )
-
                     .if ( ecx != ',' && ecx != ')' )
                         .if tstrrchr( &[rdi+1], '"' )
                             add rax,1
                         .endif
                     .endif
-
                     .if ( rax )
-
                         tstrcpy( b_data, rax )
                         tstrcpy( rdi, "addr " )
                         tstrcat( rdi, b_label )
@@ -579,9 +519,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     .endif
                 .endif
             .endif
-
             .if ( NewString )
-
                 mov rdx,buffer
                 mov eax,[rdx]
                 and eax,0x00FFFFFF
@@ -601,15 +539,12 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     tsprintf(b_data, rcx, b_label)
                 .endif
             .endif
-
             mov rax,q
             mov rax,[rax].asm_tok.tokpos
             mov di,[rax]
             mov B[rax],0
             mov rax,tokenarray
-
             tstrcat( tstrcat( tstrcpy( buffer, [rax].asm_tok.tokpos ), "addr " ), b_label )
-
             mov rax,q
             mov rax,[rax].asm_tok.tokpos
             mov [rax],di
@@ -620,9 +555,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .endif
                 tstrcat( buffer, rsi )
             .endif
-
             .if ( NewString )
-
                 GetCurrentSegment( b_seg )
                 AddLineQueue( ".data" )
                 .if Unicode
@@ -633,23 +566,17 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 AddLineQueue( b_seg )
                 InsertLineQueue()
             .endif
-
             tstrcpy( CurrSource, buffer )
             Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
-
             mov TokenCount,eax
-
             mov rcx,TokenArray
             sub rbx,tokenarray
             add rbx,rcx
             mov tokenarray,rcx
-
             imul eax,i,asm_tok
             add rax,rcx
             mov q,rax
-
         .elseif ( al == ')' )
-
             .break .if !brackets
             dec brackets
             .break .ifz
@@ -658,7 +585,6 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         add rbx,asm_tok
     .endw
-
     .if ( equal == 0 )
         StoreLine( CurrSource )
     .else
@@ -670,9 +596,8 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
     mov MODULE.line_flags,lineflags
     free_line(buffer)
-   .return( rc )
-
-GenerateCString endp
+    .return( rc )
+    endp
 
 
 ; @CStr() macro
@@ -707,18 +632,13 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
     ; find first instance of macro in line
 
     mov edi,tstricmp( [rbx].string_ptr, "@CStr" )
-
     .if edi
-
         .while ( [rbx].token != T_FINAL )
-
             .if ( [rbx].token == T_ID )
-
                 .break .ifd !tstricmp( [rbx].string_ptr, "@CStr" )
             .endif
             add rbx,asm_tok
         .endw
-
         .if ( [rbx].token == T_FINAL && [rbx+asm_tok].token == T_OP_BRACKET )
             add rbx,asm_tok
         .elseif ( [rbx].token != T_FINAL )
@@ -727,30 +647,24 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
             mov rbx,tokenarray
         .endif
     .endif
-
     .if ( [rbx].token == T_OP_BRACKET &&
           ( [rbx+asm_tok].token == T_NUM && [rbx+asm_tok*2].token == T_CL_BRACKET ) ||
           ( [rbx+asm_tok].token == '-' && [rbx+asm_tok*2].token == T_NUM &&
             [rbx+asm_tok*3].token == T_CL_BRACKET ) )
 
-
         ; return label[-value]
 
         free_line(cursrc)
-
         .new opnd:expr
-
         .if ( [rbx+asm_tok].token == '-' )
             add rbx,asm_tok
         .endif
         add rbx,asm_tok
-
         _atoow( &opnd, [rbx].string_ptr, [rbx].numbase, [rbx].itemlen )
 
         ; the number must be 32-bit
 
         .if ( opnd.h64_l || opnd.h64_h )
-
             asmerr( 2156 )
            .return 0
         .endif
@@ -759,7 +673,6 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
         ;
         mov ecx,opnd.value
         mov rdx,MODULE.StrStack
-
         .if ( [rbx-asm_tok].token == '-' )
             xor eax,eax
             .if ( rdx )
@@ -767,17 +680,14 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
             .endif
             add eax,ecx
         .else
-
             .for ( eax = ecx : eax && rdx : eax--, rdx=[rdx].str_item.next )
             .endf
             .if ( rdx == NULL )
-
                 asmerr( 2156 )
                .return 0
             .endif
             mov eax,[rdx].str_item.index
         .endif
-
         tsprintf( buffer, "D$%04X", eax )
        .return 1
     .endif
@@ -792,20 +702,15 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
         ; - dq @CStr(ID)
 
         .if ( [rbx].token == T_ID && [rbx-asm_tok].token == T_OP_BRACKET )
-
             .if SymFind( [rbx].string_ptr )
-
                 mov rax,[rax].asym.string_ptr
                 .if ( B[rax] == '"' || W[rax] == '"L' )
                     mov rsi,rax
                 .endif
             .endif
         .endif
-
         .if ( B[rsi] == '"' || W[rsi] == '"L' )
-
             ParseCString( dlabel, string, rsi, &StringOffset, &Unicode )
-
             mov esi,eax
             .if edi
                 ;.if ( MODULE.Ofssize != USE64 )
@@ -819,15 +724,11 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                 mov rax,dlabel
                 mov W[rax],' '
             .endif
-
             .if ( esi )
-
                 mov rax,string
                 mov eax,[rax]
                 and eax,0x00FFFFFF
-
                 .if ( eax != '""' )
-
                     .if Unicode
                         lea rdx,@CStr(" %s dw %s,0")
                     .else
@@ -848,9 +749,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                 .if ( MODULE.line_queue.head )
                     RunLineQueue()
                 .endif
-
                 assume rbx:asym_t
-
                 xor esi,esi
                 mov rbx,MODULE.currseg
                 .if rbx
@@ -884,8 +783,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
     .endf
      free_line(cursrc)
     .return( 0 )
-
-CString endp
+    endp
 
 
     ;option cstack:off
@@ -902,7 +800,6 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
     mov opc.llvalue,[rbx].llvalue
     mov opc.hlvalue,[rbx].hlvalue
     mov opc.flags,0
-
     .switch ecx
     .case 4
         .endc .if [rbx].mem_type == MT_REAL4
@@ -934,20 +831,14 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
     .endsw
 
     .for ( edi = 0, rsi = MODULE.FltStack : rsi : edi++, rsi = [rsi].next )
-
         .if ( size == [rsi].count )
-
             mov rax,[rsi].string
             mov edx,opc.h64_l
             mov ecx,opc.h64_h
-
             .if ( edx == [rax+0x08] && ecx == [rax+0x0C] )
-
                 mov edx,opc.value
                 mov ecx,opc.hvalue
-
                 .if ( edx == [rax] && ecx == [rax+0x04] )
-
                     mov eax,[rsi].index
                     tsprintf( buffer, "F$%04X", eax )
                    .return 1
@@ -958,7 +849,6 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
 
     tsprintf( buffer, "F$%04X", edi )
     .if ( Parse_Pass == PASS_1 )
-
         LclAlloc( str_item+16 )
         mov [rax].str_item.index,edi
         mov ecx,size
@@ -969,9 +859,7 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
         lea rcx,[rax+str_item]
         mov [rax].str_item.string,rcx
         tmemcpy(rcx, &opc, 16)
-
         GetCurrentSegment( &segm )
-
         AddLineQueue( ".data" )
         mov ecx,size
         .if ( ecx == 10 )
@@ -997,34 +885,25 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
         InsertLineQueue()
     .endif
     .return( 0 )
-
-CreateFloat ENDP
+    endp
 
 
     assume rsi:nothing, rbx:token_t
 
 TextItemError proc __ccall uses rbx item:token_t
-
     ldr rbx,item
     mov rax,[rbx].string_ptr
-
     .if ( [rbx].token == T_STRING && B[rax] == '<' )
-
         .return( asmerr( 2045 ) )
     .endif
-
     .if ( [rbx].token == T_ID )
-
         SymFind( [rbx].string_ptr )
-
         .if ( rax == NULL || [rax].asym.state == SYM_UNDEFINED )
-
             .return( asmerr( 2006, [rbx].string_ptr ) )
         .endif
     .endif
     .return( asmerr( 2051 ) )
-
-TextItemError endp
+    endp
 
 
 ; CATSTR directive.
@@ -1093,8 +972,6 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         .return( asmerr( 2005, [rdi].asym.name ) )
     .endif
-
-
     mov [rdi].asym.state,SYM_TMACRO
     mov [rdi].asym.isdefined,1
 
@@ -1102,7 +979,6 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     inc esi
     .if ( [rdi].asym.total_size < esi )
-
         mov [rdi].asym.total_size,esi
         mov [rdi].asym.string_ptr,LclAlloc( esi )
     .endif
@@ -1112,19 +988,16 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov sym,rdi
     add rbx,2*asm_tok
     .for ( edx = 2, rdi = [rdi].asym.string_ptr: edx < TokenCount: edx += 2, rbx += 2*asm_tok )
-
         mov ecx,[rbx].stringlen
         mov rsi,[rbx].string_ptr
         rep movsb
     .endf
     mov B[rdi],0
-
     .if ( MODULE.list )
         LstWrite( LSTTYPE_TMACRO, 0, sym )
     .endif
     .return( NOT_ERROR )
-
-CatStrDir endp
+    endp
 
 
 ; used by EQU if the value to be assigned to a symbol is text.
@@ -1154,10 +1027,8 @@ SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:token_t, sym:asym_t, name:
         asmerr( 2005, name )
        .return( NULL )
     .endif
-
     mov [rdi].asym.state,SYM_TMACRO
     mov [rdi].asym.isdefined,1
-
     mov rbx,tokenarray
     .if ( [rbx+2*asm_tok].token == T_STRING && [rbx+2*asm_tok].string_delim == '<' )
 
@@ -1165,7 +1036,6 @@ SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:token_t, sym:asym_t, name:
         ; just ONE literal is allowed
 
         .if ( [rbx+3*asm_tok].token != T_FINAL )
-
             asmerr(2008, [rbx+3*asm_tok].tokpos )
            .return( NULL )
         .endif
@@ -1194,8 +1064,7 @@ SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:token_t, sym:asym_t, name:
     mov rdx,[rdi].asym.string_ptr
     mov B[rdx+rsi],0
     .return( rdi )
-
-SetTextMacro endp
+    endp
 
 
 ; create a (predefined) text macro.
@@ -1212,7 +1081,6 @@ AddPredefinedText proc __ccall name:string_t, value:string_t
     .if !SymFind( name )
         SymCreate( name )
     .endif
-
     mov [rax].asym.state,SYM_TMACRO
     mov [rax].asym.isdefined,1
     mov [rax].asym.predefined,1
@@ -1223,8 +1091,7 @@ AddPredefinedText proc __ccall name:string_t, value:string_t
 
     mov [rax].asym.total_size,0
     ret
-
-AddPredefinedText endp
+    endp
 
 
 ; SubStr()
@@ -1301,7 +1168,6 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         imul ebx,i,asm_tok
         add rbx,tokenarray
-
         mov edi,opndx.value
         .if ( [rbx].token != T_FINAL )
             .return( asmerr(2008, [rbx].string_ptr ) )
@@ -1329,15 +1195,12 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         sub eax,ebx
         lea edi,[rax+1]
     .endif
-
     mov rsi,SymFind( name )
 
     ; if we've never seen it before, put it in
 
     .if ( rsi == NULL )
-
         mov rsi,SymCreate( name )
-
     .elseif( [rsi].asym.state == SYM_UNDEFINED )
 
         ; it was referenced before being defined. This is
@@ -1369,9 +1232,8 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     tmemcpy( [rsi].asym.string_ptr, p, edi )
     mov B[rax+rdi],0
     LstWrite( LSTTYPE_TMACRO, 0, rsi )
-   .return( NOT_ERROR )
-
-SubStrDir endp
+    .return( NOT_ERROR )
+    endp
 
 
 ; SizeStr()
@@ -1381,9 +1243,7 @@ SizeStrDir proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     ldr ecx,i
     ldr rdx,tokenarray
-
     .if ( ecx != 1 )
-
         imul ebx,ecx,asm_tok
         add  rbx,rdx
        .return( asmerr( 2008, [rbx].string_ptr ) )
@@ -1395,15 +1255,12 @@ SizeStrDir proc __ccall uses rbx i:int_t, tokenarray:token_t
     .if ( TokenCount > 3 )
         .return( asmerr(2008, [rbx+3*asm_tok].string_ptr ) )
     .endif
-
     .if ( CreateVariable( [rbx].string_ptr, [rbx+2*asm_tok].stringlen ) )
-
         LstWrite( LSTTYPE_EQUATE, 0, rax )
        .return( NOT_ERROR )
     .endif
     .return( ERROR )
-
-SizeStrDir endp
+    endp
 
 
 ; InStr()
@@ -1420,17 +1277,14 @@ InStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     ldr rdx,tokenarray
 
     mov start,1
-
     imul ebx,ecx,asm_tok
     add rbx,rdx
-
     .if ( ecx != 1 )
         .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
 
     inc i ;; go past INSTR
     add rbx,asm_tok
-
     .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
 
         ; v2.11: flag NOUNDEF added - no forward reference accepted
@@ -1452,13 +1306,11 @@ InStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             asmerr( 7001 )
         .endif
-
         .if ( [rbx].token != T_COMMA )
             .return( asmerr( 2008, [rbx].tokpos ) )
         .endif
         add rbx,asm_tok ;; skip comma
     .endif
-
     .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
         .return( TextItemError( rbx ) )
     .endif
@@ -1469,11 +1321,9 @@ InStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     mov rsi,[rbx].string_ptr
     mov edi,[rbx].stringlen
-
     .if ( start > edi )
         .return( asmerr( 2091, start ) )
     .endif
-
     add rbx,asm_tok
     .if ( [rbx].token != T_COMMA )
         .return( asmerr( 2008, [rbx].tokpos ) )
@@ -1485,31 +1335,24 @@ InStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .if ( [rbx+asm_tok].token != T_FINAL )
         .return( asmerr( 2008, [rbx+asm_tok].string_ptr ) )
     .endif
-
     mov edx,[rbx].stringlen
     xor eax,eax
-
     .if ( start > 0 && edi >= edx && edx )
-
         mov ecx,start
         lea rax,[rsi-1]
         add rcx,rax
-
         .if tstrstr( rcx, [rbx].string_ptr )
-
             sub rax,rsi
             add rax,1
         .endif
     .endif
-
     mov rbx,tokenarray
     .if ( CreateVariable( [rbx].string_ptr, eax ) )
         LstWrite( LSTTYPE_EQUATE, 0, rax )
         .return ( NOT_ERROR )
     .endif
     .return( ERROR )
-
-InStrDir endp
+    endp
 
 
 ; internal @CatStr macro function
@@ -1520,7 +1363,6 @@ CatStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:s
     ldr rdi,mi
     .for ( rsi = [rdi].macro_instance.parm_array,
            rsi = [rsi]: [rdi].macro_instance.parmcnt: [rdi].macro_instance.parmcnt-- )
-
         mov ebx,tstrlen( rsi )
         tmemcpy( buffer, rsi, ebx )
         mov rsi,GetAlignedPointer( rsi, ebx )
@@ -1528,57 +1370,44 @@ CatStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:s
     .endf
     mov rdx,buffer
     mov B[rdx],0
-   .return( NOT_ERROR )
-
-CatStrFunc endp
+    .return( NOT_ERROR )
+    endp
 
 
 ifdef USE_COMALLOC
-
 ComAlloc proto __ccall :string_t, :token_t
-
 ComAllocFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
-
     .if ( ComAlloc( buffer, tokenarray ) == 0 )
-
         mov rdx,mi
         mov rdx,[rdx].macro_instance.parm_array
         tstrcpy( buffer, [rdx] )
     .endif
     .return( NOT_ERROR )
-
-ComAllocFunc endp
-
+    endp
 endif
 
 
 TypeIdFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
-
     .if ( GetTypeId( buffer, tokenarray ) == 0 )
-
         mov rdx,mi
         mov rdx,[rdx].macro_instance.parm_array
         tstrcpy( buffer, [rdx] )
     .endif
     .return( NOT_ERROR )
-
-TypeIdFunc endp
+    endp
 
 
 ; internal @CStr macro function
 ; syntax:  @CStr( "\tstring\n" )
 
 CStringFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
-
     .if ( CString( buffer, tokenarray ) == 0 )
-
         mov rdx,mi
         mov rdx,[rdx].macro_instance.parm_array
         tstrcpy( buffer, [rdx] )
     .endif
     .return( NOT_ERROR )
-
-CStringFunc endp
+    endp
 
 ; convert register to reg8/16/32/64.
 ;
@@ -1595,35 +1424,26 @@ RegFunc proc __ccall private uses rbx mi:ptr macro_instance, buffer:string_t, to
     ldr rcx,mi
     mov rbx,[rcx].macro_instance.parm_array
     mov rcx,[rbx]
-
     .if ( rcx == NULL )
-
         .return( NOT_ERROR )
     .endif
-
     mov eax,TokenCount
     inc eax
     mov i,eax
     mov reg,eax
-
     mov ecx,Tokenize( rcx, eax, tokenarray, TOK_RESCAN )
     .ifd ( EvalOperand( &reg, tokenarray, ecx, &opnd, EXPF_NOUNDEF ) == ERROR )
         .return
     .endif
-
     .if ( opnd.kind != EXPR_REG )
-
         imul ecx,reg,asm_tok
         add rcx,tokenarray
        .return( asmerr(2008, [rcx-asm_tok].asm_tok.string_ptr ) )
     .endif
-
     mov rcx,opnd.base_reg
     mov reg,[rcx].asm_tok.tokval
-
     mov rcx,[rbx+string_t]
     .if ( rcx != NULL )
-
         mov ecx,Tokenize( rcx, i, tokenarray, TOK_RESCAN )
         .ifd ( EvalOperand( &i, tokenarray, ecx, &opnd, EXPF_NOUNDEF ) == ERROR )
             .return
@@ -1638,9 +1458,8 @@ RegFunc proc __ccall private uses rbx mi:ptr macro_instance, buffer:string_t, to
     .endif
     mov ecx,get_register( reg, size )
     GetResWName( ecx, buffer )
-   .return( NOT_ERROR )
-
-RegFunc endp
+    .return( NOT_ERROR )
+    endp
 
 
 ; convert string to a number.
@@ -1655,7 +1474,6 @@ GetNumber2 proc __ccall private string:string_t, pi:ptr int_t, tokenarray:token_
     mov eax,TokenCount
     inc eax
     mov i,eax
-
     mov edx,Tokenize( string, eax, tokenarray, TOK_RESCAN )
     .ifd ( EvalOperand( &i, tokenarray, edx, &opndx, EXPF_NOUNDEF ) == ERROR )
         .return( ERROR )
@@ -1668,7 +1486,7 @@ GetNumber2 proc __ccall private string:string_t, pi:ptr int_t, tokenarray:token_
     mov rcx,pi
     mov eax,opndx.value
     mov [rcx],eax
-   .return( NOT_ERROR )
+    .return( NOT_ERROR )
     endp
 
 
@@ -1689,7 +1507,6 @@ InStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance,
     mov [rdi],ax
     mov rsi,[rcx].macro_instance.parm_array
     mov rbx,[rsi]
-
     .if ( rbx )
         .ifd ( GetNumber2( rbx, &pos, tokenarray ) == ERROR )
             .return( ERROR )
@@ -1710,12 +1527,10 @@ InStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance,
     ; v2.08: if() added, empty searchstr is to return 0
     mov rdx,[rsi+size_t*2]
     .if ( B[rdx] != 0 )
-
         mov ecx,pos
         add rcx,rbx
         dec rcx
         .if tstrstr( rcx, rdx )
-
             sub rax,rbx
             lea rcx,[rax+1]
 ifdef _WIN64
@@ -1727,8 +1542,7 @@ endif
         .endif
     .endif
     .return( NOT_ERROR )
-
-InStrFunc endp
+    endp
 
 
 ; internal @SizeStr macro function
@@ -1740,10 +1554,8 @@ SizeStrFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenar
     ldr rcx,mi
     mov rdx,[rcx].macro_instance.parm_array
     mov rcx,[rdx]
-
     .if ( rcx )
         mov ecx,tstrlen( rcx )
-
 ifdef _WIN64
         myltoa( rcx, buffer, MODULE.radix, FALSE, TRUE )
 else
@@ -1751,14 +1563,12 @@ else
         myltoa( edx::ecx, buffer, MODULE.radix, FALSE, TRUE )
 endif
     .else
-
         mov rdx,buffer
         mov eax,'0'
         mov [rdx],ax
     .endif
     .return( NOT_ERROR )
-
-SizeStrFunc endp
+    endp
 
 
 ; internal @SubStr macro function
@@ -1772,9 +1582,7 @@ SubStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:s
     ldr rcx,mi
     mov rsi,[rcx].macro_instance.parm_array
     mov rdi,[rsi]
-
     .return .ifd ( GetNumber2( [rsi+size_t], &pos, tokenarray ) == ERROR )
-
     .if ( pos <= 0 )
 
         ; Masm doesn't check if index is < 0;
@@ -1784,23 +1592,18 @@ SubStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:s
         .return( asmerr( 2091, pos ) ) .if ( pos )
         mov pos,1
     .endif
-
     mov ebx,tstrlen( rdi )
     .return( asmerr( 2091, pos ) ) .if ( pos > ebx )
-
     sub ebx,pos
     inc ebx
     mov rdi,[rsi+size_t*2]
-
     .if ( rdi )
-
         .new sizereq:int_t
         .return .ifd ( GetNumber2( rdi, &sizereq, tokenarray ) == ERROR )
         .return( asmerr( 2092 ) ) .if ( sizereq < 0 )
         .return( asmerr( 2093 ) ) .if ( sizereq > ebx )
         mov ebx,sizereq
     .endif
-
     mov rdi,buffer
     mov ecx,ebx
     mov eax,pos
@@ -1808,10 +1611,8 @@ SubStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:s
     lea rsi,[rax-1]
     rep movsb
     mov B[rdi],0
-
-   .return( NOT_ERROR )
-
-SubStrFunc endp
+    .return( NOT_ERROR )
+    endp
 
 
 ; string macro initialization
@@ -1820,11 +1621,7 @@ SubStrFunc endp
     assume rdi:asym_t, rsi:macro_t
 
 StringInit proc __ccall uses rsi rdi
-
 ifdef USE_COMALLOC
-
-    ; add @ComAlloc() macro func
-
     mov rdi,CreateMacro( "@ComAlloc" )
     mov [rdi].isdefined,1
     mov [rdi].predefined,1
@@ -1834,10 +1631,7 @@ ifdef USE_COMALLOC
     mov [rsi].parmcnt,3
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 3 )
     mov [rax].mparm_list.required,TRUE
-
 endif
-
-    ; add typeid() macro func
 
     mov rdi,CreateMacro( "typeid" )
     mov [rdi].isdefined,1
@@ -1847,8 +1641,6 @@ endif
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,2
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
-
-    ;; add @CStr() macro func
 
     mov rdi,CreateMacro( "@CStr" )
     mov [rdi].isdefined,1
@@ -1860,8 +1652,6 @@ endif
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
     mov [rax].mparm_list.required,TRUE
 
-    ;; add @Reg() macro func
-
     mov rdi,CreateMacro( "@Reg" )
     mov [rdi].isdefined,1
     mov [rdi].predefined,1
@@ -1872,8 +1662,6 @@ endif
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
     mov [rax].mparm_list.required,TRUE
 
-    ;; add @CatStr() macro func
-
     mov rdi,CreateMacro( "@CatStr" )
     mov [rdi].isdefined,1
     mov [rdi].predefined,1
@@ -1883,8 +1671,6 @@ endif
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,1
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
-
-    ;; add @InStr() macro func
 
     mov rdi,CreateMacro( "@InStr" )
     mov [rdi].isdefined,1
@@ -1898,8 +1684,6 @@ endif
     mov [rax].mparm_list[mparm_list].required,TRUE
     mov [rax].mparm_list[mparm_list*2].required,TRUE
 
-    ;; add @SizeStr() macro func
-
     mov rdi,CreateMacro( "@SizeStr" )
     mov [rdi].isdefined,1
     mov [rdi].predefined,1
@@ -1908,8 +1692,6 @@ endif
     mov rsi,[rdi].macroinfo
     mov [rsi].parmcnt,1
     mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
-
-    ;; add @SubStr() macro func
 
     mov rdi,CreateMacro( "@SubStr" )
     mov [rdi].isdefined,1
@@ -1923,7 +1705,6 @@ endif
     mov [rax].mparm_list.required,TRUE
     mov [rax].mparm_list[mparm_list].required,TRUE
     ret
-
-StringInit endp
+    endp
 
     end

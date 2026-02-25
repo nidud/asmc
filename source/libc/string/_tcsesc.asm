@@ -14,16 +14,12 @@ include tchar.inc
 .code
 
 _tcsesc proc uses rsi rdi buffer:tstring_t, string:tstring_t
-
     ldr rsi,string
     ldr rdi,buffer
-
     xor eax,eax
     .while ( tchar_t ptr [rsi] )
-
         _tlodsb
         .if ( eax == BSLASH )   ; escape char ?
-
             xor ecx,ecx
             _tlodsb
             .switch eax
@@ -123,7 +119,6 @@ ifdef _UNICODE
     shr eax,1
 endif
     ret
-
-_tcsesc endp
+    endp
 
     end

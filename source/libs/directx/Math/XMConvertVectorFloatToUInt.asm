@@ -53,7 +53,6 @@ XMConvertVectorFloatToUInt proc XM_CALLCONV VFloat:FXMVECTOR, MulExponent:uint32
     ;;
     _mm_or_ps(xmm0, xmm4)
     ret
-
-XMConvertVectorFloatToUInt endp
+    endp
 
     end

@@ -263,6 +263,9 @@ endif
             mov CodeInfo.flags,0
             mov CodeInfo.mem_type,MT_EMPTY
             idata_fixup( &CodeInfo, 0, &opndx )
+            .if ( MODULE.start_fixup )
+                FixupRelease( MODULE.start_fixup )
+            .endif
             mov MODULE.start_fixup,CodeInfo.opnd[0].InsFixup
             mov MODULE.start_displ,opndx.value
         .else

@@ -495,6 +495,7 @@ omf_write_ledata proc fastcall private uses rsi rdi rbx s:asym_t
 
             omf_write_fixupp( rbx, 0 )
             omf_write_fixupp( rbx, 1 )
+            FixupRelease( [rsi].seg_info.head )
             mov [rsi].seg_info.head,NULL
             mov [rsi].seg_info.tail,NULL
         .endif
@@ -1735,6 +1736,10 @@ endif
         omf_write_debug_tables()
     .endif
     omf_write_modend( MODULE.start_fixup, MODULE.start_displ )
+    .if ( MODULE.start_fixup ) ; v2.19
+        FixupRelease( MODULE.start_fixup )
+        mov MODULE.start_fixup,NULL
+    .endif
 
 if TRUNCATE
 

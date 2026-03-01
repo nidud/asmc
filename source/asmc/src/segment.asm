@@ -1416,6 +1416,20 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
         mov grpdefidx,eax
         mov buffer_size,eax
         mov CV8Label,rax
+        mov MODULE.FixupHeap,rax
+    .else
+        ;
+        ; v2.19: release fixups to heap
+        ;
+        .for ( rdi = SymTables[TAB_SEG].head : rdi : rdi = [rdi].asym.next )
+            mov rbx,[rdi].asym.seginfo
+            .if ( [rbx].seg_info.head )
+                FixupRelease( [rbx].seg_info.head )
+                xor eax,eax
+                mov [rbx].seg_info.head,rax
+                mov [rbx].seg_info.tail,rax
+            .endif
+        .endf
     .endif
 
     ; alloc a buffer for the contents

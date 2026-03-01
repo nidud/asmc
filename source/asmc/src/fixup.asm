@@ -42,7 +42,17 @@ extern SegOverride:asym_t
 CreateFixup proc __ccall uses rsi rdi rbx sym:asym_t, type:fixup_types, options:fixup_options
 
     ldr rsi,sym
-    mov rbx,LclAlloc( sizeof( fixup ) )
+
+    mov rbx,MODULE.FixupHeap
+    .if ( rbx )
+        mov MODULE.FixupHeap,[rbx].nextrlc
+        xor eax,eax
+        mov [rbx].nextrlc,rax
+        mov [rbx].nextbp,rax
+        mov [rbx].flags,ax
+    .else
+        mov rbx,LclAlloc( sizeof( fixup ) )
+    .endif
 
     ; add the fixup to the symbol's linked list (used for backpatch)
     ; this is done for pass 1 only.
@@ -73,7 +83,6 @@ CreateFixup proc __ccall uses rsi rdi rbx sym:asym_t, type:fixup_types, options:
     mov [rbx].offs,0
     mov [rbx].type,type
     mov [rbx].options,options
-    mov [rbx].flags,0
     mov [rbx].frame_type,Frame_Type     ; this is just a guess
     mov [rbx].frame_datum,Frame_Datum
     mov [rbx].def_seg,CurrSeg           ; may be NULL (END directive)
@@ -81,6 +90,16 @@ CreateFixup proc __ccall uses rsi rdi rbx sym:asym_t, type:fixup_types, options:
     .return( rbx )
     endp
 
+
+FixupRelease proc fastcall pf:ptr fixup
+    .if ( rcx )
+        .for ( rdx = rcx : [rdx].fixup.nextrlc : rdx = [rdx].fixup.nextrlc )
+        .endf
+        mov [rdx].fixup.nextrlc,MODULE.FixupHeap
+        mov MODULE.FixupHeap,rcx
+    .endif
+    ret
+    endp
 
 ;
 ; Set global variables Frame_Type and Frame_Datum.

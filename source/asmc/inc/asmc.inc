@@ -821,6 +821,7 @@ define PE_DLL               0x04
      start_label            asym_t ?        ; non-OMF only: start label
     ends
     StrStack                stritem_t ?     ; v2.20 String stack
+    FixupHeap               ptr fixup ?     ; v2.19: stack of free <struct fixup>-items
     HllStack                hllitem_t ?     ; for .WHILE, .IF, .REPEAT
     HllFree                 hllitem_t ?     ; v2.06: stack of free <struct hll>-items
     ComStack                ptr com_item ?  ; v2.27: .CLASSDEF, .COMDEF, .ENDS

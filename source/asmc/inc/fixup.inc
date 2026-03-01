@@ -97,6 +97,7 @@ CreateFixup	proto __ccall :asym_t, :fixup_types, :fixup_options
 SetFixupFrame	proto __ccall :asym_t, :char_t
 store_fixup	proto __ccall :ptr fixup, :asym_t, :ptr int_t
 BackPatch	proto fastcall :asym_t
+FixupRelease	proto fastcall :ptr fixup
 
 endif
 .pragma list(pop)

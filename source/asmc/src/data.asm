@@ -1318,8 +1318,7 @@ endif
                 .endif
                 ; uses Frame and Frame_Datum
                 CreateFixup( opndx.sym, fixup_type, OPTJ_NONE )
-                .if ( opndx.curpc_used && [rax].fixup.def_seg &&
-                    ( MODULE.plt || MODULE.pic || MODULE.fPIC ) )
+                .if ( opndx.curpc_used && [rax].fixup.def_seg )
                     mov [rax].fixup.curpc_used,1
                 .endif
             .endif

@@ -314,9 +314,7 @@ knownstructs string_t \
 .code
 
 write_logo proc
-
     .if ( !banner )
-
         mov banner,1
         printf(
             "Asmc C Include File Translator %d.%d\n"
@@ -324,29 +322,23 @@ write_logo proc
             __H2INC__ / 100, __H2INC__ mod 100)
     .endif
     ret
-
-write_logo endp
+    endp
 
 
 write_usage proc
-
     write_logo()
     printf("Usage: h2inc [ options ] filename\n")
     ret
-
-write_usage endp
+    endp
 
 
 exit_usage proc
-
     write_usage()
     exit(0)
-
-exit_usage endp
+    endp
 
 
 exit_options proc
-
     write_usage()
     printf(
         "\n"
@@ -372,22 +364,16 @@ exit_options proc
         "Note that \"quotes\" are stripped so use -r\"\\\"old\\\"\" \"\\\"new\\\"\" to replace\n"
         "actual \"quoted strings\".\n\n"
         )
-
     exit(0)
-
-exit_options endp
+    endp
 
 
 strtrim proc string:string_t
-
     .if strlen(string)
-
         lea ecx,[rax-1]
         mov edx,eax
         add rcx,string
-
         .while islspace([rcx])
-
             mov [rcx],ah
             dec rcx
             dec edx
@@ -395,15 +381,12 @@ strtrim proc string:string_t
         mov eax,edx
     .endif
     ret
-
-strtrim endp
+    endp
 
 
 prevtok proc string:string_t, start:string_t
-
     ldr rcx,string
     ldr rdx,start
-
     .while ( rcx >= rdx && !isclabel([rcx]) )
         dec rcx
     .endw
@@ -413,15 +396,12 @@ prevtok proc string:string_t, start:string_t
     inc  rcx
     xchg rcx,rax
     ret
-
-prevtok endp
+    endp
 
 
 prevtokz proc string:string_t, start:string_t
-
     ldr rcx,string
     ldr rdx,start
-
     .while ( rcx >= rdx && !isclabel([rcx]) )
         mov [rcx],ah
         dec rcx
@@ -432,12 +412,10 @@ prevtokz proc string:string_t, start:string_t
     inc  rcx
     xchg rcx,rax
     ret
-
-prevtokz endp
+    endp
 
 
 nexttok proc string:string_t
-
     ldr rcx,string
     .repeat
         .if ( isclabel([rcx]) )
@@ -453,12 +431,10 @@ nexttok proc string:string_t
     .until 1
     ltokstart(rcx)
     ret
-
-nexttok endp
+    endp
 
 
 toksize proc string:string_t
-
     ldr rcx,string
     mov rdx,rcx
     .if ( isclabel0([rcx]) )
@@ -470,8 +446,7 @@ toksize proc string:string_t
     xchg rax,rcx
     sub rax,rdx
     ret
-
-toksize endp
+    endp
 
 
 stripval proc uses rbx string:string_t
@@ -480,7 +455,6 @@ stripval proc uses rbx string:string_t
 
     ldr rbx,string
     .while [rbx]
-
         .while !isldigit([rbx])
             mov rbx,nexttok(rbx)
             .break(1) .if !cl
@@ -489,12 +463,10 @@ stripval proc uses rbx string:string_t
         .if ( [rbx] == 'x' )
             inc rbx
         .endif
-
         .for ( : islxdigit([rbx]) : rbx++ )
         .endf
         .break .if !al
         .continue .if !islalpha([rbx])
-
         mov rcx,rbx
         .for ( : islalnum([rbx]) : rbx++ )
         .endf
@@ -503,18 +475,14 @@ stripval proc uses rbx string:string_t
         strcpy(rcx, rdx)
     .endw
     .return(string)
-
-stripval endp
+    endp
 
 
 ; #define CN_EVENT ((UINT)(-2))
 
 striptype proc uses rbx string:string_t
-
     ldr rbx,string
-
     .while 1
-
         .break .if !strchr(rbx, '(')
         .ifd ( ltokstartc(&[rax+1]) != '(' )
             mov rbx,rcx
@@ -526,7 +494,6 @@ striptype proc uses rbx string:string_t
             mov rbx,rax
             mov rdx,ltokstart(&[rax+1])
         .endif
-
         .ifd ( !isclabel0([rdx]) )
             mov rbx,rdx
            .continue
@@ -552,27 +519,19 @@ striptype proc uses rbx string:string_t
         strcpy(rcx, rdx)
     .endw
     ret
-
-striptype endp
+    endp
 
 
 wordxchg proc uses rbx r12 r13 r14 string:string_t, token:string_t, new:string_t
-
    .new retval:int_t = 0
-
     ldr r12,string
     ldr rcx,token
     mov r14,tempbuf
     mov ebx,strlen(rcx)
-
     .while strstr(r12, token)
-
         mov r13,rax
-
         .ifd !isclabel([r13-1])
-
             .ifd !isclabel([r13+rbx])
-
                 inc retval
                 mov [r13],0
                 strcpy(r12, strcat(strcat(strcpy(r14, r12), new), &[r13+rbx]))
@@ -581,41 +540,31 @@ wordxchg proc uses rbx r12 r13 r14 string:string_t, token:string_t, new:string_t
         lea r12,[r13+rbx]
     .endw
     .return(retval)
-
-wordxchg endp
+    endp
 
 
 strxchg proc uses rbx r12 r13 r14 r15 string:string_t, token:string_t, new:string_t
-
     ldr r12,string
     ldr r14,token
     ldr r15,new
     mov ebx,strlen(r14)
-
     .while strstr(r12, r14)
-
         mov r13,rax
         strcpy(tempbuf, &[r13+rbx])
         lea r12,[r13+strlen(strcpy(r13, r15))]
         strcat(r13, tempbuf)
     .endw
     ret
-
-strxchg endp
+    endp
 
 
 arg_option_f proc uses rbx r12 r13 r14 string:string_t
-
     ldr r13,string
-
     .for ( r12d = 0 : r12d < MAXARGS : r12d++ )
-
         lea rax,option_f
         mov r14,[rax+r12*8]
-
         .break .if !r14
         .continue .if !strstr(r13, r14)
-
         mov rbx,rax
         mov rdx,strlen(r14)
         .if ( [rbx-1] == ' ' )
@@ -624,12 +573,9 @@ arg_option_f proc uses rbx r12 r13 r14 string:string_t
         .endif
         add rdx,rbx
         mov rdx,ltokstart(rdx)
-
         mov al,[rdx]
         .if ( al == '(' )
-
             .for ( ecx = 0 : al : rdx++, al = [rdx] )
-
                 .if ( al == '(' )
                     inc ecx
                 .elseif ( al == ')' )
@@ -644,107 +590,79 @@ arg_option_f proc uses rbx r12 r13 r14 string:string_t
         strcpy(rbx, rdx)
     .endf
     ret
-
-arg_option_f endp
+    endp
 
 
 arg_option_s proc uses rbx r12 string:string_t
-
     ldr r12,string
-
     .for ( ebx = 0 : ebx < MAXARGS : ebx++ )
-
         lea rax,option_s
         mov rcx,[rax+rbx*8]
-
         .break .if !rcx
-
         strxchg(r12, rcx, "")
     .endf
     ret
-
-arg_option_s endp
+    endp
 
 
 arg_option_w proc uses rbx r12 string:string_t
-
     ldr r12,string
-
     .for ( ebx = 0 : ebx < MAXARGS : ebx++ )
-
         lea rax,option_w
         mov rcx,[rax+rbx*8]
-
         .break .if !rcx
-
         wordxchg(r12, rcx, "")
     .endf
     ret
-
-arg_option_w endp
+    endp
 
 
 arg_option_r proc uses rbx r12 string:string_t
-
     ldr r12,string
     .for ( ebx = 0 : ebx < MAXARGS : ebx++ )
-
         lea rax,option_r
         lea rdx,[rbx*8]
         mov rcx,[rax+rdx*2]
-
         .break .if !rcx
         mov rdx,[rax+rdx*2+8]
         strxchg(r12, rcx, rdx)
     .endf
     ret
-
-arg_option_r endp
+    endp
 
 
 arg_option_o proc uses rbx r12 string:string_t
-
     ldr r12,string
     .for ( ebx = 0 : ebx < MAXARGS : ebx++ )
-
         lea rax,option_o
         lea rdx,[rbx*8]
         mov rcx,[rax+rdx*2]
-
         .break .if !rcx
         mov rdx,[rax+rdx*2+8]
         strxchg(r12, rcx, rdx)
     .endf
     ret
-
-arg_option_o endp
+    endp
 
 
 operator proc uses rbx r12 r13 r14 string:string_t, token:string_t, new:string_t
-
     ldr r12,string
     ldr r13,token
     mov ebx,strlen(r13)
-
     .while strstr(r12, r13)
-
         mov [rax],0
         mov r14,ltokstart(&[rax+rbx])
         strtrim(r12)
         strcpy(r12, strcat(strcat(strcpy(tempbuf, r12), new), r14))
     .endw
     ret
-
-operator endp
+    endp
 
 
 convert proc uses rbx string:string_t
-
     ldr rbx,string
-
     striptype(rbx)
     stripval(rbx)
-
     operator(rbx, "<<", " shl ")
     operator(rbx, ">>", " shr ")
     operator(rbx, "==", " eq ")
@@ -761,39 +679,31 @@ convert proc uses rbx string:string_t
     operator(rbx, "!",  " not ")
     operator(rbx, "~",  " not ")
     arg_option_o(rbx)
-   .return(rbx)
-
-convert endp
+    .return(rbx)
+    endp
 
 
 oprintf proc format:string_t, args:vararg
-
     mov cblank,0
     .if ( cflags & FL_STBUF )
-
         mov rcx,strlen(filebuf)
         add rcx,filebuf
         .return vsprintf(rcx, format, &args)
     .endif
-
      mov cstart,1
     .return vfprintf(outfile, format, &args)
-
-oprintf endp
+    endp
 
 
 error proc string:string_t
-
     ldr rcx,string
     inc ercount
     printf("%s(%d) : error : %s\n", curfile, curline, rcx)
     ret
-
-error endp
+    endp
 
 
 errexit proc string:string_t
-
     .if ( srcfile )
         fclose(srcfile)
     .endif
@@ -803,36 +713,26 @@ errexit proc string:string_t
     printf("%s(%d) : fatal error : %s\n", curfile, curline, string)
     exit(1)
     ret
-
-errexit endp
+    endp
 
 
 eofexit proc
-
     .if ( cflags & FL_STBUF )
-
         fprintf(outfile, filebuf)
     .endif
     longjmp(&jmpenv, 1)
     ret
-
-eofexit endp
+    endp
 
 
 getline proc uses rbx r12 buffer:string_t
-
    .new comment_section:byte = 0
-
     ldr rbx,buffer
-
     .while 1
-
         .if !fgets(rbx, MAXLINE, srcfile)
             eofexit()
         .endif
-
         inc curline
-
         .if comment_section
             .if strstr(rbx, "*/")
                 strcpy(rbx, &[rax+2])
@@ -870,65 +770,50 @@ getline proc uses rbx r12 buffer:string_t
         .return rbx
     .endw
     ret
-
-getline endp
+    endp
 
 
 concat proc uses rbx r12 string:string_t
-
     ldr rbx,string
     lea r12,[rbx+strtrim(rbx)+1]
     mov [r12-1],' '
     getline(r12)
     strcpy(r12, ltokstart(r12))
-   .return(rbx)
-
-concat endp
+    .return(rbx)
+    endp
 
 
 concatf proc uses rbx string:string_t
-
     ldr rbx,string
     lea rcx,[rbx+strlen(rbx)-1]
-
     .if ( [rcx] == '\' )
-
         .while 1
-
             mov [rcx],0
             lea rcx,[rbx+strlen(concat(rbx))-1]
             .break .if ( [rcx] != '\' )
         .endw
     .endif
     .return(rbx)
-
-concatf endp
+    endp
 
 
 tokenize proc uses rbx r12 string:string_t
-
     ldr r12,string
-
     .while 1
-
         mov rbx,ltokstart(r12)
         mov tokpos,rbx
-
         .if ( [rbx] == 0 )
             mov csize,0
             mov ctoken,T_BLANK
            .return(T_BLANK)
         .endif
-
         .if ( [rbx] == '#' )
-
             inc rbx
             mov rdx,ltokstart(rbx)
             .if ( rdx != rbx )
                 strcpy(rbx, rdx)
             .endif
             dec rbx
-
             mov eax,[rbx+1]
             bswap eax
             .switch eax
@@ -978,13 +863,11 @@ tokenize proc uses rbx r12 string:string_t
                 .return(T_IF)
             .endsw
         .endif
-
         .if ( byte ptr [rbx] == '}' )
             mov csize,1
             mov ctoken,T_ENDS
             .return(T_ENDS)
         .endif
-
         .switch toksize(rbx)
         .case 4
             mov eax,[rbx]
@@ -1066,18 +949,14 @@ tokenize proc uses rbx r12 string:string_t
        .return(T_ID)
     .endw
     ret
-
-tokenize endp
+    endp
 
 
 parse_blank proc
-
     .if ( cstart )
         inc cblank
         .if ( cblank == 1 )
-
             .if ( cflags & FL_STBUF )
-
                 strcat(filebuf, "\n")
             .else
                 fprintf(outfile, "\n")
@@ -1085,14 +964,12 @@ parse_blank proc
         .endif
     .endif
     ret
-
-parse_blank endp
+    endp
 
 
 ; #[else]if[n]def
 
 parse_if proc uses rbx
-
     mov rbx,tokpos
     .if !memcmp(rbx, "#ifdef UNICODE", 14)
         oprintf("ifdef _UNICODE\n")
@@ -1102,31 +979,26 @@ parse_if proc uses rbx
     convert(concatf(rbx))
     oprintf("%s\n", &[rbx+1])
     ret
-
-parse_if endp
+    endp
 
 
 ; #else/#endif/#undef
 
 parse_else proc
-
     .if ( ctoken == T_ENDIF )
         mov unicode,0
     .endif
     mov rdx,tokpos
     oprintf("%s\n", &[rdx+1])
     ret
-
-parse_else endp
+    endp
 
 
 ; #error
 
 parse_error proc uses rbx
-
     mov rbx,tokpos
     .if strchr(rbx, '<')
-
         lea rdx,[rax+1]
         strcpy(rax, rdx)
         .if strchr(rbx, '>')
@@ -1136,43 +1008,35 @@ parse_error proc uses rbx
     .endif
     oprintf(".err <%s>\n", &[rbx+7])
     ret
-
-parse_error endp
+    endp
 
 
 ; #pragma
 
 parse_pragma proc uses rbx
-
     mov rbx,tokpos
     convert(concatf(rbx))
     oprintf(";.%s\n", &[rbx+1])
     ret
-
-parse_pragma endp
+    endp
 
 
 ; #include <name.h>
 
 stripchr proc string:string_t, chr:int_t
-
     ldr rcx,string
     ldr edx,chr
-
     .if strchr(rcx, edx)
         lea rdx,[rax+1]
         strcpy(rax, rdx)
     .endif
     ret
-
-stripchr endp
+    endp
 
 
 parse_include proc uses rbx
-
     mov rbx,tokpos
     mov rbx,ltokstart(&[rbx+8])
-
     .if stripchr(rbx, '<')
         stripchr(rbx, '>')
     .elseif stripchr(rbx, '"')
@@ -1181,20 +1045,16 @@ parse_include proc uses rbx
     .if strrchr(rbx, '.')
         mov [rax],0
     .endif
-
     strcat(rbx, ".inc")
     oprintf("include %s\n", rbx)
     ret
-
-parse_include endp
+    endp
 
 
 exit_macro proc string:string_t
-
     ldr rcx,string
     .return oprintf("  exitm<%s>\n  endm\n", convert(rcx))
-
-exit_macro endp
+    endp
 
 
 ; guess:
@@ -1202,16 +1062,12 @@ exit_macro endp
 ; #define n(x)  - macro
 
 parse_define proc uses rbx r12 r13 r14
-
     mov r13,tokpos
     mov r12,ltokstart(&[r13+7])
     mov r14,nexttok(rax)
     mov al,[r14-1]
-
     .if ( cl != '(' || ( cl == '(' && ( al == ' ' || al == 9 ) ) )
-
         convert(concatf(r13))
-
         xor ebx,ebx
         mov eax,[r14]
         movzx ecx,al
@@ -1229,46 +1085,35 @@ parse_define proc uses rbx r12 r13 r14
         oprintf("%s\n", &[r13+1])
        .return
     .endif
-
     mov [r14],0
     inc r14
     xor ebx,ebx
-
     .if strchr(r14, ')')
         mov [rax],0
         mov rbx,ltokstart(&[rax+1])
     .endif
-
     oprintf("%s macro %s\n", r12, r14)
-
     .if ( !rbx )
         .return error(r14)
     .endif
     strcpy(r13, rbx)
-
     .while ( [r13] == '\' )
         getline(r13)
         mov r13,ltokstart(r13)
     .endw
-
     .if ( [r13] == 0 )
         .return exit_macro(r13)
     .endif
-
-
     ;
     ; macro(arg1, \
     ;       ..., \
     ;       argn)
     ;
     .while 1
-
         .break .if !strrchr(r13, ',')
-
         lea r14,[rax+1]
         .break .ifd ltokstartc(r14) != '\'
         .break .if ( [rcx+1] != 0 )
-
         mov [r14],0
         concat(r13)
     .endw
@@ -1298,33 +1143,27 @@ parse_define proc uses rbx r12 r13 r14
         .endif
         .return exit_macro(r13)
     .endif
-
     .repeat
-
         mov [r13+rax-1],0
         strtrim(r13)
         convert(r13)
         oprintf("    %s\n", ltokstart(r13))
     .until ( [r13+strlen(getline(r13))-1] != '\' )
-
     convert(r13)
     oprintf("    %s\n", ltokstart(r13))
-   .return exit_macro("")
-
-parse_define endp
+    .return exit_macro("")
+    endp
 
 
 ; [typedef] enum [name] {
 
 parse_enum proc uses rbx
-
     mov rbx,tokpos
     .if ( !strchr(rbx, '{') )
         concat(rbx)
     .endif
     mov rbx,nexttok(rbx)
     nexttok(rbx)
-
     or cflags,FL_ENUM
     .if ( cl == '{' || [rbx] == '{' ) ; enum { --> } name;
         mov rax,filebuf
@@ -1332,27 +1171,21 @@ parse_enum proc uses rbx
         or cflags,FL_STBUF
        .return
     .endif
-
     .if ( cl == '_' ) ; enum _name { ... } name;
         inc rbx
     .endif
     oprintf(".enum %s\n", rbx)
     ret
-
-parse_enum endp
+    endp
 
 
 ; }[name][, type];
 
 parse_ends proc uses rbx r12
-
     mov r12,tokpos
-
     .if ( cflags & FL_STBUF )
-
         and cflags,not FL_STBUF
         .if ( cflags & FL_ENUM )
-
             and cflags,not FL_ENUM
             mov rbx,nexttok(r12)
             .if toksize(rbx)
@@ -1366,22 +1199,18 @@ parse_ends proc uses rbx r12
         oprintf("}\n")
     .endif
     ret
-
-parse_ends endp
+    endp
 
 
 strip_unsigned proc uses rbx r12 r13 string:string_t
-
     ldr r12,string
     .while strstr(r12, "unsigned")
-
         mov rbx,rax
         mov r13,ltokstart(&[rax+8])
         mov ecx,toksize(rax)
         mov eax,[r13]
         add r13,rcx
         lea rdx,@CStr("dword")
-
         .switch ecx
         .case 7
             .if eax == 'ni__'
@@ -1419,7 +1248,6 @@ strip_unsigned proc uses rbx r12 r13 string:string_t
         strcat(rax, r13)
         strcpy(rbx, rax)
     .endw
-
     wordxchg(r12, "long long",   "sqword")
     wordxchg(r12, "__int64",     "sqword")
     wordxchg(r12, "long",        "sdword")
@@ -1433,19 +1261,15 @@ strip_unsigned proc uses rbx r12 r13 string:string_t
     wordxchg(r12, "double",      "real8")
     wordxchg(r12, "...",         "vararg")
     ret
-
-strip_unsigned endp
+    endp
 
 
 ; type [*] name
 
 parse_protoarg proc uses rbx r12 arg:string_t
-
     ldr rcx,arg
     mov r12,ltokstart(rcx)
-
     .if ( strchr(r12, '*') )
-
         mov bl,[rax+1]
         oprintf(" :ptr")
         .if ( bl == '*' )
@@ -1453,34 +1277,29 @@ parse_protoarg proc uses rbx r12 arg:string_t
         .endif
        .return( 1 )
     .endif
-
     lea rbx,[r12+strtrim(r12)]
     .if !_stricmp(r12, "void")
         .return( 0 )
     .endif
-
     mov rbx,prevtok(rbx, r12)
     .if ( rbx > r12 )
         dec rbx
         mov rbx,prevtokz(rbx, r12)
     .endif
     oprintf(" :%s", rbx)
-   .return( 1 )
-
-parse_protoarg endp
+    .return( 1 )
+    endp
 
 
 ; args );
 
 parse_protoargs proc uses rbx r12 r13 args:string_t, comma:int_t
-
      ldr r12,args
      ldr ebx,comma
      .if !strrchr(r12, ')')
         .return error(r12)
      .endif
      mov [rax],0
-
     .while strchr(r12, '(')
         mov r13,rax
         .for ( rcx = &[rax+1], edx = 1 : [rcx] : rcx++ )
@@ -1500,7 +1319,6 @@ parse_protoargs proc uses rbx r12 r13 args:string_t, comma:int_t
         mov r13,rax
         strcpy(r13, &[rax+6])
     .endw
-
     .while r12
         xor r13d,r13d
         .if strchr(r12, ',')
@@ -1515,19 +1333,16 @@ parse_protoargs proc uses rbx r12 r13 args:string_t, comma:int_t
         mov r12,r13
     .endw
     ret
-
-parse_protoargs endp
+    endp
 
 
 ; name( args );
 
 parse_proto proc uses rbx r12 r13 p:string_t
-
     ldr r12,p
     .if !strrchr(r12, ')')
         .return error(r12)
     .endif
-
     .for ( rax--, edx = 1 : rax > r12 : rax-- )
         .if ( [rax] == ')' )
             inc edx
@@ -1539,40 +1354,32 @@ parse_proto proc uses rbx r12 r13 p:string_t
     .if ( [rax] != '(' )
         .return error(r12)
     .endif
-
     mov [rax],0
     mov rbx,rax
     mov r13,ltokstart(&[rax+1])
-
     oprintf("%s proto", prevtokz(rbx, r12))
-
     .ifd ( strip_unsigned(r13) && option_v )
         oprintf(" %s", option_v)
     .elseif ( option_c )
         oprintf(" %s", option_c)
     .endif
-
     parse_protoargs(r13, 0)
     oprintf("\n")
     ret
-
-parse_proto endp
+    endp
 
 
 ; (name)( args );
 
 parse_callback proc uses rbx r12 p:string_t
-
     ldr rbx,p
     oprintf("CALLBACK(")
-
     .if !strrchr(rbx, '(')
         .return error(rbx)
     .endif
     mov [rax],0
     mov r12,ltokstart(&[rax+1])
     strip_unsigned(r12)
-
     .if !strrchr(rbx, ')')
         .return error(rbx)
     .endif
@@ -1580,45 +1387,34 @@ parse_callback proc uses rbx r12 p:string_t
     parse_protoargs(r12, 1)
     oprintf(")\n")
     ret
-
-parse_callback endp
+    endp
 
 
 concat_line proc uses rbx buffer:string_t
-
     ldr rbx,buffer
     .while !strrchr(rbx, ';')
         concat(rbx)
     .endw
     .return(rbx)
-
-concat_line endp
+    endp
 
 
 parse_id proc uses rbx r12 r13
-
     mov r12,tokpos
-
     .if ( cflags & FL_ENUM )
-
         convert(r12)
         oprintf("%s\n", linebuf)
        .return
     .endif
-
     mov r13,strchr(r12, ';')
     mov rbx,strchr(r12, '(')
     .if ( r13 && rbx )
         .return parse_proto(r12)
     .endif
-
     nexttok(r12)
-
     .if ( !r13 && !rbx && !cl ) ; macro ?
-
         fgets(tempbuf, MAXLINE, srcfile)
         .if ( !rax || [rax] == 10 )
-
             inc curline
             .if ( option_m == 0 )
                 oprintf("%s\n\n", linebuf)
@@ -1628,9 +1424,7 @@ parse_id proc uses rbx r12 r13
         tokenize(concat_line(strcpy(linebuf, tempbuf)))
        .return parseline()
     .endif
-
     .if ( !r13 && rbx )
-
         .if strrchr(r12, ')')
             .return .if ( [rax+1] == 0 )
         .endif
@@ -1641,12 +1435,10 @@ parse_id proc uses rbx r12 r13
         .return parse_proto(r12)
     .endif
     .return error(r12)
-
-parse_id endp
+    endp
 
 
 parse_define_guide proc uses rbx
-
     mov rbx,tokpos
     .if strrchr(rbx, ';')
         mov [rax],0
@@ -1657,15 +1449,13 @@ parse_define_guide proc uses rbx
     .endif
     oprintf("%s\n", rbx)
     ret
-
-parse_define_guide endp
+    endp
 
 
 ; type name[, name2, ...];
 ; type (*name)(args);
 
 is_struct proc uses rbx r12 r13 string:string_t
-
     ldr r12,string
     lea r13,knownstructs
     .while 1
@@ -1685,14 +1475,11 @@ is_struct proc uses rbx r12 r13 string:string_t
         .endif
     .endf
     .return(0)
-
-is_struct endp
+    endp
 
 
 push_struct proc uses rbx name:string_t
-
     ldr rbx,name
-
     .return .if ( [rbx] == 0 )
     .if ( lstructs >= MAXLSTRUCTS )
         .return error("buffer overflow: to many local structures")
@@ -1704,12 +1491,10 @@ push_struct proc uses rbx name:string_t
     mov [rdx+rcx*8],rax
     inc lstructs
     ret
-
-push_struct endp
+    endp
 
 
 get_resword proc uses rbx r12 r13 string:string_t
-
     ldr r12,string
     mov ebx,strlen(r12)
     .if ( eax > 8 || eax < 2 )
@@ -1725,30 +1510,22 @@ get_resword proc uses rbx r12 r13 string:string_t
         .endif
     .endw
     .return(r12)
-
-get_resword endp
+    endp
 
 
 parse_struct_member proc uses rbx r12 r13 r14
-
    .new p:string_t
    .new q:string_t = tokpos
    .new n:int_t
-
     mov r12d,strip_unsigned(q)
-
     .if strchr(q, '(')
-
         .if ( [ltokstart(&[rax+1])] == '*' )
-
             .if strchr(rax, ')')
-
                 lea rbx,[rax+1]
                 mov p,prevtokz(rax, q)
                 movzx r13d,clevel
                 dec r13d
                 .if ( cflags & FL_RECORD )
-
                     dec r13d
                     dec clevel
                     and cflags,not FL_RECORD
@@ -1756,7 +1533,6 @@ parse_struct_member proc uses rbx r12 r13 r14
                 .endif
                 lea ecx,[r13-23]
                 oprintf("%*s%*s proc", r13d, "", ecx, p)
-
                 .ifd ( r12d && option_v )
                     oprintf(" %s", option_v)
                 .elseif ( option_c )
@@ -1774,7 +1550,6 @@ parse_struct_member proc uses rbx r12 r13 r14
             .endif
         .endif
     .endif
-
     lea r12,@CStr("ptr ")
     xor ebx,ebx
     xor r13d,r13d
@@ -1782,23 +1557,16 @@ parse_struct_member proc uses rbx r12 r13 r14
         mov [rax],0
     .endif
     mov r14,rax
-
     .if strchr(q, '[')
-
         mov [rax],0
         mov rbx,ltokstart(&[rax+1])
-
         .if strchr(rbx, ']')
-
             mov [rax],0
             .if [rax+1] == '['
-
                 mov word ptr [rax],' *'
                 .if strchr(rax, ']')
-
                     mov [rax],0
                     .if [rax+1] == '['
-
                         mov word ptr [rax],' *'
                         .if strchr(rax, ']')
                             mov [rax],0
@@ -1812,14 +1580,11 @@ parse_struct_member proc uses rbx r12 r13 r14
         add rax,q
         dec rax
         mov p,rax
-
     .elseif strrchr(q, ':')
-
         mov [rax],0
         lea rcx,[rax-1]
         mov p,rcx
         mov r13,ltokstart(&[rax+1])
-
         .if strchr(r13, ';')
             mov [rax],0
         .endif
@@ -1829,28 +1594,21 @@ parse_struct_member proc uses rbx r12 r13 r14
         mov p,strrchr(q, ';')
     .endif
     mov p,prevtokz(p, q)
-
     .if ( r13 )
-
         .if !( cflags & FL_RECORD )
-
             movzx ecx,clevel
             inc clevel
             or cflags,FL_RECORD
             dec ecx
             oprintf("%*s\n", ecx, "record")
         .endif
-
     .elseif ( cflags & FL_RECORD )
-
         dec clevel
         and cflags,not FL_RECORD
         movzx ecx,clevel
         dec ecx
         oprintf("%*s\n", ecx, "ends")
     .endif
-
-
     mov rdx,get_resword(p)
     movzx eax,clevel
     dec eax
@@ -1858,7 +1616,6 @@ parse_struct_member proc uses rbx r12 r13 r14
     oprintf("%*s%*s ", eax, "", ecx, rdx)
     mov rax,p
     mov [rax],0
-
     ; reduce type to 2: [unsigned] type [*]
     strtrim(q)
     add rax,q
@@ -1869,12 +1626,9 @@ parse_struct_member proc uses rbx r12 r13 r14
             mov q,rax
         .endif
     .endif
-
     .if strchr(p, '*')
-
         mov [rax],0
         .if strtrim(p) == 4
-
             mov rcx,p
             mov eax,[rcx]
             or  eax,0x20202020
@@ -1886,16 +1640,13 @@ parse_struct_member proc uses rbx r12 r13 r14
     .else
         add r12,4
     .endif
-
     .if ( p > q )
         mov q,p
     .endif
-
     .new isstruct:int_t = 0
     .if ( [r12] == 0 )
         mov isstruct,is_struct(q)
     .endif
-
     .if ( !r13 && isstruct )
         .if rbx
             oprintf("%s %s dup(<>)\n", q, rbx)
@@ -1911,9 +1662,7 @@ parse_struct_member proc uses rbx r12 r13 r14
             oprintf("%s%s ?\n", r12, q)
         .endif
     .endif
-
     .while r14
-
         mov p,ltokstart(&[r14+1])
         mov r14,strchr(p, ',')
         .if rax
@@ -1921,7 +1670,6 @@ parse_struct_member proc uses rbx r12 r13 r14
         .elseif strrchr(p, ';')
             mov [rax],0
         .endif
-
         xor ebx,ebx
         .if strrchr(p, '[')
             mov [rax],0
@@ -1950,28 +1698,23 @@ parse_struct_member proc uses rbx r12 r13 r14
             .endif
         .endif
     .endw
-
     xor  eax,eax
     test r13,r13
     setnz al
     ret
-
-parse_struct_member endp
+    endp
 
 
 ; [typedef] <struct|union> [name] {
 
 parse_struct proc uses rbx r12 r13 r14
-
     .new name[256]:char_t
     .new type:string_t = "struct"
     .new oldfilebuf:string_t = filebuf
     .new oldflags:dword = cflags
-
     .if ( ctoken == T_UNION )
         mov type,&@CStr("union")
     .endif
-
     mov r13,tokpos
     mov rbx,nexttok(r13)
     .if ( cl == 0 )
@@ -1986,7 +1729,6 @@ parse_struct proc uses rbx r12 r13 r14
     .if strchr(r13, '{')
         mov byte ptr[rax], 0
     .endif
-
     xor r14d,r14d
     .if strchr(rbx, ';')
         mov r14,prevtokz(rax, rbx)
@@ -2004,18 +1746,14 @@ parse_struct proc uses rbx r12 r13 r14
         oprintf("%s\n", rbx)
        .return
     .endif
-
     strcpy(&name, rbx)
-
     inc clevel
     or  cflags,FL_STRUCT or FL_STBUF
     mov filebuf,malloc(MAXBUF)
     xor ecx,ecx
     mov [rax],rcx
     mov r13,linebuf
-
     .while 1
-
         .switch tokenize(getline(r13))
         .case T_BLANK
             .endc
@@ -2025,7 +1763,6 @@ parse_struct proc uses rbx r12 r13 r14
            .endc
         .case T_STRUCT
             .if ( cflags & FL_RECORD )
-
                 dec clevel
                 and cflags,not FL_RECORD
                 movzx ecx,clevel
@@ -2037,7 +1774,6 @@ parse_struct proc uses rbx r12 r13 r14
         .case T_ENDS
             .new enddir:byte = 0
             .if ( cflags & FL_RECORD )
-
                 dec clevel
                 and cflags,not FL_RECORD
                 movzx ecx,clevel
@@ -2057,7 +1793,6 @@ parse_struct proc uses rbx r12 r13 r14
                 lea rbx,[rax+1]
             .endif
             mov r13,nexttok(tokpos)
-
             dec clevel
             .if ( clevel )
                 movzx ebx,clevel
@@ -2066,7 +1801,6 @@ parse_struct proc uses rbx r12 r13 r14
                 strcpy(&name, r13)
                .break
             .endif
-
             strtrim(r13)
             lea r14,name
             .if ( name )
@@ -2080,16 +1814,13 @@ parse_struct proc uses rbx r12 r13 r14
                 oprintf("%-23s ends\n", r13)
                 strcpy(&name, r13)
             .endif
-
             .break .if !rbx
             mov rbx,ltokstart(rbx)
             .if !byte ptr [rbx]
                 .break .if enddir
             .endif
             concat_line(rbx)
-
             .while strchr(rbx, ',')
-
                 mov byte ptr [rax],0
                 mov r13,rbx
                 lea rbx,[rax+1]
@@ -2121,7 +1852,6 @@ parse_struct proc uses rbx r12 r13 r14
                 .endif
             .endw
             .break .if !strchr(rbx, ';')
-
             mov byte ptr [rax],0
             mov r13,rbx
             lea rbx,[rax+1]
@@ -2157,24 +1887,20 @@ parse_struct proc uses rbx r12 r13 r14
     .endif
     free(r14)
     ret
-
-parse_struct endp
+    endp
 
 
 ; typedef type name;
 ; typedef type (name)(args);
 
 parse_typedef proc uses rbx r12 r13
-
    .new name[256]:char_t
-
     mov r12,tokpos
     mov rbx,nexttok(r12)
     .if ( cl == 0 )
         concat(r12)
         mov rbx,ltokstart(rbx)
     .endif
-
     .ifd ( toksize(rbx) == 4 )
         .if !memcmp(rbx, "enum", 4)
             mov tokpos,rbx
@@ -2196,18 +1922,15 @@ parse_typedef proc uses rbx r12 r13
             .return parse_struct()
         .endif
     .endif
-
     strip_unsigned(concat_line(r12))
     strrchr(r12, ';')
     .if ( [rax-1] == ')' )
         .return parse_callback(r12)
     .endif
-
     mov r13,prevtokz(rax, r12)
     strcpy(&name, r13)
     mov [r13],0
     xor ebx,ebx
-
     .if strchr(r12, '*')
         mov [rax],0
         inc ebx
@@ -2215,7 +1938,6 @@ parse_typedef proc uses rbx r12 r13
     .if strtrim(r12)
         mov r12,prevtokz(&[r12+rax-1], r12)
     .endif
-
     lea r13,name
     .if strcmp(r13, r12)
         oprintf("%-23s typedef ", r13)
@@ -2225,8 +1947,7 @@ parse_typedef proc uses rbx r12 r13
         oprintf("%s\n", r12)
     .endif
     ret
-
-parse_typedef endp
+    endp
 
 
 parse_midl_interface proc uses rbx r12 r13
@@ -2241,25 +1962,19 @@ parse_midl_interface proc uses rbx r12 r13
     .endif
     .return .if !strchr(r12, '"')
     strcpy(&iid, rax)
-
     .if !strchr(strcpy(tempbuf, ltokstart(getline(r12))), ':')
         .return error(r12)
     .endif
     mov [rax-1],0
     oprintf("DEFINE_IIDX(%s, %s\n\n", tempbuf, &iid)
     oprintf(".comdef %s\n", ltokstart(r12))
-
     getline(r12) ; {
     getline(r12) ; public:
-
     .while 1
-
         mov rbx,ltokstart(getline(r12))
         .break .if ( cl ==  '}' )
         .continue .if ( cl ==  0 )
-
         .break .if !strchr(concat_line(r12), '(')
-
         lea rbx,[rax+1]
         mov r13,prevtokz(rax, r12)
         oprintf("    %-19s proc", r13)
@@ -2272,19 +1987,15 @@ parse_midl_interface proc uses rbx r12 r13
     .endw
     oprintf("endif\n")
     ret
-
-parse_midl_interface endp
+    endp
 
 
 parse_interface proc uses rbx r12 r13
-
     mov r12,tokpos
     .return .if !strrchr(r12, ';')
-
     mov [rax],0
     strcpy(tempbuf, &[prevtokz(rax, r12)+4])
     getline(r12)
-
     .if !memcmp(r12, "#endif", 6)
         ;
         ; Windows 10:
@@ -2310,26 +2021,20 @@ parse_interface proc uses rbx r12 r13
     .endif
     getline(r12)
     getline(r12)
-
     .if !strrchr(r12, '(')
         .return error(r12)
     .endif
-
     inc rax
     oprintf("DEFINE_IIDX(%s, %s\n\n", tempbuf, rax)
     getline(r12)
     oprintf(".comdef %s\n", ltokstart(r12))
     getline(r12) ; {
     getline(r12) ; public:
-
     .while 1
-
         mov rbx,ltokstart(getline(r12))
         .break .if ( cl ==  '}' )
         .continue .if ( cl ==  0 )
-
         .break .if !strchr(concat_line(r12), '(')
-
         lea rbx,[rax+1]
         mov r13,prevtokz(rax, r12)
         oprintf("    %-19s proc", r13)
@@ -2344,15 +2049,12 @@ parse_interface proc uses rbx r12 r13
     getline(r12)
     getline(r12)
     ret
-
-parse_interface endp
+    endp
 
 
 parse_extern proc uses rbx r12 r13
-
     mov r12,tokpos
     .if !memcmp(r12, "extern const __declspec(selectany) _Null_terminated_ WCHAR", 58)
-
         mov rbx,ltokstart(&[r12+58])
         .if !strchr(rbx, '[')
             .return error(r12)
@@ -2369,11 +2071,8 @@ parse_extern proc uses rbx r12 r13
         oprintf("define %s <%s>\n", rbx, r13)
        .return
     .endif
-
     mov eax,csize
-
     mov rbx,ltokstart(&[r12+rax])
-
     .if ( ecx == 0 )
         concat(r12)
         mov rbx,ltokstart(rbx)
@@ -2384,7 +2083,6 @@ parse_extern proc uses rbx r12 r13
     .if !memcmp(rbx, "RPC_IF_HANDLE", 13)
         .return
     .endif
-
     concat_line(r12)
     .if strchr(r12, ')')
         lea rbx,[rax+1]
@@ -2395,11 +2093,9 @@ parse_extern proc uses rbx r12 r13
         add tokpos,7
         .return parse_id()
     .endif
-
     strip_unsigned(r12)
     mov r13,prevtokz(strrchr(r12, ';'), r12)
     oprintf("externdef %s:", r13)
-
     mov [r13],0
     .if strchr(r12, '*')
         mov [rax],0
@@ -2410,17 +2106,13 @@ parse_extern proc uses rbx r12 r13
     .endif
     oprintf("%s\n", r12)
     ret
-
-parse_extern endp
+    endp
 
 
 parse_inline proc uses rbx
-
     mov rbx,tokpos
     oprintf(";%s\n", rbx)
-
     .while 1
-
         .switch tokenize(getline(rbx))
         .case T_ENDS
             oprintf(";%s\n", rbx)
@@ -2439,12 +2131,10 @@ parse_inline proc uses rbx
         .endsw
     .endw
     ret
-
-parse_inline endp
+    endp
 
 
 parse_namespace proc uses rbx
-
     mov rbx,tokpos
     .if !strchr(rbx, '{')
         .return error(rbx)
@@ -2452,12 +2142,10 @@ parse_namespace proc uses rbx
     mov [rax],0
     oprintf(".%s\n", ltokstart(rbx))
     ret
-
-parse_namespace endp
+    endp
 
 
 parseline proc
-
     .switch ctoken
     .case T_BLANK
        .return parse_blank()
@@ -2501,19 +2189,16 @@ parseline proc
         .return parse_namespace()
     .endsw
     ret
-
-parseline endp
+    endp
 
 
 ; Command line options
 
 setarg_option proc uses rbx r12 r13 p:ptr string_t, arg:string_t, arg2:string_t
-
     ldr rbx,p
     ldr r13,arg
     ldr r12,arg2
     inc stoptions
-
     .for ( eax = 0, ecx = 0 : rax != [rbx] && ecx < MAXARGS : ecx++, rbx+=8 )
         .if r12
             add rbx,8
@@ -2527,55 +2212,42 @@ setarg_option proc uses rbx r12 r13 p:ptr string_t, arg:string_t, arg2:string_t
         mov [rbx+8],_strdup(r12)
     .endif
     ret
-
-setarg_option endp
+    endp
 
 
 getnextcmdstring proc uses rsi rdi cmdline:array_t
-
     ldr rcx,cmdline
     .for ( rdi = rcx,
            rsi = &[rdi+string_t] : string_t ptr [rsi] : )
         movsq
     .endf
     movsq
-   .return([rcx])
-
-getnextcmdstring endp
+    .return([rcx])
+    endp
 
 
 get_nametoken proc uses rsi rdi rbx dst:string_t, string:string_t, size:int_t, file:int_t
-
     ldr rdi,dst
     ldr rsi,string
     ldr r9d,file
     ldr ecx,size
     mov al,[rsi]
     .if al == '"'
-
         inc rsi
         .for ( : ecx && [rsi] : ecx-- )
-
             mov eax,[rsi]
             .if al == '"'
-
                 inc rsi
                 .break
             .endif
-
             ; handle the \"" case
-
             .if al == '\' && ah == '"'
-
                 inc rsi
             .endif
             movsb
         .endf
-
     .else
-
         .for ( : ecx : ecx -- )
-
             mov al,[rsi]
             .switch al
             .case ' '
@@ -2595,18 +2267,15 @@ endif
         .endf
     .endif
     mov [rdi],0
-   .return(rsi)
-
-get_nametoken endp
+    .return(rsi)
+    endp
 
 
 parse_param proc uses rbx r12 r13 cmdline:ptr string_t, buffer:string_t
-
     ldr r13,cmdline
     ldr r12,buffer
     mov rbx,[r13]
     mov eax,[rbx]
-
     .switch pascal al
 ifdef __UNIX__
     .case '-'   ; --help
@@ -2705,12 +2374,10 @@ endif
         setarg_option(&option_o, r12, &param2)
     .endsw
     ret
-
-parse_param endp
+    endp
 
 
 get_filename proc path:string_t
-
     ldr rcx,path
     .for ( rax = rcx : [rcx] : rcx++ )
 ifdef __UNIX__
@@ -2722,18 +2389,14 @@ endif
         .endif
     .endf
     ret
-
-get_filename endp
+    endp
 
 
 read_paramfile proc uses rbx name:string_t
-
     ldr rbx,name
     .new fp:ptr FILE = fopen(rbx, "rb")
-
 ifndef __UNIX__
     .if ( rax == NULL )
-
        .new path[_MAX_PATH]:char_t
         lea rbx,path
         GetModuleFileNameA(0, rbx, _MAX_PATH)
@@ -2750,9 +2413,7 @@ endif
     .endif
     .new retval:ptr = NULL
     .if ( fseek( fp, 0, SEEK_END ) == 0 )
-
         .if ( ftell( fp ) )
-
             mov ebx,eax
             mov retval,malloc( &[rax+1] )
             mov byte ptr [rax+rbx],0
@@ -2760,22 +2421,16 @@ endif
             fread( retval, 1, ebx, fp )
         .endif
     .endif
-
     fclose(fp)
-   .return( retval )
-
-read_paramfile endp
+    .return( retval )
+    endp
 
 
 parse_params proc uses rbx r12 r13 cmdline:ptr string_t, numargs:ptr int_t
-
    .new paramfile[_MAX_PATH]:char_t
-
     ldr r13,cmdline
     ldr r12,numargs
-
     .for ( rbx = [r13] : rbx : )
-
         mov eax,[rbx]
         .switch al
         .case 13
@@ -2817,27 +2472,21 @@ endif
         .endsw
     .endf
     mov [r13],rbx
-   .return(NULL)
-
-parse_params endp
+    .return(NULL)
+    endp
 
 
 translate_module proc uses rbx source:string_t
-
     ldr rbx,source
     mov curfile,rbx
-
     .if ( !fopen(rbx, "r") )
-
         perror(rbx)
        .return( 1 )
     .endif
     mov srcfile,rax
-
     mov linebuf,malloc(MAXBUF)
     mov filebuf,malloc(MAXBUF)
     mov tempbuf,malloc(MAXBUF)
-
     .if ( option_Fo )
         mov rbx,option_Fo
     .else
@@ -2859,7 +2508,6 @@ translate_module proc uses rbx source:string_t
        .return( 1 )
     .endif
     mov outfile,rax
-
     mov curline,1
     mov cflags,0
     mov clevel,0
@@ -2867,35 +2515,28 @@ translate_module proc uses rbx source:string_t
     mov cblank,0
     mov ercount,0
     ;mov lstructs,0 keep structs...
-
     .if ( !option_q )
         printf( " Translating: %s\n", source)
     .endif
-
     .if !_setjmp(&jmpenv)
-
         .while 1
             tokenize(getline(linebuf))
             parseline()
         .endw
     .endif
-
     fclose(srcfile)
     fclose(outfile)
     free(linebuf)
     free(filebuf)
     free(tempbuf)
-   .return(ercount)
-
-translate_module endp
+    .return(ercount)
+    endp
 
 
 strfcat proc buffer:string_t, path:string_t, file:string_t
-
     ldr rcx,buffer
     ldr r8,file
     ldr rdx,path
-
     mov rax,rcx
     .if rdx
         .for ( : byte ptr [rdx] : r9b=[rdx], [rcx]=r9b, rdx++, rcx++ )
@@ -2906,10 +2547,8 @@ strfcat proc buffer:string_t, path:string_t, file:string_t
     .endif
     lea rdx,[rcx-1]
     .if rdx > rax
-
         mov dl,[rdx]
         .if !( dl == '\' || dl == '/' )
-
             mov dl,'\'
             mov [rcx],dl
             inc rcx
@@ -2919,18 +2558,14 @@ strfcat proc buffer:string_t, path:string_t, file:string_t
     .endf
     mov [rcx],dl
     ret
-
-strfcat endp
+    endp
 
 
 ifdef __UNIX__
 
 GeneralFailure proc private signo:int_t
-
     .if ( signo != SIGTERM )
-
         assume rbx:ptr mcontext_t
-
         lea rdi,@CStr(
             "\n"
             "This message is created due to unrecoverable error\n"
@@ -2948,8 +2583,6 @@ GeneralFailure proc private signo:int_t
             "\t     %p %p\n\n"
             "\tEFL: 0000000000000000\n"
             "\t     r n oditsz a p c\n\n" )
-
-
         mov rbx,rdx
         add rbx,ucontext_t.uc_mcontext
         mov rax,[rbx].gregs[REG_EFL*8]
@@ -2958,7 +2591,6 @@ GeneralFailure proc private signo:int_t
             shr eax,1
             adc byte ptr [rdi+rcx+sizeof(@CStr(0))-43],0
         .untilcxz
-
         mov rcx,[rbx].gregs[REG_RIP*8]
         mov rdx,[rcx]
         mov r10,[rcx-8]
@@ -2977,22 +2609,18 @@ GeneralFailure proc private signo:int_t
         exit(1)
     .endif
     errexit("Software termination signal")
-
-GeneralFailure endp
+    endp
 
 main proc argc:int_t, argv:array_t
 
 else
 
 translate_subdir proc uses rbx r12 r13 r14 directory:string_t, wild:string_t
-
   local rc, path[_MAX_PATH]:byte, ff:_finddatai64_t
-
     lea r13,path
     lea r12,ff
     lea rbx,ff.name
     mov rc,0
-
     .ifd ( _findfirsti64(strfcat(r13, directory, wild), r12) != -1 )
         mov r14,rax
         .repeat
@@ -3003,8 +2631,7 @@ translate_subdir proc uses rbx r12 r13 r14 directory:string_t, wild:string_t
         _findclose(r14)
     .endif
     .return( rc )
-
-translate_subdir endp
+    endp
 
 
 _exception_handler proc \
@@ -3015,7 +2642,6 @@ _exception_handler proc \
 
     .new signo:int_t = SIGTERM
     .new string:string_t = "Software termination signal from kill"
-
      mov eax,[rcx].EXCEPTION_RECORD.ExceptionFlags
     .switch
     .case eax & EXCEPTION_UNWINDING
@@ -3066,11 +2692,8 @@ _exception_handler proc \
            .endc
         .endsw
     .endsw
-
     .if ( signo != SIGTERM )
-
         .new flags[17]:sbyte
-
         .for ( r11      = r8,
                r10      = rcx,
                r8d      = 0,
@@ -3081,11 +2704,9 @@ _exception_handler proc \
                [rdx+16] = r8b,
                eax      = [r11].CONTEXT.EFlags,
                ecx      = 16 : ecx : ecx-- )
-
             shr eax,1
             adc [rdx+rcx-1],r8b
         .endf
-
         mov rdx,[r11].CONTEXT._Rip
         mov rcx,[rdx]
         bswap rcx
@@ -3095,7 +2716,6 @@ _exception_handler proc \
             mov r9,[r8]
             bswap r9
         .endif
-
         printf(
             "This message is created due to unrecoverable error\n"
             "and may contain data necessary to locate it.\n"
@@ -3128,37 +2748,30 @@ _exception_handler proc \
             [r11].CONTEXT._Rbp, [r11].CONTEXT._R14,
             [r11].CONTEXT._Rsp, [r11].CONTEXT._R15,
             rdx, rcx, r8, r9, &flags)
-
         exit(1)
     .endif
     errexit(string)
-
-_exception_handler endp
+    endp
 
 
 main proc frame:_exception_handler argc:int_t, argv:array_t
 
 endif
-
    .new num_args:int_t = 0
    .new num_files:int_t = 0
 ifdef __UNIX__
    .new action:sigaction_t
-
     mov action.sa_sigaction,&GeneralFailure
     mov action.sa_flags,SA_SIGINFO
     sigaction(SIGSEGV, &action, NULL)
 else
    .new ff:_finddatai64_t
 endif
-
     lea r15,_ltype
     add argv,8
 
     .while parse_params(argv, &num_args)
-
         write_logo()
-
         inc num_files
 ifdef __UNIX__
         translate_module(curfile)
@@ -3169,7 +2782,6 @@ else
             errexit(r13)
         .endif
         _findclose(rax)
-
         .if !strchr(strcpy(r12, r13), '*')
             strchr(r12, '?')
         .endif
@@ -3184,14 +2796,12 @@ else
         .endif
 endif
     .endw
-
     .if !num_args
         write_usage()
     .elseif !num_files
         printf("error: missing source filename\n")
     .endif
     .return(0)
-
-main endp
+    endp
 
     end _tstart

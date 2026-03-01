@@ -1894,7 +1894,7 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             add [rsi].value,[rbx].asym.offs
             adc [rsi].hvalue,0
             mov rax,[rdi].sym
-            .if ( MODULE.fctype == FCT_ELF64 && [rax].asym.predefined && [rax].asym.isvariable )
+            .if ( MODULE.Ofssize == USE64 && [rax].asym.predefined && [rax].asym.isvariable )
 
                 ; v2.37.63: label - $
 

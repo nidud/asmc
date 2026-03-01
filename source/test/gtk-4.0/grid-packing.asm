@@ -4,11 +4,9 @@ include tchar.inc
 .code
 
 print_hello proc widget:ptr GtkWidget, data:gpointer
-
-    g_print("Hello World\n");
+    g_print("Hello World\n")
     ret
-
-print_hello endp
+    endp
 
 
 activate proc app:ptr GtkApplication, user_data:gpointer
@@ -51,22 +49,18 @@ activate proc app:ptr GtkApplication, user_data:gpointer
     gtk_grid_attach(GTK_GRID(grid), button, 0, 1, 2, 1)
     gtk_widget_show(window)
     ret
-
-activate endp
+    endp
 
 
 main proc argc:int_t, argv:array_t
-
    .new app:ptr GtkApplication
    .new status:int_t
-
     mov app,gtk_application_new("org.gtk.example", G_APPLICATION_FLAGS_NONE)
     g_signal_connect(app, "activate", G_CALLBACK(activate), NULL)
     mov status,g_application_run(G_APPLICATION(app), argc, argv)
     g_object_unref(app)
     mov eax,status
     ret
-
-main endp
+    endp
 
 end _tstart

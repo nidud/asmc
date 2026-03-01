@@ -777,7 +777,6 @@ define PE_DLL               0x04
     ends
     currseg                 asym_t ?        ; currently active segment - asym *
     flat_grp                asym_t ?        ; magic FLAT group - asym *
-    pCodeBuff               ptr byte ?
     currcomment             string_t ?      ; current comment
     class_sym               asym_t ?        ; current class from class::member proc
     class_reg               dd ?            ; current assume class:register

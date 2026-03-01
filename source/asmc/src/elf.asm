@@ -1167,10 +1167,14 @@ endif
 write_relocs64 proc __ccall uses rsi rdi rbx em:ptr elfmod, curr:asym_t
 
    .new reloc64:Elf64_Rela ; v2.05: changed to Rela
+   .new usepic:byte = 0
 
     ldr rbx,em
     ldr rdx,curr
     mov rcx,[rdx].asym.seginfo
+    .if ( MODULE.plt || MODULE.pic || MODULE.fPIC )
+        inc usepic
+    .endif
 
     .for ( rsi = [rcx].seg_info.head : rsi : rsi = [rsi].nextrlc )
 
@@ -1181,7 +1185,6 @@ write_relocs64 proc __ccall uses rsi rdi rbx em:ptr elfmod, curr:asym_t
 ifndef _WIN64
         mov dword ptr reloc64.r_offset[4],0
 endif
-
         mov eax,[rsi].offs
         movzx edx,[rsi].addbytes
         .if ( [rsi].rip_used )
@@ -1196,7 +1199,6 @@ else
         mov dword ptr reloc64.r_addend[0],eax
         mov dword ptr reloc64.r_addend[4],edx
 endif
-
         movzx eax,[rsi].type
         .switch pascal eax
         .case FIX_RELOFF32
@@ -1240,7 +1242,7 @@ endif
             .endif
         .case FIX_OFF64
             mov edx,R_X86_64_64
-            .if ( [rsi].curpc_used )
+            .if ( usepic && [rsi].curpc_used )
                 mov edx,R_X86_64_PC64
             .endif
         .case FIX_OFF32_IMGREL
@@ -1249,21 +1251,21 @@ endif
             mov edx,R_X86_64_32
             .if ( rcx == [rbx].symGOT )
                 mov edx,R_X86_64_GOTPC32
-            .elseif ( [rsi].curpc_used )
+            .elseif ( usepic &&  [rsi].curpc_used )
                 mov edx,R_X86_64_PC32
             .elseif ( [rsi].rip_used )
                 mov edx,R_X86_64_PC32
             .endif
         .case FIX_OFF16
             mov edx,R_X86_64_16
-            .if ( [rsi].curpc_used )
+            .if ( usepic &&  [rsi].curpc_used )
                 mov edx,R_X86_64_PC16
             .endif
         .case FIX_RELOFF16
             mov edx,R_X86_64_PC16
         .case FIX_OFF8
             mov edx,R_X86_64_8
-            .if ( [rsi].curpc_used )
+            .if ( usepic &&  [rsi].curpc_used )
                 mov edx,R_X86_64_PC8
             .endif
         .case FIX_RELOFF8

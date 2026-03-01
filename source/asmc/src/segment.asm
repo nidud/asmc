@@ -81,6 +81,7 @@ saved_stkindex  int_t 0
 ; generic byte buffer, used for OMF LEDATA records only
 align 8
 codebuf         db 1024 dup(0)
+pcodebuf        string_t 0 ; v2.37.81: moved here
 buffer_size     dd 0 ; total size of code buffer
 
 ; min cpu for USE16, USE32 and USE64
@@ -1402,7 +1403,7 @@ SegmentFini proc
 
 ; init. called for each pass
 
-SegmentInit proc fastcall uses rsi rdi pass:int_t
+SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
 
    .new curr:asym_t
    .new i:uint_32
@@ -1419,8 +1420,8 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
 
     ; alloc a buffer for the contents
 
-    .if ( rax == MODULE.pCodeBuff && Options.output_format != OFORMAT_OMF )
-        .for ( rdi = SymTables[TAB_SEG].head, buffer_size = eax : rdi : rdi = [rdi].asym.next )
+    .if ( Options.output_format != OFORMAT_OMF )
+        .for ( rdi = SymTables[TAB_SEG].head, ebx = 0 : rdi : rdi = [rdi].asym.next )
             mov rcx,[rdi].asym.seginfo
             .if ( [rcx].seg_info.internal )
                 .continue
@@ -1435,22 +1436,36 @@ SegmentInit proc fastcall uses rsi rdi pass:int_t
                 ; code segment contained labels, but this isn't sufficient.)
 
                 .if ( [rcx].seg_info.segtype == SEGTYPE_CODE )
-                    mov edx,eax
-                    shr eax,2
+                    mov edx,eax ; v2.37.81: add 50% in pass 1 and then 25%
+                    xor ecx,ecx
+                    cmp ecx,buffer_size
+                    adc ecx,1
+                    shr eax,cl
                     add eax,edx
                 .endif
-                add buffer_size,eax
+                add ebx,eax
             .endif
         .endf
-        .if ( buffer_size )
-            mov MODULE.pCodeBuff,LclAlloc( buffer_size )
+        .if ( ebx )
+            .if ( ebx > buffer_size )
+                mov buffer_size,ebx
+                mov pcodebuf,LclAlloc( ebx )
+            .else
+                mov rdx,pcodebuf
+                mov ecx,buffer_size   ; use the same buffer
+                shr ecx,2
+                mov rdi,rdx
+                xor eax,eax
+                rep stosd
+                mov rax,rdx
+            .endif
         .endif
     .endif
 
     ; Reset length of all segments to zero.
     ; set start of segment buffers.
 
-    .for ( rdi = SymTables[TAB_SEG].head, rsi = MODULE.pCodeBuff : rdi : rdi = [rdi].asym.next )
+    .for ( rdi = SymTables[TAB_SEG].head, rsi = pcodebuf : rdi : rdi = [rdi].asym.next )
         mov rcx,[rdi].asym.seginfo
         mov [rcx].seg_info.current_loc,0
         .continue .if ( [rcx].seg_info.internal )

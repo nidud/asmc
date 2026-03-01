@@ -24,24 +24,17 @@ define __IMPDEF__ 100
 .code
 
 get_module proc dll_name:string_t
-
     .new dll[256]:char_t
-
     .if !strrchr(strcpy(&dll, dll_name), '.')
-
         strcat(&dll, ".dll")
     .endif
-
     .if ( LoadLibrary(&dll) == NULL )
-
         strcpy(strrchr(&dll, '.'), ".drv")
         .if ( LoadLibrary(&dll) == NULL )
-
             strcpy(strrchr(&dll, '.'), ".exe")
             LoadLibrary(&dll)
         .endif
     .endif
-
     .if ( rax == NULL )
 ifdef __PE__
         printf( "%s: Invalid argument\n", dll_name )
@@ -52,24 +45,17 @@ endif
         xor eax,eax
     .endif
     ret
-
-get_module endp
+    endp
 
 ifndef _WIN64
 
 get_argcnt proc uses rsi rdi procaddress:ptr, size:uint_t
-
     mov rdx,procaddress
     mov ecx,size
-
     .for ( : ecx : ecx--, rdi++ )
-
         mov al,[rdi]
-
         .if ( al == 0xC3 )
-
             mov al,[rdi-1]
-
             .switch al
             .case 0x8A ; mov bl
             .case 0x8B ; mov ebx
@@ -92,11 +78,8 @@ get_argcnt proc uses rsi rdi procaddress:ptr, size:uint_t
             .default
                 .break
             .endsw
-
         .elseif ( al == 0xC2 )
-
             mov al,[rdi-1]
-
             .switch al
             .case 0x8A ; mov dl
             .case 0x8B ; mov edx
@@ -127,8 +110,7 @@ get_argcnt proc uses rsi rdi procaddress:ptr, size:uint_t
     .endf
     xor eax,eax
     ret
-
-get_argcnt endp
+    endp
 
 endif
 
@@ -144,7 +126,6 @@ process_function proc uses rsi rdi rbx fp:LPFILE, module:HMODULE, id:int_t, rva:
     add rsi,rax
     mov rcx,fname
     .if ( !rcx )
-
         mov ebx,[rsi].IMAGE_EXPORT_DIRECTORY.AddressOfNames
         add rbx,module
         mov edi,id
@@ -155,11 +136,8 @@ process_function proc uses rsi rdi rbx fp:LPFILE, module:HMODULE, id:int_t, rva:
     .if ( name == '@' || ( name == '?' && !option_cpp ) )
         .return( 0 )
     .endif
-
 ifndef _WIN64
-
     .if ( !option_c )
-
         mov rsi,module
         mov edi,rva
         add rdi,rsi
@@ -169,27 +147,18 @@ ifndef _WIN64
         add ecx,eax
         add rax,rsi
         add rcx,rsi
-
         .if ( rdi > rax && rdi < rcx )
-
             sub rcx,rdi
             mov argcnt,get_argcnt(rdi, ecx)
-
         .elseif ( rdi > rcx )
-
             .new function:string_t
             .new forward[256]:char_t
-
             .if strrchr(strcpy(&forward, rdi), '.')
-
                 mov byte ptr [rax],0
                 inc rax
                 mov function,rax
-
                 .if get_module(&forward)
-
                     .if ( rax == module )
-
                         FreeLibrary( rax )
                         fprintf( fp, ";%s recursive lookup: %s.%s\n", &name, &forward, function )
                        .return( 0 )
@@ -198,24 +167,16 @@ ifndef _WIN64
                     mov esi,[rax].IMAGE_DOS_HEADER.e_lfanew
                     mov esi,[rax+rsi].IMAGE_NT_HEADERS.OptionalHeader.DataDirectory.VirtualAddress
                     add rsi,rax
-
                     mov ebx,[rsi].IMAGE_EXPORT_DIRECTORY.AddressOfNames
                     add rbx,rax
-
                     .for ( edi = 0 : edi < [rsi].IMAGE_EXPORT_DIRECTORY.NumberOfNames : edi++, rbx+=4 )
-
                         mov ecx,[rbx]
                         add rcx,module
-
                         .ifd ( strcmp(rcx, function) == 0 )
-
                             mov ecx,[rsi].IMAGE_EXPORT_DIRECTORY.AddressOfNameOrdinals
                             add rcx,module
-
                             .for ( ebx = 0 : ebx < [rsi].IMAGE_EXPORT_DIRECTORY.NumberOfFunctions : ebx++ )
-
                                 .if ( bx == [rcx+rdi*2] )
-
                                     mov eax,[rsi].IMAGE_EXPORT_DIRECTORY.AddressOfFunctions
                                     add rax,module
                                     mov ecx,[rax+rbx*4]
@@ -242,8 +203,7 @@ ifndef _WIN64
 endif
     mov eax,1
     ret
-
-process_function endp
+    endp
 
 
 process_module proc uses rsi rdi rbx def_name:string_t, dll_name:string_t
@@ -258,40 +218,29 @@ process_module proc uses rsi rdi rbx def_name:string_t, dll_name:string_t
         .endif
         .return( 0 )
     .endif
-
     .if !get_module(dll_name)
-
         .return( 1 )
     .endif
     mov module,rax
-
     .if ( !option_q )
         printf( " Module: %s\n", def_name )
     .endif
-
     .if ( fopen( def_name, "wt" ) == NULL )
-
         perror( def_name )
         FreeLibrary( module )
        .return( 1 )
     .endif
     mov fp,rax
     fprintf( fp, "LIBRARY %s\nEXPORTS\n", dll_name )
-
     mov rax,module
     mov esi,[rax].IMAGE_DOS_HEADER.e_lfanew
     mov esi,[rax+rsi].IMAGE_NT_HEADERS.OptionalHeader.DataDirectory.VirtualAddress
     add rsi,rax
-
     .for ( ebx = 0 : ebx < [rsi].IMAGE_EXPORT_DIRECTORY.NumberOfFunctions : ebx++ )
-
         .for ( edi = 0 : edi < [rsi].IMAGE_EXPORT_DIRECTORY.NumberOfNames : edi++ )
-
             mov ecx,[rsi].IMAGE_EXPORT_DIRECTORY.AddressOfNameOrdinals
             add rcx,module
-
             .if ( bx == [rcx+rdi*2] )
-
                 mov eax,[rsi].IMAGE_EXPORT_DIRECTORY.AddressOfFunctions
                 add rax,module
                 mov eax,[rax+rbx*4]
@@ -304,14 +253,11 @@ process_module proc uses rsi rdi rbx def_name:string_t, dll_name:string_t
     FreeLibrary( module )
     xor eax,eax
     ret
-
-process_module endp
+    endp
 
 
 write_logo proc
-
     .if ( !banner && !option_q && !option_n )
-
         mov banner,1
         _tprintf(
             "Asmc Module Definition Manager %d.%d\n"
@@ -319,29 +265,23 @@ write_logo proc
             __IMPDEF__ / 100, __IMPDEF__ mod 100)
     .endif
     ret
-
-write_logo endp
+    endp
 
 
 write_usage proc
-
     write_logo()
     _tprintf("Usage: IMPDEF [ options ] <dll_file> [ [ options ] <dll_file> ... ]\n")
     ret
-
-write_usage endp
+    endp
 
 
 exit_usage proc
-
     write_usage()
     exit(0)
-
-exit_usage endp
+    endp
 
 
 exit_options proc
-
     write_usage()
     _tprintf(
         "\n"
@@ -352,10 +292,8 @@ exit_options proc
         "-p<path>   -- Set output directory\n"
         "\n"
         )
-
     exit(0)
-
-exit_options endp
+    endp
 
 
 _tmain proc argc:int_t, argv:array_t
@@ -370,11 +308,9 @@ _tmain proc argc:int_t, argv:array_t
         exit_options()
     .endif
     .for ( ebx = 1 : ebx < argc : ebx++ )
-
         mov rdx,argv
         mov rdi,[rdx+rbx*size_t]
         mov eax,[rdi]
-
         .if ( al == '-' || al == '/' )
             .switch ah
             .case 'p'
@@ -399,9 +335,7 @@ _tmain proc argc:int_t, argv:array_t
             .default
                 exit_options()
             .endsw
-
         .else
-
             .if !strrchr( strcpy( &dll, rdi ), '.' )
                 strcat( &dll, ".dll" )
             .else
@@ -411,7 +345,6 @@ _tmain proc argc:int_t, argv:array_t
                     strcpy( rax, ".dll" )
                 .endif
             .endif
-
             .if ( option_p )
                 strcat( strcat( strcpy( &def, option_p ), "\\" ), rdi )
             .else
@@ -428,7 +361,6 @@ _tmain proc argc:int_t, argv:array_t
     .endf
     xor eax,eax
     ret
-
-_tmain endp
+    endp
 
     end _tstart

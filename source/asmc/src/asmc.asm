@@ -519,8 +519,8 @@ endif
                 dec rax
             .endif
             mov byte ptr [rax],0
-            mov rdx,GetFNamePart( rbx )
-            mov rc,AssembleSubdir( path, rdx, &newo)
+            mov rcx,GetFNamePart( rbx )
+            mov rc,AssembleSubdir( path, rcx, &newo)
         .else
             mov rcx,GetFNamePart( rbx )
             mov optr,setoname(rcx, &newo)

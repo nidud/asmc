@@ -11,11 +11,11 @@ include errno.inc
 
 fsetpos proc stream:LPFILE, pos:ptr fpos_t
     ldr rcx,stream
-    ldr rdx,pos
-    .if ( rcx == NULL || rdx == NULL )
+    ldr rax,pos
+    .if ( rcx == NULL || rax == NULL )
         .return( _set_errno( EINVAL ) )
     .endif
-    _fseeki64(rcx, [rdx], SEEK_SET)
+    _fseeki64(rcx, [rax], SEEK_SET)
     ret
     endp
 

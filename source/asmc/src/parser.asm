@@ -25,6 +25,7 @@ include extern.inc
 include qfloat.inc
 include reswords.inc
 include operator.inc
+include lqueue.inc
 
 public SegOverride
 
@@ -3715,52 +3716,21 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
     .if ( [rbx].token == T_ID && TokenCount > 2 &&
           ( [rbx+asm_tok].token == T_COLON || [rbx+asm_tok].token == T_DBL_COLON ) )
 
-        mov rdi,MemAlloc(MaxLineLength)
-
         ; break label: macro/hll lines
+        ; v2.37.83: changed for -EP to work correctly
 
-        tstrcpy( rdi, [rbx+asm_tok*2].tokpos )
-        tstrcpy( CurrSource, [rbx].string_ptr )
-        tstrcat( CurrSource, [rbx+asm_tok].string_ptr )
-
-        mov TokenCount,Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
-
-        .ifd ( ParseLine( rbx ) == ERROR )
-
-            MemFree(rdi)
-           .return(ERROR)
+        AddLineQueueX( " %s%s\n %s", [rbx].string_ptr, [rbx+asm_tok].string_ptr, [rbx+asm_tok*2].tokpos )
+        FStoreLine(0)
+        .if CurrFile[TLST]
+            LstWrite( LSTTYPE_LABEL, 0, NULL )
         .endif
-
-        .if MODULE.list ; v2.26 -- missing line from list file (wiesl)
-            and MODULE.line_flags,not LOF_LISTED
-        .endif
-
-        ; parse macro or hll function
-
-        tstrcpy(CurrSource, rdi)
-        MemFree(rdi)
-        mov TokenCount,Tokenize(CurrSource, 0, rbx, TOK_DEFAULT)
-        ExpandLine(CurrSource, rbx)
-        .if ( eax == EMPTY || eax == ERROR )
-
-           .return
-        .endif
-        mov i,0
-
-if 0 ; code labels before data items allowed..
-
-        .if ( MODULE.m510 == FALSE && [rbx].token == T_DIRECTIVE && [rbx].dirtype == DRT_DATADIR )
-            .return( asmerr( 2008, [rbx].string_ptr ) )
-        .endif
-endif
-        ; label:
+        RunLineQueue()
+       .return( NOT_ERROR )
 
     .elseif ( [rbx].token == T_ID && ( [rbx+asm_tok].token == T_COLON || [rbx+asm_tok].token == T_DBL_COLON ) )
 
         mov i,2
-
         .if ( ProcStatus & PRST_PROLOGUE_NOT_DONE )
-
             write_prologue(rbx)
         .endif
         ;
@@ -3771,21 +3741,18 @@ endif
             inc eax
         .endif
         .if CreateLabel( [rbx].string_ptr, MT_NEAR, NULL, eax ) == NULL
-
             .return ERROR
         .endif
         ;
         ; v2.26: make label:: public
         ;
         .if ( [rbx+asm_tok].token == T_DBL_COLON && MODULE.scoped && !CurrProc )
-
             mov [rbx+asm_tok].token,T_FINAL
             mov TokenCount,1
             PublicDirective( -1, tokenarray )
         .endif
 
         lea rsi,[rbx+asm_tok*2]
-
         .if ( [rsi].token == T_FINAL )
             ;
             ; v2.06: this is a bit too late. Should be done BEFORE

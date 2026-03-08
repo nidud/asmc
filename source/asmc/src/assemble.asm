@@ -6,6 +6,7 @@
 
 include io.inc
 include setjmp.inc
+include time.inc
 
 include asmc.inc
 include parser.inc
@@ -860,8 +861,11 @@ endif
     ret
     endp
 
+ifdef _LIN64
+    assume uses rsi rdi
+endif
 
-open_files proc private uses rsi rdi
+open_files proc private
     .if !fopen( MODULE.curr_fname[TASM], "rb" )
         ;
         ; will not return..
@@ -884,7 +888,7 @@ open_files proc private uses rsi rdi
     ret
     endp
 
-iddc_file proc __ccall private uses rsi rdi rbx source:string_t
+iddc_file proc __ccall private uses rbx source:string_t
 
    .new iddc[260]:byte
    .new file:string_t
@@ -919,21 +923,21 @@ iddc_file proc __ccall private uses rsi rdi rbx source:string_t
     .return( file )
     endp
 
-close_files proc __ccall uses rsi rdi
+close_files proc __ccall
     ;
     ; v2.11: no fatal errors anymore if fclose() fails.
     ; That's because Fatal() may cause close_files() to be
     ; reentered and thus cause an endless loop.
     ;
-    mov rax,MODULE.curr_file[TASM]
-    .if rax
-        .if fclose( rax )
+    mov rcx,MODULE.curr_file[TASM]
+    .if rcx
+        .if fclose( rcx )
             asmerr( 3021, MODULE.curr_fname[TASM] )
         .endif
     .endif
-    mov rax,MODULE.curr_file[TOBJ]
-    .if rax
-        .if fclose( rax )
+    mov rcx,MODULE.curr_file[TOBJ]
+    .if rcx
+        .if fclose( rcx )
             asmerr( 3021, MODULE.curr_fname[TOBJ] )
         .endif
     .endif
@@ -941,20 +945,24 @@ close_files proc __ccall uses rsi rdi
         mov remove_obj,0
         remove( MODULE.curr_fname[TOBJ] )
     .endif
-    mov rax,MODULE.curr_file[TLST]
-    .if rax
-        fclose( rax )
+    mov rcx,MODULE.curr_file[TLST]
+    .if rcx
+        fclose( rcx )
         mov MODULE.curr_file[TLST],0
     .endif
-    mov rax,MODULE.curr_file[TERR]
-    .if rax
-        fclose( rax )
+    mov rcx,MODULE.curr_file[TERR]
+    .if rcx
+        fclose( rcx )
         mov MODULE.curr_file[TERR],0
     .elseif ( MODULE.curr_fname[TERR] )
         remove( MODULE.curr_fname[TERR] )
     .endif
     ret
     endp
+
+ifdef _LIN64
+    assume uses nothing
+endif
 
 ;
 ; get default file extension for error, object and listing files
@@ -1082,8 +1090,8 @@ AssembleFini proc __ccall private
 
 AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
-   .new curr_written:uint_t
    .new prev_written:uint_t
+
     xor eax,eax
     mov MacroLocals,eax
     mov MODULE.StrStack,rax ; reset string label counter
@@ -1121,25 +1129,22 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
     mov Parse_Pass,PASS_1
 
     .while 1
+
         OnePass()
         xor eax,eax
         .break .if ( MODULE.error_count > eax )
-        ;
+
         ; calculate total size of segments
-        ;
-        mov curr_written,eax
-        mov rsi,SymTables[TAB_SEG].head
-        .while rsi
-            mov eax,[rsi].asym.max_offset
-            add curr_written,eax
-            mov rsi,[rsi].asym.next
-        .endw
-        ;
+
+        .for ( rsi = SymTables[TAB_SEG].head : rsi : rsi = [rsi].asym.next )
+            add eax,[rsi].asym.max_offset
+        .endf
+
         ; if there's no phase error and size of segments didn't change, we're done
-        ;
-        mov eax,curr_written
+
         .break .if ( !MODULE.PhaseError && eax == prev_written )
         mov prev_written,eax
+
         .if ( Parse_Pass >= 199 )
             asmerr( 3000, 200 )
         .endif
@@ -1180,9 +1185,8 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 done:
     AssembleFini()
     xor eax,eax
-    .if ( eax == MODULE.error_count )
-        inc eax
-    .endif
+    cmp MODULE.error_count,1
+    adc eax,eax
     ret
     endp
 

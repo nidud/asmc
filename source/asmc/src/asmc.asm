@@ -697,17 +697,6 @@ else
                 CollectLinkOption("-nologo")
             .endif
 
-            .if ( !( flags & O_MACHINE ) )
-
-                .if ( MODULE.Ofssize == USE64 )
-                    CollectLinkOption("-machine:x64")
-                .elseif ( MODULE.Ofssize == USE32 )
-                    CollectLinkOption("-machine:x86")
-                .else
-                    CollectLinkOption("-machine:dos")
-                .endif
-            .endif
-
             .if ( flags & O_LINK )
 
                 .if ( !( flags & O_SUBSYSTEM ) )
@@ -750,6 +739,18 @@ else
                     .endif
                 .endif
             .endif
+
+            .if ( !( flags & O_MACHINE ) )
+
+                .if ( MODULE.Ofssize == USE64 )
+                    CollectLinkOption("-machine:x64")
+                .elseif ( MODULE.Ofssize == USE32 )
+                    CollectLinkOption("-machine:x86")
+                .else
+                    CollectLinkOption("-machine:dos")
+                .endif
+            .endif
+
         .endif
 
         .if ( !( flags & O_EXENAME ) )

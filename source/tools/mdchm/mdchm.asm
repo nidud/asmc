@@ -491,8 +491,19 @@ makehtm proc uses rsi rdi rbx pm:pmd
             .endw
         .endif
 
-        .if ( table || pre )
-
+        .if ( pre )
+            .while ( byte ptr [rbx] )
+                movzx eax,byte ptr [rbx]
+                inc rbx
+                .if ( eax == '<' )
+                    fprintf(fp, "&lt;")
+                .elseif ( eax == '>' )
+                    fprintf(fp, "&gt;")
+                .else
+                    fputc(eax, fp)
+                .endif
+            .endw
+        .elseif ( table )
             fprintf(fp, "%s\n", rbx)
             jmp continue
         .endif
@@ -513,6 +524,18 @@ makehtm proc uses rsi rdi rbx pm:pmd
                     inc samp
                 .endif
                 mov ecx,1
+                .endc
+            .case '<'
+                .if ( samp )
+                    fprintf(fp, "&lt;")
+                    mov ecx,1
+                .endif
+                .endc
+            .case '>'
+                .if ( samp )
+                    fprintf(fp, "&gt;")
+                    mov ecx,1
+                .endif
                 .endc
             .case '\'
                .endc .if ( byte ptr [rbx-2] == '\' )

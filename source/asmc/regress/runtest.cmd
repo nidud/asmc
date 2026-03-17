@@ -19,6 +19,7 @@ for %%f in (src\cofferr\*.asm) do call :cofferr %%f
 for %%f in (src\win64\*.asm) do call :win64 %%f
 for %%f in (src\coffdbg\*.asm) do call :coffdbg %%f
 for %%f in (src\pe\*.asm) do call :pe %%f
+for %%f in (src\ep\*.asm) do call :ep %%f
 for %%f in (src\zg\*.asm) do call :zg %%f
 for %%f in (src\zd\*.asm) do call :zd %%f
 for %%f in (src\binerr\*.asm) do call :binerr %%f
@@ -198,6 +199,14 @@ fcmp %~n1.err exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.err
 if exist %~n1.exe del %~n1.exe
+goto end
+
+:ep
+%ASMX% -q -EP %1 > %~n1.ep
+fcmp %~n1.ep exp\%~n1.ep
+if errorlevel 1 goto end
+del %~n1.ep
+del %~n1.obj
 goto end
 
 :zg

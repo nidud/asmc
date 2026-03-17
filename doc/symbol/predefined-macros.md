@@ -21,7 +21,7 @@ The macros listed in the following table.
 <tr><td><b>__COMPACT__</b></td><td>Defined as 1 when the -mc option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__DEBUG__</b></td><td>Defined as 1 when the -Zi option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__FLAT__</b></td><td>Defined as 1 when the -mf option is set. Otherwise, undefined.</td></tr>
-<tr><td><b>__GUI__</b></td><td>Defined as 1 when the -gui option is set. Otherwise, undefined.</td></tr>
+<tr><td><b>__GUI__</b></td><td>Defined as 1 when the -peg option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__HUGE__</b></td><td>Defined as 1 when the -mh option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__JWASM__</b></td><td>Defined as an integer literal value 212 that represents the compatible version of JWasm. This macro is always defined.</td></tr>
 <tr><td><b>__LARGE__</b></td><td>Defined as 1 when the -ml option is set. Otherwise, undefined.</td></tr>

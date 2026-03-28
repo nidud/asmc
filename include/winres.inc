@@ -1,4 +1,4 @@
-ifndef _INC_WINDOWS
+ifndef _WINDOWS_
 include windows.inc
 endif
 .pragma list(push, 0)

@@ -1387,6 +1387,10 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             assume rdi:asym_t
             mov [rdi].name_size,len
             mov [rdi].name,LclDup( rsi )
+            mov [rdi].hash,SymHash(rax)
+            .if ( MODULE.case_sensitive )
+                mov [rdi].casesensitive,1
+            .endif
             mov [rdi].list,MODULE.cref
             mov [rdi].state,SYM_STRUCT_FIELD
             mov [rdi].mem_type,MT_BITS

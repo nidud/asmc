@@ -64,13 +64,11 @@ else
 needbits proc __ccall count:int_t
 endif
     ldr edx,count
-
     .if ( _fneedb(STDI, edx) == -1 )
         xor eax,eax
     .endif
     ret
-
-needbits endp
+    endp
 
 dumpbits proto fastcall :dword {
     mov rdx,STDI
@@ -84,30 +82,24 @@ else
 getbits proc __ccall count:int_t
 endif
     ldr edx,count
-
     .ifd ( _fgetb(STDI, ecx) == -1 )
         xor eax,eax
     .endif
     ret
-
-getbits endp
+    endp
 
 ifdef _LIN64
 oputc proc __ccall uses rsi rdi c:int_t
 else
 oputc proc __ccall c:int_t
 endif
-    ldr ecx,c
-
     inc fsize
-    .ifd ( fputc(ecx, STDO) == -1 )
-
+    .ifd ( fputc(ldr(c), STDO) == -1 )
         .return( ER_DISK )
     .endif
     xor eax,eax
     ret
-
-oputc endp
+    endp
 
 ;************** Explode an imploded compressed stream
 
@@ -120,19 +112,15 @@ get_tree proc __ccall uses rsi rbx l:ptr uint_t, n:uint_t
     ; get bit lengths
 
     .ifd ( fgetc(STDI) == -1 )
-
         .return( 4 )
     .endif
+
     lea ebx,[rax+1] ; length/count pairs to read
     xor esi,esi     ; next code
-
     .repeat
-
         .ifd ( fgetc(STDI) == -1 )
-
             .return( 4 )
         .endif
-
         mov ecx,eax
         and eax,0x0F
         mov edx,eax
@@ -140,10 +128,8 @@ get_tree proc __ccall uses rsi rbx l:ptr uint_t, n:uint_t
         and ecx,0xF0
         shr ecx,4
         inc ecx         ; codes with those bits (1..16)
-
         lea eax,[rcx+rsi]
         .if ( eax > n ) ; don't overflow l[]
-
             .return( 4 )
         .endif
         mov rax,l
@@ -158,8 +144,7 @@ get_tree proc __ccall uses rsi rbx l:ptr uint_t, n:uint_t
         mov eax,4
     .endif
     ret
-
-get_tree endp
+    endp
 
 
 decode_huft proc __ccall uses rsi rdi htab:PHUFT, bits:int_t
@@ -172,14 +157,11 @@ decode_huft proc __ccall uses rsi rdi htab:PHUFT, bits:int_t
     dec edi
 
     needbits(ecx)
-
     .while 1
-
         not  eax
         and  eax,edi
         imul eax,eax,HUFT
         add  rbx,rax
-
         dumpbits([rbx].HUFT.b)
         movzx esi,[rbx].HUFT.e
         .if ( esi <= 16 )
@@ -197,8 +179,7 @@ decode_huft proc __ccall uses rsi rdi htab:PHUFT, bits:int_t
         mov rbx,[rbx].HUFT.t
     .endw
     ret
-
-decode_huft endp
+    endp
 
 
 explode_docopy proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, xbl:uint_t, xbd:uint_t, bdl:uint_t, s:ptr uint_t, u:ptr uint_t
@@ -207,9 +188,7 @@ explode_docopy proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, xbl:uint_t, xbd
    .new count:int_t
 
     mov edi,getbits(bdl)        ; get distance low bits
-
     .ifd decode_huft(td, xbd)   ; get coded distance high bits
-
         .return
     .endif
 
@@ -222,23 +201,18 @@ explode_docopy proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, xbl:uint_t, xbd
     mov edi,eax
 
     .ifd decode_huft(tl, xbl)    ; get coded length
-
         .return
     .endif
-
     mov esi,[rbx].HUFT.n      ; get length extra bits
     .if ( [rbx].HUFT.e )
-
         add esi,getbits(8)
     .endif
-
     mov rcx,s
     xor eax,eax
     mov edx,[rcx]
     mov [rcx],eax
     mov eax,esi
     .if ( edx > eax )
-
         sub edx,eax
         mov [rcx],edx
     .endif
@@ -299,8 +273,7 @@ explode_docopy proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, xbl:uint_t, xbd
         mov edi,offs
     .endw
     .return( 0 )
-
-explode_docopy endp
+    endp
 
 ; Decompress the imploded data using coded literals and a sliding
 ; window (of size 2^(6+bdl) bytes).
@@ -324,7 +297,6 @@ explode_lit proc __ccall uses rbx tb:PHUFT, tl:PHUFT, td:PHUFT, xbb:uint_t, xbl:
             ; flush test?
 
         .elseifd explode_docopy(tl, td, xbl, xbd, bdl, &s, &u)
-
             .return
         .endif
     .endw
@@ -332,29 +304,23 @@ explode_lit proc __ccall uses rbx tb:PHUFT, tl:PHUFT, td:PHUFT, xbb:uint_t, xbl:
         mov eax,ER_DISK
     .endif
     ret
-
-explode_lit endp
+    endp
 
 ; Decompress the imploded data using uncoded literals and a sliding
 ; window (of size 2^(6+bdl) bytes).
 
 explode_nolit proc __ccall tl:PHUFT, td:PHUFT, xbl:uint_t, xbd:uint_t, bdl:uint_t, s:uint_t
 
-   .new u:uint_t = 1 ; true if unflushed
+    .new u:uint_t = 1 ; true if unflushed
 
     .while ( s )
-
         .ifd getbits(1)
-
             dec s
             .ifd oputc(getbits(8))
                .return
             .endif
-
             ; flush test?
-
         .elseifd explode_docopy(tl, td, xbl, xbd, bdl, &s, &u)
-
             .return
         .endif
     .endw
@@ -362,8 +328,7 @@ explode_nolit proc __ccall tl:PHUFT, td:PHUFT, xbl:uint_t, xbd:uint_t, bdl:uint_
         mov eax,ER_DISK
     .endif
     ret
-
-explode_nolit endp
+    endp
 
 
 explode proc public uses rsi rdi rbx file:string_t, fp:ptr FILE, zp:PZIPLOCAL
@@ -385,52 +350,39 @@ explode proc public uses rsi rdi rbx file:string_t, fp:ptr FILE, zp:PZIPLOCAL
     mov [rax].FILE._bitcnt,0
     mov [rax].FILE._charbuf,0
     mov STDI,rax
-
     .if ( fopen(ldr(file), "wz") == NULL )
-
         dec rax
        .return
     .endif
     mov STDO,rax
     mov fsize,0
-
     mov eax,7
     mov xbl,eax
     .if ( [rbx].ZIPLOCAL.csize > 200000 )
         inc eax
     .endif
     mov xbd,eax
-
     .if ( [rbx].ZIPLOCAL.flag & 4 )
-
         mov xbb,9
         .ifd get_tree(&l, 256)
-
             mov rc,eax
             jmp done
         .endif
-
         .ifd huft_build( &l, 256, 256, 0, 0, &tb, &xbb )
-
             mov rc,eax
             .if ( eax == 1 )
                 jmp freetb
             .endif
             jmp done
         .endif
-
         .ifd get_tree(&l, 64)
-
             mov rc,eax
             jmp freetb
         .endif
         lea rdx,cplen3
-
     .else
-
         mov tb,NULL
         .ifd get_tree(&l, 64)
-
            mov rc,eax
            jmp done
         .endif
@@ -438,35 +390,27 @@ explode proc public uses rsi rdi rbx file:string_t, fp:ptr FILE, zp:PZIPLOCAL
     .endif
 
     .ifd huft_build( &l, 64, 0, rdx, &extra, &tl, &xbl )
-
         mov rc,eax
         .if ( eax == 1 )
             jmp freetl
         .endif
         jmp freetb
     .endif
-
     .ifd get_tree(&l, 64)
-
         mov rc,eax
         jmp freetl
     .endif
-
     mov bdl,6
     lea rdx,cpdist4
     .if ( [rbx].ZIPLOCAL.flag & 2 )
-
         lea rdx,cpdist8
         inc bdl
     .endif
 
     .ifd huft_build( &l, 64, 0, rdx, &extra, &td, &xbd )
-
         mov rc,eax
-        .if ( eax == 1 )
-
-            jmp freetd
-        .endif
+        cmp eax,1
+        je  freetd
         jmp freetl
     .endif
 
@@ -483,10 +427,8 @@ freetb:
     huft_free( tb )
 done:
     .if ( rc == 0 )
-
         mov rcx,STDI
         .if ( [rcx].FILE._bitcnt >= 8 )
-
             inc [rcx].FILE._cnt
             dec [rcx].FILE._ptr
         .endif
@@ -502,7 +444,6 @@ done:
     fclose(STDO)
     mov eax,rc
     ret
-
-explode endp
+    endp
 
     end

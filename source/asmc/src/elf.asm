@@ -162,27 +162,18 @@ ElfConvertSectionName proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
     ldr rcx,sym
 
     mov rsi,[rcx].asym.name
-
     .for ( rdi = &convsection, ebx = 0 : ebx < lengthof(convsection) : ebx++, rdi += conv_section )
-
         .ifd ( tmemcmp( rsi, [rdi].src, [rdi].len ) == 0 )
-
             movzx edx,[rdi].len
-
             .if ( byte ptr [rsi+rdx] == NULLC )
-
                 .return( [rdi].dst )
-
             .elseif ( ( [rdi].flags & CSF_GRPCHK ) && byte ptr [rsi+rdx] == '$' )
-
                 add rsi,rdx
-
                .return( tstrcat( tstrcpy( buffer, [rdi].dst ), rsi ) )
             .endif
         .endif
     .endf
     .return( rsi )
-
     endp
 
     assume rdi:nothing
@@ -191,9 +182,7 @@ ElfConvertSectionName proc __ccall uses rsi rdi rbx sym:asym_t, buffer:string_t
 ; get number of sections that have relocations
 
 get_num_reloc_sections proc
-
     .for ( eax = 0, rcx = SymTables[TAB_SEG].head : rcx : rcx = [rcx].asym.next )
-
         mov rdx,[rcx].asym.seginfo
         .if ( [rdx].seg_info.head )
             inc eax

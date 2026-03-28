@@ -221,17 +221,14 @@ else
 ioread proc
 endif
     .ifd ( fgetc([rbx].fp) == -1 )
-
         .return( 0 )
     .endif
-
     mov rcx,[rbx].fp
     inc [rcx].FILE._cnt
     dec [rcx].FILE._ptr
     add [rbx].fsize,[rcx].FILE._cnt
     ret
-
-ioread endp
+    endp
 
 
 ifdef _LIN64
@@ -240,28 +237,23 @@ else
 oputc proc __ccall c:int_t
 endif
     ldr ecx,c
-
     inc [rbx].csize
     .ifd ( fputc( ecx, [rbx].fpz ) != -1 )
         .return( 1 )
     .endif
     xor eax,eax
     ret
-
-oputc endp
+    endp
 
 
 putshort proc __ccall w:int_t
-
     .ifd oputc( ldr(w) )
-
         mov ecx,w
         shr ecx,8
         oputc( ecx )
     .endif
     ret
-
-putshort endp
+    endp
 
 
     assume rsi:ptr tree_desc
@@ -409,8 +401,7 @@ gen_bitlen proc __ccall uses rsi rdi desc:PTREE
         .endw
     .endf
     ret
-
-gen_bitlen endp
+    endp
 
 
     assume rsi:nothing
@@ -449,8 +440,7 @@ gen_codes proc __ccall uses rsi rdi tree:PCTDATA, max_code:int_t
         .endif
     .endf
     ret
-
-gen_codes endp
+    endp
 
 
 ifdef _WIN64
@@ -463,16 +453,13 @@ smaller proto fastcall tree:PCTDATA, n:int_t, m:int_t {
     }
 else
 smaller proc __ccall uses esi tree:PCTDATA, n:int_t, m:int_t
-
     mov edx,n
     mov esi,m
-
     .if ( ( [ecx+edx*4].ct_data.Freq < [ecx+esi*4].ct_data.Freq ) || ( ZERO? && [ebx+edx].depth <= [ebx+esi].depth ) )
         .return( 1 )
     .endif
     .return( 0 )
-
-smaller endp
+    endp
 endif
 
 pqdownheap proc __ccall uses rsi rdi tree:PCTDATA, k:int_t
@@ -490,9 +477,7 @@ endif
         ; Set EDI to the smallest of the two sons:
 
         .if ( edi < [rbx].heap_len )
-
             .ifd smaller(rcx, [rbx+rdi*4+4].heap, [rbx+rdi*4].heap)
-
                 inc edi
             .endif
         .endif
@@ -512,8 +497,7 @@ endif
     .endw
     mov [rbx+rsi*4].heap,r9d
     ret
-
-pqdownheap endp
+    endp
 
 
 ;
@@ -645,8 +629,7 @@ build_tree proc __ccall uses rsi rdi desc:PTREE
 
     gen_codes(tree, max_code)
     ret
-
-build_tree endp
+    endp
 
 
 send_bits proc __ccall uses rsi rdi value:int_t, length:int_t
@@ -674,8 +657,7 @@ send_bits proc __ccall uses rsi rdi value:int_t, length:int_t
         mov [rbx].bi_buf,esi
     .endif
     ret
-
-send_bits endp
+    endp
 
 
 scan_tree proc __ccall uses rsi rdi tree:PCTDATA, max_code:int_t
@@ -716,7 +698,6 @@ scan_tree proc __ccall uses rsi rdi tree:PCTDATA, max_code:int_t
         .else
             inc [rbx+4*REPZ_11_138].bl_tree.Freq
         .endif
-
         xor edx,edx
         mov prevlen,ecx
         .if ( eax == 0 )
@@ -731,8 +712,7 @@ scan_tree proc __ccall uses rsi rdi tree:PCTDATA, max_code:int_t
         .endif
     .endf
     ret
-
-scan_tree endp
+    endp
 
 
 send_tree proc __ccall uses rsi rdi tree:PCTDATA, max_code:int_t
@@ -819,65 +799,52 @@ send_tree proc __ccall uses rsi rdi tree:PCTDATA, max_code:int_t
         .endif
     .endf
     ret
-
-send_tree endp
+    endp
 
 
 build_bl_tree proc
-
     scan_tree(&[rbx].dyn_ltree, l_desc.max_code)
     scan_tree(&[rbx].dyn_dtree, d_desc.max_code)
     build_tree(&bl_desc)
-
     .for ( rdx = &bl_order, eax = BL_CODES-1 : eax >= 3 : eax-- )
-
         movzx ecx,byte ptr [rdx+rax]
         movzx ecx,[rbx+rcx*4].bl_tree.ct_data.Len
        .break .if ecx
     .endf
-
     lea  ecx,[rax+1]
     imul ecx,ecx,3
     add  ecx,5+5+4
     add  [rbx].opt_len,ecx
     ret
-
-build_bl_tree endp
+    endp
 
 
 send_all_trees proc __ccall uses rsi rdi lcodes:int_t, dcodes:int_t, blcodes:int_t
 
     ldr esi,lcodes
     ldr edi,dcodes
-
     mov ecx,esi
     sub ecx,257
     send_bits(ecx, 5)
-
     mov ecx,edi
     dec ecx
     send_bits(ecx, 5)
-
     mov ecx,blcodes
     sub ecx,4
     send_bits(ecx, 4)
-
     .for ( esi = 0 : esi < blcodes : esi++ )
-
         lea rdx,bl_order
         movzx eax,byte ptr [rdx+rsi]
         movzx ecx,[rbx+rax*4].bl_tree.ct_data.Len
         send_bits(ecx, 3)
     .endf
-
     mov edx,lcodes
     dec edx
     send_tree(&[rbx].dyn_ltree, edx)
     dec edi
     send_tree(&[rbx].dyn_dtree, edi)
     ret
-
-send_all_trees endp
+    endp
 
 
 init_block proc
@@ -902,8 +869,7 @@ init_block proc
     mov [rbx].flags,0
     mov [rbx].flag_bit,1
     ret
-
-init_block endp
+    endp
 
 
 ct_init proc uses rsi rdi
@@ -916,14 +882,11 @@ ct_init proc uses rsi rdi
     .for ( edx = 0 : edx < LENGTH_CODES-1 : edx++ )
 
         mov [rbx+rdx*4].base_length,esi
-
         lea rcx,extra_lbits
         mov ecx,[rcx+rdx*4]
         mov eax,1
         shl eax,cl
-
         .for ( edi = 0 : edi < eax : edi++ )
-
             mov [rbx+rsi].length_code,dl
             inc esi
         .endf
@@ -945,9 +908,7 @@ ct_init proc uses rsi rdi
         mov ecx,[rcx+rdx*4]
         mov eax,1
         shl eax,cl
-
         .for ( edi = 0 : edi < eax : edi++ )
-
             mov [rbx+rsi].d_code,dl
             inc esi
         .endf
@@ -960,15 +921,12 @@ ct_init proc uses rsi rdi
         mov eax,esi
         shl eax,7
         mov [rbx+rdx*4].base_dist,eax
-
         lea rcx,extra_dbits
         mov ecx,[rcx+rdx*4]
         sub ecx,7
         mov eax,1
         shl eax,cl
-
         .for ( edi = 0 : edi < eax : edi++ )
-
             mov [rbx+rsi].d_code[256],dl
             inc esi
         .endf
@@ -1012,12 +970,9 @@ ct_init proc uses rsi rdi
     ; The static distance tree is trivial
 
     .for ( esi = 0 : esi < D_CODES : esi++ )
-
         mov edx,5
         mov [rbx+rsi*4].static_dtree.Len,dx
-
         .for ( eax = 0, ecx = esi : edx : edx-- )
-
             shr ecx,1
             adc eax,eax
         .endf
@@ -1028,14 +983,12 @@ ct_init proc uses rsi rdi
 
     init_block()
     ret
-
-ct_init endp
+    endp
 
 
 ; Write out any remaining bits in an incomplete byte.
 
 bi_windup proc
-
     xor eax,eax
     mov edx,[rbx].bi_valid
     mov ecx,[rbx].bi_buf
@@ -1050,8 +1003,7 @@ bi_windup proc
         .endif
     .endif
     ret
-
-bi_windup endp
+    endp
 
 
 ifdef _LIN64
@@ -1059,11 +1011,8 @@ copy_block proc __ccall uses rsi rdi buf:string_t, len:uint_t, header:int_t
 else
 copy_block proc __ccall buf:string_t, len:uint_t, header:int_t
 endif
-
     .ifd bi_windup()
-
         .if header
-
             .ifd !putshort(len)
                 .return
             .endif
@@ -1073,12 +1022,9 @@ endif
                 .return
             .endif
         .endif
-
         mov eax,1
         .if ( len )
-
             .ifd ( fwrite(buf, 1, len, [rbx].fpz) == len )
-
                 add [rbx].csize,eax
                .return( 1 )
             .endif
@@ -1086,8 +1032,7 @@ endif
         .endif
     .endif
     ret
-
-copy_block endp
+    endp
 
 
 compress_block proc __ccall uses rsi rdi ltree:PCTDATA, dtree:PCTDATA
@@ -1188,13 +1133,11 @@ compress_block proc __ccall uses rsi rdi ltree:PCTDATA, dtree:PCTDATA
             mov eax,lx
         .until ( eax >= [rbx].last_lit )
     .endif
-
     movzx ecx,[rsi+4*END_BLOCK].ct_data.Code
     movzx edx,[rsi+4*END_BLOCK].ct_data.Len
     send_bits(ecx, edx)
     ret
-
-compress_block endp
+    endp
 
 
 flush_block proc eof:int_t
@@ -1303,8 +1246,6 @@ ifdef FORCE_METHOD
 else
     .elseif ( static_lenb == opt_lenb )
 endif
-
-
         mov ecx,eof
         add ecx,STATIC_TREES*2
         send_bits(ecx, 3)
@@ -1317,9 +1258,7 @@ endif
         mov [rbx].cmpr_lenbits,eax
         shr ecx,3
         add [rbx].cmpr_bytelen,ecx
-
     .else
-
         mov ecx,eof
         add ecx,DYN_TREES*2
         send_bits(ecx, 3)
@@ -1340,7 +1279,6 @@ endif
         shr ecx,3
         add [rbx].cmpr_bytelen,ecx
     .endif
-
     init_block()
     .if ( eof )
         bi_windup()
@@ -1348,8 +1286,7 @@ endif
     .endif
     mov eax,[rbx].cmpr_bytelen
     ret
-
-flush_block endp
+    endp
 
 ;
 ; Save the match info and tally the frequency counts. Return true if
@@ -1382,17 +1319,13 @@ ct_tally proc dist:int_t, lc:int_t
         movzx eax,[rbx+rdx].length_code
         add eax,LITERALS+1
         inc [rbx+rax*4].dyn_ltree.Freq
-
         mov edx,edi
         .if ( edi >= 256 )
-
             shr edi,7
             add edi,256
         .endif
-
         movzx eax,[rbx+rdi].d_code
         inc [rbx+rax*4].dyn_dtree.Freq
-
         mov eax,[rbx].last_dist
         inc [rbx].last_dist
         mov [rbx+rax*4].d_buf,edx
@@ -1431,17 +1364,14 @@ ct_tally proc dist:int_t, lc:int_t
             add edi,eax
         .endf
         shr edi,3
-
         mov eax,[rbx].last_lit
         shr eax,1
         .if ( [rbx].last_dist < eax )
-
             mov eax,[rbx].str_start
             sub eax,[rbx].block_start
             and eax,0xFFFF
             shr eax,1
             .if ( edi < eax )
-
                 .return( 1 )
             .endif
         .endif
@@ -1451,8 +1381,7 @@ ct_tally proc dist:int_t, lc:int_t
         dec eax
     .endif
     ret
-
-ct_tally endp
+    endp
 
 
 update_hash proc watcall id:int_t
@@ -1466,8 +1395,7 @@ update_hash proc watcall id:int_t
     and     eax,HASH_MASK
     mov     [rbx].ins_h,eax
     ret
-
-update_hash endp
+    endp
 
 ;
 ; Insert string s in the dictionary and set match_head to the previous head
@@ -1493,8 +1421,7 @@ insert_string proc
     and     edx,WMASK
     mov     [rcx+rdx*2],ax
     ret
-
-insert_string endp
+    endp
 
 
 if HASH_BITS lt 8 or MAX_MATCH ne 258
@@ -1509,7 +1436,6 @@ endif
     mov     rdi,[rdx].FILE._base
     mov     rsi,[rdx].FILE._base
     mov     si,ax                   ; match: window + cur_match
-
     mov     edx,[rbx].str_start
     mov     di,dx                   ; scan: window + start
 ifdef __P686__
@@ -1664,8 +1590,7 @@ else
     pop     ebp
     ret
 endif
-
-longest_match endp
+    endp
 
 
 fill_window proc
@@ -1749,8 +1674,7 @@ fill_window proc
        .break .if ( [rbx].lookahead >= MIN_LOOKAHEAD )
     .endw
     ret
-
-fill_window endp
+    endp
 
 
 deflate_fast proc
@@ -1762,17 +1686,13 @@ deflate_fast proc
     mov [rbx].prev_length,MIN_MATCH-1
 
     .while ( [rbx].lookahead ) ; deflate while lookahead
-
         .if ( [rbx].lookahead >= MIN_MATCH )
-
             mov prev_length,insert_string()
         .endif
-
         mov eax,prev_length
         mov ecx,[rbx].str_start
         sub ecx,eax
         .if ( eax && ecx <= MAX_DIST )
-
             mov ecx,[rbx].lookahead
             .if ( [rbx].nice_match > ecx )
                 mov [rbx].nice_match,ecx
@@ -1795,16 +1715,12 @@ deflate_fast proc
             sub [rbx].lookahead,match_length
 
             .if ( eax <= [rbx].max_lazy_match && [rbx].lookahead >= MIN_MATCH )
-
                 .for ( --match_length : match_length : match_length-- )
-
                     inc [rbx].str_start
                     mov prev_length,insert_string()
                 .endf
                 inc [rbx].str_start
-
             .else
-
                 add [rbx].str_start,eax
                 xor eax,eax
                 mov match_length,eax
@@ -1821,7 +1737,6 @@ deflate_fast proc
   endif
             .endif
         .else
-
             mov ecx,[rbx].str_start
             mov rdx,[rbx].fp
             add rcx,[rdx].FILE._base
@@ -1832,26 +1747,21 @@ deflate_fast proc
         .endif
 
         .if ( flush )
-
             .ifd !flush_block(0)
-
                 .return
             .endif
             mov [rbx].block_start,[rbx].str_start
         .endif
         .continue .if ( [rbx].lookahead >= MIN_LOOKAHEAD )
-
         fill_window()
         mov rcx,[rbx].fp
         .if ( [rcx].FILE._flag & _IOERR )
-
             .return( 0 )
         .endif
     .endw
     flush_block(1)
     ret
-
-deflate_fast endp
+    endp
 
 
 deflate_slow proc
@@ -1864,12 +1774,9 @@ deflate_slow proc
    .new prev_length:int_t = 0
 
     .while ( [rbx].lookahead )
-
         .if ( [rbx].lookahead >= MIN_MATCH )
-
             mov prev_length,insert_string()
         .endif
-
         mov prev_match,[rbx].match_start
         mov edx,match_length
         mov [rbx].prev_length,edx
@@ -1877,9 +1784,7 @@ deflate_slow proc
         mov eax,prev_length
         mov ecx,[rbx].str_start
         sub ecx,eax
-
         .if ( eax && edx < [rbx].max_lazy_match && ecx <= MAX_DIST )
-
             mov ecx,[rbx].lookahead
             .if ( [rbx].nice_match >= ecx )
                 mov [rbx].nice_match,ecx
@@ -1890,7 +1795,6 @@ deflate_slow proc
             .endif
             mov match_length,eax
             .if ( eax == MIN_MATCH )
-
                 mov eax,[rbx].str_start
                 sub ax,word ptr [rbx].match_start
                 .if ( eax > TOO_FAR )
@@ -1898,28 +1802,23 @@ deflate_slow proc
                 .endif
             .endif
         .endif
-
         mov eax,[rbx].prev_length
         .if ( eax >= MIN_MATCH && match_length <= eax )
-
             mov eax,[rbx].str_start
             add eax,[rbx].lookahead
             sub eax,MIN_MATCH
             mov len,eax
-
             mov eax,[rbx].str_start
             dec eax
             sub ax,word ptr prev_match
             mov edx,[rbx].prev_length
             sub edx,MIN_MATCH
             mov flush,ct_tally(eax, edx)
-
             mov eax,[rbx].prev_length
             dec eax
             sub [rbx].lookahead,eax
             dec eax
             mov [rbx].prev_length,eax
-
             .repeat
                 inc [rbx].str_start
                 .if ( [rbx].str_start <= len )
@@ -1931,29 +1830,21 @@ deflate_slow proc
             xor eax,eax
             mov mavailable,eax
             mov match_length,MIN_MATCH-1
-
             .if ( flush )
-
                 .ifd !flush_block(0)
-
                     .return
                 .endif
                 mov [rbx].block_start,[rbx].str_start
             .endif
-
         .else
-
             xor eax,eax
             .if ( mavailable != eax )
-
                 mov rdx,[rbx].fp
                 mov rcx,[rdx].FILE._base
                 mov cx,word ptr [rbx].str_start
                 movzx edx,byte ptr [rcx-1]
                 .ifd ct_tally(eax, edx)
-
                     .ifd !flush_block(0)
-
                        .return
                     .endif
                     mov [rbx].block_start,[rbx].str_start
@@ -1964,18 +1855,14 @@ deflate_slow proc
             inc [rbx].str_start
             dec [rbx].lookahead
         .endif
-
         .continue .if ( [rbx].lookahead >= MIN_LOOKAHEAD )
         fill_window()
         mov rcx,[rbx].fp
         .if ( [rcx].FILE._flag & _IOERR )
-
             .return( 0 )
         .endif
     .endw
-
     .if ( mavailable )
-
         mov ecx,[rbx].str_start
         mov rdx,[rbx].fp
         add rcx,[rdx].FILE._base
@@ -1984,8 +1871,7 @@ deflate_slow proc
     .endif
     flush_block(1)
     ret
-
-deflate_slow endp
+    endp
 
 
 deflate proc public uses rsi rdi rbx src:string_t, fpz:LPFILE, zp:PZIPLOCAL
@@ -1993,13 +1879,10 @@ deflate proc public uses rsi rdi rbx src:string_t, fpz:LPFILE, zp:PZIPLOCAL
     .new retval:int_t = 0
 
     .if ( fopen(ldr(src), "rz") == NULL )
-
        .return
     .endif
     mov rbx,rax
-
     .if !malloc(DEFLATE+0x20000)
-
         fclose(rbx)
        .return( 0 )
     .endif
@@ -2009,54 +1892,43 @@ deflate proc public uses rsi rdi rbx src:string_t, fpz:LPFILE, zp:PZIPLOCAL
     mov ecx,DEFLATE+0x20000
     xor eax,eax
     rep stosb
-
     mov [rbx].fp,rdx
     mov [rbx].fpz,fpz
     mov [rbx].compr_level,compresslevel
     mov [rbx].head,&[rbx].head_buf
-
     lea rax,[rbx+DEFLATE]
     xor ax,ax ; align block on 64K
     add rax,0x10000
     mov [rbx].prev,rax
-
     mov l_desc.dyn_tree,&[rbx].dyn_ltree
     mov l_desc.static_tree,&[rbx].static_ltree
     mov d_desc.dyn_tree,&[rbx].dyn_dtree
     mov d_desc.static_tree,&[rbx].static_dtree
     mov bl_desc.dyn_tree,&[rbx].bl_tree
-
     mov rdi,[rbx].head
     mov ecx,HASH_SIZE/2
     xor eax,eax
     rep stosd
-
     .ifd ct_init()
-
         mov eax,[rbx].compr_level
         imul eax,eax,dconfig
         lea rcx,config_table
         add rcx,rax
-
         mov [rbx].max_lazy_match,[rcx].dconfig.max_lazy
         mov [rbx].good_match,[rcx].dconfig.good_length
         mov [rbx].nice_match,[rcx].dconfig.nice_length
         mov [rbx].max_chain_len,[rcx].dconfig.max_chain
-
         mov eax,[rbx].compr_level
         .if ( al == 1 )
             mov [rbx].compr_flags,FAST
         .elseif ( al == 9 )
             mov [rbx].compr_flags,SLOW
         .endif
-
         .ifd ( ioread() == 0 )
-
            inc eax
         .else
             mov [rbx].lookahead,eax
             .if ( eax < MIN_LOOKAHEAD )
-
                 fill_window()
             .endif
             update_hash(0)
@@ -2069,10 +1941,8 @@ deflate proc public uses rsi rdi rbx src:string_t, fpz:LPFILE, zp:PZIPLOCAL
         .endif
         mov retval,eax
     .endif
-
     mov rcx,zp
     .if ( rcx )
-
         mov rax,[rbx].fp
         mov eax,[rax].FILE._crc32
         not eax
@@ -2085,7 +1955,6 @@ deflate proc public uses rsi rdi rbx src:string_t, fpz:LPFILE, zp:PZIPLOCAL
     free(rbx)
     mov eax,retval
     ret
-
-deflate endp
+    endp
 
     end

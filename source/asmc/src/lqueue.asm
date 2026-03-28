@@ -16,8 +16,6 @@ include input.inc
 include parser.inc
 include preproc.inc
 
-extern ResWordTable:ReservedWord
-
 lq_line struct  ; item of a line queue
 next    ptr_t ?
 line    char_t 1 dup(?)
@@ -84,11 +82,17 @@ tvsprintf proc __ccall uses rsi rdi rbx buffer:string_t, format:string_t, argptr
             .case 'r'
                 mov     ecx,[rbx]
                 add     rbx,size_t
+ifdef _WIN64
                 lea     rdx,ResWordTable
-                imul    ecx,ecx,ReservedWord
-                cmp     ecx,T_CCALL*ReservedWord
-                movzx   eax,[rdx+rcx].ReservedWord.len
-                mov     rdx,[rdx+rcx].ReservedWord.name
+                cmp     ecx,T_CCALL
+                movzx   eax,[rdx+rcx*8].ReservedWord.len
+                lea     rdx,ResWordNames
+                mov     rdx,[rdx+rcx*string_t]
+else
+                cmp     ecx,T_CCALL
+                movzx   eax,ResWordTable[ecx*8].len
+                mov     rdx,ResWordNames[ecx*string_t]
+endif
                 jnz     .1
                 mov     eax,1
                 jmp     .1

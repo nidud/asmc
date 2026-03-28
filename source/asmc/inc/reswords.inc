@@ -30,20 +30,23 @@ ReservedWord	struct
 next		dw ?		; index next entry (used for hash table)
 len		db ?		; length of reserved word, i.e. 'AX' = 2
 flags		db ?		; see enum reservedword_flags
-name		string_t ?	; reserved word (char[])
+hash		dd ?		; 32-bit hash of reserved word
 ReservedWord	ends
+externdef	ResWordTable:ReservedWord
+externdef	ResWordNames:string_t
+externdef	resw_table:word
 
-FindResWord		proto fastcall :string_t, :uint_t
-RemoveResWord		proto fastcall :int_t
-GetResWName		proto fastcall :uint_t, :string_t
-IsKeywordDisabled	proto fastcall :string_t, :int_t
-EnableKeyword		proto fastcall :uint_t
-DisableKeyword		proto fastcall :uint_t
-RenameKeyword		proto __ccall :uint_t, :string_t, :uchar_t
-Set64Bit		proto __ccall :int_t
-ResWordsInit		proto
-ResWordsFini		proto
-SetMasmKeywords		proto fastcall :int_t
+FindResWord	proto fastcall :string_t, :uint_t
+RemoveResWord	proto fastcall :int_t
+GetResWName	proto fastcall :uint_t, :string_t
+IsKeywordDisabled proto fastcall :string_t, :int_t
+EnableKeyword	proto fastcall :uint_t
+DisableKeyword	proto fastcall :uint_t
+RenameKeyword	proto __ccall :uint_t, :string_t, :uchar_t
+Set64Bit	proto __ccall :int_t
+ResWordsInit	proto
+ResWordsFini	proto
+SetMasmKeywords proto fastcall :int_t
 
 endif
 .pragma list(pop)

@@ -617,32 +617,32 @@ InvertJump proc fastcall private p:string_t
     inc rcx
     mov eax,[rcx]
     .switch al
-      .case 'e'
-      .case 'z'
-      .case 'c'
-      .case 's'
-      .case 'p'
-      .case 'o'
+    .case 'e'
+    .case 'z'
+    .case 'c'
+    .case 's'
+    .case 'p'
+    .case 'o'
         mov byte ptr [rcx+1],al
         mov byte ptr [rcx],'n'
-        ret
-      .case 'n'
+       .return
+    .case 'n'
         mov byte ptr [rcx],ah
         mov byte ptr [rcx+1],' '
-        ret
-      .case 'a'
+       .return
+    .case 'a'
         mov byte ptr [rcx],'b'
-        .endc
-      .case 'b'
+       .endc
+    .case 'b'
         mov byte ptr [rcx],'a'
-        .endc
-      .case 'g'
+       .endc
+    .case 'g'
         mov byte ptr [rcx],'l'
-        .endc
-      .case 'l'
+       .endc
+    .case 'l'
         mov byte ptr [rcx],'g'
-        .endc
-      .default
+       .endc
+    .default
         ;
         ; v2.11: convert "jmp" to 0
         ;
@@ -650,7 +650,7 @@ InvertJump proc fastcall private p:string_t
             dec rcx
             mov byte ptr [rcx],NULLC
         .endif
-        ret
+        .return
     .endsw
     .if ah == 'e'
         mov byte ptr [rcx+1],' '
@@ -867,8 +867,6 @@ GetExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_
 ;   .CONT .IF: TRUE
 ;
 
-GenerateFloat proto __ccall :int_t, :token_t
-
     assume rbx:token_t
 
 ExpandCStrings proc __ccall public uses rdi rbx tokenarray:token_t
@@ -944,12 +942,13 @@ GetProcVtbl proc fastcall private sym:asym_t, name:ptr sbyte
 
 GetProc proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, opnd:ptr expr
 
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
+    ldr ecx,i
+    imul ebx,ecx,asm_tok
+    add rbx,ldr(tokenarray)
 
     .if ( [rbx].token == T_OP_SQ_BRACKET )
 
-        .for ( ecx = i : [rbx].token != T_FINAL : rbx+=asm_tok, ecx++ )
+        .for ( : [rbx].token != T_FINAL : rbx+=asm_tok, ecx++ )
             .break .if ( [rbx].token == T_CL_SQ_BRACKET )
         .endf
         add ecx,3
@@ -1054,7 +1053,7 @@ GetMacroReturn proc __ccall private uses rsi rbx i:int_t, tokenarray:token_t
     ;
     ; if the last line is retm<..> use this as return value
     ;
-    .return .if !GetProc( i, tokenarray, &opnd )
+    .return .if !GetProc( ldr(i), ldr(tokenarray), &opnd )
     .if ( [rax].asym.state == SYM_STRUCT_FIELD )
         mov rsi,rax
         imul ebx,i,asm_tok

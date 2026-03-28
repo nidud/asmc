@@ -38,11 +38,11 @@ define __TOKEN_INC
     }
 
 .template asm_tok
-    token           uchar_t ?
+    token           db ?
     union
-     dirtype        uchar_t ?   ; T_DIRECTIVE: type
-     bytval         uchar_t ?   ; T_STYPE: memtype
-     precedence     uchar_t ?   ; T_UNARY_OPERATOR/T_BINARY_OPERATOR
+     dirtype        db ?        ; T_DIRECTIVE: type
+     bytval         db ?        ; T_STYPE: memtype
+     precedence     db ?        ; T_UNARY_OPERATOR/T_BINARY_OPERATOR
      string_delim   char_t ?    ; T_STRING: string delimiter
      floattype      char_t ?    ; T_FLOAT: 0 or 'r'
      numbase        char_t ?    ; T_NUM: number base
@@ -62,11 +62,10 @@ define __TOKEN_INC
      ends
     ends
     union
-     tokval         uint_t ?    ; index if token is a reserved word
-     stringlen      uint_t ?    ; T_STRING: size
-     idarg          uint_t ?    ; T_ID: currently not used
-     itemlen        uint_t ?    ; T_NUM: size
-     lastidx        uint_t ?    ; T_FINAL: last index (used in RunMacro())
+     tokval         dd ?        ; index if token is a reserved word
+     stringlen      dd ?        ; T_STRING: size
+     itemlen        dd ?        ; T_NUM: size
+     lastidx        dd ?        ; T_FINAL: last index (used in RunMacro())
     ends
     string_ptr      string_t ?
     tokpos          string_t ?  ; points to item in CurrSource

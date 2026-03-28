@@ -371,8 +371,7 @@ endif
         inc eax
     .endif
     ret
-
-huft_build endp
+    endp
 
 ;
 ; Free the malloc'ed tables built by huft_build(), which makes a linked
@@ -385,15 +384,12 @@ huft_free proc __ccall uses rsi rdi rbx huft:PHUFT
 else
 huft_free proc __ccall uses rbx huft:PHUFT
 endif
-
-    .for ( rbx = huft : rbx : )
-
+    .for ( rbx = ldr(huft) : rbx : )
         lea rcx,[rbx-HUFT]
         mov rbx,[rcx].HUFT.t
         free(rcx)
     .endf
     ret
-
-huft_free endp
+    endp
 
     end

@@ -189,7 +189,7 @@ SymGetLocal proc __ccall uses rbx psym:asym_t
         lea rdx,[rax].asym.nextll
     .endw
     xor eax,eax
-    mov [rdx],eax
+    mov [rdx],rax
     ret
     endp
 
@@ -199,13 +199,10 @@ SymGetLocal proc __ccall uses rbx psym:asym_t
 ; fixme: It might be necessary to reset the "defined" flag
 ; for local labels (not for params and locals!). Low priority!
 
-define FNVPRIME 0x01000193
-define FNVBASE  0x811c9dc5
-
 SymSetLocal proc __ccall uses rsi rdi psym:asym_t
 
-    xor eax,eax
     ldr rsi,psym
+    xor eax,eax
     lea rdx,lsym_table
     mov rdi,rdx
     mov ecx,sizeof(lsym_table) / 4
@@ -214,16 +211,19 @@ SymSetLocal proc __ccall uses rsi rdi psym:asym_t
     mov rsi,[rsi].asym.procinfo
     mov rsi,[rsi].proc_info.labellist
     .while rsi
-        mov rcx,[rsi].asym.name
-        mov eax,FNVBASE
-        mov dl,[rcx]
-        .while dl
-            inc  rcx
-            or   dl,0x20
-            imul eax,eax,FNVPRIME
-            xor  al,dl
-            mov  dl,[rcx]
-        .endw
+        mov eax,[rsi].asym.hash
+        .if ( [rsi].asym.casesensitive )
+            mov rcx,[rsi].asym.name
+            mov eax,FNVBASE
+            mov dl,[rcx]
+            .while dl
+                inc  rcx
+                or   dl,0x20
+                imul eax,eax,FNVPRIME
+                xor  al,dl
+                mov  dl,[rcx]
+            .endw
+        .endif
         and eax,LHASH_TABLE_SIZE - 1
         mov [rdi+rax*size_t],rsi
         mov rsi,[rsi].asym.nextll
@@ -232,16 +232,22 @@ SymSetLocal proc __ccall uses rsi rdi psym:asym_t
     endp
 
 
-SymAlloc proc __ccall uses rsi rdi name:string_t
+SymAlloc proc __ccall uses rsi rdi rbx name:string_t
     ldr rsi,name
-    mov edi,tstrlen( rsi )
+    mov ebx,SymHash(rsi)
+    sub rcx,rsi
+    mov edi,ecx
     LclAlloc( &[rdi+asym+1] )
+    mov [rax].asym.hash,ebx
     mov [rax].asym.name_size,edi
     mov [rax].asym.mem_type,MT_EMPTY
     lea rdx,[rax+asym]
     mov [rax].asym.name,rdx
     .if ( MODULE.cref )
         mov [rax].asym.list,1
+    .endif
+    .if ( MODULE.case_sensitive )
+        mov [rax].asym.casesensitive,1
     .endif
     .if edi
         mov ecx,edi
@@ -257,110 +263,73 @@ SymAlloc proc __ccall uses rsi rdi name:string_t
 
 ifdef _WIN64
 
-    option win64:rsp noauto nosave
-
     ; find a symbol in the local/global symbol table,
     ; return ptr to next free entry in global table if not found.
     ; Note: lsym must be global, thus if the symbol isn't
     ; found and is to be added to the local table, there's no
     ; second scan necessary.
 
+align 16
+
+option win64:rsp noauto nosave
+
 SymFind proc fastcall string:string_t
+
     movzx   eax,byte ptr [rcx]
     test    eax,eax
     jz      .done
     mov     r10,rcx
+    mov     r9d,eax
     or      al,0x20
     xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+    xor     r9d,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
     inc     rcx
     mov     dl,[rcx]
     test    dl,dl
     jz      .1
 .0:
     inc     rcx
-    or      dl,0x20
+    imul    r9d,r9d,FNVPRIME
     imul    eax,eax,FNVPRIME
+    xor     r9b,dl
+    or      dl,0x20
     xor     al,dl
     mov     dl,[rcx]
     test    dl,dl
     jnz     .0
 .1:
     sub     rcx,r10
-    mov     r8d,ecx
+    mov     r8d,eax
     cmp     CurrProc,0
     je      .global
-    mov     r9d,eax
     and     eax,LHASH_TABLE_SIZE - 1
     lea     rdx,lsym_table
     lea     rdx,[rdx+rax*8]
     mov     rax,[rdx]
     test    rax,rax
     jz      .end_l
-    test    MODULE.case_sensitive,1
-    jz      .cmp_li
 .cmp_l:
-    cmp     r8d,[rax].asym.name_size
+    cmp     ecx,[rax].asym.name_size
     jne     .next_l
-    mov     r11,[rax].asym.name
-.dd_l:
-    test    r8d,-4
-    jz      .db_l
-    sub     r8d,4
-    mov     ecx,[r10+r8]
-    cmp     ecx,[r11+r8]
-    je      .dd_l
-    jmp     .size_l
-.db_l:
-    test    r8d,r8d
-    jz      .exit_l
-    sub     r8d,1
-    mov     cl,[r10+r8]
-    cmp     cl,[r11+r8]
-    je      .db_l
-.size_l:
-    mov     r8d,[rax].asym.name_size
+    test    [rax].asym.casesensitive,1
+    jz      .nocase_l
+    cmp     r9d,[rax].asym.hash
+    je      .exit_l
 .next_l:
     mov     rdx,rax
     mov     rax,[rax].asym.nextitem
     test    rax,rax
     jnz     .cmp_l
     jmp     .end_l
+.nocase_l:
+    cmp     r8d,[rax].asym.hash
+    jne     .next_l
 .exit_l:
     mov     lsym,rdx
     jmp     .done
-.cmp_li:
-    cmp     r8d,[rax].asym.name_size
-    jne     .next_li
-    mov     r11,[rax].asym.name
-.dd_li:
-    test    r8d,-4
-    jz      .db_li
-    sub     r8d,4
-    mov     ecx,[r10+r8]
-    cmp     ecx,[r11+r8]
-    je      .dd_li
-    add     r8d,4
-.db_li:
-    test    r8d,r8d
-    jz      .exit_l
-    sub     r8d,1
-    mov     cl,[r10+r8]
-    cmp     cl,[r11+r8]
-    je      .db_li
-    mov     ch,cl
-    mov     cl,[r11+r8]
-    or      ecx,0x2020
-    cmp     cl,ch
-    je      .db_li
-    mov     r8d,[rax].asym.name_size
-.next_li:
-    mov     rdx,rax
-    mov     rax,[rax].asym.nextitem
-    test    rax,rax
-    jnz     .cmp_li
 .end_l:
     mov     lsym,rdx
-    mov     eax,r9d
+    mov     eax,r8d
 .global:
     and     eax,GHASH_TABLE_SIZE-1
     lea     rdx,gsym_table
@@ -368,233 +337,110 @@ SymFind proc fastcall string:string_t
     mov     rax,[rdx]
     test    rax,rax
     jz      .end_g
-    test    MODULE.case_sensitive,1
-    jz      .cmp_gi
 .cmp_g:
-    cmp     r8d,[rax].asym.name_size
+    cmp     ecx,[rax].asym.name_size
     jne     .next_g
-    mov     r11,[rax].asym.name
-    mov     r9d,r8d
-.dd_g:
-    test    r9d,-4
-    jz      .db_g
-    sub     r9d,4
-    mov     ecx,[r10+r9]
-    cmp     ecx,[r11+r9]
-    je      .dd_g
-    jmp     .next_g
-.db_g:
-    test    r9d,r9d
-    jz      .end_g
-    sub     r9d,1
-    mov     cl,[r10+r9]
-    cmp     cl,[r11+r9]
-    je      .db_g
+    test    [rax].asym.casesensitive,1
+    jz      .nocase_g
+    cmp     r9d,[rax].asym.hash
+    je      .end_g
 .next_g:
     mov     rdx,rax
     mov     rax,[rax].asym.nextitem
     test    rax,rax
     jnz     .cmp_g
     jmp     .end_g
-.cmp_gi:
-    cmp     r8d,[rax].asym.name_size
-    jne     .next_gi
-    mov     r11,[rax].asym.name
-    mov     r9d,r8d
-.dd_gi:
-    test    r9d,-4
-    jz      .db_gi
-    sub     r9d,4
-    mov     ecx,[r10+r9]
-    cmp     ecx,[r11+r9]
-    je      .dd_gi
-    add     r9d,4
-.db_gi:
-    test    r9d,r9d
-    jz      .end_g
-    sub     r9d,1
-    mov     cl,[r10+r9]
-    cmp     cl,[r11+r9]
-    je      .db_gi
-    mov     ch,cl
-    mov     cl,[r11+r9]
-    or      ecx,0x2020
-    cmp     cl,ch
-    je      .db_gi
-.size_gi:
-    mov     r8d,[rax].asym.name_size
-.next_gi:
-    mov     rdx,rax
-    mov     rax,[rax].asym.nextitem
-    test    rax,rax
-    jnz     .cmp_gi
+.nocase_g:
+    cmp     r8d,[rax].asym.hash
+    jne     .next_g
 .end_g:
     mov     gsym,rdx
 .done:
     ret
     endp
 
-    option win64:rbp auto save
+option win64:rbp auto save
 
 else
 
-SymFind proc fastcall uses esi edi ebx ebp string:string_t
+SymFind proc fastcall uses esi ebx string:string_t
+
     movzx   eax,byte ptr [ecx]
     test    eax,eax
     jz      .done
     mov     esi,ecx
+    mov     ebx,eax
     or      al,0x20
     xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+    xor     ebx,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
     inc     ecx
     mov     dl,[ecx]
     test    dl,dl
     jz      .1
 .0:
     inc     ecx
-    or      dl,0x20
+    imul    ebx,ebx,FNVPRIME
     imul    eax,eax,FNVPRIME
+    xor     bl,dl
+    or      dl,0x20
     xor     al,dl
     mov     dl,[ecx]
     test    dl,dl
     jnz     .0
 .1:
     sub     ecx,esi
+    mov     esi,eax
     cmp     CurrProc,0
     je      .global
-    mov     ebp,eax
     and     eax,LHASH_TABLE_SIZE - 1
     lea     edx,lsym_table[eax*4]
     mov     eax,[edx]
     test    eax,eax
     jz      .end_l
-    cmp     MODULE.case_sensitive,0
-    je      .cmp_li
 .cmp_l:
     cmp     ecx,[eax].asym.name_size
     jne     .next_l
-    mov     edi,[eax].asym.name
-.dd_l:
-    test    ecx,-4
-    jz      .db_l
-    sub     ecx,4
-    mov     ebx,[esi+ecx]
-    cmp     ebx,[edi+ecx]
-    je      .dd_l
-    jmp     .size_l
-.db_l:
-    test    ecx,ecx
-    jz      .exit_l
-    sub     ecx,1
-    mov     bl,[esi+ecx]
-    cmp     bl,[edi+ecx]
-    je      .db_l
-.size_l:
-    mov     ecx,[eax].asym.name_size
+    test    [eax].asym.casesensitive,1
+    jz      .nocase_l
+    cmp     ebx,[eax].asym.hash
+    je      .exit_l
 .next_l:
     mov     edx,eax
     mov     eax,[eax].asym.nextitem
     test    eax,eax
     jnz     .cmp_l
     jmp     .end_l
+.nocase_l:
+    cmp     esi,[rax].asym.hash
+    jne     .next_l
 .exit_l:
     mov     lsym,edx
     jmp     .done
-.cmp_li:
-    cmp     ecx,[eax].asym.name_size
-    jne     .next_li
-    mov     edi,[eax].asym.name
-.dd_li:
-    test    ecx,-4
-    jz      .db_li
-    sub     ecx,4
-    mov     ebx,[esi+ecx]
-    cmp     ebx,[edi+ecx]
-    je      .dd_li
-    add     ecx,4
-.db_li:
-    test    ecx,ecx
-    jz      .exit_l
-    sub     ecx,1
-    mov     bl,[esi+ecx]
-    cmp     bl,[edi+ecx]
-    je      .db_li
-    mov     bh,[edi+ecx]
-    or      ebx,0x2020
-    cmp     bl,bh
-    je      .db_li
-    mov     ecx,[eax].asym.name_size
-.next_li:
-    mov     edx,eax
-    mov     eax,[eax].asym.nextitem
-    test    eax,eax
-    jnz     .cmp_li
 .end_l:
     mov     lsym,edx
-    mov     eax,ebp
+    mov     eax,esi
 .global:
-    and     eax,GHASH_TABLE_SIZE - 1
+    and     eax,GHASH_TABLE_SIZE-1
     lea     edx,gsym_table[eax*4]
     mov     eax,[edx]
     test    eax,eax
     jz      .end_g
-    cmp     MODULE.case_sensitive,0
-    je      .cmp_gi
 .cmp_g:
     cmp     ecx,[eax].asym.name_size
     jne     .next_g
-    mov     edi,[eax].asym.name
-    mov     ebp,ecx
-.dd_g:
-    test    ebp,-4
-    jz      .db_g
-    sub     ebp,4
-    mov     ebx,[esi+ebp]
-    cmp     ebx,[edi+ebp]
-    je      .dd_g
-    jmp     .next_g
-.db_g:
-    test    ebp,ebp
-    jz      .end_g
-    sub     ebp,1
-    mov     bl,[esi+ebp]
-    cmp     bl,[edi+ebp]
-    je      .db_g
+    test    [eax].asym.casesensitive,1
+    jz      .nocase_g
+    cmp     ebx,[eax].asym.hash
+    je      .end_g
 .next_g:
     mov     edx,eax
     mov     eax,[eax].asym.nextitem
     test    eax,eax
     jnz     .cmp_g
     jmp     .end_g
-.cmp_gi:
-    cmp     ecx,[eax].asym.name_size
-    jne     .next_gi
-    mov     edi,[eax].asym.name
-.dd_gi:
-    test    ecx,-4
-    jz      .db_gi
-    sub     ecx,4
-    mov     ebx,[esi+ecx]
-    cmp     ebx,[edi+ecx]
-    je      .dd_gi
-    add     ecx,4
-.db_gi:
-    test    ecx,ecx
-    jz      .end_g
-    sub     ecx,1
-    mov     bl,[esi+ecx]
-    cmp     bl,[edi+ecx]
-    je      .db_gi
-    mov     bh,[edi+ecx]
-    or      ebx,0x2020
-    cmp     bl,bh
-    je      .db_gi
-.size_gi:
-    mov     ecx,[eax].asym.name_size
-.next_gi:
-    mov     edx,eax
-    mov     eax,[eax].asym.nextitem
-    test    eax,eax
-    jnz     .cmp_gi
+.nocase_g:
+    cmp     esi,[eax].asym.hash
+    jne     .next_g
 .end_g:
     mov     gsym,edx
 .done:
@@ -709,9 +555,12 @@ SymAddLocal proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t
            .return 0
         .endif
     .endif
-    tstrlen( rsi )
-    mov [rbx].asym.name_size,eax
-    lea edi,[rax+1]
+
+    SymHash(rsi)
+    sub rcx,rsi
+    mov [rbx].asym.hash,eax
+    mov [rbx].asym.name_size,ecx
+    lea edi,[rcx+1]
     LclAlloc( edi )
     mov [rbx].asym.name,rax
     mov ecx,edi
@@ -959,13 +808,9 @@ SymPassInit proc __ccall pass:int_t
 ; get all symbols in global hash table
 
 SymGetAll proc __ccall syms:asym_t
-
     ldr rdx,syms
     xor ecx,ecx
-
-    ; copy symbols to table
-
-    .repeat
+    .repeat ; copy symbols to table
         lea rax,gsym_table
         mov rax,[rax+rcx*asym_t]
         .while rax

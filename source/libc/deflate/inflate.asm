@@ -44,13 +44,11 @@ else
 needbits proc __ccall count:int_t
 endif
     ldr edx,count
-
     .ifd ( _fneedb(STDI, edx) == -1 )
         xor eax,eax
     .endif
     ret
-
-needbits endp
+    endp
 
 dumpbits proto fastcall :dword {
     mov rdx,STDI
@@ -64,13 +62,11 @@ else
 getbits proc __ccall count:int_t
 endif
     ldr edx,count
-
     .ifd ( _fgetb(STDI, ecx) == -1 )
         xor eax,eax
     .endif
     ret
-
-getbits endp
+    endp
 
 ifdef _LIN64
 oputc proc __ccall uses rsi rdi c:int_t
@@ -78,16 +74,13 @@ else
 oputc proc __ccall c:int_t
 endif
     ldr ecx,c
-
     inc fsize
     .ifd ( fputc(ecx, STDO) == -1 )
-
         .return( ER_DISK )
     .endif
     xor eax,eax
     ret
-
-oputc endp
+    endp
 
 ; Decompress the codes in a compressed block
 
@@ -103,20 +96,14 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:int_t, d:int_t
         imul  eax,eax,HUFT
         add   rbx,rax
         movzx esi,[rbx].HUFT.e
-
         .if ( esi > 16 )
-
             .repeat
-
                 .if ( esi == 99 )
-
                    .return( 1 )
                 .endif
-
                 dumpbits([rbx].HUFT.b)
                 sub esi,16
                 needbits(esi)
-
                 mov   rbx,[rbx].HUFT.t
                 imul  eax,eax,HUFT
                 add   rbx,rax
@@ -135,7 +122,6 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:int_t, d:int_t
         .else ; it's an EOB or a length
 
             .if ( esi == 15 ) ; exit if end of block
-
                 .return( 0 )
             .endif
 
@@ -152,20 +138,14 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:int_t, d:int_t
             imul  eax,eax,HUFT
             add   rbx,rax
             movzx esi,[rbx].HUFT.e
-
             .if ( esi > 16 )
-
                 .repeat
-
                     .if ( esi == 99 )
-
                        .return( 1 )
                     .endif
-
                     dumpbits([rbx].HUFT.b)
                     sub esi,16
                     needbits(esi)
-
                     mov   rbx,[rbx].HUFT.t
                     imul  eax,eax,HUFT
                     add   rbx,rax
@@ -176,7 +156,6 @@ inflate_codes proc __ccall uses rsi rdi rbx tl:PHUFT, td:PHUFT, l:int_t, d:int_t
 
             mov ebx,[rbx].HUFT.n
             mov edx,getbits(esi)
-
             mov rcx,STDO
             mov rax,[rcx].FILE._ptr
             sub rax,[rcx].FILE._base
@@ -241,8 +220,7 @@ endif
         .endif
     .endw
     ret
-
-inflate_codes endp
+    endp
 
 ; Decompress an inflated type 1 (fixed Huffman codes) block
 
@@ -271,11 +249,9 @@ inflate_fixed proc uses rdi rbx
         mov rdi,rbx
         mov fixed_bl,7
         .ifd huft_build( rdi, 288, 257, &cplens, &cplext, &fixed_tl, &fixed_bl )
-
             mov fixed_tl,NULL
            .return
         .endif
-
         mov rdx,rdi         ; make an incomplete code set
         mov ecx,32
         mov eax,5
@@ -283,9 +259,7 @@ inflate_fixed proc uses rdi rbx
         mov fixed_bd,5
         mov rdi,rdx
         .ifd huft_build( rdi, 32, 0, &cpdist, &cpdext, &fixed_td, &fixed_bd )
-
             .if ( eax != 1 )
-
                 mov ebx,eax
                 huft_free( fixed_tl )
                 mov fixed_tl,NULL
@@ -298,12 +272,10 @@ inflate_fixed proc uses rdi rbx
     ; decompress until an end-of-block code
 
     .ifd inflate_codes( fixed_tl, fixed_td, fixed_bl, fixed_bd )
-
         mov eax,1
     .endif
     ret
-
-inflate_fixed endp
+    endp
 
 ; Decompress an inflated type 2 (dynamic Huffman codes) block
 
@@ -371,17 +343,13 @@ inflate_dynamic proc uses rsi rdi rbx
         add  rbx,rax
         mov  td,rbx
         dumpbits([rbx].HUFT.b)
-
         mov eax,[rbx].HUFT.n
         .if ( eax < 16 )
-
             mov edi,eax
             mov ll[rsi*4],eax
             inc esi
             xor edx,edx
-
         .elseif ( eax == 16 )
-
             getbits(2)
             add eax,3
             mov edx,eax
@@ -389,11 +357,8 @@ inflate_dynamic proc uses rsi rdi rbx
             .if ( eax > n )
                 .return( 1 )
             .endif
-
         .else
-
             .if ( eax == 17 )
-
                 getbits(3)
                 add eax,3
             .else
@@ -407,7 +372,6 @@ inflate_dynamic proc uses rsi rdi rbx
             .endif
             xor edi,edi
         .endif
-
         .if edx
             .repeat
                 mov ll[rsi*4],edi
@@ -420,27 +384,20 @@ inflate_dynamic proc uses rsi rdi rbx
     ; free decoding table for trees
 
     huft_free( tl )
-
-
     mov l,9
     huft_build( &ll, nl, 257, &cplens, &cplext, &tl, &l )
-
     .if ( l == 0 || eax == 1 )
-
         huft_free( tl )
        .return( 1 )
     .endif
     .if ( eax )
         .return
     .endif
-
     mov d,6
     mov eax,nl
     lea rcx,ll[rax*4]
     huft_build( rcx, nd, 0, &cpdist, &cpdext, &td, &d )
-
     .if ( l == 0 && nl <= 257 )
-
         huft_free( tl )
        .return( 1 )
     .endif
@@ -448,55 +405,45 @@ inflate_dynamic proc uses rsi rdi rbx
         xor eax,eax
     .endif
     .if ( eax )
-
         mov ebx,eax
         huft_free( tl )
        .return( ebx )
     .endif
-
     mov ebx,inflate_codes( tl, td, l, d )
     huft_free( td )
     huft_free( tl )
-
     mov eax,ebx
     .if ( eax )
         mov eax,1
     .endif
     ret
-
-inflate_dynamic endp
+    endp
 
 
 ; Decompress an inflated type 0 (stored) block.
 
 inflate_stored proc uses rbx
-
     mov rdx,STDI        ; go to byte boundary
     mov ecx,[rdx].FILE._bitcnt
     and ecx,7
     sub [rdx].FILE._bitcnt,ecx
     shr [rdx].FILE._charbuf,cl
-
     mov ebx,getbits(16) ; number of bytes in block
     getbits(16)
     not ax
     .if ( eax != ebx )
-
         .return( 1 )
     .endif
     .if ( eax == 0 )
-
         .return
     .endif
     .for ( : ebx : ebx-- ) ; read and output the compressed data
-
         .ifd oputc(getbits(8))
             .return
         .endif
     .endf
     .return( 0 )
-
-inflate_stored endp
+    endp
 
 
 inflate proc public uses rbx file:string_t, fp:ptr FILE, zp:PZIPLOCAL
@@ -614,7 +561,6 @@ inflate proc public uses rbx file:string_t, fp:ptr FILE, zp:PZIPLOCAL
     fclose(STDO)
     mov eax,rc
     ret
-
-inflate endp
+    endp
 
     end

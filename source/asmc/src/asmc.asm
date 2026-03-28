@@ -471,11 +471,13 @@ ifdef _LIN64
     mov action.sa_flags,SA_SIGINFO
     sigaction(SIGSEGV, &action, NULL)
 else
-ifndef DEBUG
+ifndef __DEBUG__
     signal(SIGSEGV, &GeneralFailure)
 endif
 ifndef __UNIX__
+ifndef __DEBUG__
     signal(SIGBREAK, &GeneralFailure)
+endif
 else
     signal(SIGTERM, &GeneralFailure)
 endif

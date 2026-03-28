@@ -17,6 +17,7 @@ include fastpass.inc
 define B <byte ptr>
 
 externdef CurrEnum:asym_t
+externdef max_resw_len:int_t
 
 .data
 
@@ -971,7 +972,7 @@ get_id_in_backquotes proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_statu
     mov rsi,[rdx].input
     mov rdi,[rdx].output
     mov [rbx].token,T_ID
-    mov [rbx].idarg,0
+    mov [rbx].tokval,0
     .while 1 ; v2.37.51
         lodsb
         .break .if ( al == '`' )
@@ -991,98 +992,146 @@ get_id_in_backquotes proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_statu
 
 
 get_id proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
+
+   .new len:int_t
+   .new hash:int_t
+   .new IsResWord:byte = 1
+
     ldr rbx,buf
     ldr rdx,p
+
     mov rsi,[rdx].input
     mov rdi,[rdx].output
     mov [rbx].bytval,0 ; added v2.27
-    mov eax,[rsi]
-    .if ( ax == '"L' && [rdx].brachets )
+    movzx eax,word ptr [rsi]
+    .switch
+    .case eax == '"L'
+       .endc .if ( ![rdx].brachets )
         stosb
         inc [rdx].input
         inc [rdx].output
        .return get_string( rbx, rdx )
-    .endif
-    .if ( al == '@' ) ; v3.37: skip local labels in option class:reg
+    .case al == '@' ; v3.37: skip local labels in option class:reg
         mov [rbx].AtLabel,1
-    .endif
+    .case al == '_'
+        mov IsResWord,0
+    .endsw
+    stosb
+    inc rsi
+    movzx ecx,al
+    or  cl,0x20
+    xor ecx,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+
 continue_scan:
-    .repeat
+
+    .while islabel( [rsi] )
         stosb
         inc rsi
-    .until !islabel( [rsi] )
+        or al,0x20
+        imul ecx,ecx,FNVPRIME
+        xor cl,al
+    .endw
     ;
     ; if the name starts with a dot then accept dots
     ; within the name (though not as last char). OPTION DOTNAMEX
     ; must be on.
     ;
     .if ( al == '.' && MODULE.dotnamex )
-        mov rcx,[rdx].output
-        .if ( al == [rcx] )
+
+        mov IsResWord,0
+        mov rax,[rdx].output
+        .if ( B[rax] == '.' )
             ;
             ; allow .name..
             ; allow .name.00100
             ;
-            .if ( al == B[rsi+1] || ( B[rsi+1] >= '0' && B[rsi+1] <= '9') )
-                jmp continue_scan
-            .endif
-            .if ( islabel( [rsi+1] ) )
+            .if ( islabel([rsi+1]) || eax  == '.' )
                 mov al,'.'
+                stosb
+                inc  rsi
                 jmp continue_scan
             .endif
         .endif
     .endif
+    mov hash,ecx
     mov rcx,rdi
     sub rcx,[rdx].output
-    .if ( ecx > MAX_ID_LEN )
-        asmerr( 2043 )
-        mov rdx,p
-        mov rdi,[rdx].output
-        add rdi,MAX_ID_LEN
+
+    .if ( ecx > max_resw_len )
+        mov IsResWord,0
+        .if ( ecx > MAX_ID_LEN )
+            mov len,ecx
+            mov rdi,rdx
+            asmerr( 2043 )
+            mov rdx,rdi
+            mov rdi,[rdx].output
+            add rdi,MAX_ID_LEN
+            mov ecx,len
+        .endif
     .endif
-    mov B[rdi],0
-    inc rdi
-    mov rax,[rdx].output
-    mov al,[rax]
-    .if ( ecx == 1 && al == '?' )
-        mov [rdx].input,rsi
-        mov [rbx].token,T_QUESTION_MARK
-        mov [rbx].string_ptr,&__quest
-       .return
+
+    xor eax,eax
+    stosb
+    mov [rdx].input,rsi
+    mov rsi,[rdx].output
+
+    .if ( ecx == 1 )
+        mov IsResWord,al
+        .if ( B[rsi] == '?' )
+            mov [rbx].token,T_QUESTION_MARK
+            mov [rbx].string_ptr,&__quest
+           .return
+        .endif
     .endif
-    mov rax,[rdx].output
-    FindResWord( rax, ecx )
-    mov rdx,p
+
+    .if ( IsResWord )
+
+        mov eax,hash
+ifdef _WIN64
+        mov r9d,eax
+        lea r10,resw_table
+        and eax,HASH_TABITEMS-1
+        .for ( r8 = &ResWordTable, ax = [r10+rax*2] : eax : ax = [r8+rax*8].ReservedWord.next )
+            .break .if ( cl == [r8+rax*8].ReservedWord.len && r9d == [r8+rax*8].ReservedWord.hash )
+        .endf
+else
+        push edx
+        mov edx,eax
+        and eax,HASH_TABITEMS-1
+        .for ( ax = resw_table[eax*2] : eax : ax = ResWordTable[eax*8].next )
+            .break .if ( cl == ResWordTable[eax*8].len && edx == ResWordTable[eax*8].hash )
+        .endf
+        pop edx
+endif
+    .endif
+
+
     .if ( eax == 0 )
-        mov rax,[rdx].output
-        mov al,[rax]
-        .if ( al == '.' && !MODULE.dotname )
+        .if ( B[rsi] == '.' && !MODULE.dotname )
             mov [rbx].token,T_DOT
             lea rax,stokstr1[('.' - '(') * 2]
             mov [rbx].string_ptr,rax
-            inc [rdx].input
            .return
         .endif
-        mov [rdx].input,rsi
-        mov [rdx].output,rdi
         mov [rbx].token,T_ID
-        mov [rbx].idarg,0
+        mov [rbx].tokval,0
+        mov [rdx].output,rdi
        .return
     .endif
-    mov [rdx].input,rsi
     mov [rdx].output,rdi
+
     .switch eax
     .case T_SYSCALL       ; v2.24 hack for syscall..
         .if ( [rdx].index == 0 )
             mov eax,T_SYSCALL_
         .endif
         .endc
-      .case T_DOT_NEW
+    .case T_DOT_NEW
         inc [rdx].cstring
        .endc
-      .case T_DOT_ELSEIF
-      .case T_DOT_WHILE
-      .case T_DOT_CASE
+    .case T_DOT_ELSEIF
+    .case T_DOT_WHILE
+    .case T_DOT_CASE
         mov [rbx].HllCode,1
        .endc
     .endsw
@@ -1126,13 +1175,14 @@ continue_scan:
             and     esi,P_EXT_MASK
             .if ( eax > edi || ecx > esi )
                 mov [rbx].token,T_ID
-                mov [rbx].idarg,0
+                mov [rbx].tokval,0
                .return
             .endif
         .endif
         mov [rbx].token,T_INSTRUCTION
        .return
     .endif
+
     imul    esi,[rbx].tokval,special_item
     lea     rcx,SpecialTable
     add     rcx,rsi
@@ -1143,7 +1193,6 @@ continue_scan:
         mov ecx,T_REG
        .endc
     .case RWT_DIRECTIVE
-        mov rdx,p
         .if ( [rdx].flags2 == 0 )
             mov [rdx].flags2,[rcx].special_item.value
         .endif
@@ -1163,7 +1212,7 @@ continue_scan:
        .endc
     .default
         mov ecx,T_ID
-        mov [rbx].idarg,0
+        mov [rbx].tokval,0
     .endsw
      mov [rbx].token,cl
     .return( 0 )

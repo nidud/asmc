@@ -24,7 +24,6 @@ main proc
         fclose(fp)
     .endif
     ret
-
-main endp
+    endp
 
     end

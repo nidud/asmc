@@ -224,9 +224,6 @@ get_param_name proc __ccall uses rsi rdi rbx tokenarray:token_t, token:string_t,
 ; Create a type name to reduce number of types
 ;  DesktopToastsSample.asm: 4298 -->  519
 
-define FNVPRIME 0x01000193
-define FNVBASE  0x811c9dc5
-
     assume rbx:nothing, rdi:token_t
 
 GetTypeName proc __ccall uses rsi rdi rbx type:string_t, string:string_t, tokenarray:token_t, langtype:int_t

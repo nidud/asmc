@@ -112,49 +112,51 @@ IS_SIGNED proto watcall :byte {
 
     nextitem        asym_t ?        ; next symbol in hash line
     name            string_t ?      ; symbol name
-    name_size       int_t ?
     record
-     used           dd : 1 ?        ; symbol has been referenced
      isdefined      dd : 1 ?        ; symbol is "defined" in this pass
-     scoped         dd : 1 ?        ; symbol is local label or SYM_STACK
-     iat_used       dd : 1 ?        ; v2.07: IAT entry of symbol used (SYM_EXTERNAL + isproc==1 only)
-     isequate       dd : 1 ?        ; symbol has been defined with EQU
-     predefined     dd : 1 ?        ; symbol is predefined
-     isvariable     dd : 1 ?        ; symbol is variable (defined by '=' directive)
-     ispublic       dd : 1 ?        ; symbol has been added to the publics queue
-     list           dd : 1 ?        ; symbol is to be listed
-     isarray        dd : 1 ?        ; symbol is an array (total_length is valid)
-     isdata         dd : 1 ?        ; field first_size is valid
      isproc         dd : 1 ?        ; symbol is PROC or PROTO; has proc_info extension
-     issaved        dd : 1 ?        ; assembly-time variables only: symbol has been saved
-     fwdref         dd : 1 ?        ; symbol was forward referenced
-     included       dd : 1 ?        ; COFF: static symbol added to public queue. ELF:symbol added to symbol table (SYM_INTERNAL)
-     method         dd : 1 ?        ;
-     isclass        dd : 1 ?        ;
-     hasvtable      dd : 1 ?        ; base class - first member = lpVtbl
-     isvtable       dd : 1 ?        ; vtable struct - classVtbl
-     isvmacro       dd : 1 ?        ; vtable method is inline - sym->vmacro set
-     isinline       dd : 1 ?        ; SYM_EXTERNAL.target_type == SYM_MACRO
-     isstatic       dd : 1 ?        ; SYM_EXTERNAL.target_type == SYM_MACRO
-     vparray        dd : 1 ?        ; p.p.proc() - nested function call
-     operator       dd : 1 ?        ;
-     regparam       dd : 1 ?        ; register param
-     regpair        dd : 1 ?        ; reg::reg param
+     ispublic       dd : 1 ?        ; symbol has been added to the publics queue
+     predefined     dd : 1 ?        ; symbol is predefined
+     used           dd : 1 ?        ; symbol has been referenced
      isexport       dd : 1 ?        ; v2.19: symbol exported ( SYM_INTERNAL )
-     isimport       dd : 1 ?        ; v2.37: symbol imported ( SYM_EXTERNAL )
+     isarray        dd : 1 ?        ; symbol is an array (total_length is valid)
+     isvariable     dd : 1 ?        ; symbol is variable (defined by '=' directive)
+     method         dd : 1 ?        ;
+     isinline       dd : 1 ?        ; SYM_EXTERNAL.target_type == SYM_MACRO
+     scoped         dd : 1 ?        ; symbol is local label or SYM_STACK
+     included       dd : 1 ?        ; COFF: static symbol added to public queue. ELF:symbol added to symbol table (SYM_INTERNAL)
+     regparam       dd : 1 ?        ; register param
+     issaved        dd : 1 ?        ; assembly-time variables only: symbol has been saved
      crecord        dd : 1 ?        ; v2.36.37: use bitf_* in records
+     isequate       dd : 1 ?        ; symbol has been defined with EQU
+     list           dd : 1 ?        ; symbol is to be listed
+     hasvtable      dd : 1 ?        ; base class - first member = lpVtbl
+     operator       dd : 1 ?        ;
+     isimport       dd : 1 ?        ; v2.37: symbol imported ( SYM_EXTERNAL )
+     iat_used       dd : 1 ?        ; v2.07: IAT entry of symbol used (SYM_EXTERNAL + isproc==1 only)
+     isdata         dd : 1 ?        ; field first_size is valid
+     fwdref         dd : 1 ?        ; symbol was forward referenced
+     isstatic       dd : 1 ?        ; SYM_EXTERNAL.target_type == SYM_MACRO
+     isvtable       dd : 1 ?        ; vtable struct - classVtbl
+     isclass        dd : 1 ?        ;
+     vparray        dd : 1 ?        ; p.p.proc() - nested function call
+     isvmacro       dd : 1 ?        ; vtable method is inline - sym->vmacro set
      bitexpr        dd : 1 ?        ; v2.36.44: set by GetSimpleExpression() - rec.field == 1
      EndpOccured    dd : 1 ?        ; v2.37.15: set by EndpDir() - .return without RET
+     regpair        dd : 1 ?        ; reg::reg param
      negative       dd : 1 ?        ; v2.37.19: set by SetValue() - EXPR_CONST
+    ends
+    name_size       int_t ?
+    hash            dd ?            ; v2.37.85: set by SymAlloc()
+    record
+     casesensitive  db : 1 ?
     ends
     state           db ?
     mem_type        db ?
     langtype        db ?
     segoffsize      db ?
     is_far          db ?
-    sys_rcnt        db ?            ; syscall: register count
-    sys_xcnt        db ?            ; syscall: SIMD registers
-    sys_size        db ?            ; syscall: max size 8/16/32/64
+
     type            asym_t ?        ; set if memtype is MT_TYPE
 
     union
@@ -194,7 +196,6 @@ IS_SIGNED proto watcall :byte {
      vtable         asym_t ?        ; used by SYM_TYPE
      vmacro         asym_t ?        ; used by SYM_TYPE
     ends
-
 
     union
      ;
@@ -268,6 +269,11 @@ IS_SIGNED proto watcall :byte {
       param_id      db ?            ; param index
       param_regs    db ?            ; number or registers assign to this param
       param_offs    db ?            ; stack offset (inline functions) or next register
+     ends
+     struct
+      sys_rcnt      db ?            ; syscall: register count
+      sys_xcnt      db ?            ; syscall: SIMD registers
+      sys_size      db ?            ; syscall: max size 8/16/32/64
      ends
      struct
       bitf_size     db ?            ; bit field info for fixed sized records
@@ -529,6 +535,19 @@ SymSetCmpFunc   proto __ccall
 SymClearLocal   proto __ccall
 SymSetLocal     proto __ccall :asym_t
 SymGetLocal     proto __ccall :asym_t
+
+SymHash proto fastcall :string_t {
+    xor edx,edx
+    .if ( !MODULE.case_sensitive )
+        mov dh,0x20
+    .endif
+    .for ( eax = FNVBASE : byte ptr [rcx] : rcx++ )
+        mov  dl,[rcx]
+        or   dl,dh
+        imul eax,eax,FNVPRIME
+        xor  al,dl
+    .endf
+    }
 
 endif
 .pragma list(pop)

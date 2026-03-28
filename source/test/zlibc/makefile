@@ -1,22 +1,22 @@
 # Makefile for inflate
 # Mon Dec 16 17:05:42 2024
 
+flags = -q
+
 inflate:
-	asmc64 -q $@.asm
+	asmc64 $(flags) $@.asm
 ifdef YACC
 	./$@
 else
 	$@
 endif
 	@pause
+
+clean:
 ifdef YACC
-	rm ./$@.o
-	rm ./$@
+	rm ./inflate.o
+	rm ./inflate
 else
-	del $@.exe
-	del $@.obj
+	del inflate.exe
+	del inflate.obj
 endif
-
-vs:
-	project -p inflate
-

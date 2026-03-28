@@ -34,14 +34,6 @@ LabelInit proc __ccall
     endp
 
 
-GetAnonymousLabel proc __ccall buffer:string_t, value:int_t
-    mov eax,MODULE.anonymous_label
-    add eax,value
-    tsprintf( buffer, "L&_%04u", eax )
-    .return( buffer )
-    endp
-
-
 ; define a (code) label.
 ; - name: name of the label; ensured to be a valid identifier
 ; - mem_type: label's memory type

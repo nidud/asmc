@@ -22,7 +22,6 @@ AddFloatingPointEmulationFixup proto __ccall :ptr code_info
 public  szNull
 
 externdef opnd_clstab:opnd_class
-externdef ResWordTable:ReservedWord
 externdef vex_flags:byte
 
 ;; segment order must match the one in special.inc
@@ -68,18 +67,18 @@ output_opc proc __ccall uses rdi rbx
     mov     evex,0
     mov     fpfix,FALSE
     movzx   ecx,[rsi].token
+ifdef _WIN64
     lea     rax,ResWordTable
-    imul    ecx,ecx,ReservedWord
-    mov     rflags,[rcx+rax].ReservedWord.flags
+    mov     rflags,[rax+rcx*8].ReservedWord.flags
+else
+    mov     rflags,ResWordTable[ecx*8].flags
+endif
     and     al,RWF_MASK
     mov     tuple,al
 
     .if ( [rsi].prefix == 0 )
-
         .if ( rflags & RWF_EVEX )
-
             .if !( MODULE.avxencoding & PREFER_VEX or PREFER_VEX3 or NO_EVEX )
-
                 or [rsi].prefix,PREFIX_EVEX
             .endif
         .elseif ( ( rflags & RWF_VEX ) && MODULE.avxencoding == PREFER_EVEX )

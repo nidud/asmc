@@ -124,6 +124,10 @@ define OPT_REGAX        0x20 ; use [R|E]AX to render jump-code
 define OPT_ASSERT       0x40 ; Generate .assert code
 define OPT_PUSHF        0x80 ; Push/Pop flags
 
+define FNVPRIME         0x01000193
+define FNVBASE          0x811c9dc5
+define HASH_TABITEMS    0x4000
+
 ; enumerations
 
 ; output formats. Order must match formatoptions[] in assemble.asm

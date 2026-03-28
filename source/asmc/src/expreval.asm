@@ -810,7 +810,13 @@ endif
     assume rcx:expr_t
 
 init_expr proc fastcall opnd:expr_t
-    mov rcx,tmemset( rcx, 0, sizeof(expr) )
+    mov rdx,rcx
+    xor eax,eax
+    mov ecx,sizeof(expr)/4
+    xchg rdx,rdi
+    rep stosd
+    lea rcx,[rdi-expr]
+    mov rdi,rdx
     mov [rcx].inst,EMPTY
     mov [rcx].kind,EXPR_EMPTY
     mov [rcx].mem_type,MT_EMPTY
@@ -1186,22 +1192,16 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
             mov rcx,[rdi].type
             xor eax,eax
             mov [rdi].value,eax
-
             .if ( rcx )
                 SearchNameInStruct( rcx, rsi, rdi, 0 )
             .endif
-
             .if ( rax == NULL )
-
                 .if SymFind(rsi)
-
                     .if ( [rax].asym.state == SYM_TYPE )
-
                         mov rcx,[rdi].type
                         .if !( rax == rcx || ( rcx && !( [rcx].asym.isdefined ) ) || MODULE.oldstructs )
                             xor eax,eax
                         .endif
-
                     .elseif !( MODULE.oldstructs && ( [rax].asym.state == SYM_STRUCT_FIELD ||
                               [rax].asym.state == SYM_EXTERNAL || [rax].asym.state == SYM_INTERNAL ) )
                         xor eax,eax
@@ -1211,23 +1211,23 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
         .else
 
             mov edx,[rsi]
+            and edx,0x00FFFFFF
             or  dh,0x20
-            .if ( dl == '@' && !( edx & 0x00FF0000 ) )
-                .if ( dh == 'b' )
-                    mov rsi,GetAnonymousLabel( &labelbuff, 0 )
-                .elseif ( dh == 'f' )
-                    mov rsi,GetAnonymousLabel( &labelbuff, 1 )
-                .endif
+            .if ( edx == 'b@' || edx == 'f@' )
+                mov eax,MODULE.anonymous_label
+                lea rsi,labelbuff
+                bt  edx,10
+                adc eax,0
+                tsprintf( rsi, "L&_%04u", eax )
             .endif
             SymFind( rsi )
+
         .endif
 
         .if ( rax == NULL || [rax].asym.state == SYM_UNDEFINED ||
-              ( [rax].asym.state == SYM_TYPE && [rax].asym.typekind == TYPE_NONE ) ||
-              [rax].asym.state == SYM_MACRO || [rax].asym.state == SYM_TMACRO )
-
+              [rax].asym.state == SYM_TMACRO || [rax].asym.state == SYM_MACRO ||
+              ( [rax].asym.state == SYM_TYPE && [rax].asym.typekind == TYPE_NONE ) )
             .if ( [rdi].is_opattr )
-
                 mov [rdi].kind,EXPR_ERROR
                .endc
             .endif

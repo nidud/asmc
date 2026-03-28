@@ -6,6 +6,8 @@
 ifndef __DEFLATE_INC
 define __DEFLATE_INC
 
+.pragma comment(lib, zlibc)
+
 include stdio.inc
 
 ifndef __ccall

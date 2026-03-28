@@ -10,6 +10,7 @@ endif
 
 ifdef zip
 flag += -DSTDZIP
+name = zlibc
 endif
 ifdef noutf
 flag += -DNOUTF8

@@ -84,7 +84,6 @@ InWordRange macro val
 
 CCALLBACK(fpDirective, :int_t, :token_t)
 
-extern ResWordTable:ReservedWord
 extern directive_tab:fpDirective
 
 ; parsing of branch instructions with imm operand is found in branch.asm
@@ -4396,10 +4395,12 @@ init_prefix:
                     ; error is emitted below as syntax error
 
                     movzx eax,CodeInfo.token
-                    lea   rcx,ResWordTable
-                    imul  eax,eax,ReservedWord
-
-                    .if [rcx+rax].ReservedWord.flags & RWF_EVEX
+ifdef _WIN64
+                    lea rcx,ResWordTable
+                    .if ( [rcx+rax*8].ReservedWord.flags & RWF_EVEX )
+else
+                    .if ( ResWordTable[eax*8].flags & RWF_EVEX )
+endif
                         inc j
                     .endif
 

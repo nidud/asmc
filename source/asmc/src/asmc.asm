@@ -487,7 +487,11 @@ ifdef ASMC64
 endif
 
     .if !tgetenv( "ASMC" )     ; v2.21 -- getenv() error..
+if 1;ndef __DEBUG__
         lea rax,@CStr( "" )
+else
+        lea rax,@CStr( "-c -Cp -coff mp.asm" )
+endif
     .endif
     mov rcx,argv
     mov rdx,[rcx]

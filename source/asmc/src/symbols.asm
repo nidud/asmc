@@ -53,8 +53,8 @@ gsym                symptr_t ?          ; asym ** pointer into global hash table
 lsym                symptr_t ?          ; asym ** pointer into local hash table
 szDate              char_t 16 dup(?)    ; value of @Date symbol
 szTime              char_t 16 dup(?)    ; value of @Time symbol
-lsym_table          asym_t LHASH_TABLE_SIZE+1 dup(?)
 gsym_table          asym_t GHASH_TABLE_SIZE dup(?)
+lsym_table          asym_t LHASH_TABLE_SIZE+1 dup(?)
 SymCmpFunc          StrCmpFunc ?
 dyneqtable          string_t _MAX_DYNEQ dup(?)
 dyneqvalue          string_t _MAX_DYNEQ dup(?)
@@ -228,6 +228,21 @@ SymSetLocal proc __ccall uses rsi rdi psym:asym_t
         mov [rdi+rax*size_t],rsi
         mov rsi,[rsi].asym.nextll
     .endw
+    ret
+    endp
+
+
+SymHash proc fastcall name:string_t
+    xor edx,edx
+    .if ( !MODULE.case_sensitive )
+        mov dh,0x20
+    .endif
+    .for ( eax = FNVBASE : byte ptr [rcx] : rcx++ )
+        mov  dl,[rcx]
+        or   dl,dh
+        imul eax,eax,FNVPRIME
+        xor  al,dl
+    .endf
     ret
     endp
 
@@ -608,6 +623,16 @@ SymCreate proc __ccall name:string_t
         mov rcx,gsym
         mov [rcx],rax
     .endif
+    ret
+    endp
+
+; short version of SymCreate()
+
+SymGCreate proc fastcall name:string_t
+    SymAlloc( rcx )
+    inc SymCount
+    mov rcx,gsym
+    mov [rcx],rax
     ret
     endp
 

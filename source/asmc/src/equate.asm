@@ -227,7 +227,7 @@ check_float:
 
     .if ( rdi == NULL || [rdi].state == SYM_UNDEFINED )
         .if rdi == NULL
-            mov rdi,SymCreate(name)
+            mov rdi,SymGCreate(name)
         .else
             sym_remove_table(&SymTables[TAB_UNDEF], rdi)
             mov [rdi].fwdref,1
@@ -304,7 +304,7 @@ CreateVariable proc __ccall uses rdi name:string_t, value:int_t
 
     mov rdi,SymFind(name)
     .if rdi == NULL
-        mov rdi,SymCreate(name)
+        mov rdi,SymGCreate(name)
         mov [rdi].issaved,0
         .if StoreState
             mov [rdi].issaved,1

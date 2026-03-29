@@ -331,7 +331,7 @@ add_cmdline_tmacros proc __ccall private uses rsi rdi rbx
             .break
         .endif
         .if !SymFind( rdi )
-            SymCreate( rdi )
+            SymGCreate( rdi )
             mov [rax].asym.state,SYM_TMACRO
         .endif
         .if ( [rax].asym.state != SYM_TMACRO )

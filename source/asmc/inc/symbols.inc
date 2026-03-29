@@ -513,6 +513,7 @@ MAX_SEGALIGNMENT    equ 0xFF
 SymAlloc        proto __ccall :string_t
 SymFree         proto __ccall :asym_t
 SymCreate       proto __ccall :string_t
+SymGCreate      proto fastcall :string_t
 SymLCreate      proto __ccall :string_t
 SymAddGlobal    proto __ccall :asym_t
 SymAddLocal     proto __ccall :asym_t, :string_t
@@ -535,19 +536,7 @@ SymSetCmpFunc   proto __ccall
 SymClearLocal   proto __ccall
 SymSetLocal     proto __ccall :asym_t
 SymGetLocal     proto __ccall :asym_t
-
-SymHash proto fastcall :string_t {
-    xor edx,edx
-    .if ( !MODULE.case_sensitive )
-        mov dh,0x20
-    .endif
-    .for ( eax = FNVBASE : byte ptr [rcx] : rcx++ )
-        mov  dl,[rcx]
-        or   dl,dh
-        imul eax,eax,FNVPRIME
-        xor  al,dl
-    .endf
-    }
+SymHash         proto fastcall :string_t
 
 endif
 .pragma list(pop)

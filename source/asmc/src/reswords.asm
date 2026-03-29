@@ -351,35 +351,44 @@ size_resw_strings equ $ - resw_strings
 ; v2.11: RWF_SPECIAL flag removed:
 ; { 0, sizeof(#string)-1, RWF_SPECIAL or flags, NULL },
 
+HASH macro string
+  FNVHASH = FNVBASE
+  forc x,<string>
+   FNVHASH = (FNVHASH * FNVPRIME) and 0xFFFFFFFF
+   FNVHASH = FNVHASH xor '&x&'
+  endm
+exitm<FNVHASH>
+endm
+
 .data
 align size_t*2
 
-ResWordTable ReservedWord { 0, 0, 0, NULL } ;; dummy entry for T_NULL
+ResWordTable ReservedWord { 0, 0, 0, 0 } ;; dummy entry for T_NULL
 res macro tok, string, type, value, bytval, flags, cpu, sflags
-    ReservedWord { 0, @SizeStr(string), flags, NULL }
+    ReservedWord { 0, @SizeStr(string), flags, HASH(string) }
     endm
 include special.inc
 undef res
 res macro tok, string, value, bytval, flags, cpu, sflags
-    ReservedWord { 0, @SizeStr(string), flags, NULL }
+    ReservedWord { 0, @SizeStr(string), flags, HASH(string) }
     endm
 include directve.inc
 undef res
 insa macro tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex
-    ReservedWord { 0, @SizeStr(string), 0, NULL }
+    ReservedWord { 0, @SizeStr(string), 0, HASH(string) }
     endm
 insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
     endm
 insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
     endm
 insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flags
-    ReservedWord { 0, @SizeStr(string), flags, NULL }
+    ReservedWord { 0, @SizeStr(string), flags, HASH(string) }
     endm
 insv macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flags, vex
-    ReservedWord { 0, @SizeStr(string), flags, NULL }
+    ReservedWord { 0, @SizeStr(string), flags, HASH(string) }
     endm
 avxins macro alias, tok, string, rwf, flgs
-    ReservedWord { 0, @SizeStr(string), rwf or RWF_VEX, NULL }
+    ReservedWord { 0, @SizeStr(string), rwf or RWF_VEX, HASH(string) }
     endm
 include instruct.inc
 undef insx
@@ -491,11 +500,12 @@ Removed glqueue { 0, 0 }
 
 b64bit int_t FALSE ; resw tables in 64bit mode?
 
+ResWordInitialized int_t FALSE
+
 .pragma list(pop)
 
-    .code
+.code
 
-    assume rbx:ptr ReservedWord
 
 FindResWord proc fastcall _name:string_t, size:uint_t
 ifdef _WIN64
@@ -590,56 +600,24 @@ endif
 
 ; add reserved word to hash table
 
-get_hash proc fastcall private uses rsi token:string_t, len:byte
-    xor     eax,eax
-    test    edx,edx
-    jz      .1
-    mov     eax,FNVBASE
-    mov     esi,edx
-.0:
-    mov     edx,[rcx]
-    or      edx,0x20202020
-    add     rcx,4
-    imul    eax,eax,FNVPRIME
-    xor     al,dl
-    dec     esi
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dh
-    dec     esi
-    jz      .1
-    shr     edx,16
-    imul    eax,eax,FNVPRIME
-    xor     al,dl
-    dec     esi
-    jz      .1
-    imul    eax,eax,FNVPRIME
-    xor     al,dh
-    dec     esi
-    jnz     .0
-.1:
-    xor     edx,edx
-    ret
-    endp
-
+    assume rbx:ptr ReservedWord
 
 AddResWord proc fastcall private uses rsi rdi rbx token:int_t
 
     mov     esi,ecx
     lea     rbx,ResWordTable
-    lea     rdi,ResWordNames
-    invoke  get_hash, [rdi+rcx*string_t], [rbx+rcx*8].ReservedWord.len
-    mov     [rbx+rsi*8].ReservedWord.hash,eax
+    mov     eax,[rbx+rcx*8].ReservedWord.hash
     and     eax,HASH_TABITEMS-1
     lea     rcx,resw_table
     lea     rdi,[rcx+rax*2]
+    xor     edx,edx
 
     ; sort the items of a line by length!
 
     movzx   ecx,word ptr [rdi]
     test    ecx,ecx
     jz      .1
-    mov     al,[rbx+rsi*8].ReservedWord.len
+    mov     al,[rbx+rsi*8].len
 .0:
     cmp     al,[rbx+rcx*8].len
     jbe     .1
@@ -651,11 +629,11 @@ AddResWord proc fastcall private uses rsi rdi rbx token:int_t
     mov     ecx,esi
     test    edx,edx
     jnz     .2
-    mov     [rbx+rcx*8].ReservedWord.next,[rdi]
+    mov     [rbx+rcx*8].next,[rdi]
     mov     [rdi],si
     jmp     .3
 .2:
-    mov     [rbx+rcx*8].ReservedWord.next,[rbx+rdx*8].next
+    mov     [rbx+rcx*8].next,[rbx+rdx*8].next
     mov     [rbx+rdx*8].next,si
 .3:
     ret
@@ -668,10 +646,10 @@ RemoveResWord proc fastcall uses rsi rdi rbx token:int_t
 
     mov     esi,ecx
     lea     rbx,ResWordTable
-    lea     rdi,ResWordNames
-    invoke  get_hash, [rdi+rcx*string_t], [rbx+rcx*8].ReservedWord.len
+    mov     eax,[rbx+rcx*8].hash
     and     eax,HASH_TABITEMS-1
     lea     rcx,resw_table
+    xor     edx,edx
     lea     rdi,[rcx+rax*2]
     movzx   ecx,word ptr [rdi]
     test    ecx,ecx
@@ -717,16 +695,21 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
 
    .new nameptr:string_t
    .new newname[64]:char_t ; added v2.26
+   .new hash:dword
 
     ldr ecx,token
     ldr rdx,name
-    .for ( rdi = &newname, rsi = rdx :: )
+
+    .for ( ebx = FNVBASE, rdi = &newname, rsi = rdx :: )
         lodsb
         .break .if !al
+        imul ebx,ebx,FNVPRIME
         or al,0x20 ;; '@' --> 'ï'..
+        xor bl,al
         stosb
     .endf
     stosb
+    mov hash,ebx
 
     ; v2.11: do nothing if new name matches current name
 
@@ -797,6 +780,7 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
         mov rsi,nameptr
         assume rdi:nothing
     .endif
+    mov [rbx].hash,hash
     movzx ecx,length
     mov [rbx].len,cl
     mov edi,ecx
@@ -808,43 +792,47 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
     endp
 
 ; ResWordsInit() initializes the reserved words hash array ( resw_table[] )
-; and also the reserved words string pointers ( ResWordTable[].name + ResWordTable[].len )
+; and also the reserved words string pointers ( ResWordNames[] + ResWordTable[].len )
 
 ResWordsInit proc uses rsi rdi rbx
 
     ; exit immediately if table is already initialized
 
-    .return .if ResWordTable[ReservedWord].hash
+    .if ( !ResWordInitialized )
 
-    ; clear hash table
+        inc ResWordInitialized
 
-    lea rdi,resw_table
-    mov ecx,sizeof(resw_table)/4
-    xor eax,eax
-    rep stosd
+        ; clear hash table
 
-    ; currently these flags must be set manually, since the
-    ; RWF_ flags aren't contained in instravx.inc
+        lea rdi,resw_table
+        mov ecx,sizeof(resw_table)/4
+        xor eax,eax
+        rep stosd
+        mov ResWordNames,rax
 
-    or ResWordTable[T_VPEXTRQ*ReservedWord].flags,RWF_X64
-    or ResWordTable[T_VPINSRQ*ReservedWord].flags,RWF_X64
+        ; currently these flags must be set manually, since the
+        ; RWF_ flags aren't contained in instravx.inc
 
-    ; initialize ResWordTable[].name and .len.
-    ; add keyword to hash table ( unless it is 64-bit only ).
-    ; v2.09: start with index = 1, since index 0 is now T_NULL
+        or ResWordTable[T_VPEXTRQ*ReservedWord].flags,RWF_X64
+        or ResWordTable[T_VPINSRQ*ReservedWord].flags,RWF_X64
 
-    .for ( rsi = &resw_strings,
-           rbx = &ResWordTable[ReservedWord],
-           edi = 1 : edi < ResWordCount : edi++, rbx += ReservedWord )
+        ; initialize ResWordTable[].name and .len.
+        ; add keyword to hash table ( unless it is 64-bit only ).
+        ; v2.09: start with index = 1, since index 0 is now T_NULL
 
-        lea rcx,ResWordNames
-        mov [rcx+rdi*string_t],rsi
-        movzx eax,[rbx].len
-        add rsi,rax
-        .if ( !( [rbx].flags & RWF_X64 ) )
-            AddResWord(edi)
-        .endif
-    .endf
+        .for ( rsi = &resw_strings,
+               rbx = &ResWordTable[ReservedWord],
+               edi = 1 : edi < ResWordCount : edi++, rbx += ReservedWord )
+
+            lea rcx,ResWordNames
+            mov [rcx+rdi*string_t],rsi
+            movzx eax,[rbx].len
+            add rsi,rax
+            .if ( !( [rbx].flags & RWF_X64 ) )
+                AddResWord(edi)
+            .endif
+        .endf
+    .endif
     ret
     endp
 
@@ -870,6 +858,7 @@ ResWordsFini proc uses rsi rdi rbx
         lea rcx,ResWordNames
         mov [rcx+rsi*string_t],[rdi].name
         mov [rdx+rsi*8].ReservedWord.len,[rdi].length
+        mov [rdx+rsi*8].ReservedWord.hash,[rdi].hash
         AddResWord(esi)
     .endf
     mov renamed_keys.head,NULL

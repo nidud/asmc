@@ -1293,7 +1293,7 @@ endif
                 .endif
                 mov rdi,SymFind( [rbx].string_ptr )
                 .if ( rax == NULL )
-                    mov rdi,SymCreate( [rbx].string_ptr )
+                    mov rdi,SymGCreate( [rbx].string_ptr )
                     mov [rax].asym.state,SYM_UNDEFINED
                     mov [rax].asym.used,1
                     sym_add_table( &SymTables[TAB_UNDEF], rax ) ; add UNDEFINED
@@ -1325,26 +1325,11 @@ endif
             .if ( !IsPROC ) ; not for PROTO!
                 asmerr( 2008, [rbx].string_ptr )
             .endif
-            inc i
-            add rbx,asm_tok
+            ;
             ; count register names which follow
-            .for ( :: uses_cnt++, rbx += asm_tok )
-                .if ( [rbx].token != T_REG )
-                    ; the register may be a text macro here
-                    .break .if ( [rbx].token != T_ID )
-                    .break .if ( ( SymFind( [rbx].string_ptr ) ) == NULL )
-                    .break .if ( [rax].asym.state != SYM_TMACRO )
-                     mov rdi,rax
-                     mov ecx,FindResWord( [rdi].asym.string_ptr, [rdi].asym.name_size )
-                     imul eax,ecx,special_item
-                     lea rdx,SpecialTable
-                    .break .if ( [rdx+rax].special_item.type != RWT_REG )
-                     mov [rbx].token,T_REG
-                     mov [rbx].tokval,ecx
-                     mov [rbx].string_ptr,[rdi].asym.string_ptr
-                .endif
+            ;
+            .for ( i++, rbx+=asm_tok, eax = 0 : [rbx+rax].token == T_REG : uses_cnt++, rax+=asm_tok )
             .endf
-            tokptr(i)
             .if ( uses_cnt == 0 )
                 asmerr( 2008, [rbx-asm_tok].tokpos )
             .endif
@@ -1379,7 +1364,7 @@ endif
         mov     eax,uses_cnt
         stosw
         ; read in registers
-        .for ( : [rbx].token == T_REG: i++, rbx += asm_tok )
+        .for ( : [rbx].token == T_REG : i++, rbx+=asm_tok )
             .if ( SizeFromRegister( [rbx].tokval ) == 1 )
                 asmerr( 2032 )
             .endif

@@ -953,7 +953,7 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov rbx,tokenarray
     mov rdi,SymFind( [rbx].string_ptr )
     .if ( rdi == NULL )
-        mov rdi,SymCreate( [rbx].string_ptr )
+        mov rdi,SymGCreate( [rbx].string_ptr )
     .elseif( [rdi].asym.state == SYM_UNDEFINED )
 
         ; v2.01: symbol has been used already. Using
@@ -1079,7 +1079,7 @@ AddPredefinedText proc __ccall name:string_t, value:string_t
     ; v2.08: ignore previous setting
 
     .if !SymFind( name )
-        SymCreate( name )
+        SymGCreate( name )
     .endif
     mov [rax].asym.state,SYM_TMACRO
     mov [rax].asym.isdefined,1
@@ -1200,7 +1200,7 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     ; if we've never seen it before, put it in
 
     .if ( rsi == NULL )
-        mov rsi,SymCreate( name )
+        mov rsi,SymGCreate( name )
     .elseif( [rsi].asym.state == SYM_UNDEFINED )
 
         ; it was referenced before being defined. This is

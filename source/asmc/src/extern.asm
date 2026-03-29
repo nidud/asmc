@@ -500,7 +500,7 @@ HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:asym_t
                     .return( asmerr( 2004, altname ) )
                 .endif
             .else
-                mov rdi,SymCreate( altname )
+                mov rdi,SymGCreate( altname )
                 sym_add_table( &SymTables[TAB_UNDEF], rdi )
             .endif
 
@@ -992,7 +992,7 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov rdi,SymFind( token )
         .if ( Parse_Pass == PASS_1 )
             .if ( rdi == NULL )
-                .if ( SymCreate( token ) )
+                .if SymGCreate( token )
                     mov rdi,rax
                     sym_add_table( &SymTables[TAB_UNDEF], rdi )
                 .else

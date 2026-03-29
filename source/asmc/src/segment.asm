@@ -252,7 +252,7 @@ CreateGroup proc fastcall private uses rsi rdi name:string_t
     mov rdi,SymFind( rcx )
     .if ( rdi == NULL || [rdi].asym.state == SYM_UNDEFINED )
         .if ( rdi == NULL )
-            mov rdi,SymCreate( rsi )
+            mov rdi,SymGCreate( rsi )
         .else
             sym_remove_table( &SymTables[TAB_UNDEF], rdi )
         .endif
@@ -1294,7 +1294,7 @@ endif
         .if ( !ImageBase && Options.output_format == OFORMAT_BIN && Options.sub_format != SFORMAT_NONE )
             .new ti:qualified_type
             .if !SymFind("IMAGE_DOS_HEADER")
-               SymCreate("IMAGE_DOS_HEADER")
+               SymGCreate("IMAGE_DOS_HEADER")
             .endif
             mov ti.symtype,rax
             CreateLabel( "__ImageBase", MT_TYPE, &ti, 0 )

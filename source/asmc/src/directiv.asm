@@ -374,7 +374,7 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; v2.04b: adjusted to new field <substitute>
         mov rdi,SymFind(subst)
         .if ( rdi == NULL )
-            mov rdi,SymCreate(subst)
+            mov rdi,SymGCreate(subst)
             mov [rdi].state,SYM_UNDEFINED
             sym_add_table(&SymTables[TAB_UNDEF], rdi)
         .elseif ( [rdi].state != SYM_UNDEFINED && [rdi].state != SYM_INTERNAL &&

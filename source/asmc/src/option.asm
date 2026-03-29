@@ -321,7 +321,7 @@ endif
                     ; todo: if MAX_ID_LEN can be > 255, then check size,
                     ; since a reserved word's size must be <= 255
                     ;
-                    .if ( FindResWord( rdi, ecx ) != 0 )
+                    .ifd ( FindResWord( rdi, ecx ) != 0 )
                         DisableKeyword( eax )
                     .else
                         mov rcx,rsi

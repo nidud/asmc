@@ -57,7 +57,7 @@ SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .break .if ( [rdi].elmt == rsi )
             .endf
         .else
-            mov rsi,SymCreate( [rbx].string_ptr )
+            mov rsi,SymGCreate( [rbx].string_ptr )
             mov edi,NULL
         .endif
         .if ( rdi == NULL )

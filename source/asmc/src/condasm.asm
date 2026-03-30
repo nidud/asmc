@@ -365,14 +365,10 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .until ( !( rax && [rbx+asm_tok].token == T_DOT ) )
                 .if ( rax )
                     mov esi,BLOCK_ACTIVE
-                .else
-                    mov esi,BLOCK_INACTIVE
                 .endif
             .else
                 .if ( check_defd( [rbx].string_ptr ) )
                     mov esi,BLOCK_ACTIVE
-                .else
-                    mov esi,BLOCK_INACTIVE
                 .endif
             .endif
             add rbx,asm_tok
@@ -381,8 +377,6 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov rax,MODULE.flat_grp
             .if ( rax && [rax].asym.isdefined )
                 mov esi,BLOCK_ACTIVE
-            .else
-                mov esi,BLOCK_INACTIVE
             .endif
             add rbx,asm_tok
         .elseif ( al == T_REG && [rbx+asm_tok].token == T_FINAL )

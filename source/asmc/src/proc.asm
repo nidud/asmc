@@ -1744,8 +1744,8 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov ecx,GetCurrOffset()
         .if ( ecx != [rdi].asym.offs )
-            mov [rdi].asym.offs,ecx
             mov MODULE.PhaseError,TRUE
+            mov [rdi].asym.offs,ecx
         .endif
         mov CurrProc,rdi
         tsprintf(&strFUNC, "\"%s\"", [rdi].asym.name)

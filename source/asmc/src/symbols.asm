@@ -231,11 +231,23 @@ SymSetLocal proc __ccall uses rsi rdi psym:asym_t
     ret
     endp
 
+;
+; CASEMAP is set on symbol creation here.
+;
+; option casemap:none
+; abc db 1
+; ABC db 2
+; option casemap:all
+;
+; Result:     Asmc Masm JWasm
+; mov al,abc  abc  ABC  abc
+; mov cl,ABC  ABC  ABC  abc
+;
 
 SymHash proc fastcall name:string_t
-    xor edx,edx
-    .if ( !MODULE.case_sensitive )
-        mov dh,0x20
+    mov edx,0x2000
+    .if ( MODULE.case_sensitive )
+        xor edx,edx
     .endif
     .for ( eax = FNVBASE : byte ptr [rcx] : rcx++ )
         mov  dl,[rcx]

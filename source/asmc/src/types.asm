@@ -68,59 +68,84 @@ CreateTypeSymbol proc __ccall uses rsi rdi sym:asym_t, name:string_t, global:int
 
     assume rbx:asym_t
 
+SearchInStruct proc __ccall uses rsi rdi rbx tstruct:asym_t, namelen:int_t, hash:uint_t,
+        poffset:ptr dword, level:int_t
+
+    ldr rcx,tstruct
+    mov rax,[rcx].asym.structinfo
+    mov rbx,[rax].struct_info.head
+    .if ( !rbx || level >= MAX_STRUCT_NESTING )
+        .if ( rbx )
+            asmerr( 1007 )
+        .endif
+        .return( NULL )
+    .endif
+    inc level
+    .for ( edi = ldr(namelen), esi = ldr(hash) : rbx : rbx = [rbx].next )
+        .if ( [rbx].hash == 0 )
+            .if ( [rbx].state == SYM_TYPE )
+                .if ( SearchInStruct( rbx, edi, esi, ldr(poffset), level ) )
+                    mov rcx,ldr(poffset)
+                    .if rcx
+                        mov edx,[rbx].offs
+                        add [rcx],edx
+                    .endif
+                    .return
+                .endif
+            .elseif ( [rbx].mem_type == MT_TYPE )
+                .if ( SearchInStruct( [rbx].type, edi, esi, ldr(poffset), level ) )
+                    mov rcx,ldr(poffset)
+                    .if rcx
+                        mov edx,[rbx].offs
+                        add [rcx],edx
+                    .endif
+                    .return
+                .endif
+            .endif
+        .elseif ( edi == [rbx].name_size && esi == [rbx].hash )
+            .return( rbx )
+        .endif
+    .endf
+    .return( NULL )
+    endp
+
+
 SearchNameInStruct proc __ccall uses rsi rdi rbx tstruct:asym_t, name:string_t,
         poffset:ptr uint_32, level:int_t
 
-    mov edi,tstrlen( name )
-    xor esi,esi
-    mov rcx,tstruct
-    mov rdx,[rcx].asym.structinfo
-    mov rbx,[rdx].struct_info.head
-    .if ( level >= MAX_STRUCT_NESTING )
-        asmerr( 1007 )
-       .return( NULL )
+    ldr rbx,tstruct
+    mov rax,[rbx].asym.structinfo
+    mov rax,[rax].struct_info.head
+    .if ( !rax )
+        .return
     .endif
-    inc level
-    .for ( : rbx : rbx = [rbx].next )
-
-        ; recursion: if member has no name, check if it is a structure
-        ; and scan this structure's fieldlist then
-
-        mov rax,[rbx].name
-        .if ( byte ptr [rax] == 0 )
-
-            ; there are 2 cases: an anonymous inline struct ...
-
-            .if ( [rbx].state == SYM_TYPE )
-                .if ( SearchNameInStruct( rbx, name, poffset, level ) )
-                    mov rsi,rax
-                    mov rcx,poffset
-                    .if rcx
-                        add [rcx],[rbx].offs
-                    .endif
-                    .break
-                .endif
-
-            ; or an anonymous structured field
-
-            .elseif ( [rbx].mem_type == MT_TYPE )
-                .if ( SearchNameInStruct( [rbx].type, name, poffset, level ) )
-                    mov rsi,rax
-                    mov rcx,poffset
-                    .if rcx
-                        add [rcx],[rbx].offs
-                    .endif
-                    .break
-                .endif
-            .endif
-        .elseif ( edi == [rbx].name_size )
-            .if ( SymCmpFunc( name, [rbx].name, edi ) == 0 )
-                mov rsi,rbx
-               .break
-            .endif
-        .endif
-    .endf
-    .return( rsi )
+    mov ecx,0x20
+    .if ( [rax].asym.casesensitive )
+        xor ecx,ecx
+    .endif
+    ldr     rdx,name
+    movzx   esi,byte ptr [rdx]
+    mov     rdi,rdx
+    test    esi,esi
+    jz      .1
+    or      esi,ecx
+    xor     esi,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+    inc     rdx
+    movzx   eax,byte ptr [rdx]
+    test    eax,eax
+    jz      .1
+.0:
+    inc     rdx
+    imul    esi,esi,FNVPRIME
+    or      eax,ecx
+    xor     esi,eax
+    mov     al,[rdx]
+    test    eax,eax
+    jnz     .0
+.1:
+    sub rdx,rdi
+    SearchInStruct(rbx, edx, esi, ldr(poffset), ldr(level))
+    ret
     endp
 
 ; check if a struct has changed
@@ -443,18 +468,19 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     ; syntax is either "<name> ENDS" (i=1) or "ENDS" (i=0).
     ; first case must be top level (next=NULL), latter case must NOT be top level (next!=NULL)
 
-    mov rbx,tokenarray
-    .if ( ( i == 1 && [rdi].asym.next == NULL ) ||
-          ( i == 0 && [rdi].asym.next != NULL ) )
+    ldr ecx,i
+    ldr rbx,tokenarray
+    .if ( ( ecx == 1 && [rdi].asym.next == NULL ) ||
+          ( ecx == 0 && [rdi].asym.next != NULL ) )
     .else
         lea rdx,@CStr("")
-        .if ( i == 1 )
+        .if ( ecx == 1 )
             mov rdx,[rbx].asm_tok.string_ptr
         .endif
         .return( asmerr( 1010, rdx ) )
     .endif
-    .if ( i == 1 ) ; an global struct ends with <name ENDS>
-        .if ( SymCmpFunc( [rbx].string_ptr, [rdi].asym.name, [rdi].asym.name_size ) != 0 )
+    .if ( ecx == 1 ) ; an global struct ends with <name ENDS>
+        .ifd ( SymCmpFunc( [rbx].string_ptr, [rdi].asym.name, [rdi].asym.name_size ) != 0 )
 
             ; names don't match
 
@@ -536,11 +562,11 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .else
         mov eax,[rdi].asym.total_size
         .switch eax
-        .case 1:  mov [rdi].asym.mem_type,MT_BYTE   : .endc
-        .case 2:  mov [rdi].asym.mem_type,MT_WORD   : .endc
-        .case 4:  mov [rdi].asym.mem_type,MT_DWORD  : .endc
-        .case 6:  mov [rdi].asym.mem_type,MT_FWORD  : .endc
-        .case 8:  mov [rdi].asym.mem_type,MT_QWORD  : .endc
+        .case 1: mov [rdi].asym.mem_type,MT_BYTE   : .endc
+        .case 2: mov [rdi].asym.mem_type,MT_WORD   : .endc
+        .case 4: mov [rdi].asym.mem_type,MT_DWORD  : .endc
+        .case 6: mov [rdi].asym.mem_type,MT_FWORD  : .endc
+        .case 8: mov [rdi].asym.mem_type,MT_QWORD  : .endc
         .default
             mov [rdi].asym.mem_type,MT_EMPTY
         .endsw
@@ -578,10 +604,8 @@ EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 CheckAnonymousStruct proc fastcall private uses rdi type_ptr:asym_t
     mov rcx,[rcx].asym.structinfo
     .for ( rdi = [rcx].struct_info.head : rdi : rdi = [rdi].next )
-        mov rax,[rdi].name
-        .if ( byte ptr [rax] )
-            SearchNameInStruct( CurrStruct, [rdi].name, 0, 0 )
-            .if ( rax )
+        .if ( [rdi].hash )
+            .if SearchInStruct( CurrStruct, [rdi].name_size, [rdi].hash, 0, 0 )
                 .return( asmerr( 2005, [rax].asym.name ) )
             .endif
         .elseif ( [rdi].type )
@@ -613,8 +637,13 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:token_t,
 
   local offs:int_32
   local len:int_t
+  local hash:uint_t
   local s:struct_t
   local bitfield:int_t ; don't align bitfields..
+
+    ldr edi,loc
+    ldr rbx,tokenarray
+    ldr rsi,name
 
     mov bitfield,0
     mov rcx,CurrStruct
@@ -623,14 +652,15 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:token_t,
     .endif
     mov s,[rcx].asym.structinfo
     mov offs,[rcx].asym.offs
-    .if ( name )
-        mov len,tstrlen( name )
-        .if( eax > MAX_ID_LEN )
+    .if ( rsi )
+        mov hash,SymHash( rsi )
+        sub rcx,rsi
+        mov len,ecx
+        .if( ecx > MAX_ID_LEN )
             asmerr( 2043 )
            .return( NULL )
         .endif
-        SearchNameInStruct( CurrStruct, name, 0, 0 )
-        .if ( rax )
+        .if SearchInStruct( CurrStruct, ecx, eax, 0, 0 )
             asmerr( 2005, [rax].asym.name )
            .return( NULL )
         .endif
@@ -642,16 +672,18 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:token_t,
         .if ( rcx && ( [rcx].asym.typekind == TYPE_STRUCT || [rcx].asym.typekind == TYPE_UNION ) )
             CheckAnonymousStruct( rcx )
         .endif
-        mov name,&@CStr("")
+        lea rsi,@CStr("")
         mov len,0
+        mov hash,0
     .endif
-    mov ecx,loc
-    .if ( ecx != -1 )
-        mov  rdi,StringBufferEnd
-        inc  ecx
-        imul ebx,ecx,asm_tok
-        add  rbx,tokenarray
-        .for ( : [rbx].token != T_FINAL : rbx += asm_tok )
+    mov name,rsi
+
+    .if ( edi != -1 )
+
+        inc edi
+        imul eax,edi,asm_tok
+        add rbx,rax
+        .for ( rdi = StringBufferEnd : [rbx].token != T_FINAL : rbx += asm_tok )
             .if ( [rbx].token == T_ID )
                 mov rsi,SymFind( [rbx].string_ptr )
                 .if ( eax && [rax].asym.isvariable )
@@ -699,6 +731,7 @@ endif
 
     ; create the struct field symbol
 
+    mov [rdi].hash,hash
     mov [rdi].name_size,len
     .if ( eax )
         mov [rdi].name,LclDup( name )
@@ -708,6 +741,9 @@ endif
     mov [rdi].state,SYM_STRUCT_FIELD
     .if ( MODULE.cref )
         mov [rdi].list,1
+    .endif
+    .if ( MODULE.case_sensitive )
+        mov [rdi].casesensitive,1
     .endif
     mov [rdi].isdefined,1
     mov [rdi].mem_type,mem_type

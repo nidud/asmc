@@ -1069,19 +1069,18 @@ continue_scan:
             mov ecx,len
         .endif
     .endif
-
     xor eax,eax
     stosb
-    mov [rdx].input,rsi
-    mov rsi,[rdx].output
-
     .if ( ecx == 1 )
         mov IsResWord,al
-        .if ( B[rsi] == '?' )
+        mov rax,[rdx].output
+        .if ( B[rax] == '?' )
+            inc [rdx].input
             mov [rbx].token,T_QUESTION_MARK
             mov [rbx].string_ptr,&__quest
            .return
         .endif
+        xor eax,eax
     .endif
 
     .if ( IsResWord )
@@ -1105,19 +1104,22 @@ else
 endif
     .endif
 
-
     .if ( eax == 0 )
-        .if ( B[rsi] == '.' && !MODULE.dotname )
+        mov rcx,[rdx].output
+        .if ( B[rcx] == '.' && !MODULE.dotname )
+            inc [rdx].input
             mov [rbx].token,T_DOT
             lea rax,stokstr1[('.' - '(') * 2]
             mov [rbx].string_ptr,rax
            .return
         .endif
         mov [rbx].token,T_ID
-        mov [rbx].tokval,0
+        mov [rbx].tokval,eax
+        mov [rdx].input,rsi
         mov [rdx].output,rdi
        .return
     .endif
+    mov [rdx].input,rsi
     mov [rdx].output,rdi
 
     .switch eax

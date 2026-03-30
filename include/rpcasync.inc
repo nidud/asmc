@@ -17,8 +17,6 @@ if defined(RPC_NO_WINDOWS_H) or defined(_KRPCENV_)
 include windef.inc
 endif
 
-define RPC_ASYNC_VERSION_1_0     sizeof(RPC_ASYNC_STATE)
-
 .enum RPC_NOTIFICATION_TYPES {
     RpcNotificationTypeNone,
     RpcNotificationTypeEvent,
@@ -94,6 +92,7 @@ u                       RPC_ASYNC_NOTIFICATION_INFO <>
 Reserved                LONG_PTR 4 dup(?)
 RPC_ASYNC_STATE         ends
 PRPC_ASYNC_STATE        typedef ptr RPC_ASYNC_STATE
+define RPC_ASYNC_VERSION_1_0 sizeof(RPC_ASYNC_STATE)
 
 define RPC_C_NOTIFY_ON_SEND_COMPLETE      0x1
 define RPC_C_INFINITE_TIMEOUT             INFINITE

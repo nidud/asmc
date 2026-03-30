@@ -506,10 +506,6 @@ WSAMSG			ENDS
 PWSAMSG			typedef ptr WSAMSG
 LPWSAMSG		typedef ptr WSAMSG
 
-if(_WIN32_WINNT GE 0x0600)
-_WSACMSGHDR		equ cmsghdr
-endif
-
 WSACMSGHDR		STRUC
 cmsg_len		size_t ?
 cmsg_level		SINT ?
@@ -521,14 +517,15 @@ LPWSACMSGHDR		typedef ptr WSACMSGHDR
 if(_WIN32_WINNT GE 0x0600)
 CMSGHDR			typedef WSACMSGHDR
 PCMSGHDR		typedef ptr WSACMSGHDR
+_WSACMSGHDR		typedef CMSGHDR
 endif
 
 WSA_CMSGHDR_ALIGN macro len
-	exitm<((len) + TYPE_ALIGNMENT(WSACMSGHDR)-1) & (not (TYPE_ALIGNMENT(WSACMSGHDR)-1))>
+	exitm<((len) + TYPE_ALIGNMENT(WSACMSGHDR)-1) and (not (TYPE_ALIGNMENT(WSACMSGHDR)-1))>
 	endm
 
 WSA_CMSGDATA_ALIGN macro len
-	exitm<((len) + MAX_NATURAL_ALIGNMENT-1) & (not (MAX_NATURAL_ALIGNMENT-1))>
+	exitm<((len) + MAX_NATURAL_ALIGNMENT-1) and (not (MAX_NATURAL_ALIGNMENT-1))>
 	endm
 
 

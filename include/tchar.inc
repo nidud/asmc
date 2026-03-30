@@ -734,7 +734,7 @@ define _topenfile	<_openfile>
 
 define _tgetpath	<_getpath>
 
-define _TEOF		EOF
+define _TEOF		(-1);EOF
 
 _tmain			equ <main>
 _tWinMain		equ <WinMain>

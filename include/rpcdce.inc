@@ -182,7 +182,7 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
 
-define RPC_MGR_EPV void
+RPC_MGR_EPV typedef ptr
 
 RPC_STATS_VECTOR        struct
 Count                   dword ?

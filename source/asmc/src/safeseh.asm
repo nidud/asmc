@@ -40,7 +40,7 @@ SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .if ( [rbx].token != T_ID )
         .return( asmerr(2008, [rbx].string_ptr ) )
     .endif
-    mov rsi,SymFind( [rbx].string_ptr )
+    mov rsi,SymFindID( rbx )
 
     ;; make sure the argument is a true PROC
     .if ( rsi == NULL || [rsi].asym.state == SYM_UNDEFINED )

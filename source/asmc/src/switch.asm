@@ -1665,7 +1665,7 @@ endif
                     .break .if [rbx].tokval != T_OFFSET
                     .gotosw(T_STRING)
                 .case T_ID
-                    .if SymFind( [rbx].string_ptr )
+                    .if SymFindID( rbx )
                         .break .if ( [rax].asym.state != SYM_INTERNAL )
                         .break .if ( !( [rax].asym.mem_type == MT_NEAR || [rax].asym.mem_type == MT_EMPTY ) )
                     .elseif ( Parse_Pass != PASS_1 )

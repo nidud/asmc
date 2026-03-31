@@ -702,7 +702,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
         ; - dq @CStr(ID)
 
         .if ( [rbx].token == T_ID && [rbx-asm_tok].token == T_OP_BRACKET )
-            .if SymFind( [rbx].string_ptr )
+            .if SymFindID( rbx )
                 mov rax,[rax].asym.string_ptr
                 .if ( B[rax] == '"' || W[rax] == '"L' )
                     mov rsi,rax
@@ -897,7 +897,7 @@ TextItemError proc __ccall uses rbx item:token_t
         .return( asmerr( 2045 ) )
     .endif
     .if ( [rbx].token == T_ID )
-        SymFind( [rbx].string_ptr )
+        SymFindID( rbx )
         .if ( rax == NULL || [rax].asym.state == SYM_UNDEFINED )
             .return( asmerr( 2006, [rbx].string_ptr ) )
         .endif

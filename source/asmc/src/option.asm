@@ -620,6 +620,7 @@ endif
                 .break
             .endif
             inc i
+if 0
         .case OP_DOTNAMEX ;; ON | OFF
             .ifd ( !tstricmp( rsi, "ON" ) )
                 mov MODULE.dotnamex,1
@@ -629,6 +630,7 @@ endif
                 .break
             .endif
             inc i
+endif
         .case OP_SWITCH ;; C | PASCAL | TABLE | NOTABLE | REGAX | NOREGS
             .ifd ( !tstricmp( rsi, "C" ) )
                 mov MODULE.switch_structured,0

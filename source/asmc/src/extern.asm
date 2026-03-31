@@ -133,7 +133,7 @@ CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, n
     ; a PROTO typedef may be used
 
     .if ( [rbx].token == T_ID )
-        mov rdi,SymFind( [rbx].string_ptr )
+        mov rdi,SymFindID( rbx )
         .if ( rax && [rax].asym.state == SYM_TYPE && [rax].asym.mem_type == MT_PROC )
             inc i
             add rbx,asm_tok
@@ -419,7 +419,7 @@ ProtoDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
         ; v2.04: set the "defined" flag
 
-        .if ( SymFind( [rbx].string_ptr ) )
+        .if SymFindID( rbx )
             .if ( [rax].asym.isproc )
                 mov [rax].asym.isdefined,1
             .endif

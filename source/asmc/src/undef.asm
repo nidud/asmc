@@ -27,8 +27,7 @@ UndefDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
         .if ( [rbx].token != T_ID )
             .return( asmerr( 2008, [rbx].string_ptr ) )
         .endif
-        SymFind( [rbx].string_ptr )
-        .if ( rax )
+        .if SymFindID( rbx )
             mov [rax].asym.state,SYM_UNDEFINED
         .endif
         inc esi

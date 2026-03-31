@@ -23,6 +23,7 @@ externdef CurrStruct:asym_t ; start of current STRUCT list
 
 CreateType		proto __ccall :int_t, :token_t, :string_t, :ptr asym_t
 CreateTypeSymbol	proto __ccall :asym_t, :string_t, :int_t
+SearchInStruct		proto __ccall :asym_t, :int_t, :uint_t, :ptr uint_t, :int_t
 SearchNameInStruct	proto __ccall :asym_t, :string_t, :ptr uint_t, :int_t
 GetQualifiedType	proto __ccall :ptr int_t, :token_t, :ptr qualified_type
 CreateStructField	proto __ccall :int_t, :token_t, :string_t, :uchar_t, :asym_t, :uint_t

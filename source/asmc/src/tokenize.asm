@@ -82,7 +82,7 @@ IsMultiLine proc fastcall tokenarray:token_t
             .return( 0 )
         .endif
         ; don't concat macros
-        .if SymFind( [rcx].string_ptr )
+        .if SymFindID( rcx )
             .if ( [rax].asym.state == SYM_MACRO && !( [rax].asym.multiline ) )
                 .return( 0 )
             .endif
@@ -535,7 +535,7 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
             xor eax,eax
             lea rdi,[rbx-asm_tok]
             .if ( [rdi].asm_tok.token == T_ID )
-                SymFind( [rdi].asm_tok.string_ptr )
+                SymFindID( rdi )
             .endif
             .if ( rax && [rax].asym.state == SYM_TMACRO )
                 SymFind( [rax].asym.string_ptr )
@@ -965,32 +965,6 @@ number_done:
 
     assume rdx:ptr line_status
 
-get_id_in_backquotes proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
-    ldr rdx,p
-    ldr rbx,buf
-    inc [rdx].input
-    mov rsi,[rdx].input
-    mov rdi,[rdx].output
-    mov [rbx].token,T_ID
-    mov [rbx].tokval,0
-    .while 1 ; v2.37.51
-        lodsb
-        .break .if ( al == '`' )
-        .if ( !al || al == ';' )
-            mov B[rdi],0
-           .return asmerr( 2046 )
-        .endif
-        stosb
-        inc [rdx].input
-    .endw
-    inc [rdx].input
-    xor eax,eax
-    stosb
-    mov [rdx].output,rdi
-    ret
-    endp
-
-
 get_id proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
    .new len:int_t
@@ -1011,31 +985,39 @@ get_id proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
         inc [rdx].input
         inc [rdx].output
        .return get_string( rbx, rdx )
-    .case al == '@' ; v3.37: skip local labels in option class:reg
+    .case al == '@'         ; v3.37: skip local labels in option class:reg
         mov [rbx].AtLabel,1
     .case al == '_'
         mov IsResWord,0
     .endsw
     stosb
     inc rsi
+ifdef _WIN64
+    mov r10,rbx
+endif
     movzx ecx,al
+    movzx ebx,al
     or  cl,0x20
     xor ecx,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+    xor ebx,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
 
 continue_scan:
 
     .while islabel( [rsi] )
         stosb
-        inc rsi
-        or al,0x20
+        inc  rsi
+        imul ebx,ebx,FNVPRIME
         imul ecx,ecx,FNVPRIME
-        xor cl,al
+        xor  bl,al
+        or   al,0x20
+        xor  cl,al
     .endw
     ;
     ; if the name starts with a dot then accept dots
     ; within the name (though not as last char). OPTION DOTNAMEX
     ; must be on.
     ;
+if 0
     .if ( al == '.' && MODULE.dotnamex )
 
         mov IsResWord,0
@@ -1053,9 +1035,18 @@ continue_scan:
             .endif
         .endif
     .endif
-    mov hash,ecx
+endif
+    mov eax,ebx
+ifdef _WIN64
+    mov rbx,r10
+else
+    mov ebx,buf
+endif
+    mov [rbx].hash1,ecx
+    mov [rbx].hash2,eax
     mov rcx,rdi
     sub rcx,[rdx].output
+    mov [rbx].idlen,cl
 
     .if ( ecx > max_resw_len )
         mov IsResWord,0
@@ -1085,7 +1076,7 @@ continue_scan:
 
     .if ( IsResWord )
 
-        mov eax,hash
+        mov eax,[rbx].hash1
 ifdef _WIN64
         mov r9d,eax
         lea r10,resw_table
@@ -1221,6 +1212,53 @@ endif
     endp
 
 
+get_id_in_backquotes proc fastcall uses rsi rdi rbx buf:token_t, p:ptr line_status
+    mov rbx,buf
+    inc [rdx].input
+    mov rsi,[rdx].input
+    mov rdi,[rdx].output
+    mov [rbx].token,T_ID
+ifdef _WIN64
+    mov r10,rbx
+else
+    push ebx
+endif
+    mov ecx,FNVBASE
+    mov ebx,FNVBASE
+    .while 1 ; v2.37.51
+        lodsb
+        .break .if ( al == '`' )
+        .if ( !al || al == ';' )
+            mov B[rdi],0
+           .return asmerr( 2046 )
+        .endif
+        stosb
+        imul ebx,ebx,FNVPRIME
+        imul ecx,ecx,FNVPRIME
+        xor  bl,al
+        or   al,0x20
+        xor  cl,al
+    .endw
+    mov eax,ebx
+ifdef _WIN64
+    mov rbx,r10
+else
+    pop ebx
+endif
+    mov [rbx].hash1,ecx
+    mov [rbx].hash2,eax
+    mov rcx,rdi
+    sub rcx,[rdx].output
+    mov [rbx].idlen,cl
+    mov [rdx].input,rsi
+    xor eax,eax
+    stosb
+    mov [rbx].tokval,eax
+    mov [rdx].output,rdi
+    ret
+    endp
+
+
 ;
 ; save symbols in IFDEF's so they don't get expanded
 ;
@@ -1239,7 +1277,7 @@ StartComment proc fastcall p:string_t
     endp
 
 
-    assume proc:public, rsi:nothing, rdx:ptr line_status
+    assume proc:public, rsi:nothing
 
 GetToken proc fastcall uses rsi rdi rbx tokenarray:token_t, p:ptr line_status
 

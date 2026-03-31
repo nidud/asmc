@@ -335,7 +335,7 @@ EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:toke
           [rdx+asm_tok].asm_tok.tokval != T_EQU )
         .return ERROR
     .endif
-    .if ( SymFind( [rdx].asm_tok.string_ptr ) == NULL )
+    .if ( SymFindID( rdx ) == NULL )
         .return ERROR
     .endif
     .if ( [rax].asym.mem_type == MT_TYPE )

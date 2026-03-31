@@ -406,7 +406,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:asym_t, idx:int_t, tokenarray:token_t
                     mov i,idx
                     mov cnt_opnum,1
                     .if [rbx].token == T_ID
-                        mov sym,SymFind( [rbx].string_ptr )
+                        mov sym,SymFindID( rbx )
 
                         .if ( rax && [rax].asym.isdefined && ( [rax].asym.state == SYM_TMACRO ||
                                 ( [rax].asym.state == SYM_MACRO && [rax].asym.isfunc &&
@@ -659,7 +659,7 @@ RunMacro proc __ccall uses rsi rdi rbx mac:asym_t, idx:int_t, tokenarray:token_t
 
                     .if ( [rbx].token == T_ID )
 
-                        .if SymFind( [rbx].string_ptr )
+                        .if SymFindID( rbx )
 
                             mov sym,rax
                             .if ( [rax].asym.state == SYM_MACRO &&
@@ -1400,7 +1400,7 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t,
 
             .if ( [rbx].token == T_ID )
 
-                mov sym,SymFind( [rbx].string_ptr )
+                mov sym,SymFindID( rbx )
 
                 ; expand macro functions
 
@@ -1626,7 +1626,7 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
 
         .if ( [rbx].token == T_ID )
 
-            mov rsi,SymFind( [rbx].string_ptr )
+            mov rsi,SymFindID( rbx )
 
             ; don't check isdefined flag (which cannot occur in pass one, and this code usually runs
             ; in pass one only!
@@ -2006,9 +2006,17 @@ ExpandClass proc __ccall uses rsi rdi rbx buffer:string_t, string:string_t, toke
 
             .if ( [rbx].token == T_ID && ![rbx].AtLabel && !( rbx > tokenarray && [rbx-asm_tok].token == T_DOT ) )
 
-                mov rsi,SymFind( [rbx].string_ptr )
-                .if !SearchNameInStruct( rdi, [rbx].string_ptr, 0, 0 )
-                    .if SearchNameInStruct( [rdi].asym.vtable, [rbx].string_ptr, 0, 0 )
+                mov rsi,SymFindID( rbx )
+                mov eax,[rbx].hash1
+                .if ( [rdi].asym.casesensitive )
+                    mov eax,[rbx].hash2
+                .endif
+                .if !SearchInStruct( rdi, [rbx].idlen, eax, 0, 0 )
+                    mov eax,[rbx].hash1
+                    .if ( [rdi].asym.casesensitive )
+                        mov eax,[rbx].hash2
+                    .endif
+                    .if SearchInStruct( [rdi].asym.vtable, [rbx].idlen, eax, 0, 0 )
                         xor esi,esi ; allow name conflict --> use class::method()
                     .endif
                 .endif
@@ -2075,7 +2083,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                    .break
                 .endif
 
-                .if ( SymFind( [rbx+asm_tok*2].string_ptr ) )
+                .if SymFindID( &[rbx+asm_tok*2] )
                     .if ( [rax].asym.state == SYM_MACRO )
 
                        .break
@@ -2176,7 +2184,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                 mov count,2
                .endc
             .case DRT_MACRO
-                SymFind( [rdx].asm_tok.string_ptr )
+                SymFindID( rdx )
                 ; don't expand macro DEFINITIONs!
                 ; the name is an exception, if it's not the macro itself
 
@@ -2271,7 +2279,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
 
                 mov esi,T_INVOKE
                 .if ( [rbx].token == T_ID )
-                    SymFind( [rbx].string_ptr )
+                    SymFindID( rbx )
                     .if ( rax && [rax].asym.state == SYM_TYPE )
                         mov esi,T_DOT_NEW
                     .endif

@@ -296,9 +296,80 @@ ifdef _WIN64
     ; found and is to be added to the local table, there's no
     ; second scan necessary.
 
-align 16
 
 option win64:rsp noauto nosave
+
+align 16
+
+SymFindID proc fastcall tok:token_t
+
+    movzx   eax,[rcx].asm_tok.idlen
+    test    eax,eax
+    jz      .done
+    mov     r9d,[rcx].asm_tok.hash2
+    mov     ecx,[rcx].asm_tok.hash1
+    xchg    eax,ecx
+    mov     r8d,eax
+    cmp     CurrProc,0
+    je      .global
+    and     eax,LHASH_TABLE_SIZE - 1
+    lea     rdx,lsym_table
+    lea     rdx,[rdx+rax*8]
+    mov     rax,[rdx]
+    test    rax,rax
+    jz      .end_l
+.cmp_l:
+    cmp     ecx,[rax].asym.name_size
+    jne     .next_l
+    test    [rax].asym.casesensitive,1
+    jz      .nocase_l
+    cmp     r9d,[rax].asym.hash
+    je      .exit_l
+.next_l:
+    mov     rdx,rax
+    mov     rax,[rax].asym.nextitem
+    test    rax,rax
+    jnz     .cmp_l
+    jmp     .end_l
+.nocase_l:
+    cmp     r8d,[rax].asym.hash
+    jne     .next_l
+.exit_l:
+    mov     lsym,rdx
+    jmp     .done
+.end_l:
+    mov     lsym,rdx
+    mov     eax,r8d
+.global:
+    and     eax,GHASH_TABLE_SIZE-1
+    lea     rdx,gsym_table
+    lea     rdx,[rdx+rax*8]
+    mov     rax,[rdx]
+    test    rax,rax
+    jz      .end_g
+.cmp_g:
+    cmp     ecx,[rax].asym.name_size
+    jne     .next_g
+    test    [rax].asym.casesensitive,1
+    jz      .nocase_g
+    cmp     r9d,[rax].asym.hash
+    je      .end_g
+.next_g:
+    mov     rdx,rax
+    mov     rax,[rax].asym.nextitem
+    test    rax,rax
+    jnz     .cmp_g
+    jmp     .end_g
+.nocase_g:
+    cmp     r8d,[rax].asym.hash
+    jne     .next_g
+.end_g:
+    mov     gsym,rdx
+.done:
+    ret
+    endp
+
+align 16
 
 SymFind proc fastcall string:string_t
 
@@ -389,6 +460,73 @@ SymFind proc fastcall string:string_t
 option win64:rbp auto save
 
 else
+
+SymFindID proc fastcall uses esi ebx tok:token_t
+
+    movzx   eax,[rcx].asm_tok.idlen
+    test    eax,eax
+    jz      .done
+    mov     esi,[rcx].asm_tok.hash1
+    mov     ebx,[rcx].asm_tok.hash2
+    mov     ecx,eax
+    mov     eax,esi
+    cmp     CurrProc,0
+    jne     .local
+.global:
+    and     eax,GHASH_TABLE_SIZE-1
+    lea     edx,gsym_table[eax*4]
+    mov     eax,[edx]
+    test    eax,eax
+    jz      .end_g
+.cmp_g:
+    cmp     ecx,[eax].asym.name_size
+    jne     .next_g
+    test    [eax].asym.casesensitive,1
+    jz      .nocase_g
+    cmp     ebx,[eax].asym.hash
+    je      .end_g
+.next_g:
+    mov     edx,eax
+    mov     eax,[eax].asym.nextitem
+    test    eax,eax
+    jnz     .cmp_g
+.end_g:
+    mov     gsym,edx
+.done:
+    ret
+.nocase_g:
+    cmp     esi,[eax].asym.hash
+    jne     .next_g
+    jmp     .end_g
+.local:
+    and     eax,LHASH_TABLE_SIZE - 1
+    lea     edx,lsym_table[eax*4]
+    mov     eax,[edx]
+    test    eax,eax
+    jz      .end_l
+.cmp_l:
+    cmp     ecx,[eax].asym.name_size
+    jne     .next_l
+    test    [eax].asym.casesensitive,1
+    jz      .nocase_l
+    cmp     ebx,[eax].asym.hash
+    je      .exit_l
+.next_l:
+    mov     edx,eax
+    mov     eax,[eax].asym.nextitem
+    test    eax,eax
+    jnz     .cmp_l
+.end_l:
+    mov     lsym,edx
+    mov     eax,esi
+    jmp     .global
+.nocase_l:
+    cmp     esi,[rax].asym.hash
+    jne     .next_l
+.exit_l:
+    mov     lsym,edx
+    jmp     .done
+    endp
 
 SymFind proc fastcall uses esi ebx string:string_t
 

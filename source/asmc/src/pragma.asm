@@ -534,9 +534,6 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; .pragma exit(<proc>, <priority>)
 
         mov edi,eax
-        .if !MODULE.dotname
-            AddLineQueueX(" %r dotname", T_OPTION)
-        .endif
         .if ( Options.output_format == OFORMAT_ELF && Options.mscrt == 0 )
 
             inc i
@@ -544,15 +541,16 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 inc i
             .endif
             .endc .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
-
-            AddLineQueueX(" %r dotnamex:on", T_OPTION)
-            lea rsi,@CStr(".fini_array")
+            lea rsi,@CStr("`.fini_array")
             .if edi == "init"
-                lea rsi,@CStr(".init_array")
+                lea rsi,@CStr("`.init_array")
             .endif
-            tsprintf(&stdlib, "%s.%05d", rsi, opndx.uvalue)
+            tsprintf(&stdlib, "%s.%05d`", rsi, opndx.uvalue)
             lea rsi,stdlib
         .else
+            .if !MODULE.dotname
+                AddLineQueueX(" %r dotname", T_OPTION)
+            .endif
             lea rsi,@CStr(".CRT$XTA")
             .if edi == "init"
                 lea rsi,@CStr(".CRT$XIA")

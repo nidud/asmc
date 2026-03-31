@@ -3790,6 +3790,9 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
 
         mov [rbx].token,T_ID
         mov [rbx].string_ptr,[rbx+asm_tok].string_ptr
+        mov [rbx].hash1,[rbx+asm_tok].hash1
+        mov [rbx].hash2,[rbx+asm_tok].hash2
+        mov [rbx].idlen,[rbx+asm_tok].idlen
         mov [rbx+asm_tok].token,T_DIRECTIVE
         mov [rbx+asm_tok].tokval,T_PROTO
         mov [rbx+asm_tok].dirtype,DRT_PROTO

@@ -61,12 +61,15 @@ define __TOKEN_INC
       AtLabel       db : 1 ?    ; @label
      ends
     ends
+    idlen           db ?
     union
      tokval         dd ?        ; index if token is a reserved word
      stringlen      dd ?        ; T_STRING: size
      itemlen        dd ?        ; T_NUM: size
      lastidx        dd ?        ; T_FINAL: last index (used in RunMacro())
     ends
+    hash1           dd ?
+    hash2           dd ?
     string_ptr      string_t ?
     tokpos          string_t ?  ; points to item in CurrSource
    .ends

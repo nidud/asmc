@@ -15,6 +15,7 @@ include types.inc
 include listing.inc
 include proc.inc
 include lqueue.inc
+include tokenize.inc
 
 ; prototypes
 
@@ -108,7 +109,7 @@ StartupExitDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( MODULE._model == MODEL_TINY )
             AddLineQueue( "org 100h" )
         .endif
-        AddLineQueueX( "%s::", szStartAddr )
+        AddLineQueue( szStartAddr "::" )
         .if ( MODULE.ostype == OPSYS_DOS )
             .if ( MODULE._model == MODEL_TINY )
 
@@ -185,10 +186,11 @@ endif
 
 ; END directive
 
-EndDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
+EndDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
   local opndx:expr
 
+    ldr rbx,tokenarray
     inc i ; skip directive
 
     ; v2.08: END may generate code, so write listing first
@@ -200,29 +202,21 @@ EndDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
 ifndef ASMC64
     .if ( MODULE.StartupDirectiveFound )
+        ;
         ; start label behind END ignored if .STARTUP has been found
-        mov esi,TokenCount
-        .if ( i < esi && Parse_Pass == PASS_1 )
+        ;
+        .if ( i < TokenCount && Parse_Pass == PASS_1 )
             asmerr( 4003 )
         .endif
-        inc esi
-        mov i,esi
-        imul ebx,esi,asm_tok
-        add rbx,tokenarray
-        mov [rbx].token,T_ID
-        mov [rbx].string_ptr,&T(szStartAddr)
-        mov [rbx+asm_tok].token,T_FINAL
-        mov [rbx+asm_tok].string_ptr,&T("")
-        inc esi
-        mov TokenCount,esi
+        mov TokenCount,Tokenize( "end " szStartAddr, 0, rbx, TOK_RESCAN )
     .endif
 endif
     ; v2.11: flag EXPF_NOUNDEF added - will return ERROR if start label isn't defined
-    .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
+    .ifd ( EvalOperand( &i, rbx, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
         .return( ERROR )
     .endif
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
+    imul eax,i,asm_tok
+    add rbx,rax
     .if ( [rbx].token != T_FINAL )
         .return( asmerr(2008, [rbx].tokpos ) )
     .endif

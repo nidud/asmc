@@ -600,7 +600,7 @@ define PE_DLL               0x04
       case_sensitive        dd: 1 ? ; option casemap
       convert_uppercase     dd: 1 ? ; option casemap
       dotname               dd: 1 ? ; option dotname
-      dotnamex              dd: 1 ? ; option dotnamex:<on:off>
+;     dotnamex              dd: 1 ? ; option dotnamex:<on:off>
       write_listing         dd: 1 ? ; .list/.nolist
       listif                dd: 1 ? ; .listif/.nolistif
       list_generated_code   dd: 1 ? ; .listall, -Sa, -Sg
@@ -700,7 +700,7 @@ define PE_DLL               0x04
       case_sensitive        dd: 1 ? ; option casemap
       convert_uppercase     dd: 1 ? ; option casemap
       dotname               dd: 1 ? ; option dotname
-      dotnamex              dd: 1 ? ; option dotnamex:<on:off>
+;     dotnamex              dd: 1 ? ; option dotnamex:<on:off>
       list                  dd: 1 ? ; .list/.nolist
       listif                dd: 1 ? ; .listif/.nolistif
       list_generated_code   dd: 1 ? ; .listall, -Sa, -Sg

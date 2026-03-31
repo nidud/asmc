@@ -351,7 +351,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             ;
             ; v2.07: handle structs + members (if -Zne is NOT set)
             ;
-            SymFind( [rbx].string_ptr )
+            SymFindID( rbx )
             .if ( Options.strict_masm_compat == FALSE && [rbx+asm_tok].token == T_DOT && rax &&
                   ( [rax].asym.state == SYM_TYPE || [rax].asym.type ) )
                 .repeat

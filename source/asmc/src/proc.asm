@@ -1291,7 +1291,7 @@ endif
                 .if ( [rbx].token != T_ID )
                     .return( asmerr(2008, [rbx].string_ptr ) )
                 .endif
-                mov rdi,SymFind( [rbx].string_ptr )
+                mov rdi,SymFindID( rbx )
                 .if ( rax == NULL )
                     mov rdi,SymGCreate( [rbx].string_ptr )
                     mov [rax].asym.state,SYM_UNDEFINED

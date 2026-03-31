@@ -319,7 +319,7 @@ endif
             mov rdi,SearchNameInStruct( CurrStruct, rsi, &offs, 0 )
         .endif
     .else
-        mov edi,NULL ; anonymous struct
+        xor edi,edi ; anonymous struct
     .endif
     .if ( MODULE.list )
         mov rcx,CurrStruct
@@ -685,7 +685,7 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:token_t,
         add rbx,rax
         .for ( rdi = StringBufferEnd : [rbx].token != T_FINAL : rbx += asm_tok )
             .if ( [rbx].token == T_ID )
-                mov rsi,SymFind( [rbx].string_ptr )
+                mov rsi,SymFindID( rbx )
                 .if ( eax && [rax].asym.isvariable )
                     .if ( [rax].asym.predefined && [rax].asym.sfunc_ptr )
                         [rax].asym.sfunc_ptr( rax, NULL )
@@ -998,7 +998,7 @@ GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:token_t,
 
     .if ( type == EMPTY )
         .if ( [rbx].token == T_ID && [rbx-asm_tok].tokval == T_PTR )
-            mov [rsi].symtype,SymFind( [rbx].string_ptr )
+            mov [rsi].symtype,SymFindID( rbx )
             mov rdi,[rsi].symtype
             .if ( rdi == NULL || [rdi].asym.state == SYM_UNDEFINED )
                 ;.if ( rdi && rdi == CurrStruct )
@@ -1054,7 +1054,7 @@ GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:token_t,
             .endif
             .return( ERROR )
         .endif
-        mov [rsi].symtype,SymFind( [rbx].string_ptr )
+        mov [rsi].symtype,SymFindID( rbx )
         mov rdi,rax
         .if ( rdi == NULL || [rdi].asym.state != SYM_TYPE )
             .if ( [rsi].symtype == NULL || [rdi].asym.state == SYM_UNDEFINED )

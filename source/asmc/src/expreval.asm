@@ -1142,7 +1142,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
 
                 inc eax
                 mov [rcx],eax
-                .if ( SymFind([rbx].string_ptr) )
+                .if SymFindID( rbx )
                     .if ( [rax].asym.state != SYM_UNDEFINED )
 
                         dec [rdi].value ; symbol defined
@@ -1193,10 +1193,15 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
             xor eax,eax
             mov [rdi].value,eax
             .if ( rcx )
-                SearchNameInStruct( rcx, rsi, rdi, 0 )
+                movzx edx,[rbx].idlen
+                mov eax,[rbx].hash1
+                .if ( [rcx].asym.casesensitive )
+                    mov eax,[rbx].hash2
+                .endif
+                SearchInStruct( rcx, edx, eax, rdi, 0 )
             .endif
             .if ( rax == NULL )
-                .if SymFind(rsi)
+                .if SymFindID( rbx )
                     .if ( [rax].asym.state == SYM_TYPE )
                         mov rcx,[rdi].type
                         .if !( rax == rcx || ( rcx && !( [rcx].asym.isdefined ) ) || MODULE.oldstructs )
@@ -1209,7 +1214,6 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
                 .endif
             .endif
         .else
-
             mov edx,[rsi]
             and edx,0x00FFFFFF
             or  dh,0x20
@@ -1219,9 +1223,10 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
                 bt  edx,10
                 adc eax,0
                 tsprintf( rsi, "L&_%04u", eax )
+                SymFind( rsi )
+            .else
+                SymFindID( rbx )
             .endif
-            SymFind( rsi )
-
         .endif
 
         .if ( rax == NULL || [rax].asym.state == SYM_UNDEFINED ||

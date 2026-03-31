@@ -854,7 +854,7 @@ PurgeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if [rbx].token != T_ID
             .return asmerr( 2008, [rbx].string_ptr )
         .endif
-        mov rsi,SymFind( [rbx].string_ptr )
+        mov rsi,SymFindID( rbx )
         .if rax == NULL
             .return asmerr( 2006, [rbx].string_ptr )
         .endif

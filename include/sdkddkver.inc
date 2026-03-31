@@ -1,6 +1,6 @@
 ifndef _INC_SDKDDKVER
 define _INC_SDKDDKVER
-;.pragma list(push, 0)
+.pragma list(push, 0)
 
 ifndef WINAPI ; default (API) type
 ifdef _WIN64
@@ -279,6 +279,5 @@ endif
 
 endif
 
-;.pragma list(pop)
+.pragma list(pop)
 endif
-

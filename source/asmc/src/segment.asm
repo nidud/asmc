@@ -1088,7 +1088,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                     ; associated segment must be COMDAT, but not associative
 
-                    .if SymFind( [rbx].string_ptr )
+                    .if SymFindID( rbx )
                         mov rcx,[rax].asym.seginfo
                     .endif
                     .if ( rax == NULL || [rax].asym.state != SYM_SEG ||

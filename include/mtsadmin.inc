@@ -86,6 +86,7 @@ define __MTSAdmin_LIBRARY_DEFINED__
 	}
 
 .enum __MIDL___MIDL_itf_mtsadmin_0123_0003 {
+	mtsErrObjectErrors		= 0x80110401,
 	mtsErrObjectInvalid		= 0x80110402,
 	mtsErrKeyMissing		= 0x80110403,
 	mtsErrAlreadyInstalled		= 0x80110404,

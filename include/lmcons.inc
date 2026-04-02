@@ -1,5 +1,6 @@
 ifndef NETCONS_INCLUDED
 define NETCONS_INCLUDED
+include lmerr.inc
 
 NET_API_STATUS		typedef DWORD
 

@@ -49,12 +49,11 @@ eqitem              ends
 define _MAX_DYNEQ 20
 
 .data?
-gsym                symptr_t ?          ; asym ** pointer into global hash table
-lsym                symptr_t ?          ; asym ** pointer into local hash table
 szDate              char_t 16 dup(?)    ; value of @Date symbol
 szTime              char_t 16 dup(?)    ; value of @Time symbol
 gsym_table          asym_t GHASH_TABLE_SIZE dup(?)
 lsym_table          asym_t LHASH_TABLE_SIZE+1 dup(?)
+lsym                symptr_t ?          ; asym ** pointer into local hash table
 SymCmpFunc          StrCmpFunc ?
 dyneqtable          string_t _MAX_DYNEQ dup(?)
 dyneqvalue          string_t _MAX_DYNEQ dup(?)
@@ -300,8 +299,7 @@ option win64:rsp noauto nosave
 else
 define r8d <esi>
 define r9d <ebx>
-define r11 <edi>
-define r10d <ecx>
+define r10d <edi>
 assume uses esi edi ebx
 endif
 
@@ -313,13 +311,11 @@ _LK_SYMFIND macro
 ifdef _WIN64
     lea     r10,lsym_table
     lea     rdx,[r10+rax*size_t]
-    mov     rax,[r10+rax*size_t]
 else
     lea     edx,lsym_table[eax*size_t]
-    mov     eax,[edx]
 endif
+    mov     rax,[rdx]
     test    rax,rax
-    lea     r11,lsym
     jz      .lend
 .lcmp:
     cmp     ecx,[rax].asym.name_size
@@ -334,9 +330,6 @@ else
 @@:
 endif
     cmp     r10d,[rax].asym.hash
-ifndef _WIN64
-    mov     ecx,[rax].asym.name_size
-endif
     je      .done
 .llup:
     mov     rdx,rax
@@ -344,20 +337,18 @@ endif
     test    rax,rax
     jnz     .lcmp
 .lend:
-    mov     [r11],rdx
+    mov     lsym,rdx
 .gsym:
     mov     eax,r8d
     and     eax,GHASH_TABLE_SIZE-1
 ifdef _WIN64
     lea     r10,gsym_table
     lea     rdx,[r10+rax*size_t]
-    mov     rax,[r10+rax*size_t]
 else
     lea     edx,gsym_table[eax*size_t]
-    mov     eax,[edx]
 endif
+    mov     rax,[rdx]
     test    rax,rax
-    lea     r11,gsym
     jz      .done
 .gcmp:
     cmp     ecx,[rax].asym.name_size
@@ -372,9 +363,6 @@ else
 @@:
 endif
     cmp     r10d,[rax].asym.hash
-ifndef _WIN64
-    mov     ecx,[rax].asym.name_size
-endif
     je      .done
 .glup:
     mov     rdx,rax
@@ -382,7 +370,6 @@ endif
     test    rax,rax
     jnz     .gcmp
 .done:
-    mov     [r11],rdx
     endm
 
 align size_t*2
@@ -433,11 +420,12 @@ endif
 ;
 ; SymLookup() creates a global label if it isn't defined yet
 ;
-SymLookup proc __ccall name:string_t
-    .if !SymFind( name )
-        SymAlloc( name )
-        mov rcx,gsym
-        mov [rcx],rax
+SymLookup proc __ccall uses rbx name:string_t
+    ldr rbx,name
+    .if !SymFind( rbx )
+        xchg rdx,rbx
+        SymAlloc( rdx )
+        mov [rbx],rax
         inc SymCount
     .endif
     ret
@@ -453,7 +441,7 @@ SymLookupLocal proc __ccall name:string_t
 
     ; v2.19: don't move a label marked as public if -Zm isn't set
 
-    .if ( rax == NULL || ( ( [rax].asym.ispublic ) && MODULE.m510 == 0 ) )
+    .if ( rax == NULL || ( [rax].asym.ispublic && MODULE.m510 == 0 ) )
 
         SymAlloc( name )
         mov [rax].asym.scoped,1
@@ -470,9 +458,8 @@ SymLookupLocal proc __ccall name:string_t
         ;
         ; remove the label from the global hash table
 
-        mov rdx,[rax].asym.nextitem
-        mov rcx,gsym
-        mov [rcx],rdx
+        mov rcx,[rax].asym.nextitem
+        mov [rdx],rcx
         dec SymCount
         mov [rax].asym.scoped,1
         mov [rax].asym.nextitem,0
@@ -558,18 +545,16 @@ SymAddLocal proc __ccall uses rsi rdi rbx sym:asym_t, name:string_t
 ; Called by:
 ; - RecordDirective() in types.c to add bitfield fields (which have global scope).
 
-SymAddGlobal proc __ccall sym:asym_t
+SymAddGlobal proc __ccall uses rbx sym:asym_t
 
-    ldr rcx,sym
-    .if SymFind( [rcx].asym.name )
-        mov rcx,sym
-        asmerr( 2005, [rcx].asym.name )
+    ldr rbx,sym
+    .if SymFind( [rbx].asym.name )
+        asmerr( 2005, [rbx].asym.name )
         xor eax,eax
     .else
-        mov rax,sym
+        mov rax,rbx
         inc SymCount
-        mov rcx,gsym
-        mov [rcx],rax
+        mov [rdx],rax
         mov [rax].asym.nextitem,0
     .endif
     ret
@@ -578,26 +563,27 @@ SymAddGlobal proc __ccall sym:asym_t
 
 ; Create symbol and optionally insert it into the symbol table
 
-SymCreate proc __ccall name:string_t
-    .if SymFind( name )
-        asmerr( 2005, name )
+SymCreate proc __ccall uses rbx name:string_t
+    ldr rbx,name
+    .if SymFind( rbx )
+        asmerr( 2005, rbx )
         xor eax,eax
     .else
-        SymAlloc( name )
+        xchg rdx,rbx
+        SymAlloc( rdx )
         inc SymCount
-        mov rcx,gsym
-        mov [rcx],rax
+        mov [rbx],rax
     .endif
     ret
     endp
 
 ; short version of SymCreate()
 
-SymGCreate proc fastcall name:string_t
+SymGCreate proc fastcall uses rbx name:string_t
+    mov rbx,rdx
     SymAlloc( rcx )
     inc SymCount
-    mov rcx,gsym
-    mov [rcx],rax
+    mov [rbx],rax
     ret
     endp
 

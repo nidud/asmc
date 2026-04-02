@@ -961,7 +961,7 @@ GetProc proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, opnd:
     .elseif [rbx].token == T_REG
         GetStdAssume(GetRegNo([rbx].tokval))
     .else
-        SymFind([rbx].string_ptr)
+        SymFindID(rbx)
     .endif
     .return .if !rax
     .return .if [rax].asym.isproc
@@ -1061,7 +1061,7 @@ GetMacroReturn proc __ccall private uses rsi rbx i:int_t, tokenarray:token_t
         .if ( [rbx].token == T_OP_SQ_BRACKET )
             mov rcx,opnd.type
         .else
-           .return .if !SymFind( [rbx].string_ptr )
+           .return .if !SymFindID( rbx )
             xor ecx,ecx
             .if ( [rax].asym.mem_type == MT_TYPE )
                 mov rcx,[rax].asym.type
@@ -1558,7 +1558,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
                 ; [reg].p[..].Method()
 
                 mov rdi,name
-                .if SymFind( [rdx+asm_tok].asm_tok.string_ptr )
+                .if SymFindID( &[rdx+asm_tok] )
 
                     .if ( dotcount > 2 && [rax].asym.state == SYM_TYPE && [rax].asym.typekind == TYPE_STRUCT )
 
@@ -1616,7 +1616,7 @@ LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, to
 
     .else
 
-        mov sym1,SymFind( [rbx].string_ptr )
+        mov sym1,SymFindID( rbx )
         mov edi,dotcount
         .if edi
             dec edi

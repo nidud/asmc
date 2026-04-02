@@ -308,7 +308,7 @@ else
 endif
         .switch eax
         .case CR
-            .continue ; don't store CR
+            .continue(0) ; don't store CR
         .case LF
             mov byte ptr [rdi],0
             .return( buffer )

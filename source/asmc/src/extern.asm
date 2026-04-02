@@ -203,6 +203,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         mov token,[rbx].string_ptr
         mov rdi,rax
+        mov rcx,rbx
         inc i
         add rbx,asm_tok
 
@@ -213,7 +214,7 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         inc i
         add rbx,asm_tok
-        mov rsi,SymFind( rdi )
+        mov rsi,SymFindID( rcx )
         mov ti.mem_type,MT_EMPTY
         mov ti.size,0
         mov ti.is_ptr,0
@@ -552,6 +553,7 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .return( asmerr( 2008, [rbx].string_ptr ) )
         .endif
         mov token,[rbx].string_ptr
+        mov rcx,rbx
         inc i
         add rbx,asm_tok
 
@@ -583,7 +585,7 @@ ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         inc i
         add rbx,asm_tok
-        mov rdi,SymFind( token )
+        mov rdi,SymFindID( rcx )
 
         mov ti.mem_type,MT_EMPTY
         mov ti.size,0
@@ -844,6 +846,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; get the symbol name
 
         mov token,[rbx].string_ptr
+        mov rdi,rbx
         inc i
         add rbx,asm_tok
 
@@ -915,7 +918,7 @@ CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov count,opndx.uvalue
         .endif
 
-        mov rdi,SymFind( token )
+        mov rdi,SymFindID( rdi )
         .if ( rdi == NULL || [rdi].asym.state == SYM_UNDEFINED )
             mov rdi,MakeComm( token, rdi, size, count, isfar )
             .if ( rdi == NULL )
@@ -984,12 +987,13 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; get the symbol name
 
         mov token,[rbx].string_ptr
+        mov rcx,rbx
         inc i
         add rbx,asm_tok
 
         ; Add the public name
 
-        mov rdi,SymFind( token )
+        mov rdi,SymFindID( rcx )
         .if ( Parse_Pass == PASS_1 )
             .if ( rdi == NULL )
                 .if SymGCreate( token )

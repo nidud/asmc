@@ -58,7 +58,7 @@ FindDotSymbol proc fastcall uses rsi rdi rbx tok:token_t
 
     .for ( rbx = rcx : [rbx-asm_tok].token != T_COMMA && [rbx-asm_tok].token != T_DIRECTIVE : rbx -= asm_tok )
     .endf
-    .return .if !SymFind( [rbx].string_ptr )
+    .return .if !SymFindID( rbx )
 
     mov rsi,rax
     add rbx,asm_tok

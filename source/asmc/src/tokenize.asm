@@ -1297,7 +1297,8 @@ GetToken proc fastcall uses rsi rdi rbx tokenarray:token_t, p:ptr line_status
     ; varname.abc -> . is an operator
     ;
 
-    mov [rcx].asm_tok.flags,0
+    mov dword ptr [rcx],0;.asm_tok.flags,0
+;    mov [rcx].asm_tok.flags,0
     mov rax,[rdx].input
     .switch
     .case isldigit( [rax] )

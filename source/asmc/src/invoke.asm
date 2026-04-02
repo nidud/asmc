@@ -3142,7 +3142,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         imul ebx,i,asm_tok
         add rbx,tokenarray
 
-        mov sym,SymFind( [rbx].string_ptr )
+        mov sym,SymFindID( rbx )
         inc i
     .endif
 
@@ -3200,7 +3200,7 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .elseif ( [rbx].token == T_OP_SQ_BRACKET && [rbx+3*asm_tok].token == T_DOT && opnd.mbr )
             mov rdi,opnd.mbr
             .if ( [rdi].asym.method )
-                mov pclass,SymFind( [rbx+4*asm_tok].string_ptr )
+                mov pclass,SymFindID( &[rbx+4*asm_tok] )
                 .if ( rax && [rax].asym.isvtable )
                     .if ( [rdi].asym.isvmacro )
                         mov pmacro,[rdi].asym.vmacro
@@ -3525,7 +3525,7 @@ endif
             .if ( [rbx].token == T_OP_SQ_BRACKET )
                 add rbx,asm_tok*4
             .endif
-            mov rcx,SymFind( [rbx].string_ptr )
+            mov rcx,SymFindID( rbx )
             AssignPointer( rcx, edi, rbx, pclass, [rsi].langtype, pmacro)
 ifndef ASMC64
 

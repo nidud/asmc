@@ -690,7 +690,7 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     ldr rbx,tokenarray
     mov rdi,[rbx].string_ptr
-    mov rsi,SymFind(rdi)
+    mov rsi,SymFindID(rbx)
     .if ( rax == NULL )
         mov rsi,CreateMacro(rdi)
     .elseif ( [rsi].state != SYM_MACRO )

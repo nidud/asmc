@@ -28,7 +28,7 @@ UpdateWordSize      proto fastcall :asym_t, :ptr
 UpdateCurPC         proto fastcall :asym_t, :ptr
 
 GHASH_TABLE_SIZE    equ 0x8000
-LHASH_TABLE_SIZE    equ 256
+LHASH_TABLE_SIZE    equ 0x1000
 
 USESTRFTIME         equ 0   ; 1=use strftime()
 
@@ -288,332 +288,147 @@ SymAlloc proc __ccall uses rsi rdi rbx name:string_t
 .pragma warning(disable: 6004)
 
 
+; find a symbol in the local/global symbol table,
+; return ptr to next free entry in global table if not found.
+; Note: lsym must be global, thus if the symbol isn't
+; found and is to be added to the local table, there's no
+; second scan necessary.
+
+
 ifdef _WIN64
-
-    ; find a symbol in the local/global symbol table,
-    ; return ptr to next free entry in global table if not found.
-    ; Note: lsym must be global, thus if the symbol isn't
-    ; found and is to be added to the local table, there's no
-    ; second scan necessary.
-
-
 option win64:rsp noauto nosave
-
-align 16
-
-SymFindID proc fastcall tok:token_t
-
-    movzx   eax,[rcx].asm_tok.idlen
-    test    eax,eax
-    jz      .done
-    mov     r9d,[rcx].asm_tok.hash2
-    mov     ecx,[rcx].asm_tok.hash1
-    xchg    eax,ecx
-    mov     r8d,eax
-    cmp     CurrProc,0
-    je      .global
-    and     eax,LHASH_TABLE_SIZE - 1
-    lea     rdx,lsym_table
-    lea     rdx,[rdx+rax*8]
-    mov     rax,[rdx]
-    test    rax,rax
-    jz      .end_l
-.cmp_l:
-    cmp     ecx,[rax].asym.name_size
-    jne     .next_l
-    test    [rax].asym.casesensitive,1
-    jz      .nocase_l
-    cmp     r9d,[rax].asym.hash
-    je      .exit_l
-.next_l:
-    mov     rdx,rax
-    mov     rax,[rax].asym.nextitem
-    test    rax,rax
-    jnz     .cmp_l
-    jmp     .end_l
-.nocase_l:
-    cmp     r8d,[rax].asym.hash
-    jne     .next_l
-.exit_l:
-    mov     lsym,rdx
-    jmp     .done
-.end_l:
-    mov     lsym,rdx
-    mov     eax,r8d
-.global:
-    and     eax,GHASH_TABLE_SIZE-1
-    lea     rdx,gsym_table
-    lea     rdx,[rdx+rax*8]
-    mov     rax,[rdx]
-    test    rax,rax
-    jz      .end_g
-.cmp_g:
-    cmp     ecx,[rax].asym.name_size
-    jne     .next_g
-    test    [rax].asym.casesensitive,1
-    jz      .nocase_g
-    cmp     r9d,[rax].asym.hash
-    je      .end_g
-.next_g:
-    mov     rdx,rax
-    mov     rax,[rax].asym.nextitem
-    test    rax,rax
-    jnz     .cmp_g
-    jmp     .end_g
-.nocase_g:
-    cmp     r8d,[rax].asym.hash
-    jne     .next_g
-.end_g:
-    mov     gsym,rdx
-.done:
-    ret
-    endp
-
-align 16
-
-SymFind proc fastcall string:string_t
-
-    movzx   eax,byte ptr [rcx]
-    test    eax,eax
-    jz      .done
-    mov     r10,rcx
-    mov     r9d,eax
-    or      al,0x20
-    xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
-    xor     r9d,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
-    inc     rcx
-    mov     dl,[rcx]
-    test    dl,dl
-    jz      .1
-.0:
-    inc     rcx
-    imul    r9d,r9d,FNVPRIME
-    imul    eax,eax,FNVPRIME
-    xor     r9b,dl
-    or      dl,0x20
-    xor     al,dl
-    mov     dl,[rcx]
-    test    dl,dl
-    jnz     .0
-.1:
-    sub     rcx,r10
-    mov     r8d,eax
-    cmp     CurrProc,0
-    je      .global
-    and     eax,LHASH_TABLE_SIZE - 1
-    lea     rdx,lsym_table
-    lea     rdx,[rdx+rax*8]
-    mov     rax,[rdx]
-    test    rax,rax
-    jz      .end_l
-.cmp_l:
-    cmp     ecx,[rax].asym.name_size
-    jne     .next_l
-    test    [rax].asym.casesensitive,1
-    jz      .nocase_l
-    cmp     r9d,[rax].asym.hash
-    je      .exit_l
-.next_l:
-    mov     rdx,rax
-    mov     rax,[rax].asym.nextitem
-    test    rax,rax
-    jnz     .cmp_l
-    jmp     .end_l
-.nocase_l:
-    cmp     r8d,[rax].asym.hash
-    jne     .next_l
-.exit_l:
-    mov     lsym,rdx
-    jmp     .done
-.end_l:
-    mov     lsym,rdx
-    mov     eax,r8d
-.global:
-    and     eax,GHASH_TABLE_SIZE-1
-    lea     rdx,gsym_table
-    lea     rdx,[rdx+rax*8]
-    mov     rax,[rdx]
-    test    rax,rax
-    jz      .end_g
-.cmp_g:
-    cmp     ecx,[rax].asym.name_size
-    jne     .next_g
-    test    [rax].asym.casesensitive,1
-    jz      .nocase_g
-    cmp     r9d,[rax].asym.hash
-    je      .end_g
-.next_g:
-    mov     rdx,rax
-    mov     rax,[rax].asym.nextitem
-    test    rax,rax
-    jnz     .cmp_g
-    jmp     .end_g
-.nocase_g:
-    cmp     r8d,[rax].asym.hash
-    jne     .next_g
-.end_g:
-    mov     gsym,rdx
-.done:
-    ret
-    endp
-
-option win64:rbp auto save
-
 else
-
-SymFindID proc fastcall uses esi ebx tok:token_t
-
-    movzx   eax,[rcx].asm_tok.idlen
-    test    eax,eax
-    jz      .done
-    mov     esi,[rcx].asm_tok.hash1
-    mov     ebx,[rcx].asm_tok.hash2
-    mov     ecx,eax
-    mov     eax,esi
-    cmp     CurrProc,0
-    jne     .local
-.global:
-    and     eax,GHASH_TABLE_SIZE-1
-    lea     edx,gsym_table[eax*4]
-    mov     eax,[edx]
-    test    eax,eax
-    jz      .end_g
-.cmp_g:
-    cmp     ecx,[eax].asym.name_size
-    jne     .next_g
-    test    [eax].asym.casesensitive,1
-    jz      .nocase_g
-    cmp     ebx,[eax].asym.hash
-    je      .end_g
-.next_g:
-    mov     edx,eax
-    mov     eax,[eax].asym.nextitem
-    test    eax,eax
-    jnz     .cmp_g
-.end_g:
-    mov     gsym,edx
-.done:
-    ret
-.nocase_g:
-    cmp     esi,[eax].asym.hash
-    jne     .next_g
-    jmp     .end_g
-.local:
-    and     eax,LHASH_TABLE_SIZE - 1
-    lea     edx,lsym_table[eax*4]
-    mov     eax,[edx]
-    test    eax,eax
-    jz      .end_l
-.cmp_l:
-    cmp     ecx,[eax].asym.name_size
-    jne     .next_l
-    test    [eax].asym.casesensitive,1
-    jz      .nocase_l
-    cmp     ebx,[eax].asym.hash
-    je      .exit_l
-.next_l:
-    mov     edx,eax
-    mov     eax,[eax].asym.nextitem
-    test    eax,eax
-    jnz     .cmp_l
-.end_l:
-    mov     lsym,edx
-    mov     eax,esi
-    jmp     .global
-.nocase_l:
-    cmp     esi,[rax].asym.hash
-    jne     .next_l
-.exit_l:
-    mov     lsym,edx
-    jmp     .done
-    endp
-
-SymFind proc fastcall uses esi ebx string:string_t
-
-    movzx   eax,byte ptr [ecx]
-    test    eax,eax
-    jz      .done
-    mov     esi,ecx
-    mov     ebx,eax
-    or      al,0x20
-    xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
-    xor     ebx,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
-    inc     ecx
-    mov     dl,[ecx]
-    test    dl,dl
-    jz      .1
-.0:
-    inc     ecx
-    imul    ebx,ebx,FNVPRIME
-    imul    eax,eax,FNVPRIME
-    xor     bl,dl
-    or      dl,0x20
-    xor     al,dl
-    mov     dl,[ecx]
-    test    dl,dl
-    jnz     .0
-.1:
-    sub     ecx,esi
-    mov     esi,eax
-    cmp     CurrProc,0
-    je      .global
-    and     eax,LHASH_TABLE_SIZE - 1
-    lea     edx,lsym_table[eax*4]
-    mov     eax,[edx]
-    test    eax,eax
-    jz      .end_l
-.cmp_l:
-    cmp     ecx,[eax].asym.name_size
-    jne     .next_l
-    test    [eax].asym.casesensitive,1
-    jz      .nocase_l
-    cmp     ebx,[eax].asym.hash
-    je      .exit_l
-.next_l:
-    mov     edx,eax
-    mov     eax,[eax].asym.nextitem
-    test    eax,eax
-    jnz     .cmp_l
-    jmp     .end_l
-.nocase_l:
-    cmp     esi,[rax].asym.hash
-    jne     .next_l
-.exit_l:
-    mov     lsym,edx
-    jmp     .done
-.end_l:
-    mov     lsym,edx
-    mov     eax,esi
-.global:
-    and     eax,GHASH_TABLE_SIZE-1
-    lea     edx,gsym_table[eax*4]
-    mov     eax,[edx]
-    test    eax,eax
-    jz      .end_g
-.cmp_g:
-    cmp     ecx,[eax].asym.name_size
-    jne     .next_g
-    test    [eax].asym.casesensitive,1
-    jz      .nocase_g
-    cmp     ebx,[eax].asym.hash
-    je      .end_g
-.next_g:
-    mov     edx,eax
-    mov     eax,[eax].asym.nextitem
-    test    eax,eax
-    jnz     .cmp_g
-    jmp     .end_g
-.nocase_g:
-    cmp     esi,[eax].asym.hash
-    jne     .next_g
-.end_g:
-    mov     gsym,edx
-.done:
-    ret
-    endp
-
+define r8d <esi>
+define r9d <ebx>
+define r11 <edi>
+define r10d <ecx>
+assume uses esi edi ebx
 endif
 
+_LK_SYMFIND macro
+    cmp     rax,CurrProc
+    jz      .gsym
+    mov     eax,r8d
+    and     eax,LHASH_TABLE_SIZE-1
+ifdef _WIN64
+    lea     r10,lsym_table
+    lea     rdx,[r10+rax*size_t]
+    mov     rax,[r10+rax*size_t]
+else
+    lea     edx,lsym_table[eax*size_t]
+    mov     eax,[edx]
+endif
+    test    rax,rax
+    lea     r11,lsym
+    jz      .lend
+.lcmp:
+    cmp     ecx,[rax].asym.name_size
+    jne     .llup
+    test    [rax].asym.casesensitive,1
+    mov     r10d,r9d
+ifdef __P686__
+    cmovz   r10d,r8d
+else
+    jnz     @F
+    mov     r10d,r8d
+@@:
+endif
+    cmp     r10d,[rax].asym.hash
+ifndef _WIN64
+    mov     ecx,[rax].asym.name_size
+endif
+    je      .done
+.llup:
+    mov     rdx,rax
+    mov     rax,[rax].asym.nextitem
+    test    rax,rax
+    jnz     .lcmp
+.lend:
+    mov     [r11],rdx
+.gsym:
+    mov     eax,r8d
+    and     eax,GHASH_TABLE_SIZE-1
+ifdef _WIN64
+    lea     r10,gsym_table
+    lea     rdx,[r10+rax*size_t]
+    mov     rax,[r10+rax*size_t]
+else
+    lea     edx,gsym_table[eax*size_t]
+    mov     eax,[edx]
+endif
+    test    rax,rax
+    lea     r11,gsym
+    jz      .done
+.gcmp:
+    cmp     ecx,[rax].asym.name_size
+    jne     .glup
+    test    [rax].asym.casesensitive,1
+    mov     r10d,r9d
+ifdef __P686__
+    cmovz   r10d,r8d
+else
+    jnz     @F
+    mov     r10d,r8d
+@@:
+endif
+    cmp     r10d,[rax].asym.hash
+ifndef _WIN64
+    mov     ecx,[rax].asym.name_size
+endif
+    je      .done
+.glup:
+    mov     rdx,rax
+    mov     rax,[rax].asym.nextitem
+    test    rax,rax
+    jnz     .gcmp
+.done:
+    mov     [r11],rdx
+    endm
+
+align size_t*2
+
+SymFindID proc fastcall tok:token_t
+    xor     eax,eax
+    mov     r8d,[rcx].asm_tok.hash1
+    mov     r9d,[rcx].asm_tok.hash2
+    movzx   ecx,[rcx].asm_tok.idlen
+    test    ecx,ecx
+    jz      .null
+    _LK_SYMFIND
+.null:
+    ret
+    endp
+
+align size_t*2
+
+SymFind proc fastcall string:string_t
+    movzx   eax,byte ptr [rcx]
+    mov     r8d,FNVBASE
+    mov     r9d,FNVBASE
+    mov     rdx,rcx
+    test    eax,eax
+    jz      .null
+.0:
+    imul    r9d,r9d,FNVPRIME
+    imul    r8d,r8d,FNVPRIME
+    xor     r9d,eax
+    or      eax,0x20
+    inc     rcx
+    xor     r8d,eax
+    mov     al,[rcx]
+    test    eax,eax
+    jnz     .0
+    sub     rcx,rdx
+    _LK_SYMFIND
+.null:
+    ret
+    endp
+
+ifdef _WIN64
+option win64:rbp auto save
+else
+assume uses:nothing
+endif
 
 ;
 ; SymLookup() creates a global label if it isn't defined yet

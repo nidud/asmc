@@ -210,6 +210,7 @@ StructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     ldr ecx,i
     ldr rbx,tokenarray
     mov rsi,[rbx].string_ptr
+    mov rdi,rbx
     imul ecx,ecx,asm_tok
     add rbx,rcx
     mov al,TYPE_STRUCT
@@ -242,6 +243,7 @@ else
         .if ( [rbx].token == T_ID )
 endif
             mov rsi,[rbx].string_ptr
+            mov rdi,rbx
             inc i
             add rbx,asm_tok
         .endif
@@ -314,7 +316,7 @@ endif
 
             ; the "top-level" struct is part of the global namespace
 
-            mov rdi,SymFind( rsi )
+            mov rdi,SymFindID( rdi )
         .else
             mov rdi,SearchNameInStruct( CurrStruct, rsi, &offs, 0 )
         .endif
@@ -1402,7 +1404,7 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         ; record field names are global! (Masm design flaw)
 
-        mov rsi,SymFind( [rdi].asm_tok.string_ptr )
+        mov rsi,SymFindID( rdi )
         mov def,TRUE
         .if ( oldr )
             .if ( rsi == NULL || [rsi].asym.state != SYM_STRUCT_FIELD ||

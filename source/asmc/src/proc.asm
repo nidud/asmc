@@ -1550,7 +1550,6 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
 
     mov name,[rbx].string_ptr
-    add rbx,asm_tok
     mov rdi,CurrProc
 
     .if ( rdi != NULL )
@@ -1560,14 +1559,12 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov rsi,[rdi].asym.procinfo
         .if ( [rsi].paralist || [rsi].isframe || [rsi].locallist || [rsi].regslist )
-
             .return( asmerr( 2144, name ) )
         .endif
 
         ; nested procs ... push currproc on a stack
 
         .if ( Parse_Pass == PASS_1 ) ;; get the locals stored so far
-
             SymGetLocal( rdi )
         .endif
         LclAlloc( sizeof( qnode ) )
@@ -1582,8 +1579,8 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
 
     inc i ; go past PROC
-    add rbx,asm_tok
-    mov sym,SymFind( name )
+    mov sym,SymFindID( rbx )
+    add rbx,asm_tok*2
 
     .if ( Parse_Pass == PASS_1 )
 

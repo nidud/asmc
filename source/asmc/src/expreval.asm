@@ -2357,13 +2357,11 @@ cmp_types proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, trueval:int
     .if ( [rcx].mem_type == MT_PTR && [rdx].mem_type == MT_PTR )
         mov rbx,rcx
         .if !rsi
-            mov rax,[rcx].type_tok
-            mov rsi,SymFind( [rax].asm_tok.string_ptr )
+            mov rsi,SymFindID( [rcx].type_tok )
             mov rdx,opnd2
         .endif
         .if !rdi
-            mov rax,[rdx].type_tok
-            mov rdi,SymFind( [rax].asm_tok.string_ptr )
+            mov rdi,SymFindID( [rdx].type_tok )
         .endif
         .if ( [rsi].is_ptr == [rdi].is_ptr &&
               [rsi].ptr_memtype == [rdi].ptr_memtype &&

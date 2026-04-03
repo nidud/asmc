@@ -173,61 +173,60 @@ instr_t		typedef ptr instr_item
 ; special_item is the structure used to store directives and
 ; other reserved words in SpecialTable (special.h).
 
-special_item	STRUC
-value		dd ?
-sflags		dd ?
-cpu		dw ?	; CPU type
-bytval		db ?
-type		db ?
-special_item	ENDS
+if sizeof(special_item) ne 16
+.err @CatStr(%@FileName,<(>,%@Line,<): >, <special_item need to 16 byte!!!!>)
+endif
 
 ifdef _WIN64
-GetRegNo macro x
-	 lea  r11,SpecialTable
-	 imul eax,x,special_item
-	 exitm<[r11+rax].special_item.bytval>
-	 endm
-GetSflagsSp macro x
-	 lea  r11,SpecialTable
-	 imul eax,x,special_item
-	 exitm<[r11+rax].special_item.sflags>
-	 endm
-GetValueSp macro x
-	 lea  r11,SpecialTable
-	 imul eax,x,special_item
-	 exitm<[r11+rax].special_item.value>
-	 endm
-GetMemtypeSp macro x
-	 lea  r11,SpecialTable
-	 imul eax,x,special_item
-	 exitm<[r11+rax].special_item.bytval>
-	 endm
-GetCpuSp macro x
-	 lea  r11,SpecialTable
-	 imul eax,x,special_item
-	 exitm<[r11+rax].special_item.cpu>
-	 endm
+GetSpecialTable proto watcall :dword {
+	add eax,eax
+	lea rax,[r12+rax*8]
+	}
+GetRegNo proto watcall :dword {
+	add eax,eax
+	retm<[r12+rax*8].special_item.bytval>
+	}
+GetSflagsSp proto watcall :dword {
+	add eax,eax
+	retm<[r12+rax*8].special_item.sflags>
+	}
+GetValueSp proto watcall :dword {
+	add eax,eax
+	retm<[r12+rax*8].special_item.value>
+	}
+GetMemtypeSp proto watcall :dword {
+	add eax,eax
+	retm<[r12+rax*8].special_item.bytval>
+	}
+GetCpuSp proto watcall :dword {
+	add eax,eax
+	retm<[r12+rax*8].special_item.cpu>
+	}
 else
-GetRegNo macro x
-	 imul eax,x,special_item
-	 exitm<SpecialTable[eax].bytval>
-	 endm
-GetSflagsSp macro x
-	 imul eax,x,special_item
-	 exitm<SpecialTable[eax].sflags>
-	 endm
-GetValueSp macro x
-	 imul eax,x,special_item
-	 exitm<SpecialTable[eax].value>
-	 endm
-GetMemtypeSp macro x
-	 imul eax,x,special_item
-	 exitm<SpecialTable[eax].bytval>
-	 endm
-GetCpuSp macro x
-	 imul eax,x,special_item
-	 exitm<SpecialTable[eax].cpu>
-	 endm
+GetSpecialTable proto watcall :dword {
+	add eax,eax
+	lea eax,SpecialTable[eax*8]
+	}
+GetRegNo proto watcall :dword {
+	add eax,eax
+	retm<SpecialTable[eax*8].special_item.bytval>
+	}
+GetSflagsSp proto watcall :dword {
+	add eax,eax
+	retm<SpecialTable[eax*8].special_item.sflags>
+	}
+GetValueSp proto watcall :dword {
+	add eax,eax
+	retm<SpecialTable[eax*8].special_item.value>
+	}
+GetMemtypeSp proto watcall :dword {
+	add eax,eax
+	retm<SpecialTable[eax*8].special_item.bytval>
+	}
+GetCpuSp proto watcall :dword {
+	add eax,eax
+	retm<SpecialTable[eax*8].special_item.cpu>
+	}
 endif
 
 ; values for <value> if type == RWT_DIRECTIVE
@@ -405,7 +404,6 @@ IS_OPER_32 macro s
 ; globals
 
 externdef InstrTable:instr_item		; instruction table
-externdef SpecialTable:special_item	; rest of res words
 externdef optable_idx:ushort_t		; helper, access thru IndexFromToken() only
 
 IndexFromToken_imm macro tok

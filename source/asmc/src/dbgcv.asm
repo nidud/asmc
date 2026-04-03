@@ -1728,12 +1728,10 @@ endif
 
                         mov rcx,pproc
                         movzx ecx,[rcx].proc_info.basereg
-                        imul eax,ecx,special_item
-                        lea rdx,SpecialTable
-                        .if ( [rdx+rax].special_item.cpu == P_64 )
-                            mov size,get_x64_regno( ecx )
+                        .if ( GetCpuSp(ecx) == P_64 )
+                            mov size,get_x64_regno(ecx)
                         .else
-                            mov size,GetRegNo( ecx )
+                            mov size,GetRegNo(ecx)
                             add size,CV_REG_EAX
                         .endif
                         mov rdx,[rbx].ps

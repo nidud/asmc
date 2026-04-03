@@ -460,7 +460,6 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
     mov rdi,[rsi].input
     mov eax,[rdi]
-    mov [rbx].tokval,0
     .switch al
     .case ':' ; T_COLON binary operator (0x3A)
         inc [rsi].input
@@ -968,7 +967,6 @@ number_done:
 get_id proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
    .new len:int_t
-   .new hash:int_t
    .new IsResWord:byte = 1
 
     ldr rbx,buf
@@ -1000,9 +998,6 @@ endif
     or  cl,0x20
     xor ecx,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
     xor ebx,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
-
-continue_scan:
-
     .while islabel( [rsi] )
         stosb
         inc  rsi
@@ -1012,30 +1007,6 @@ continue_scan:
         or   al,0x20
         xor  cl,al
     .endw
-    ;
-    ; if the name starts with a dot then accept dots
-    ; within the name (though not as last char). OPTION DOTNAMEX
-    ; must be on.
-    ;
-if 0
-    .if ( al == '.' && MODULE.dotnamex )
-
-        mov IsResWord,0
-        mov rax,[rdx].output
-        .if ( B[rax] == '.' )
-            ;
-            ; allow .name..
-            ; allow .name.00100
-            ;
-            .if ( islabel([rsi+1]) || eax  == '.' )
-                mov al,'.'
-                stosb
-                inc  rsi
-                jmp continue_scan
-            .endif
-        .endif
-    .endif
-endif
     mov eax,ebx
 ifdef _WIN64
     mov rbx,r10
@@ -1094,43 +1065,40 @@ else
         pop edx
 endif
     .endif
-
-    .if ( eax == 0 )
-        mov rcx,[rdx].output
+    mov rcx,[rdx].output
+    mov [rdx].output,rdi
+    mov rdi,[rdx].input
+    mov [rdx].input,rsi
+    mov [rbx].tokval,eax
+    .switch
+    .case ( eax == 0 )
         .if ( B[rcx] == '.' && !MODULE.dotname )
-            inc [rdx].input
-            mov [rbx].token,T_DOT
+            inc rdi
+            mov [rdx].output,rcx
+            mov [rdx].input,rdi
+            mov ecx,T_DOT
             lea rax,stokstr1[('.' - '(') * 2]
             mov [rbx].string_ptr,rax
-           .return
+           .endc
         .endif
-        mov [rbx].token,T_ID
-        mov [rbx].tokval,eax
-        mov [rdx].input,rsi
-        mov [rdx].output,rdi
-       .return
-    .endif
-    mov [rdx].input,rsi
-    mov [rdx].output,rdi
-
-    .switch eax
-    .case T_SYSCALL       ; v2.24 hack for syscall..
+        mov ecx,T_ID
+       .endc
+    .case ( eax == T_SYSCALL ) ; v2.24 hack for syscall..
         .if ( [rdx].index == 0 )
             mov eax,T_SYSCALL_
+            mov [rbx].tokval,eax
         .endif
-        .endc
-    .case T_DOT_NEW
+        jmp special
+    .case ( eax == T_DOT_NEW )
         inc [rdx].cstring
-       .endc
-    .case T_DOT_ELSEIF
-    .case T_DOT_WHILE
-    .case T_DOT_CASE
+        jmp special
+    .case ( eax == T_DOT_ELSEIF )
+    .case ( eax == T_DOT_WHILE )
+    .case ( eax == T_DOT_CASE )
         mov [rbx].HllCode,1
-       .endc
-    .endsw
-    mov [rbx].tokval,eax
+        jmp special
+    .case ( eax >= SPECIAL_LAST )
 
-    .if ( eax >= SPECIAL_LAST )
 
         ; if -Zm is set, the following from the Masm docs is relevant:
         ;
@@ -1153,59 +1121,57 @@ endif
             ; checking the cpu won't give the expected results currently since
             ; some instructions in the table (i.e. MOV) start with a 386 variant!
 
-            mov     eax,[rbx].tokval
-            sub     eax,SPECIAL_LAST
-            lea     rdx,optable_idx
-            lea     rcx,InstrTable
-            movzx   eax,word ptr [rdx+rax*2]
-            movzx   ecx,[rcx+rax*instr_item].instr_item.cpu
-            mov     eax,ecx
-            and     eax,P_CPU_MASK
-            and     ecx,P_EXT_MASK
-            mov     edi,MODULE.curr_cpu
-            mov     esi,edi
-            and     edi,P_CPU_MASK
-            and     esi,P_EXT_MASK
+            sub eax,SPECIAL_LAST
+            lea rdx,optable_idx
+            lea rcx,InstrTable
+            movzx eax,word ptr [rdx+rax*2]
+            movzx ecx,[rcx+rax*instr_item].instr_item.cpu
+            mov eax,ecx
+            and eax,P_CPU_MASK
+            and ecx,P_EXT_MASK
+            mov edi,MODULE.curr_cpu
+            mov esi,edi
+            and edi,P_CPU_MASK
+            and esi,P_EXT_MASK
             .if ( eax > edi || ecx > esi )
-                mov [rbx].token,T_ID
+                mov ecx,T_ID
                 mov [rbx].tokval,0
-               .return
+               .endc
             .endif
         .endif
-        mov [rbx].token,T_INSTRUCTION
-       .return
-    .endif
-
-    imul    esi,[rbx].tokval,special_item
-    lea     rcx,SpecialTable
-    add     rcx,rsi
-    mov     [rbx].bytval,[rcx].special_item.bytval
-    movzx   eax,[rcx].special_item.type
-    .switch eax
-    .case RWT_REG
-        mov ecx,T_REG
-       .endc
-    .case RWT_DIRECTIVE
-        .if ( [rdx].flags2 == 0 )
-            mov [rdx].flags2,[rcx].special_item.value
-        .endif
-        mov ecx,T_DIRECTIVE
-       .endc
-    .case RWT_UNARY_OP
-        mov ecx,T_UNARY_OPERATOR
-       .endc
-    .case RWT_BINARY_OP
-        mov ecx,T_BINARY_OPERATOR
-       .endc
-    .case RWT_STYPE
-        mov ecx,T_STYPE
-       .endc
-    .case RWT_RES_ID
-        mov ecx,T_RES_ID
+        mov ecx,T_INSTRUCTION
        .endc
     .default
-        mov ecx,T_ID
-        mov [rbx].tokval,0
+     special:
+        mov rcx,GetSpecialTable(eax)
+        mov [rbx].bytval,[rcx].special_item.bytval
+        movzx eax,[rcx].special_item.type
+        .switch eax
+        .case RWT_REG
+            mov ecx,T_REG
+           .endc
+        .case RWT_DIRECTIVE
+            .if ( [rdx].flags2 == 0 )
+                mov [rdx].flags2,[rcx].special_item.value
+            .endif
+            mov ecx,T_DIRECTIVE
+           .endc
+        .case RWT_UNARY_OP
+            mov ecx,T_UNARY_OPERATOR
+           .endc
+        .case RWT_BINARY_OP
+            mov ecx,T_BINARY_OPERATOR
+           .endc
+        .case RWT_STYPE
+            mov ecx,T_STYPE
+           .endc
+        .case RWT_RES_ID
+            mov ecx,T_RES_ID
+           .endc
+        .default
+            mov ecx,T_ID
+            mov [rbx].tokval,0
+        .endsw
     .endsw
      mov [rbx].token,cl
     .return( 0 )
@@ -1213,18 +1179,18 @@ endif
 
 
 get_id_in_backquotes proc fastcall uses rsi rdi rbx buf:token_t, p:ptr line_status
-    mov rbx,buf
-    inc [rdx].input
+
     mov rsi,[rdx].input
     mov rdi,[rdx].output
-    mov [rbx].token,T_ID
+    inc rsi
 ifdef _WIN64
-    mov r10,rbx
+    mov r10,rcx
 else
-    push ebx
+    push ecx
 endif
     mov ecx,FNVBASE
     mov ebx,FNVBASE
+
     .while 1 ; v2.37.51
         lodsb
         .break .if ( al == '`' )
@@ -1245,6 +1211,7 @@ ifdef _WIN64
 else
     pop ebx
 endif
+    mov [rbx].token,T_ID
     mov [rbx].hash1,ecx
     mov [rbx].hash2,eax
     mov rcx,rdi
@@ -1253,7 +1220,6 @@ endif
     mov [rdx].input,rsi
     xor eax,eax
     stosb
-    mov [rbx].tokval,eax
     mov [rdx].output,rdi
     ret
     endp
@@ -1297,8 +1263,11 @@ GetToken proc fastcall uses rsi rdi rbx tokenarray:token_t, p:ptr line_status
     ; varname.abc -> . is an operator
     ;
 
-    mov dword ptr [rcx],0;.asm_tok.flags,0
-;    mov [rcx].asm_tok.flags,0
+    xor eax,eax
+    mov [rcx],rax
+ifndef _WIN64
+    mov [ecx+4],eax
+endif
     mov rax,[rdx].input
     .switch
     .case isldigit( [rax] )
@@ -1386,19 +1355,20 @@ Tokenize proc __ccall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:t
 
   local rc, p:line_status
 
-    mov p.input,line
-    mov p.start,rax
-    mov p.tokenarray,tokenarray
+    ldr rcx,line
+    mov p.input,rcx
+    mov p.start,rcx
+    mov p.tokenarray,ldr(tokenarray)
     mov p.outbuf,StringBuffer
     mov p.flags,flags
-    mov p.index,start
+    mov p.index,ldr(start)
     mov p.flags2,0
     mov p.flags3,0
     mov p.cstring,0
     mov p.brachets,0
 
     .repeat
-        .if ( start == 0 )
+        .if ( ldr(start) == 0 )
             mov p.output,StringBuffer
             .if ( MODULE.inside_comment )
                 .if tstrchr( p.start, MODULE.inside_comment )

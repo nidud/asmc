@@ -1310,9 +1310,7 @@ SwitchStart proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         mov [rsi].tokval,[rbx].tokval
         .if ( [rbx].token == T_REG )
-            lea rcx,SpecialTable
-            imul eax,eax,special_item
-            mov eax,[rcx+rax].special_item.sflags
+            mov eax,GetSflagsSp(eax)
             and eax,SFR_SIZMSK
             .if ( eax == 2 )
                 mov [rsi].Switch16,1

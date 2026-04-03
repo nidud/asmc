@@ -240,19 +240,12 @@ GetLangType proc __ccall i:ptr int_t, tokenarray:token_t, plang:ptr byte
 
 SizeFromRegister proc fastcall registertoken:int_t
 
-    lea  rdx,SpecialTable
-    imul eax,ecx,special_item
-    add  rdx,rax
-    mov  eax,[rdx].special_item.sflags
-    and  eax,SFR_SIZMSK
-
+    mov eax,GetSflagsSp(ecx)
+    and eax,SFR_SIZMSK
     .ifz
-
+        test GetValueSp(ecx),OP_SR
         movzx eax,CurrWordSize
-        .if !( [rdx].special_item.value & OP_SR )
-
-            ; CRx, DRx, TRx remaining
-
+        .ifz ; CRx, DRx, TRx remaining
             mov eax,4
             .if ( MODULE.Ofssize == USE64 )
                 mov eax,8
@@ -343,26 +336,20 @@ endif
 
 ; get memory type from size
 
-    assume rcx:ptr special_item
-
 MemtypeFromSize proc fastcall uses rbx size:int_t, ptype:ptr byte
 
-    lea rbx,SpecialTable
-    add rbx,T_BYTE * special_item
-    .for ( : [rbx].special_item.type == RWT_STYPE : rbx += special_item )
-
-        mov al,[rbx].special_item.bytval
-        and eax,MT_SPECIAL
-        .ifz
-            ; the size is encoded 0-based in field mem_type
-
-            mov al,[rbx].special_item.bytval
-            .if al != MT_ZWORD
-                and eax,MT_SIZE_MASK
+    GetSpecialTable(T_BYTE)
+    .for ( : [rax].special_item.type == RWT_STYPE : rax+=special_item )
+        mov bl,[rax].special_item.bytval
+        and ebx,MT_SPECIAL
+        .ifz ; the size is encoded 0-based in field mem_type
+            mov bl,[rax].special_item.bytval
+            .if bl != MT_ZWORD
+                and ebx,MT_SIZE_MASK
             .endif
-            inc eax
-            .if eax == ecx
-                mov al,[rbx].special_item.bytval
+            inc ebx
+            .if ebx == ecx
+                mov al,[rax].special_item.bytval
                 mov [rdx],al
                .return( NOT_ERROR )
             .endif
@@ -2502,10 +2489,7 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
             mov [rsi].iswide,0
         .endif
         .if ( [rsi].Ofssize == USE64 && regno >=4 && regno <= 7 )
-            mov eax,regtok
-            imul eax,eax,special_item
-            lea rcx,SpecialTable
-            .if ( [rcx+rax].special_item.cpu == P_86 )
+            .if ( GetCpuSp(regtok) == P_86 )
                 mov [rsi].x86hi_used,1 ;; it's AH,BH,CH,DH
             .else
                 mov [rsi].x64lo_used,1 ;; it's SPL,BPL,SIL,DIL
@@ -2621,9 +2605,7 @@ endif
 
     ; if it's a x86-64 register (SIL, R8W, R8D, RSI, ...
 
-    imul eax,regtok,special_item
-    lea rcx,SpecialTable
-    movzx eax,[rcx+rax].special_item.cpu
+    mov eax,GetCpuSp(regtok)
     and eax,P_CPU_MASK
     .if ( eax == P_64 )
         or [rsi].rex,0x40
@@ -3717,14 +3699,39 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
 
         ; break label: macro/hll lines
         ; v2.37.83: changed for -EP to work correctly
+        ; v2.37.91: regression from v2.37.83 - @ramonsala
 
-        AddLineQueueX( " %s%s\n %s", [rbx].string_ptr, [rbx+asm_tok].string_ptr, [rbx+asm_tok*2].tokpos )
-        FStoreLine(0)
-        .if CurrFile[TLST]
-            LstWrite( LSTTYPE_LABEL, 0, NULL )
+        .if ( Options.preprocessor_stdout )
+            AddLineQueueX( " %s%s\n %s", [rbx].string_ptr, [rbx+asm_tok].string_ptr, [rbx+asm_tok*2].tokpos )
+            FStoreLine(0)
+            .if CurrFile[TLST]
+                LstWrite( LSTTYPE_LABEL, 0, NULL )
+            .endif
+            RunLineQueue()
+           .return( NOT_ERROR )
         .endif
-        RunLineQueue()
-       .return( NOT_ERROR )
+        mov rdi,MemAlloc(MaxLineLength)
+        tstrcpy( rdi, [rbx+asm_tok*2].tokpos )
+        tstrcpy( CurrSource, [rbx].string_ptr )
+        tstrcat( CurrSource, [rbx+asm_tok].string_ptr )
+        mov TokenCount,Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
+        .ifd ( ParseLine( rbx ) == ERROR )
+            MemFree(rdi)
+           .return(ERROR)
+        .endif
+        .if MODULE.list ; v2.26 -- missing line from list file (wiesl)
+            and MODULE.line_flags,not LOF_LISTED
+        .endif
+
+        ; parse macro or hll function
+
+        tstrcpy(CurrSource, rdi)
+        MemFree(rdi)
+        mov TokenCount,Tokenize(CurrSource, 0, rbx, TOK_DEFAULT)
+        ExpandLine(CurrSource, rbx)
+        .if ( eax == EMPTY || eax == ERROR )
+           .return
+        .endif
 
     .elseif ( [rbx].token == T_ID && ( [rbx+asm_tok].token == T_COLON || [rbx+asm_tok].token == T_DBL_COLON ) )
 

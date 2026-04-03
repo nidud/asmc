@@ -471,6 +471,14 @@ define SIT_MACRO        1
     NO_EVEX         = 0x08,    ; Don't encode using EVEX.
     }
 
+.template special_item
+    value       dd ?
+    sflags      dd ?
+    cpu         dd ?
+    bytval      db ?
+    type        db ?
+   .ends
+
 .template hll_item
     next            hllitem_t ?
     caselist        hllitem_t ?
@@ -875,6 +883,7 @@ externdef               ModelToken      : string_t
 externdef               LastCodeBufSize : int_t
 externdef               stackreg        : uint_t
 externdef               szDgroup        : char_t        ; DGROUP
+externdef               SpecialTable    : special_item
 
 
 AssembleModule          proto __ccall :string_t

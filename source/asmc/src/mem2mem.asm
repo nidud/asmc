@@ -152,9 +152,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
     and ebx,OP_MS
     and edi,OP_MS
     mov reg,MODULE.accumulator
-    lea rcx,SpecialTable
-    imul eax,eax,special_item
-    mov eax,[rcx+rax].special_item.sflags
+    mov eax,GetSflagsSp(eax)
     and eax,SFR_SIZMSK
     mov regz,eax
 
@@ -699,9 +697,7 @@ compare_reg:
 
         mov rdx,[rdx].expr.base_reg
         mov esi,[rdx].asm_tok.tokval
-        lea rcx,SpecialTable
-        imul eax,esi,special_item
-        mov eax,[rcx+rax].special_item.sflags
+        mov eax,GetSflagsSp(esi)
         and eax,SFR_SIZMSK
         mov regsize,eax
         .if ( !reverse )

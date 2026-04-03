@@ -228,16 +228,11 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov rdx,[rdi].fc_info.regpack
                 mov [rdx].fc_regs.gpr_dq[rsi],al
             .endif
-
-            mov  ecx,[rbx].asm_tok.tokval
-            lea  rdx,SpecialTable
-            imul eax,ecx,special_item
-            mov  cl,[rdx+rax].special_item.bytval
-            mov  eax,1
-            shl  eax,cl
-            or   [rdi].fc_info.regmask,eax
-            add  rbx,asm_tok
-
+            mov cl,GetRegNo([rbx].asm_tok.tokval)
+            mov eax,1
+            shl eax,cl
+            or  [rdi].fc_info.regmask,eax
+            add rbx,asm_tok
             .if ( [rbx].token == T_COMMA )
                 add rbx,asm_tok
             .endif

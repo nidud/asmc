@@ -43,14 +43,14 @@ fastcall_init proc __ccall private
 
 
 get_register proc __ccall reg:int_t, size:int_t
-    lea  rcx,SpecialTable
-    imul eax,reg,special_item
-    mov  edx,size
-    .if ( [rcx+rax].special_item.value & OP_XMM )
+    ldr ecx,reg
+    ldr edx,size
+    GetSpecialTable(ecx)
+    .if ( [rax].special_item.value & OP_XMM )
         mov edx,16
     .endif
-    movzx ecx,[rcx+rax].special_item.bytval
-    mov eax,reg
+    movzx eax,[rax].special_item.bytval
+    xchg eax,ecx
     .return .if ( ecx > 15 )
     .switch rdx
     .case 1
@@ -527,18 +527,16 @@ fast_param proc __ccall private uses rsi rdi rbx \
 
     .if ( [rdi].base_reg )
 
-        mov     rax,[rdi].base_reg
-        mov     ecx,[rax].asm_tok.tokval
-        lea     rdx,SpecialTable
-        imul    eax,ecx,special_item
-        add     rdx,rax
-        mov     eax,[rdx].special_item.sflags
-        and     eax,SFR_SIZMSK
-        mov     param_regsize,eax
-        mov     eax,ecx
-        movzx   ecx,[rdx].special_item.bytval
-        mov     edx,[rdx].special_item.value
-        mov     param_regno,ecx
+        mov rax,[rdi].base_reg
+        mov ecx,[rax].asm_tok.tokval
+        mov rdx,GetSpecialTable(ecx)
+        mov eax,[rdx].special_item.sflags
+        and eax,SFR_SIZMSK
+        mov param_regsize,eax
+        mov eax,ecx
+        movzx ecx,[rdx].special_item.bytval
+        mov edx,[rdx].special_item.value
+        mov param_regno,ecx
 
         .if ( [rdi].kind == EXPR_REG && !( [rdi].indirect ) )
             mov param_reg,eax
@@ -569,21 +567,17 @@ fast_param proc __ccall private uses rsi rdi rbx \
 
     .if ( [rdi].kind == EXPR_ADDR && [rdi].idx_reg )
 
-        mov     rax,[rdi].idx_reg
-        mov     ecx,[rax].asm_tok.tokval
-        lea     rdx,SpecialTable
-        imul    eax,ecx,special_item
-        mov     reg,ecx
-        movzx   ecx,[rdx+rax].special_item.bytval
-        mov     edx,[rdx+rax].special_item.value
-
+        mov rax,[rdi].idx_reg
+        mov ecx,[rax].asm_tok.tokval
+        GetSpecialTable(ecx)
+        mov reg,ecx
+        movzx ecx,[rax].special_item.bytval
+        mov edx,[rax].special_item.value
         .if ( edx & OP_R )
-
             mov eax,1
             shl eax,cl
             and eax,rmask
             mov rcx,regs_used
-
             .if ( eax )
                 .if ( eax & [rcx] )
                     mov destroyed,TRUE
@@ -719,9 +713,8 @@ fast_param proc __ccall private uses rsi rdi rbx \
 
     .if ( ebx )
 
-        lea   rdx,SpecialTable
-        imul  eax,ebx,special_item
-        movzx ecx,[rdx+rax].special_item.bytval
+        GetSpecialTable(ebx)
+        movzx ecx,[rax].special_item.bytval
 
         .if ( arg_flt || !( param_reg && ecx == param_regno ) )
 
@@ -729,27 +722,23 @@ fast_param proc __ccall private uses rsi rdi rbx \
 
             ; - it may however be sign extended..
 
-            .if ( [rdx+rax].special_item.value & ( OP_XMM or OP_YMM or OP_ZMM ) )
-
+            .if ( [rax].special_item.value & ( OP_XMM or OP_YMM or OP_ZMM ) )
                 add ecx,16
             .endif
-
-            xor eax,eax
+            xor edx,edx
             .if ( ecx < 32 ) ; max 16 float args..
-                inc eax
-                shl eax,cl
+                inc edx
+                shl edx,cl
             .endif
             mov ecx,arg_flt
             .if ( ecx )
-
-                imul  ecx,ecx,special_item
-                movzx ecx,[rdx+rcx].special_item.bytval
-                mov   edx,1
-                shl   edx,cl
-                or    eax,edx
+                movzx ecx,GetRegNo(ecx)
+                mov eax,1
+                shl eax,cl
+                or edx,eax
             .endif
             mov rcx,regs_used
-            or  [rcx],eax
+            or  [rcx],edx
         .endif
 
     .else
@@ -1668,11 +1657,9 @@ endif
                 .endif
             .else
              @@:
-                imul  eax,ebx,special_item
-                lea   rdx,SpecialTable
-                movzx ecx,[rdx+rax].special_item.bytval
-                lea   ebx,[rcx+T_AL]
-                add   ecx,T_AH
+                movzx ecx,GetRegNo(ebx)
+                lea ebx,[rcx+T_AL]
+                add ecx,T_AH
                 AddLineQueueX( " mov %r, 0", ecx )
             .endif
         .endif
@@ -1743,14 +1730,10 @@ endif
                     .endif
                 .endif
             .else
-
-                imul    eax,ebx,special_item
-                lea     rdx,SpecialTable
-                movzx   ecx,[rdx+rax].special_item.bytval
-                lea     eax,[rcx+T_AL]
-                mov     arg_reg,eax
-                add     ecx,T_AH
-
+                movzx ecx,GetRegNo(ebx)
+                lea eax,[rcx+T_AL]
+                mov arg_reg,eax
+                add ecx,T_AH
                 AddLineQueueX( " mov %r, 0", ecx )
                 mov ecx,T_BYTE
             .endif

@@ -367,7 +367,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov ecx,MODULE.curr_cpu
         and ecx,P_CPU_MASK
-        .if ( ( cx ) < GetCpuSp(reg) )
+        .if ( ( ecx ) < GetCpuSp(reg) )
             .return( asmerr( 2085 ) )
         .endif
         .if ( [rbx+asm_tok].token != T_COLON )

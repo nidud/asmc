@@ -498,6 +498,7 @@ endif
     mov _pgmptr,rdx
     mov [rcx],rax
 ifdef _WIN64
+    lea r12,SpecialTable
     lea r14,ModuleInfo
     lea r15,_ltype
 endif

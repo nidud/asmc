@@ -405,11 +405,10 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
             mov rax,[rdi].base_reg
         .endif
         .if ( rax )
-            imul eax,[rax].asm_tok.tokval,special_item
+            GetSpecialTable([rax].asm_tok.tokval)
         .endif
-        lea rcx,SpecialTable
         .if ( ( rbx && [rbx].state == SYM_STACK ) ||
-              ( [rdi].indirect && eax && ( [rcx+rax].special_item.sflags & SFR_SSBASED ) ) )
+              ( [rdi].indirect && rax && ( [rax].special_item.sflags & SFR_SSBASED ) ) )
             or [rsi].value,OPATTR_SSREL
         .endif
         .if ( rbx && [rbx].state == SYM_EXTERNAL )
@@ -614,9 +613,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
                 mov [rsi].value,eax
                 mov [rsi].is_type,1
                 mov rax,[rdi].base_reg
-                imul eax,[rax].asm_tok.tokval,special_item
-                lea rcx,SpecialTable
-                .if ( ( [rcx+rax].special_item.value & OP_RGT8 ) && [rsi].mem_type == MT_EMPTY &&
+                .if ( ( GetValueSp([rax].asm_tok.tokval) & OP_RGT8 ) && [rsi].mem_type == MT_EMPTY &&
                       byte ptr [rsi].value == MODULE.wordsize )
                     mov rax,[rdi].base_reg
                     mov rbx,GetStdAssumeEx([rax].asm_tok.bytval)
@@ -1056,9 +1053,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
     .case T_REG
         mov [rdi].kind,EXPR_REG
         mov [rdi].base_reg,rbx
-        imul eax,[rbx].tokval,special_item
-        lea rcx,SpecialTable
-        movzx eax,[rcx+rax].special_item.cpu
+        mov eax,GetCpuSp([rbx].tokval)
         mov ecx,MODULE.curr_cpu
         mov edx,ecx
         and ecx,P_EXT_MASK
@@ -1083,17 +1078,11 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
 
         .elseif ( flags & EXPF_IN_SQBR )
 
-            lea rcx,SpecialTable
-            imul eax,[rbx].tokval,special_item
-            add rax,rcx
-
+            GetSpecialTable([rbx].tokval)
             .if ( [rax].special_item.sflags & SFR_IREG )
-
                 mov [rdi].indirect,1
                 mov [rdi].assumecheck,1
-
             .elseif ( [rax].special_item.value & OP_SR )
-
                 .if ( [rbx+asm_tok].token != T_COLON ||
                       ( Options.strict_masm_compat && [rbx+asm_tok*2].token == T_REG ) )
                     .return fnasmerr( 2032 )
@@ -1448,15 +1437,9 @@ endif
                     mov rcx,[rcx].asym.procinfo
                     movzx eax,[rcx].proc_info.basereg
                     mov [rbx].tokval,eax
-                    imul eax,eax,special_item
-                    lea rcx,SpecialTable
-                    mov al,[rcx+rax].special_item.bytval
-                    mov [rbx].bytval,al
+                    mov [rbx].bytval,GetRegNo(eax)
                 .endif
-
-                mov [rdi].sym,rsi
-
-                .for ( : [rsi].type : rsi = [rsi].type )
+                .for ( [rdi].sym = rsi : [rsi].type : rsi = [rsi].type )
                 .endf
                 .if ( [rsi].state == SYM_TYPE && [rsi].typekind != TYPE_TYPEDEF )
                     mov [rdi].type,rsi
@@ -1470,14 +1453,9 @@ endif
 
     .case T_STYPE
         mov [rdi].kind,EXPR_CONST
-        imul ecx,[rbx].tokval,special_item
-        lea rax,SpecialTable
-        add rcx,rax
-        mov [rdi].mem_type,[rcx].special_item.bytval
-        mov eax,[rcx].special_item.sflags
-        mov [rdi].Ofssize,al
-        GetTypeSize([rdi].mem_type, eax)
-        mov [rdi].value,eax
+        mov [rdi].mem_type,GetMemtypeSp([rbx].tokval)
+        mov [rdi].Ofssize,GetSflagsSp([rbx].tokval)
+        mov [rdi].value,GetTypeSize([rdi].mem_type, eax)
         mov [rdi].is_type,1
         mov [rdi].type,NULL
        .endc
@@ -2164,9 +2142,7 @@ colon_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             .return( fnasmerr( 2032 ) )
         .endif
         mov rax,[rsi].base_reg
-        imul eax,[rax].asm_tok.tokval,special_item
-        lea rbx,SpecialTable
-        .if !( [rbx+rax].special_item.value & OP_SR )
+        .if !( GetValueSp([rax].asm_tok.tokval) & OP_SR )
             .return( fnasmerr( 2096 ) )
         .endif
         mov [rdi].override,[rsi].base_reg
@@ -2605,17 +2581,13 @@ endif
             .endif
             mov [rdi].explicit,1
             .if ( [rdi].kind == EXPR_REG && ( !( [rdi].indirect ) || [rdi].assumecheck ) )
-                mov  rax,[rdi].base_reg
-                mov  ecx,[rax].asm_tok.tokval
-                imul eax,ecx,special_item
-                lea  rdx,SpecialTable
-                add  rdx,rax
-                .if ( [rdx].special_item.value & OP_SR )
+                mov rax,[rdi].base_reg
+                .if ( [GetSpecialTable([rax].asm_tok.tokval)].special_item.value & OP_SR )
                     .if ( [rsi].value != 2 && [rsi].value != 4 )
                         .return( fnasmerr( 2032 ) )
                     .endif
                 .else
-                    mov eax,[rdx].special_item.sflags
+                    mov eax,[rax].special_item.sflags
                     and eax,SFR_SIZMSK
                     .ifz
                         mov eax,4 ; CRx, DRx, TRx remaining
@@ -3076,9 +3048,7 @@ endif
             .endif
             .endc
         .endif
-        imul eax,[rbx].tokval,special_item
-        lea rcx,SpecialTable
-        mov ecx,[rcx+rax].special_item.value
+        mov ecx,GetValueSp([rbx].tokval)
         mov rax,[rdi].sym
         .if ( [rdi].mbr != NULL )
             mov rax,[rdi].mbr
@@ -3168,9 +3138,7 @@ endif
             .endif
             .endc
         .endsw
-        imul eax,[rbx].tokval,special_item
-        lea  rcx,SpecialTable
-        mov  ecx,[rcx+rax].special_item.sflags
+        mov  ecx,GetSflagsSp([rbx].tokval)
        .return( unaryop( ecx, rsi, rdi, sym, [rbx].tokval, rdx ) )
     .default
         .return fnasmerr( 2008, [rbx].string_ptr )

@@ -14,6 +14,9 @@ include dxgiformat.inc
 ifndef D2D_NO_INCLUDE_D3D10
 include d3d10_1.inc
 endif
+ifndef _INTSAFE_H_INCLUDED_
+include intsafe.inc
+endif
 
 .pragma comment(lib, d2d1)
 

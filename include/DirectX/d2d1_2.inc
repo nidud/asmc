@@ -21,5 +21,7 @@ externdef IID_ID2D1Device1:IID
 externdef IID_ID2D1Factory2:IID
 externdef IID_ID2D1CommandSink1:IID
 
+D2D1ComputeMaximumScaleFactor proto WINAPI :ptr
+
 include d2d1_2helper.inc
 endif

@@ -155,6 +155,9 @@ D2D1_SIMPLE_COLOR_PROFILE ENDS
     D2D1_COLOR_CONTEXT_TYPE_FORCE_DWORD = 0xffffffff
     }
 
+if ( NTDDI_VERSION ge NTDDI_WINTHRESHOLD )
+D2D1GetGradientMeshInteriorPointsFromCoonsPatch proto WINAPI :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+endif
 
 externdef		IID_ID2D1InkStyle:IID
 externdef		IID_ID2D1Ink:IID

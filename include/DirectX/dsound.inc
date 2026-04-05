@@ -64,24 +64,22 @@ DEFINE_GUID(DSDEVID_DefaultVoicePlayback, 0xdef00002, 0x9c6d, 0x47ed, 0xaa, 0xf1
 DEFINE_GUID(DSDEVID_DefaultVoiceCapture, 0xdef00003, 0x9c6d, 0x47ed, 0xaa, 0xf1, 0x4d, 0xda, 0x8f, 0x2b, 0x5c, 0x03);
 
 if DIRECTSOUND_VERSION GE 0x0800
-
-IDirectSoundCapture8	equ IDirectSoundCapture
-IDirectSound3DListener8 equ IDirectSound3DListener
-IDirectSound3DBuffer8	equ IDirectSound3DBuffer
-IDirectSoundNotify8	equ IDirectSoundNotify
-IDirectSoundFXGargle8	equ IDirectSoundFXGargle
-IDirectSoundFXChorus8	equ IDirectSoundFXChorus
-IDirectSoundFXFlanger8	equ IDirectSoundFXFlanger
-IDirectSoundFXEcho8	equ IDirectSoundFXEcho
-IDirectSoundFXDistortion8 equ IDirectSoundFXDistortion
-IDirectSoundFXCompressor8 equ IDirectSoundFXCompressor
-IDirectSoundFXParamEq8	equ IDirectSoundFXParamEq
-IDirectSoundFXWavesReverb8 equ IDirectSoundFXWavesReverb
-IDirectSoundFXI3DL2Reverb8 equ IDirectSoundFXI3DL2Reverb
-IDirectSoundCaptureFXAec8 equ IDirectSoundCaptureFXAec
-IDirectSoundCaptureFXNoiseSuppress8 equ IDirectSoundCaptureFXNoiseSuppress
-IDirectSoundFullDuplex8 equ IDirectSoundFullDuplex
-
+IDirectSoundCapture8	equ <IDirectSoundCapture>
+IDirectSound3DListener8 equ <IDirectSound3DListener>
+IDirectSound3DBuffer8	equ <IDirectSound3DBuffer>
+IDirectSoundNotify8	equ <IDirectSoundNotify>
+IDirectSoundFXGargle8	equ <IDirectSoundFXGargle>
+IDirectSoundFXChorus8	equ <IDirectSoundFXChorus>
+IDirectSoundFXFlanger8	equ <IDirectSoundFXFlanger>
+IDirectSoundFXEcho8	equ <IDirectSoundFXEcho>
+IDirectSoundFXDistortion8 equ <IDirectSoundFXDistortion>
+IDirectSoundFXCompressor8 equ <IDirectSoundFXCompressor>
+IDirectSoundFXParamEq8	equ <IDirectSoundFXParamEq>
+IDirectSoundFXWavesReverb8 equ <IDirectSoundFXWavesReverb>
+IDirectSoundFXI3DL2Reverb8 equ <IDirectSoundFXI3DL2Reverb>
+IDirectSoundCaptureFXAec8 equ <IDirectSoundCaptureFXAec>
+IDirectSoundCaptureFXNoiseSuppress8 equ <IDirectSoundCaptureFXNoiseSuppress>
+IDirectSoundFullDuplex8 equ <IDirectSoundFullDuplex>
 endif
 
 LPDIRECTSOUND		typedef ptr IDirectSound
@@ -131,24 +129,22 @@ endif
 
 
 if DIRECTSOUND_VERSION GE 0x0800
-
-IID_IDirectSoundCapture8 equ IID_IDirectSoundCapture
-IID_IDirectSound3DListener8 equ IID_IDirectSound3DListener
-IID_IDirectSound3DBuffer8 equ IID_IDirectSound3DBuffer
-IID_IDirectSoundNotify8 equ IID_IDirectSoundNotify
-IID_IDirectSoundFXGargle8 equ IID_IDirectSoundFXGargle
-IID_IDirectSoundFXChorus8 equ IID_IDirectSoundFXChorus
-IID_IDirectSoundFXFlanger8 equ IID_IDirectSoundFXFlanger
-IID_IDirectSoundFXEcho8 equ IID_IDirectSoundFXEcho
-IID_IDirectSoundFXDistortion8 equ IID_IDirectSoundFXDistortion
-IID_IDirectSoundFXCompressor8 equ IID_IDirectSoundFXCompressor
-IID_IDirectSoundFXParamEq8 equ IID_IDirectSoundFXParamEq
-IID_IDirectSoundFXWavesReverb8 equ IID_IDirectSoundFXWavesReverb
-IID_IDirectSoundFXI3DL2Reverb8 equ IID_IDirectSoundFXI3DL2Reverb
-IID_IDirectSoundCaptureFXAec8 equ IID_IDirectSoundCaptureFXAec
-IID_IDirectSoundCaptureFXNoiseSuppress8 equ IID_IDirectSoundCaptureFXNoiseSuppress
-IID_IDirectSoundFullDuplex8 equ IID_IDirectSoundFullDuplex
-
+IID_IDirectSoundCapture8 equ <IID_IDirectSoundCapture>
+IID_IDirectSound3DListener8 equ <IID_IDirectSound3DListener>
+IID_IDirectSound3DBuffer8 equ <IID_IDirectSound3DBuffer>
+IID_IDirectSoundNotify8 equ <IID_IDirectSoundNotify>
+IID_IDirectSoundFXGargle8 equ <IID_IDirectSoundFXGargle>
+IID_IDirectSoundFXChorus8 equ <IID_IDirectSoundFXChorus>
+IID_IDirectSoundFXFlanger8 equ <IID_IDirectSoundFXFlanger>
+IID_IDirectSoundFXEcho8 equ <IID_IDirectSoundFXEcho>
+IID_IDirectSoundFXDistortion8 equ <IID_IDirectSoundFXDistortion>
+IID_IDirectSoundFXCompressor8 equ <IID_IDirectSoundFXCompressor>
+IID_IDirectSoundFXParamEq8 equ <IID_IDirectSoundFXParamEq>
+IID_IDirectSoundFXWavesReverb8 equ <IID_IDirectSoundFXWavesReverb>
+IID_IDirectSoundFXI3DL2Reverb8 equ <IID_IDirectSoundFXI3DL2Reverb>
+IID_IDirectSoundCaptureFXAec8 equ <IID_IDirectSoundCaptureFXAec>
+IID_IDirectSoundCaptureFXNoiseSuppress8 equ <IID_IDirectSoundCaptureFXNoiseSuppress>
+IID_IDirectSoundFullDuplex8 equ <IID_IDirectSoundFullDuplex>
 endif
 
 

@@ -914,7 +914,7 @@ CApplication::CApplication proc hInstance:HINSTANCE
     endp
 
 
-wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, iCmdShow:int_t
+wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, iCmdShow:int_t
 
     ; Ignore the return value because we want to continue running even in the
     ; unlikely event that HeapSetInformation fails.

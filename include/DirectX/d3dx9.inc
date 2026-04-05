@@ -2,10 +2,11 @@ ifndef __D3DX9_H__
 define __D3DX9_H__
 .pragma list(push, 0)
 include limits.inc
+include float.inc
 
 D3DX_DEFAULT		equ (-1)
 D3DX_DEFAULT_NONPOW2	equ (-2)
-D3DX_DEFAULT_FLOAT	equ FT_MAX
+D3DX_DEFAULT_FLOAT	equ FLT_MAX
 D3DX_FROM_FILE		equ (-3)
 D3DFMT_FROM_FILE	equ (-3)
 

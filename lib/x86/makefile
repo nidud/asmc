@@ -20,12 +20,14 @@ targets = \
 	crypt32.lib	\
 	cryptui.lib	\
 	cryptxml.lib	\
+	d2d1.lib	\
 	d3d11.lib	\
 	dbghelp.lib	\
 	dhcpcsvc.lib	\
 	dnsapi.lib	\
 	dsuiext.lib	\
 	dwmapi.lib	\
+	dwrite.lib	\
 	elscore.lib	\
 	evr.lib		\
 	gdi32.lib	\

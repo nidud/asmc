@@ -617,10 +617,16 @@ DEFINE_IIDX(ID2D1Multithread, "31e6e7bc-e0ff-4d46-8c64-a0a8c41c15d3")
      GetMultithreadProtected proc
      _Enter		proc
      _Leave		proc
-
     .ends
 
 endif
+
+D2D1CreateDevice proto WINAPI :ptr, :ptr, :ptr
+D2D1CreateDeviceContext proto WINAPI :ptr, :ptr, :ptr
+D2D1ConvertColorSpace proto WINAPI  :dword, :dword, :ptr
+D2D1SinCos proto WINAPI :real4, :ptr, :ptr
+D2D1Tan proto WINAPI :real4
+D2D1Vec3Length proto WINAPI :real4, :real4, :real4
 
 include d2d1_1helper.inc
 

@@ -34,7 +34,6 @@ LABELOPT equ 1
 BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
 
     .new next:fixup_t
-    .return( NOT_ERROR ) .if ( Parse_Pass != PASS_1 )
 
     .for ( rsi = rcx, rbx = [rsi].bp_fixup : rbx : rbx = next )
 
@@ -131,7 +130,7 @@ if LABELOPT
                         .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
                             .continue( 1 ) .if ( [rcx].fixup.orgoccured )
                             ; do this check after the check for ORG!
-                            .break .if ( [rcx].fixup.locofs <= eax )
+                            .break .if ( eax >= [rcx].fixup.locofs )
                         .endf
 
                         ; scan the segment's label list and adjust all labels
@@ -140,7 +139,7 @@ if LABELOPT
                         ; use the <next>-field of asym already!)
 
                         .for ( rcx = [rdx].label_list: rcx: rcx = [rcx].asym.next )
-                            .break .if ( [rcx].asym.offs <= eax )
+                            .break .if ( eax >= [rcx].asym.offs )
                             add [rcx].asym.offs,edi
                         .endf
 
@@ -149,8 +148,8 @@ if LABELOPT
                         ; number of passes to 2 for not too complex sources.
 
                         .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
-                            .if ( [rcx].fixup.sym != rsi )
-                                .break .if ( [rcx].fixup.locofs <= eax )
+                            .if ( rsi != [rcx].fixup.sym )
+                                .break .if ( eax >= [rcx].fixup.locofs )
                                 add [rcx].fixup.locofs,edi
                             .endif
                         .endf
@@ -176,7 +175,6 @@ endif
         .endsw
     .endf
     xor eax,eax ; NOT_ERROR
-    mov [rsi].bp_fixup,rax
     ret
     endp
 

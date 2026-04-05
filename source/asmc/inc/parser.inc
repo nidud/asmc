@@ -178,6 +178,11 @@ if sizeof(special_item) ne 16
 endif
 
 ifdef _WIN64
+GetInstrTable proto watcall :dword {
+	lea r11,optable_idx
+	mov ax,[r11+rax*2-SPECIAL_LAST*2]
+	lea rax,[r12+rax*8+SPECIAL_LAST*special_item]
+	}
 GetSpecialTable proto watcall :dword {
 	add eax,eax
 	lea rax,[r12+rax*8]
@@ -203,6 +208,10 @@ GetCpuSp proto watcall :dword {
 	retm<[r12+rax*8].special_item.cpu>
 	}
 else
+GetInstrTable proto watcall :dword {
+	mov ax,optable_idx[eax*2-SPECIAL_LAST*2]
+	lea eax,InstrTable[eax*8]
+	}
 GetSpecialTable proto watcall :dword {
 	add eax,eax
 	lea eax,SpecialTable[eax*8]
@@ -405,26 +414,6 @@ IS_OPER_32 macro s
 
 externdef InstrTable:instr_item		; instruction table
 externdef optable_idx:ushort_t		; helper, access thru IndexFromToken() only
-
-IndexFromToken_imm macro tok
-    exitm<optable_idx[(tok-SPECIAL_LAST)*2]>
-    endm
-ifdef _WIN64
-IndexFromToken_dword proto watcall tok:uint_t {
-    sub eax,SPECIAL_LAST
-    lea rcx,optable_idx
-    retm<word ptr [rcx+rax*2]>
-    }
-else
-IndexFromToken_dword macro tok
-    sub tok,SPECIAL_LAST
-    exitm<optable_idx[tok*2]>
-    endm
-endif
-
-IndexFromToken macro tok
-%   exitm<typeid(IndexFromToken_,tok)(tok)>
-    endm
 
 SizeFromMemtype		proto fastcall :uchar_t, :int_t, :asym_t
 MemtypeFromSize		proto fastcall :int_t, :ptr uchar_t

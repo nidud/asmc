@@ -4168,19 +4168,13 @@ init_prefix:
 
     ; get the instruction's start position in InstrTable[]
 
-    movzx eax,IndexFromToken(eax)
-    lea rcx,InstrTable
-    lea rax,[rcx+rax*8]
-    mov CodeInfo.pinstr,rax
-
+    mov CodeInfo.pinstr,GetInstrTable(eax)
     inc i
     add rsi,asm_tok
-
     mov rax,CurrSeg
     .return asmerr(2034) .if rax == NULL
 
     mov rax,[rax].asym.seginfo
-
     .if ( [rax].seg_info.segtype == SEGTYPE_UNDEF )
         mov [rax].seg_info.segtype,SEGTYPE_CODE
     .endif

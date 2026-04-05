@@ -974,7 +974,6 @@ get_id proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
     mov rsi,[rdx].input
     mov rdi,[rdx].output
-    mov [rbx].bytval,0 ; added v2.27
     movzx eax,word ptr [rsi]
     .switch
     .case eax == '"L'
@@ -1083,12 +1082,6 @@ endif
         .endif
         mov ecx,T_ID
        .endc
-    .case ( eax == T_SYSCALL ) ; v2.24 hack for syscall..
-        .if ( [rdx].index == 0 )
-            mov eax,T_SYSCALL_
-            mov [rbx].tokval,eax
-        .endif
-        jmp special
     .case ( eax == T_DOT_NEW )
         inc [rdx].cstring
         jmp special
@@ -1097,6 +1090,12 @@ endif
     .case ( eax == T_DOT_CASE )
         mov [rbx].HllCode,1
         jmp special
+    .case ( eax == T_SYSCALL ) ; v2.24 hack for syscall..
+        .if ( [rdx].index )
+            jmp special
+        .endif
+        mov eax,T_SYSCALL_
+        mov [rbx].tokval,eax
     .case ( eax >= SPECIAL_LAST )
 
 
@@ -1121,11 +1120,8 @@ endif
             ; checking the cpu won't give the expected results currently since
             ; some instructions in the table (i.e. MOV) start with a 386 variant!
 
-            sub eax,SPECIAL_LAST
-            lea rdx,optable_idx
-            lea rcx,InstrTable
-            movzx eax,word ptr [rdx+rax*2]
-            movzx ecx,[rcx+rax*instr_item].instr_item.cpu
+            GetInstrTable(eax)
+            movzx ecx,[rax].instr_item.cpu
             mov eax,ecx
             and eax,P_CPU_MASK
             and ecx,P_EXT_MASK

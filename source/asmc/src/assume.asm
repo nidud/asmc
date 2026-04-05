@@ -92,10 +92,7 @@ SetStdAssumeTable proc fastcall uses rsi rdi savedstate:ptr, ti:ptr stdassume_ty
     mov ecx,sizeof(StdAssumeTable)
     mov rax,rdi
     rep movsb
-    mov rdi,rax
-    mov rsi,rdx
-    .for ( ecx = 0: ecx < NUM_STDREGS: ecx++,
-           rdi += assume_info, rsi += stdassume_typeinfo )
+    .for ( rdi = rax, rsi = rdx, ecx = 0 : ecx < NUM_STDREGS : ecx++, rdi+=assume_info, rsi+=stdassume_typeinfo )
         .if ( [rdi].symbol )
             mov rdx,[rdi].symbol
             mov [rdx].type,        [rsi].type
@@ -112,14 +109,12 @@ SetStdAssumeTable proc fastcall uses rsi rdi savedstate:ptr, ti:ptr stdassume_ty
     assume rsi:ptr assume_info, rdi:ptr stdassume_typeinfo
 
 GetStdAssumeTable proc fastcall uses rsi rdi savedstate:ptr, ti:ptr stdassume_typeinfo
+
     mov rdi,rcx
     lea rsi,StdAssumeTable
     mov ecx,sizeof(StdAssumeTable)
     rep movsb
-    lea rsi,StdAssumeTable
-    mov rdi,rdx
-    .for ( : ecx < NUM_STDREGS: ecx++,
-           rdi += stdassume_typeinfo, rsi += assume_info )
+    .for ( rsi = &StdAssumeTable, rdi = rdx : ecx < NUM_STDREGS : ecx++, rdi+=stdassume_typeinfo, rsi+=assume_info )
         .if ( [rsi].symbol )
             mov rdx,[rsi].symbol
             mov [rdi].type,        [rdx].type
@@ -142,44 +137,34 @@ AssumeSaveState proc
     endp
 
 
-    assume rdx:ptr assume_info
+AssumeInit proc fastcall uses rdi pass:int_t ;; pass may be -1 here!
 
-AssumeInit proc fastcall uses rbx pass:int_t ;; pass may be -1 here!
-
-    mov ebx,ecx
+    mov edx,ecx
     xor eax,eax
-    .for ( rdx = &SegAssumeTable,
-           ecx = 0 : ecx < NUM_SEGREGS : ecx++, rdx += assume_info )
-        mov [rdx].symbol,rax
-        mov [rdx].error,al
-        mov [rdx].is_flat,al
-    .endf
+    mov ecx,sizeof(SegAssumeTable)
+    lea rdi,SegAssumeTable
+    rep stosb
     ;
     ; the GPR assumes are handled somewhat special by masm.
     ; they aren't reset for each pass - instead they keep their value.
     ;
-    .if ( ebx <= PASS_1 ) ; v2.10: just reset assumes in pass one
-        .for ( rdx = &StdAssumeTable,
-               ecx = 0 : ecx < NUM_STDREGS : ecx++, rdx += assume_info )
-            mov [rdx].symbol,rax
-            mov [rdx].error,al
+    .if ( edx <= PASS_1 ) ; v2.10: just reset assumes in pass one
+        .for ( rdi = &StdAssumeTable : ecx < NUM_STDREGS : ecx++, rdi+=assume_info )
+            mov [rdi].assume_info.symbol,rax
+            mov [rdi].assume_info.error,al
         .endf
-        .if ( ebx == PASS_1 )
-            lea  rdx,stdsym
-            mov  ecx,sizeof(stdsym)
-            xchg rdi,rdx
-            rep  stosb
-            mov  rdi,rdx
+        .if ( edx == PASS_1 )
+            lea rdi,stdsym
+            mov ecx,sizeof(stdsym)
+            rep stosb
         .endif
     .endif
-    .if ( ebx > PASS_1 && UseSavedState )
+    .if ( edx > PASS_1 && UseSavedState )
         SetSegAssumeTable( &saved_SegAssumeTable )
         SetStdAssumeTable( &saved_StdAssumeTable, &saved_StdTypeInfo )
     .endif
     ret
     endp
-
-    assume edx:nothing
 
 
 ; generate assume lines after .MODEL directive
@@ -242,12 +227,9 @@ GetStdAssume proc fastcall reg:int_t
 
 GetStdAssumeEx proc watcall reg:int_t
     .if ( eax < NUM_STDREGS )
-        push rcx
         imul ecx,eax,assume_info
         lea  rax,StdAssumeTable
-        add  rax,rcx
-        pop  rcx
-        mov  rax,[rax].assume_info.symbol
+        mov  rax,[rax+rcx].assume_info.symbol
     .else
         xor eax,eax
     .endif
@@ -367,7 +349,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov ecx,MODULE.curr_cpu
         and ecx,P_CPU_MASK
-        .if ( ( ecx ) < GetCpuSp(reg) )
+        .if ( ecx < GetCpuSp(reg) )
             .return( asmerr( 2085 ) )
         .endif
         .if ( [rbx+asm_tok].token != T_COLON )
@@ -506,7 +488,6 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .case EXPR_REG
                 mov rdx,opnd.base_reg
                 mov esi,[rdx].asm_tok.tokval
-
                 .if ( GetValueSp(esi) & OP_SR )
                     movzx ecx,GetRegNo(esi)
                     imul ecx,ecx,assume_info
@@ -515,7 +496,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     mov [rdi].symbol,rax
                     mov al,[rdx+rcx].assume_info.is_flat
                     mov [rdi].is_flat,al
-                    .endc
+                   .endc
                 .endif
             .default
                 .return( asmerr( 2096 ) )
@@ -574,8 +555,7 @@ search_assume proc __ccall uses rsi rdi rbx sym:asym_t, def:int_t, search_grps:i
 
     ; now check all segment registers
 
-    lea rdi,SegAssumeTable
-    .for ( rbx = &searchtab, ecx = 0 : ecx < NUM_SEGREGS : ecx++ )
+    .for ( rdi = rcx, rbx = &searchtab, ecx = 0 : ecx < NUM_SEGREGS : ecx++ )
         mov  eax,[rbx+rcx*4]
         imul edx,eax,assume_info
         mov  rdx,[rdi+rdx].symbol
@@ -647,16 +627,17 @@ GetOfssizeAssume proc fastcall segno:int_t
 ;
 
 GetAssume proc __ccall override:asym_t, sym:asym_t, def:int_t, passume:ptr asym_t
-    imul eax,def,assume_info
+
+    imul eax,ldr(def),assume_info
     lea rdx,SegAssumeTable
     add rdx,rax
-    mov eax,def
+    ldr eax,def
     ;
     ; v2.17: handle case if model isn't flat, but current segment is 64-bit ( flatgrp3.asm )
     ;
-    .if ( ( eax != ASSUME_NOTHING ) && ( [rdx].is_flat || MODULE.Ofssize == USE64 ) )
+    .if ( eax != ASSUME_NOTHING && ( [rdx].is_flat || MODULE.Ofssize == USE64 ) )
         mov rdx,MODULE.flat_grp
-        mov rcx,passume
+        mov rcx,ldr(passume)
         mov [rcx],rdx
        .return
     .endif

@@ -134,10 +134,8 @@ endif
         ;; if instruction is valid for 16bit cpu, but operands aren't,
         ;; then display a more specific error message!
 
-        movzx eax,[rsi].token
-        movzx eax,IndexFromToken(eax)
-        lea rcx,InstrTable
-        mov ax,[rcx+rax*instr_item].instr_item.cpu
+        GetInstrTable([rsi].token)
+        mov ax,[rax].instr_item.cpu
         and eax,P_CPU_MASK
         mov ecx,2085
         .if ebx == P_386 && eax <= P_386
@@ -177,13 +175,11 @@ endif
 
     .if ( [rsi].inst != EMPTY )
 
-        mov     eax,[rsi].inst
-        movzx   edx,IndexFromToken(eax)
-        lea     rcx,InstrTable
-        mov     al,[rcx+rdx*instr_item].instr_item.flags
-        and     eax,II_ALLOWED_PREFIX
-        mov     cl,[rdi].flags
-        and     ecx,II_ALLOWED_PREFIX
+        mov rdx,GetInstrTable([rsi].inst)
+        mov al,[rdx].instr_item.flags
+        and eax,II_ALLOWED_PREFIX
+        mov cl,[rdi].flags
+        and ecx,II_ALLOWED_PREFIX
 
         ; instruction prefix must be ok. However, with -Zm, the plain REP
         ; is also ok for instructions which expect REPxx.
@@ -197,8 +193,7 @@ endif
                 asmerr( 2068 )
             .endif
         .else
-            lea rcx,InstrTable
-            OutputByte( [rcx+rdx*instr_item].instr_item.opcode )
+            OutputByte( [rdx].instr_item.opcode )
         .endif
     .endif
 

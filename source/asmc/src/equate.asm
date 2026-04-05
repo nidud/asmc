@@ -83,15 +83,17 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
     add eax,[rdx].value
     .if [rcx].isvariable
         mov [rcx].offs,eax
-        .if Parse_Pass == PASS_2 && ( [rcx].fwdref )
+        .if ( Parse_Pass == PASS_2 && [rcx].fwdref )
             mov MODULE.PhaseError,TRUE
         .endif
     .else
-        .if Parse_Pass != PASS_1 && [rcx].offs != eax
+        mov edx,[rcx].offs
+        mov [rcx].offs,eax
+        .if ( Parse_Pass == PASS_1 )
+            BackPatch(rcx)
+        .elseif ( eax != edx )
             mov MODULE.PhaseError,TRUE
         .endif
-        mov [rcx].offs,eax
-        BackPatch(rcx)
     .endif
     ret
     endp

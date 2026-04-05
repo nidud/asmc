@@ -150,6 +150,20 @@ intbuff char_t 256 dup(?)
 
     .data
 
+; create SpecialTable.
+
+SpecialTable special_item { 0, 0, 0, 0, 0 } ; dummy entry for T_NULL
+res macro tok, string, type, value, bytval, flags, cpu, sflags
+    special_item { value, sflags, cpu, bytval, type }
+    endm
+include special.inc
+undef res
+res macro tok, string, value, bytval, flags, cpu, sflags
+    special_item { value, sflags, cpu, bytval, RWT_DIRECTIVE }
+    endm
+include directve.inc
+undef res
+
 OpCls macro op1, op2, op3
     exitm<OPC_&op1&&op2&&op3&>
     endm
@@ -184,21 +198,6 @@ undef insn
 undef insx
 undef insv
 undef insa
-
-; create SpecialTable.
-
-SpecialTable special_item { 0, 0, 0, 0, 0 } ; dummy entry for T_NULL
-res macro tok, string, type, value, bytval, flags, cpu, sflags
-    special_item { value, sflags, cpu, bytval, type }
-    endm
-include special.inc
-undef res
-res macro tok, string, value, bytval, flags, cpu, sflags
-    special_item { value, sflags, cpu, bytval, RWT_DIRECTIVE }
-    endm
-include directve.inc
-undef res
-
 
 ; define symbolic indices for InstrTable[]
 
@@ -243,8 +242,7 @@ undef insa
 }
 
 ; create optable_idx, the index array for InstrTable.
-; This is needed because instructions often need more than
-; one entry in InstrTable.
+; This is needed because instructions often need more than one entry in InstrTable.
 
 optable_idx label word
 insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex

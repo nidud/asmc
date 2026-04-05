@@ -1653,9 +1653,6 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t, type_sym:asy
         label_defined:
 
             SetSymSegOfs( rsi )
-            .if( Parse_Pass != PASS_1 && [rsi].asym.offs != old_offset )
-                mov MODULE.PhaseError,TRUE
-            .endif
             mov [rsi].asym.isdefined,1
             mov [rsi].asym.isdata,1
             mov [rsi].asym.mem_type,mem_type
@@ -1664,7 +1661,11 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t, type_sym:asy
             ; backpatch for data items? Yes, if the item is defined
             ; in a code segment then its offset may change!
 
-            BackPatch( rsi )
+            .if ( Parse_Pass == PASS_1 )
+                BackPatch( rsi )
+            .elseif ( [rsi].asym.offs != old_offset )
+                mov MODULE.PhaseError,TRUE
+            .endif
         .endif
 
         mov rdi,type_sym

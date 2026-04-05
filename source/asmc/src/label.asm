@@ -157,10 +157,28 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
         mov [rdi].asym.asmpass,Parse_Pass
     .endif
     SetSymSegOfs( rdi )
-    .if ( Parse_Pass != PASS_1 && [rdi].asym.offs != adr )
+    mov eax,[rdi].asym.offs
+    .if ( Parse_Pass == PASS_1 )
+        BackPatch( rdi )
+    .elseif ( eax != adr )
         mov MODULE.PhaseError,TRUE
+        ;
+        ; This should be handled in pass 1, but if the label offset
+        ; is changed at pass 2, all labels in this segment is updated.
+        ; That is, all labels after (and including) the current label.
+        ;
+        .if ( [rdi].asym.asmpass == PASS_2 )
+
+            mov rcx,[rdi].asym.segm
+            mov rdx,[rcx].asym.seginfo
+            mov ebx,eax
+            sub ebx,adr
+            .for ( rcx = [rdx].seg_info.label_list : rcx : rcx = [rcx].asym.next )
+                .break .if ( eax >= [rcx].asym.offs )
+                add [rcx].asym.offs,ebx
+            .endf
+        .endif
     .endif
-    BackPatch( rdi )
     .return( rdi )
     endp
 

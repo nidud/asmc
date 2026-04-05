@@ -1798,8 +1798,9 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             AddLinnumDataRef( edi, eax )
         .endif
     .endif
-
-    BackPatch( sym )
+    .if ( Parse_Pass == PASS_1 )
+        BackPatch( sym )
+    .endif
     mov eax,NOT_ERROR
     ret
     endp

@@ -250,10 +250,7 @@ endif
            .new CodeInfo:code_info
             mov CodeInfo.opnd[0].InsFixup,NULL
             mov CodeInfo.token,T_NOP
-            movzx eax,IndexFromToken(T_NOP)
-            lea rcx,InstrTable
-            lea rax,[rcx+rax*instr_item]
-            mov CodeInfo.pinstr,rax
+            mov CodeInfo.pinstr,GetInstrTable(T_NOP)
             mov CodeInfo.flags,0
             mov CodeInfo.mem_type,MT_EMPTY
             idata_fixup( &CodeInfo, 0, &opndx )

@@ -76,10 +76,7 @@ jumpExtend proc fastcall private uses rsi rbx CodeInfo:ptr code_info, far_flag:i
     OutputByte( eax )
     OutputByte( ebx )
     mov [rsi].token,T_JMP
-    movzx eax,IndexFromToken(T_JMP)
-    lea rdx,InstrTable
-    lea rax,[rdx+rax*instr_item]
-    mov [rsi].pinstr,rax
+    mov [rsi].pinstr,GetInstrTable(T_JMP)
     ret
     endp
 
@@ -117,13 +114,9 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
   local state:int_32
   local mem_type:byte
   local symseg:asym_t
-  local opidx:dword
 
     ldr rsi,CodeInfo
     ldr rbx,opndx
-    movzx eax,[rsi].token
-    movzx eax,IndexFromToken(eax)
-    mov opidx,eax
 
     ; v2.05: just 1 operand possible
 
@@ -256,13 +249,9 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
             ;  JCXZ, LOOPW, LOOPEW, LOOPZW, LOOPNEW, LOOPNZW,
             ; JECXZ, LOOPD, LOOPED, LOOPZD, LOOPNED, LOOPNZD?
 
-            mov eax,opidx
-            lea rcx,InstrTable
-            lea rcx,[rcx+rax*instr_item]
-
-            .if ( ( [rsi].Ofssize && [rcx].instr_item.byte1_info == F_16A ) ||
-                  ( [rsi].Ofssize != USE32 && [rcx].instr_item.byte1_info == F_32A ) )
-
+            GetInstrTable([rsi].token)
+            .if ( ( [rsi].Ofssize && [rax].instr_item.byte1_info == F_16A ) ||
+                  ( [rsi].Ofssize != USE32 && [rax].instr_item.byte1_info == F_32A ) )
                 dec edx ; 1 extra byte for ADRSIZ (0x67)
             .endif
             mov ecx,OP_I8

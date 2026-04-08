@@ -128,7 +128,10 @@ if LABELOPT
 
                         mov eax,[rbx].locofs
                         .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
-                            .continue( 1 ) .if ( [rcx].fixup.orgoccured )
+                            .if ( [rcx].fixup.orgoccured )
+                                mov MODULE.OrgOccured,1 ; v2.37.93: added - see CreateLabel()
+                               .continue( 1 )
+                            .endif
                             ; do this check after the check for ORG!
                             .break .if ( eax >= [rcx].fixup.locofs )
                         .endf

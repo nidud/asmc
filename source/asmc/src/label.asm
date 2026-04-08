@@ -161,13 +161,16 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
     .if ( Parse_Pass == PASS_1 )
         BackPatch( rdi )
     .elseif ( eax != adr )
+
         mov MODULE.PhaseError,TRUE
         ;
-        ; This should be handled in pass 1, but if the label offset
-        ; is changed at pass 2, all labels in this segment is updated.
-        ; That is, all labels after (and including) the current label.
+        ; Label offset changes cannot always be resolved in pass 1. In that
+        ; case the offset difference is detected in pass 2 and must be applied
+        ; to the current label and to all subsequent labels in the same segment.
+        ; This happens if an ORG or ALIGN directive occurred, or the .RETURN
+        ; directive is used without RET (see EndpDir()).
         ;
-        .if ( [rdi].asym.asmpass == PASS_2 )
+        .if ( [rdi].asym.asmpass == 1 && MODULE.OrgOccured )
 
             mov rcx,[rdi].asym.segm
             mov rdx,[rcx].asym.seginfo

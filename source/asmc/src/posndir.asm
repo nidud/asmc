@@ -236,11 +236,11 @@ AlignDirective proc __ccall i:int_t, tokenarray:token_t
     ; v2.04: added, Skip backpatching after ALIGN occured
     .if ( Parse_Pass == PASS_1 && CurrSeg )
 
-        mov rcx,CurrSeg
-        mov rcx,[rcx].asym.seginfo
-        mov rcx,[rcx].seg_info.head
-        .if rcx
-            mov [rcx].fixup.orgoccured,1
+        mov rax,CurrSeg
+        mov rcx,[rax].asym.seginfo
+        mov rax,[rcx].seg_info.head
+        .if rax
+            mov [rax].fixup.orgoccured,1
         .endif
     .endif
     ; find out how many bytes past alignment we are & add the remainder
@@ -248,7 +248,7 @@ AlignDirective proc __ccall i:int_t, tokenarray:token_t
     mov CurrAddr,GetCurrOffset()
     cdq
     div align_value
-    .if( edx )
+    .if ( edx )
         sub align_value,edx
         fill_in_objfile_space( align_value )
     .endif

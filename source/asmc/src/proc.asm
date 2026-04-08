@@ -2091,6 +2091,7 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:token_t
     mov rcx,CurrProc
     .if ( MODULE.RetStack )
 
+        mov MODULE.OrgOccured,1
         mov [rcx].asym.EndpOccured,1
         AddLineQueue( " ret" ) ; skip the last jump
         RunLineQueue()

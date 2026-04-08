@@ -598,58 +598,123 @@ endif
 
 ; add reserved word to hash table
 
-    assume rbx:ptr ReservedWord
-
-AddResWord proc fastcall private uses rsi rdi rbx token:int_t
-
-    mov     esi,ecx
-    lea     rbx,ResWordTable
-    mov     eax,[rbx+rcx*8].ReservedWord.hash
+AddResWord proc fastcall private token:int_t
+ifdef _WIN64
+    mov     r9d,ecx
+    lea     r10,ResWordTable
+    mov     eax,[r10+rcx*8].ReservedWord.hash
     and     eax,HASH_TABITEMS-1
     lea     rcx,resw_table
-    lea     rdi,[rcx+rax*2]
+    lea     r11,[rcx+rax*2]
     xor     edx,edx
 
     ; sort the items of a line by length!
 
-    movzx   ecx,word ptr [rdi]
+    movzx   ecx,word ptr [r11]
     test    ecx,ecx
     jz      .1
-    mov     al,[rbx+rsi*8].len
+    mov     al,[r10+r9*8].ReservedWord.len
 .0:
-    cmp     al,[rbx+rcx*8].len
+    cmp     al,[r10+rcx*8].ReservedWord.len
     jbe     .1
     mov     edx,ecx
-    movzx   ecx,[rbx+rcx*8].next
+    movzx   ecx,[r10+rcx*8].ReservedWord.next
+    test    ecx,ecx
+    jnz     .0
+.1:
+    mov     ecx,r9d
+    test    edx,edx
+    jnz     .2
+    mov     [r10+rcx*8].ReservedWord.next,[r11]
+    mov     [r11],r9w
+    jmp     .3
+.2:
+    mov     [r10+rcx*8].ReservedWord.next,[r10+rdx*8].ReservedWord.next
+    mov     [r10+rdx*8].ReservedWord.next,r9w
+.3:
+else
+    push    esi
+    push    edi
+    mov     esi,ecx
+    mov     eax,ResWordTable[ecx*8].ReservedWord.hash
+    and     eax,HASH_TABITEMS-1
+    lea     edi,resw_table[eax*2]
+    xor     edx,edx
+
+    ; sort the items of a line by length!
+
+    movzx   ecx,word ptr [edi]
+    test    ecx,ecx
+    jz      .1
+    mov     al,ResWordTable[esi*8].len
+.0:
+    cmp     al,ResWordTable[ecx*8].len
+    jbe     .1
+    mov     edx,ecx
+    movzx   ecx,ResWordTable[ecx*8].next
     test    ecx,ecx
     jnz     .0
 .1:
     mov     ecx,esi
     test    edx,edx
     jnz     .2
-    mov     [rbx+rcx*8].next,[rdi]
-    mov     [rdi],si
+    mov     ResWordTable[ecx*8].next,[edi]
+    mov     [edi],si
     jmp     .3
 .2:
-    mov     [rbx+rcx*8].next,[rbx+rdx*8].next
-    mov     [rbx+rdx*8].next,si
+    mov     ResWordTable[ecx*8].next,ResWordTable[edx*8].next
+    mov     ResWordTable[edx*8].next,si
 .3:
+    pop     edi
+    pop     esi
+endif
     ret
     endp
 
 
 ; remove a reserved word from the hash table.
 
-RemoveResWord proc fastcall uses rsi rdi rbx token:int_t
-
-    mov     esi,ecx
-    lea     rbx,ResWordTable
-    mov     eax,[rbx+rcx*8].hash
+RemoveResWord proc fastcall token:int_t
+ifdef _WIN64
+    mov     r9d,ecx
+    lea     r10,ResWordTable
+    mov     eax,[r10+rcx*8].ReservedWord.hash
     and     eax,HASH_TABITEMS-1
     lea     rcx,resw_table
     xor     edx,edx
-    lea     rdi,[rcx+rax*2]
-    movzx   ecx,word ptr [rdi]
+    lea     r11,[rcx+rax*2]
+    movzx   ecx,word ptr [r11]
+    test    ecx,ecx
+    jz      .3
+.0:
+    cmp     ecx,r9d
+    jne     .2
+    test    edx,edx
+    jz      .1
+    mov     [r10+rdx*8].ReservedWord.next,[r10+rcx*8].ReservedWord.next
+    mov     eax,TRUE
+    jmp     .4
+.1:
+    mov     [r11],[r10+rcx*8].ReservedWord.next
+    mov     eax,TRUE
+    jmp     .4
+.2:
+    mov     edx,ecx
+    movzx   ecx,[r10+rcx*8].ReservedWord.next
+    test    ecx,ecx
+    jnz     .0
+.3:
+    xor     eax,eax
+.4:
+else
+    push    esi
+    push    edi
+    mov     esi,ecx
+    mov     eax,ResWordTable[rbx+rcx*8].hash
+    and     eax,HASH_TABITEMS-1
+    xor     edx,edx
+    lea     edi,resw_table[eax*2]
+    movzx   ecx,word ptr [edi]
     test    ecx,ecx
     jz      .3
 .0:
@@ -657,21 +722,24 @@ RemoveResWord proc fastcall uses rsi rdi rbx token:int_t
     jne     .2
     test    edx,edx
     jz      .1
-    mov     [rbx+rdx*8].next,[rbx+rcx*8].next
+    mov     ResWordTable[edx*8].next,ResWordTable[ecx*8].next
     mov     eax,TRUE
     jmp     .4
 .1:
-    mov     [rdi],[rbx+rcx*8].next
+    mov     [edi],ResWordTable[ecx*8].next
     mov     eax,TRUE
     jmp     .4
 .2:
     mov     edx,ecx
-    movzx   ecx,[rbx+rcx*8].next
+    movzx   ecx,ResWordTable[ecx*8].next
     test    ecx,ecx
     jnz     .0
 .3:
     xor     eax,eax
 .4:
+    pop     edi
+    pop     esi
+endif
     ret
     endp
 
@@ -688,6 +756,8 @@ rename_node ends
 ; - token:  keyword to rename
 ; - name:   new name of keyword
 ; - length: length of new name
+
+    assume rbx:ptr ReservedWord
 
 RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:byte
 

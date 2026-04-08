@@ -103,7 +103,7 @@ InitializeArray proc __ccall uses rsi rdi rbx f:asym_t, pi:ptr int_t, tokenarray
             .elseif ( [rbx].token == T_RES_ID && [rbx].tokval == T_DUP )
                 mov bArray,TRUE
             .elseif ( ( no_of_bytes == 1 || ; added @v2.34.51
-                      ( no_of_bytes == 2 && ( MODULE.wstring || MODULE.lstring ) ) ) &&
+                      ( no_of_bytes == 2 && ( MODULE.wstring || MODULE.LStringUsed ) ) ) &&
                       [rbx].token == T_STRING && ( [rbx].string_delim == '"' || [rbx].string_delim == "'" ) )
                 mov bArray,TRUE
             .endif
@@ -901,7 +901,7 @@ next_item:
                         ; v2.23 - use L"Unicode"
 
                         .if ( inside_struct == TRUE || !( ( Options.strict_masm_compat == 0 ) &&
-                              ( MODULE.wstring || MODULE.lstring ) && no_of_bytes == 2 ) )
+                              ( MODULE.wstring || MODULE.LStringUsed ) && no_of_bytes == 2 ) )
 
                             .return( asmerr( 2071 ) )
                         .endif
@@ -914,7 +914,7 @@ next_item:
                     .if ( no_of_bytes == 1 && eax > 1 )
                         inc ecx
                     .elseif ( ( Options.strict_masm_compat == 0 ) &&
-                              ( MODULE.wstring || MODULE.lstring ) &&
+                              ( MODULE.wstring || MODULE.LStringUsed ) &&
                               no_of_bytes == 2 && eax > 1 )
                         mov ecx,2
                     .endif
@@ -937,7 +937,7 @@ next_item:
                     ; v2.22 - unicode
                     ; v2.23 - use L"Unicode"
 
-                    .if ( Options.strict_masm_compat == 0 && ( MODULE.wstring || MODULE.lstring ) &&
+                    .if ( Options.strict_masm_compat == 0 && ( MODULE.wstring || MODULE.LStringUsed ) &&
                             string_len > 1 && no_of_bytes == 2 )
 ifndef __UNIX__
                         mov ecx,string_len

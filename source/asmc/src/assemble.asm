@@ -422,11 +422,7 @@ SetMasm510 proc __ccall value:int_t
 
 ModulePassInit proc __ccall private uses rsi rdi rbx
     lea rdi,Options
-    mov ecx,MODULE.flags
     mov MODULE.flags,[rdi].flags
-    .if ( ecx & MASKOF(module_info.lstring) )
-        mov MODULE.lstring,1
-    .endif
     mov ecx,[rdi].cpu
     mov esi,[rdi]._model
     ;
@@ -813,6 +809,8 @@ get_module_name proc __ccall private uses rsi rdi
 
 ModuleInit proc private
 
+    mov MODULE.OrgOccured,0
+    mov MODULE.LStringUsed,0
     mov eax,Options.sub_format
     mov MODULE.sub_format,al
     mov eax,Options.output_format

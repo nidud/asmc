@@ -617,11 +617,12 @@ endif
 ; now return NULL in any case.
 
 GetTextLine proc __ccall uses rsi rdi rbx buffer:string_t
+    ldr rdi,buffer
     mov rbx,MODULE.src_stack
     .if ( [rbx].type == SIT_FILE )
-        .if my_fgets( buffer, MaxLineLength, [rbx].file )
+        .if my_fgets( rdi, MaxLineLength, [rbx].file )
             inc [rbx].line_num
-           .return( buffer )
+           .return( rdi )
         .endif
 
         ; don't close and remove main source file
@@ -644,28 +645,29 @@ if FILESEQ
         .endif
 endif
     .else
-        assume rdi:ptr macro_instance
-        mov rdi,[rbx].mi
-        .if ( [rdi].currline )
-            mov rcx,[rdi].currline
+        assume rsi:ptr macro_instance
+        mov rsi,[rbx].mi
+        .if ( [rsi].currline )
+            mov rcx,[rsi].currline
             mov rax,[rcx].srcline.next
         .else
-            mov rax,[rdi].startline
+            mov rax,[rsi].startline
         .endif
-        mov [rdi].currline,rax
+        mov [rsi].currline,rax
         .if ( rax )
             ;
             ; if line contains placeholders, replace them by current values
             ;
             .if ( [rax].srcline.ph_count )
                 lea rdx,[rax].srcline.line
-                fill_placeholders( buffer, rdx, [rdi].parmcnt, [rdi].localstart, [rdi].parm_array )
+                fill_placeholders( rdi, rdx, [rsi].parmcnt, [rsi].localstart, [rsi].parm_array )
             .else
-                tstrcpy( buffer, &[rax].srcline.line )
+                tstrcpy( rdi, &[rax].srcline.line )
             .endif
             inc [rbx].line_num
-           .return( buffer )
+           .return( rdi )
         .endif
+        assume rsi:nothing
         mov MODULE.src_stack,[rbx].next
         mov [rbx].next,SrcFree
         mov SrcFree,rbx

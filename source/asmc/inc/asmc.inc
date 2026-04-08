@@ -608,7 +608,6 @@ define PE_DLL               0x04
       case_sensitive        dd: 1 ? ; option casemap
       convert_uppercase     dd: 1 ? ; option casemap
       dotname               dd: 1 ? ; option dotname
-;     dotnamex              dd: 1 ? ; option dotnamex:<on:off>
       write_listing         dd: 1 ? ; .list/.nolist
       listif                dd: 1 ? ; .listif/.nolistif
       list_generated_code   dd: 1 ? ; .listall, -Sa, -Sg
@@ -620,7 +619,6 @@ define PE_DLL               0x04
       masm_compat_gencode   dd: 1 ? ; -Zg option
       cstack                dd: 1 ? ; -Cs
       wstring               dd: 1 ? ; -ws convert "string" to unicode
-      lstring               dd: 1 ? ; L"Unicode" used --> allow dw "string"
       switch_structured     dd: 1 ? ; auto insert break after cases
       switch_notable        dd: 1 ? ; no indexed jump table
       switch_regax          dd: 1 ? ; use [R|E]AX to render jump-code
@@ -708,7 +706,6 @@ define PE_DLL               0x04
       case_sensitive        dd: 1 ? ; option casemap
       convert_uppercase     dd: 1 ? ; option casemap
       dotname               dd: 1 ? ; option dotname
-;     dotnamex              dd: 1 ? ; option dotnamex:<on:off>
       list                  dd: 1 ? ; .list/.nolist
       listif                dd: 1 ? ; .listif/.nolistif
       list_generated_code   dd: 1 ? ; .listall, -Sa, -Sg
@@ -720,7 +717,6 @@ define PE_DLL               0x04
       masm_compat_gencode   dd: 1 ? ; -Zg option
       cstack                dd: 1 ? ; -Cs
       wstring               dd: 1 ? ; -ws convert "string" to unicode
-      lstring               dd: 1 ? ; L"Unicode" used --> allow dw "string"
       switch_structured     dd: 1 ? ; auto insert break after cases
       switch_notable        dd: 1 ? ; no indexed jump table
       switch_regax          dd: 1 ? ; use [R|E]AX to render jump-code
@@ -856,8 +852,12 @@ define PE_DLL               0x04
     num_segs                uint_t ?        ; number of segments in module
     start_displ             uint_t ?        ; OMF only, optional displ for start label
     ; moved...
-    hll_label               dd ?    ; hll directive label counter
-    PhaseError              db ?    ; phase error flag
+    hll_label               dd ?            ; hll directive label counter
+    record
+     PhaseError             db : 1 ?        ; phase error flag
+     OrgOccured             db : 1 ?        ; set by BackPatch()
+     LStringUsed            db : 1 ?        ; L"Unicode" used --> allow dw "string"
+    ends
    .ends
 
 TokenCount              equ <MODULE.token_count>

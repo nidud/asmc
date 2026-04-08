@@ -47,7 +47,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
         mov eax,1
     .endif
     .if ( W[rsi] == '"L' )
-        mov MODULE.lstring,1
+        mov MODULE.LStringUsed,1
         mov eax,1
         add rsi,1
     .endif

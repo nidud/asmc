@@ -14,6 +14,13 @@ include condasm.inc
 include assume.inc
 include fastpass.inc
 
+ifndef DOTNAMEX ; v2.08: added
+; set DOTNAMEX to 1 if support for Intel C++ generated assembly code
+; is to be enabled.
+;
+define DOTNAMEX 0
+endif
+
 define B <byte ptr>
 
 externdef CurrEnum:asym_t
@@ -966,7 +973,6 @@ number_done:
 
 get_id proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
-   .new len:int_t
    .new IsResWord:byte = 1
 
     ldr rbx,buf
@@ -997,6 +1003,10 @@ endif
     or  cl,0x20
     xor ecx,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
     xor ebx,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+
+if DOTNAMEX
+continue_scan:
+endif
     .while islabel( [rsi] )
         stosb
         inc  rsi
@@ -1006,6 +1016,30 @@ endif
         or   al,0x20
         xor  cl,al
     .endw
+if DOTNAMEX
+    ;
+    ; if the name starts with a dot then accept dots
+    ; within the name (though not as last char). OPTION DOTNAME
+    ; must be on.
+    ;
+    .if ( al == '.' && MODULE.dotname )
+
+        mov IsResWord,0
+        mov rax,[rdx].output
+        .if ( B[rax] == '.' )
+            ;
+            ; allow .name..
+            ; allow .name.00100
+            ;
+            .if ( islabel([rsi+1]) || eax  == '.' )
+                mov al,'.'
+                stosb
+                inc  rsi
+                jmp continue_scan
+            .endif
+        .endif
+    .endif
+endif
     mov eax,ebx
 ifdef _WIN64
     mov rbx,r10
@@ -1021,13 +1055,12 @@ endif
     .if ( ecx > max_resw_len )
         mov IsResWord,0
         .if ( ecx > MAX_ID_LEN )
-            mov len,ecx
             mov rdi,rdx
             asmerr( 2043 )
             mov rdx,rdi
             mov rdi,[rdx].output
             add rdi,MAX_ID_LEN
-            mov ecx,len
+            mov ecx,MAX_ID_LEN
         .endif
     .endif
     xor eax,eax

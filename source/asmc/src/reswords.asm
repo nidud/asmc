@@ -710,7 +710,7 @@ else
     push    esi
     push    edi
     mov     esi,ecx
-    mov     eax,ResWordTable[rbx+rcx*8].hash
+    mov     eax,ResWordTable[ecx*8].hash
     and     eax,HASH_TABITEMS-1
     xor     edx,edx
     lea     edi,resw_table[eax*2]

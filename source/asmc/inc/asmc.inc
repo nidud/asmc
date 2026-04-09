@@ -628,6 +628,7 @@ define PE_DLL               0x04
       mscrt                 dd: 1 ? ; pragma init/exit option
       debug_frame           dd: 1 ? ; -Z7
       pe_exe                dd: 1 ? ; -pe[g]
+      asm_info              dd: 1 ? ; -info
      ends
     ends
     record

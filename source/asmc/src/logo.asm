@@ -69,23 +69,22 @@ endif
  char_t "-endbr Insert ENDBR at function entry     -EP Preprocess listing to stdout",10
  char_t "-eq Don't display error messages          -Fe<file> Name executable",10
  char_t "-Fi<file> Force <file> to be included     -Fl[file] Generate listing",10
- char_t "-Fo<file> Name object file",10
+ char_t "-fno-pic No position-independent code     -fno-plt Function calls to GOT",10
+ char_t "-Fo<file> Name object file                -fpic, -fPIC Relocate data to GOT",10
 ifndef ASMC64
+ char_t "-fp<n> FPU: 0=8087, 2=80287, 3=80387      -fpc No floating-point instructions",10
  char_t "-FPi Generate 80x87 emulator encoding     -FPi87 80x87 instructions (default)",10
- char_t "-fpc Disallow floating-point instructions -fp<n> FPU: 0=8087, 2=80287, 3=80387",10
 endif
- char_t "-fno-pic No position-independent code     -fplt Relocate function calls to PLT",10
- char_t "-fpic, -fPIC Relocate data to GOT         -fno-plt Function calls to GOT",10
- char_t "-frame Auto generate unwind information   -Fw<file> Set errors file name",10
- char_t "-G<c|d|z> Use Pascal, C, or Stdcall calls -G<r|v> Use Fastcall or Vectorcall",10
- char_t "-G<s|w> Use Syscall or Watcom calls       -Ge Conditional stack checking",10
- char_t "-home Copy register parameters to Stack   -I<name> Add include path",10
- char_t "-idd[t] Assemble as binary data [or text] -logo Print logo string and exit",10
+ char_t "-fplt Relocate function calls to PLT      -frame Auto generate unwind info",10
+ char_t "-Fw<file> Set errors file name            -G<c|d|r|s|v|w|z> Calling convention",10
+ char_t "-Ge Conditional stack checking            -home Copy register params to Stack",10
+ char_t "-I<name> Add include path                 -idd[t] Assemble as binary [or text]",10
+ char_t "-info Print assembly information          -logo Print logo string and exit",10
+ char_t "-MD[d] Defines _MSVCRT [_DEBUG]           -MT[d] Defines _MT [_DEBUG]",10
 ifndef ASMC64
  char_t "-m<t|s|c|m|l|h|f> Set memory model        -mz Generate DOS MZ binary file",10
 endif
- char_t "-MD[d] Dynamic - Defines _MSVCRT [_DEBUG] -mscrt Use MSCRT segments for ELF",10
- char_t "-MT[d] Static - Defines _MT [_DEBUG]      -nc<name> Set name of code segment",10
+ char_t "-mscrt Use MSCRT segments for ELF         -nc<name> Set name of code segment",10
  char_t "-nd<name> Set name of data segment        -nm<name> Set name of module",10
  char_t "-nolib Ignore INCLUDELIB directive        -nologo Suppress copyright message",10
  char_t "-nt<name> Set name of text segment        -pe[c|g|d] Generate PE binary file",10

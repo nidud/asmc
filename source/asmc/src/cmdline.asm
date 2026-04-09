@@ -653,6 +653,9 @@ endif
     .case 'ddi'             ; -idd
         mov Options.iddc,1
         .return
+    .case 'ofni'            ; -info
+        mov Options.asm_info,1
+        .return
     .case 'knil'            ; -link
         mov Options.link,1
         .return

@@ -69,6 +69,7 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-I</b> <i>pathname</i></td><td>Sets path for include file.</td></tr>
 <tr><td><b>-idd</b></td><td>Assemble source as <a href="option-idd.md">binary data</a>.</td></tr>
 <tr><td><b>-iddt</b></td><td>Assemble source as <a href="option-idd.md">text file</a>.</td></tr>
+<tr><td><b>-info</b></td><td></a>Displays module assembly information.</td></tr>
 <tr><td><b>-link</b></td><td>The link options. For more information, see <a href="option-link.md">Linker options</a>.</td></tr>
 <tr><td><b>-logo</b></td><td>Print logo string and exit.</td></tr>
 <tr><td><b>-m</b>&lt;<i>model</i>&gt;</td><td>Set <a href="option-m.md">memory model</a>. Not available in ASMC64.</td></tr>

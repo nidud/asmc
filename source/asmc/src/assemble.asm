@@ -1088,6 +1088,7 @@ AssembleFini proc __ccall private
 
 AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
+   .new starttime:uint_t
    .new prev_written:uint_t
 
     xor eax,eax
@@ -1125,6 +1126,9 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
     .endif
     AssembleInit( source )
     mov Parse_Pass,PASS_1
+    .if ( Options.asm_info )
+        mov starttime,clock()
+    .endif
 
     .while 1
 
@@ -1180,6 +1184,21 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
         WriteModule()
     .endif
     LstWriteCRef()
+    .if ( Options.asm_info )
+        mov ebx,GetLineNumber()
+        clock()
+        sub  eax,starttime
+        imul eax,eax,1000
+        mov ecx,CLOCKS_PER_SEC
+        xor edx,edx
+        div ecx
+        mov starttime,eax
+        mov rdx,GetFName( MODULE.srcfile )
+        mov edi,Parse_Pass
+        inc edi
+        tprintf( "%s: %u lines, %u passes, %u ms, %u warnings, %u errors\n",
+            rdx, ebx, edi, starttime, MODULE.warning_count, MODULE.error_count )
+    .endif
 done:
     AssembleFini()
     xor eax,eax

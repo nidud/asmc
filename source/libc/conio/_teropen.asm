@@ -10,10 +10,8 @@ include tchar.inc
     .code
 
 _eropen proc file:tstring_t
-
     _syserr("Error open file", "Can't open the file:\n%s", file)
     ret
-
-_eropen endp
+    endp
 
     end

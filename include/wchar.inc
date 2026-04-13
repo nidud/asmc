@@ -13,12 +13,21 @@ endif
 
 .pragma comment(lib, libc, msvcrt)
 
+ifndef _TIME32_T_DEFINED
+define _TIME32_T_DEFINED
+__time32_t typedef sdword
+endif
+ifndef _TIME64_T_DEFINED
+define _TIME64_T_DEFINED
+__time64_t typedef sqword
+endif
 ifndef _TIME_T_DEFINED
 define _TIME_T_DEFINED
 ifdef _WIN64
-time_t typedef sqword
+time_t	typedef sqword
 else
-time_t typedef sdword
+time_t	typedef sdword
+define _USE_32BIT_TIME_T
 endif
 endif
 
@@ -75,28 +84,57 @@ endif
 
 ifndef _FSIZE_T_DEFINED
 define _FSIZE_T_DEFINED
-_fsize_t	typedef size_t
+_fsize_t	typedef dword
 endif
 
 ifndef _WFINDDATA_T_DEFINED
 define _WFINDDATA_T_DEFINED
-_wfinddata_t	STRUC
-attrib		dd ?
-time_create	time_t ?
-time_access	time_t ?
-time_write	time_t ?
+_wfinddata32_t	STRUC
+attrib		uint_t ?
+time_create	__time32_t ?	;; -1 for FAT file systems
+time_access	__time32_t ?	;; -1 for FAT file systems
+time_write	__time32_t ?
 size		_fsize_t ?
 name		wchar_t 260 dup(?)
-_wfinddata_t	ENDS
-if _INTEGRAL_MAX_BITS GE 64
-_wfinddatai64_t STRUC
-attrib		dd ?
-time_create	time_t ?
-time_access	time_t ?
-time_write	time_t ?
+_wfinddata32_t	ENDS
+_wfinddata32i64_t STRUC
+attrib		uint_t ?
+time_create	__time32_t ?
+time_access	__time32_t ?
+time_write	__time32_t ?
+size		uint64_t ?
+name		wchar_t 260 dup(?)
+_wfinddata32i64_t ENDS
+__wfinddata64_t STRUC
+attrib		uint_t ?
+time_create	__time64_t ?
+time_access	__time64_t ?
+time_write	__time64_t ?
+size		uint64_t ?
+name		wchar_t 260 dup(?)
+__wfinddata64_t ENDS
+_wfinddata64i32_t STRUC
+attrib		uint_t ?
+time_create	__time64_t ?
+time_access	__time64_t ?
+time_write	__time64_t ?
 size		_fsize_t ?
 name		wchar_t 260 dup(?)
-_wfinddatai64_t ENDS
+_wfinddata64i32_t ENDS
+ifdef _USE_32BIT_TIME_T
+_wfinddata_t	typedef _wfinddata32_t
+_wfinddatai64_t typedef _wfinddata32i64_t
+define _wfindfirst	<_wfindfirst32>
+define _wfindnext	<_wfindnext32>
+define _wfindfirsti64	<_wfindfirst32i64>
+define _wfindnexti64	<_wfindnext32i64>
+else
+_wfinddata_t	typedef _wfinddata64i32_t
+_wfinddatai64_t typedef __wfinddata64_t
+define _wfindfirst	<_wfindfirst64i32>
+define _wfindnext	<_wfindnext64i32>
+define _wfindfirsti64	<_wfindfirst64>
+define _wfindnexti64	<_wfindnext64>
 endif
 endif
 
@@ -169,10 +207,8 @@ _wrename	proto __cdecl :wstring_t, :wstring_t
 _wopen		proto __Cdecl :wstring_t, :int_t, :vararg
 _wsopen		proto __Cdecl :wstring_t, :int_t, :int_t, :vararg
 _wmktemp	proto __cdecl :wstring_t
-if _INTEGRAL_MAX_BITS GE 64
 _wfindfirsti64	proto __cdecl :wstring_t, :ptr _wfinddatai64_t
 _wfindnexti64	proto __cdecl :ptr, :ptr _wfinddatai64_t
-endif
 endif
 
 ifndef _WLOCALE_DEFINED
@@ -266,11 +302,7 @@ ifndef _OFF_T_DEFINED
 define _OFF_T_DEFINED
 _off32_t typedef sdword
 _off64_t typedef qword
-ifdef _WIN64
-_off_t typedef qword
-else
 _off_t typedef sdword
-endif
 if not __STDC__
 off_t	typedef _off_t
 off32_t typedef sdword

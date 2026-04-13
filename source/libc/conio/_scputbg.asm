@@ -14,7 +14,6 @@ _scputbg proc x:BYTE, y:BYTE, l:BYTE, a:BYTE
     mov dh,a
     shl dh,4
     .for ( : dl : dl--, rcx+=4 )
-
         mov al,[rcx+2]
         and eax,0x0F
         or  al,dh
@@ -22,7 +21,6 @@ _scputbg proc x:BYTE, y:BYTE, l:BYTE, a:BYTE
     .endf
     _cendpaint()
     ret
-
-_scputbg endp
+    endp
 
     end

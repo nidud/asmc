@@ -14,13 +14,10 @@ _sendmessage proc uses rbx hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARA
 
     ldr rbx,hwnd
     .if ( [rbx].flags & W_WNDPROC && [rbx].flags & W_CHILD )
-
         .return( [rbx].winproc(rbx, uiMsg, wParam, lParam) )
     .endif
     .if ( [rbx].flags & W_PARENT )
-
         .if _dlgetfocus(rbx)
-
             mov rbx,rax
             .if ( [rbx].flags & W_WNDPROC )
                 .return .ifd ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
@@ -36,14 +33,12 @@ _sendmessage proc uses rbx hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARA
         mov rbx,hwnd
     .endif
     .for ( eax = 1 : rbx : )
-
         .if ( [rbx].flags & W_WNDPROC )
             .break .ifd ( [rbx].winproc(rbx, uiMsg, wParam, lParam) == 0 )
         .endif
         mov rbx,[rbx].prev
     .endf
     ret
-
-_sendmessage endp
+    endp
 
     end

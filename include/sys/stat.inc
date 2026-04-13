@@ -72,11 +72,7 @@ ifndef _OFF_T_DEFINED
 define _OFF_T_DEFINED
 _off32_t typedef sdword
 _off64_t typedef qword
-ifdef _WIN64
-_off_t typedef qword
-else
 _off_t typedef sdword
-endif
 if not __STDC__
 off_t   typedef _off_t
 off32_t typedef sdword
@@ -174,12 +170,48 @@ else
 endif
    .ends
 
+ifdef __UNIX__
+_stati64i32 typedef _stati64
+else
+.template _stati64i32
+    st_dev      dd ?
+    st_ino      dw ?
+    st_mode     dw ?
+    st_nlink    sword ?
+    st_uid      sword ?
+    st_gid      sword ?
+    st_rdev     dd ?
+    st_size     dd ?
+    st_atime    dq ?
+    st_mtime    dq ?
+    st_ctime    dq ?
+   .ends
+endif
+
 .pragma pack(pop)
 
 endif
 
 PSTAT   typedef ptr _stat32
 PSTAT64 typedef ptr _stati64
+
+if 0
+ifdef _USE_32BIT_TIME_T
+define _fstat       <_fstat32>
+define _fstati64    <_fstat32i64>
+define _stat        <_stat32>
+define _stati64     <_stat32i64>
+define _wstat       <_wstat32>
+define _wstati64    <_wstat32i64>
+else
+define _fstat       <_fstat64i32>
+define _fstati64    <_fstat64>
+define _stat        <_stat64i32>
+define _stati64     <_stat64>
+define _wstat       <_wstat64i32>
+define _wstati64    <_wstat64>
+endif
+endif
 
 ifdef __UNIX__
 define _stat    <stat>
@@ -194,6 +226,7 @@ endif
 _stat       proto __cdecl :string_t, :PSTAT
 _fstat      proto __cdecl :int_t, :PSTAT
 _stat64     proto __cdecl :string_t, :PSTAT64
+_stat64i32  proto __cdecl :string_t, :ptr _stati64i32
 _fstat64    proto __cdecl :int_t, :PSTAT64
 
 ifndef _WSTAT_DEFINED
@@ -202,6 +235,7 @@ _wstat32    typedef _stat32
 _wstati64   typedef _stati64
 _wstat      proto __cdecl :wstring_t, :PSTAT
 _wstat64    proto __cdecl :wstring_t, :PSTAT64
+_wstat64i32 proto __cdecl :wstring_t, :ptr _stati64i32
 endif
 
 .pragma list(pop)

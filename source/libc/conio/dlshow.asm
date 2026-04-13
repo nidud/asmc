@@ -11,14 +11,11 @@ include conio.inc
     assume rbx:PDOBJ
 
 dlshow proc uses rbx dobj:PDOBJ
-
     ldr rbx,dobj
     .if rcshow([rbx].rc, [rbx].flags, [rbx].window)
-
         or [rbx].flags,W_VISIBLE
     .endif
     ret
-
-dlshow endp
+    endp
 
     end

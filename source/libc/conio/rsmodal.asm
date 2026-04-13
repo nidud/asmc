@@ -9,10 +9,8 @@ include conio.inc
 .code
 
 rsmodal proc uses rbx robj:PIDD
-
     ldr rbx,robj
     .if rsopen(rbx)
-
         xchg rbx,rax
         rsevent(rax, rbx)
         xchg rbx,rax
@@ -20,7 +18,6 @@ rsmodal proc uses rbx robj:PIDD
         mov eax,ebx
     .endif
     ret
-
-rsmodal endp
+    endp
 
     end

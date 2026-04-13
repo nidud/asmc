@@ -21,7 +21,6 @@ _scgetw proc x:BYTE, y:BYTE
     add     rdx,[rcx].buffer
     mov     eax,[rdx]
     ret
-
-_scgetw endp
+    endp
 
     end

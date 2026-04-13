@@ -13,9 +13,7 @@ include malloc.inc
     assume rbx:PCONSOLE
 
 _conpush proc uses rbx
-
 ifdef __TTY__
-
     _write(_confd, CSI "?1049h", 8)  ; enables the alternative buffer
 else
     mov rbx,_console
@@ -31,11 +29,9 @@ else
     .endif
 endif
     ret
-
-_conpush endp
+    endp
 
 _conpop proc uses rbx p:PCHAR_INFO
-
 ifdef __TTY__
     _write(_confd, CSI "?1049l", 8) ; disables the alternative buffer
 else
@@ -46,7 +42,6 @@ else
     free(rbx)
 endif
     ret
-
-_conpop endp
+    endp
 
     end

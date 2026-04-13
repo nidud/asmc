@@ -16,7 +16,6 @@ _dlmodal proc uses rbx hwnd:THWND, wndp:TPROC
 
     mov [rbx].winproc,wndp
     or  [rbx].flags,W_WNDPROC
-
     [rbx].winproc(rbx, WM_CREATE, 0, 0)
     _dlsetfocus(rbx, [rbx].index)
 ifdef __TTY__
@@ -31,9 +30,7 @@ else
 endif
     .new msg:MESSAGE
     .whiled _getmessage(&msg, NULL, 1)
-
         .return .if ( eax == -1 )
-
         _translatemsg(&msg)
         _dispatchmsg(&msg)
     .endw
@@ -46,7 +43,6 @@ else
 endif
     _sendmessage(rbx, WM_CLOSE, msg.wParam, msg.lParam)
     .return( msg.wParam )
-
-_dlmodal endp
+    endp
 
     end

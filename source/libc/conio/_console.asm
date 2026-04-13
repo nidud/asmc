@@ -156,30 +156,24 @@ else
         mov ecx,w
         rep movsb
     .endif
-
 endif
-
     lea rcx,_rgbcolortable
     mov [rbx].color,rcx
     mov [rbx].conmax.X,rc.col
     mov [rbx].conmax.Y,rc.row
     mov rax,rbx
     ret
-
-__initconsole endp
+    endp
 
 
 __termconsole proc uses rbx
-
     mov rbx,_console
     .if ( rbx )
-
         mov _console,[rbx].prev
         free(rbx)
     .endif
     ret
-
-__termconsole endp
+    endp
 
 .pragma init(__initconsole, 100)
 .pragma exit(__termconsole, 2)

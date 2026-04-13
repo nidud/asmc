@@ -12,9 +12,7 @@ include conio.inc
     .code
 
 wcpushst proc uses rbx p:PCHAR_INFO, cp:tstring_t
-
     ldr     rbx,p
-
     mov     rdx,_console
     mov     cl,[rdx].TCONSOLE.rc.col
     mov     ch,1
@@ -31,15 +29,12 @@ wcpushst proc uses rbx p:PCHAR_INFO, cp:tstring_t
     invoke  wcputs(&[rbx+4], eax, eax, cp)
     invoke  _rcxchg(rc, rbx)
     ret
-
-wcpushst endp
+    endp
 
 wcpopst proc wp:PCHAR_INFO
-
     ldr     rcx,wp
     invoke  _rcxchg(rc, rcx)
     ret
-
-wcpopst endp
+    endp
 
     END

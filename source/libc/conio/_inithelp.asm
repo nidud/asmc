@@ -12,22 +12,17 @@ include conio.inc
 .code
 
 _inithelp proc help:DPROC
-
     ldr rcx,help
     mov rax,thelp
     mov thelp,rcx
     ret
-
-_inithelp endp
+    endp
 
 _thelp proc
-
     .if ( thelp )
-
         thelp()
     .endif
     ret
-
-_thelp endp
+    endp
 
     END

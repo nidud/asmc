@@ -127,7 +127,6 @@ _dlinit proc uses rsi rdi rbx hwnd:THWND, name:tstring_t
         .endf
     .endif
     .return( rbx )
-
-_dlinit endp
+    endp
 
     end

@@ -21,14 +21,11 @@ _dispatchmsg proc msg:PMESSAGE
     mov [rcx].wParam,rax
     mov [rcx].lParam,rax
     mov rdx,_console
-
     .if ( rcx == [rdx].msgptr )
-
         mov rcx,[rcx].prev
         mov [rdx].msgptr,rcx
     .endif
     ret
-
-_dispatchmsg endp
+    endp
 
     end

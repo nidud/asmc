@@ -14,10 +14,8 @@ tosetbitflag proc uses rsi rbx tobj:PTOBJ, count:int_t, flag:uint_t, bitflag:uin
     ldr eax,flag
     ldr esi,count
     ldr edx,bitflag
-
     mov ecx,eax
     not eax
-
     .while esi
         ;
         ; Remove the flag from Object
@@ -34,7 +32,6 @@ tosetbitflag proc uses rsi rbx tobj:PTOBJ, count:int_t, flag:uint_t, bitflag:uin
         dec esi
     .endw
     ret
-
-tosetbitflag endp
+    endp
 
     end

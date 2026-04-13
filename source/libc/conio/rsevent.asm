@@ -9,15 +9,12 @@ include conio.inc
 .code
 
 rsevent proc uses rbx robj:PIDD, dobj:PDOBJ
-
     ldr rbx,dobj
-
     dlevent(rbx)
     mov edx,[rbx].DOBJ.rc
     mov rcx,robj
     mov [rcx].RIDD.rc,edx
     ret
-
-rsevent endp
+    endp
 
     end

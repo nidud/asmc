@@ -1,5 +1,5 @@
 
-procs equ <for x,<0,1,2,3,4,5>> ; add functions to test...
+procs equ <for x,<0,1,2,3,4,5,7>> ; add functions to test...
 
 args_x macro
     lea rcx,str_2
@@ -34,6 +34,8 @@ size_s  equ 4096 ; maximum data size
     info_3 db "SSE Intel Silvermont",0
     info_4 db "SSE Intel Atom",0
     info_5 db "AVX 32",0
+    info_6 db "AVX512",0
+    info_7 db "PCMPISTRI",0
 
     .code
 

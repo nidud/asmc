@@ -11,20 +11,15 @@ include conio.inc
     assume rbx:PDOBJ
 
 dlopen proc uses rbx dobj:PDOBJ, at:uint_t, ttl:string_t
-
     ldr rbx,dobj
     ldr edx,at
-
     and edx,0xFF
     mov [rbx].window,rcopen([rbx].rc, [rbx].flags, 0, edx, ttl, [rbx].window)
-
     .if rax
-
         or  [rbx].flags,W_ISOPEN
         mov eax,1
     .endif
     ret
-
-dlopen endp
+    endp
 
     end

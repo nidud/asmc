@@ -9,7 +9,6 @@ include conio.inc
 .code
 
 rcshow proc rc:TRECT, flag:uint_t, p:PCHAR_INFO
-
     ldr eax,flag
     and eax,W_ISOPEN or W_VISIBLE
     .ifnz
@@ -23,7 +22,6 @@ rcshow proc rc:TRECT, flag:uint_t, p:PCHAR_INFO
         .endif
     .endif
     ret
-
-rcshow endp
+    endp
 
     end

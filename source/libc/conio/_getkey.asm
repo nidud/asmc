@@ -52,7 +52,6 @@ ifndef __TTY__
     SetConsoleMode(_coninpfh, oldstate)
 endif
     .return( c )
-
-_getkey endp
+    endp
 
     end

@@ -19,28 +19,21 @@ _dlinside proc fastcall hwnd:THWND, pos:COORD
 
     mov eax,[rcx].rc
     .if ( [rcx].flags & W_CHILD )
-
         mov rcx,[rcx].prev
         add ax,word ptr [rcx].rc
     .endif
-
     mov rc,eax
     mov ecx,eax
     xor eax,eax
     mov dh,cl
-
     .if ( dl >= dh )
-
         add dh,rc.col
         .if ( dl < dh )
-
             shr edx,16
             mov dh,ch
             .if ( dl >= dh )
-
                 add dh,rc.row
                 .if ( dl < dh )
-
                     mov al,dl
                     sub al,ch
                     inc al
@@ -49,8 +42,7 @@ _dlinside proc fastcall hwnd:THWND, pos:COORD
         .endif
     .endif
     ret
-
-_dlinside endp
+    endp
 
 
 wm_lbbuttondown proc uses rbx hwnd:THWND, lParam:COORD
@@ -60,9 +52,7 @@ wm_lbbuttondown proc uses rbx hwnd:THWND, lParam:COORD
 
     mov rbx,hwnd
     .ifd ( _dlinside(rbx, lParam) == 0 )
-
         .if !( [rbx].flags & W_CHILD )
-
             _postquitmsg(rbx, 0)
         .endif
         .return TRUE
@@ -70,7 +60,6 @@ wm_lbbuttondown proc uses rbx hwnd:THWND, lParam:COORD
 
     movzx edx,[rbx].flags
     .if !( edx & W_CHILD )
-
         and edx,W_ISOPEN or W_VISIBLE or W_MOVEABLE
         .if ( eax != 1 || edx != W_ISOPEN or W_VISIBLE or W_MOVEABLE )
             .return TRUE
@@ -119,8 +108,7 @@ wm_lbbuttondown proc uses rbx hwnd:THWND, lParam:COORD
         .endsw
     .endif
     .return( 0 )
-
-wm_lbbuttondown endp
+    endp
 
 
 wm_lbuttonup proc fastcall uses rbx hwnd:THWND
@@ -184,8 +172,7 @@ wm_lbuttonup proc fastcall uses rbx hwnd:THWND
         .endsw
     .endif
     .return( 0 )
-
-wm_lbuttonup endp
+    endp
 
 
 wm_mousemove proc uses rbx hwnd:THWND, lParam:COORD
@@ -228,8 +215,7 @@ wm_mousemove proc uses rbx hwnd:THWND, lParam:COORD
         mov [rbx].x,al
     .endw
     .return( 0 )
-
-wm_mousemove endp
+    endp
 
 
 wm_setfocus proc uses rbx hwnd:THWND
@@ -301,8 +287,7 @@ wm_setfocus proc uses rbx hwnd:THWND
        .endc
     .endsw
     .return( 0 )
-
-wm_setfocus endp
+    endp
 
 
 wm_killfocus proc uses rbx hwnd:THWND
@@ -348,8 +333,7 @@ wm_killfocus proc uses rbx hwnd:THWND
        .endc
     .endsw
     .return( 0 )
-
-wm_killfocus endp
+    endp
 
     assume rcx:THWND
 
@@ -375,8 +359,7 @@ wm_syschar proc hwnd:THWND, wParam:uint_t
         .endif
     .endf
     .return( 1 )
-
-wm_syschar endp
+    endp
 
 
 wm_char proc uses rbx hwnd:THWND, wParam:uint_t
@@ -469,8 +452,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t
         .endc
     .endsw
     .return( 1 )
-
-wm_char endp
+    endp
 
 
 wm_keydown proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
@@ -544,8 +526,7 @@ wm_keydown proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
         .endif
     .endif
     .return( 1 )
-
-wm_keydown endp
+    endp
 
 
 _defwinproc proc public hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
@@ -566,7 +547,6 @@ _defwinproc proc public hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
     .case WM_CHAR:          .return wm_char(rcx, eax)
     .endsw
     .return( 1 )
-
-_defwinproc endp
+    endp
 
     end

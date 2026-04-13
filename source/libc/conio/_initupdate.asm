@@ -12,23 +12,18 @@ include conio.inc
 .code
 
 _initupdate proc update:DPROC
-
     ldr rcx,update
     mov rax,tupdate
     mov tupdate,rcx
     ret
-
-_initupdate endp
+    endp
 
 _tupdate proc
-
     mov rax,tupdate
     .if ( rax )
-
         rax()
     .endif
     ret
-
-_tupdate endp
+    endp
 
     end

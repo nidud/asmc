@@ -30,7 +30,6 @@ _rcputbg proc w:TRECT, rc:TRECT, p:PCHAR_INFO, a:uchar_t
         .endf
     .endf
     ret
-
-_rcputbg endp
+    endp
 
     end

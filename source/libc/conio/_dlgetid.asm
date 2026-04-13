@@ -16,15 +16,12 @@ _dlgetid proc hwnd:THWND, index:int_t
     ldr edx,index
 
     .for ( rcx = [rcx].object : rcx : rcx = [rcx].next, edx-- )
-
         .if ( dl == 0 )
-
             .break
         .endif
     .endf
     mov rax,rcx
     ret
-
-_dlgetid endp
+    endp
 
     end

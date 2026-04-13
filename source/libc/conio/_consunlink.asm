@@ -20,7 +20,6 @@ _consunlink proc hwnd:THWND
         mov [rdx].TDIALOG.prev,rcx
     .endif
     ret
-
-_consunlink endp
+    endp
 
     end

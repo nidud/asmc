@@ -9,11 +9,9 @@ include conio.inc
 .code
 
 _cbeginpaint proc
-
     mov rax,_console
     dec [rax].TCONSOLE.paint
     ret
-
-_cbeginpaint endp
+    endp
 
     end

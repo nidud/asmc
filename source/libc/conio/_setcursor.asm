@@ -15,7 +15,6 @@ _setcursor proc uses rbx p:PCURSOR
    .new cu:CONSOLE_CURSOR_INFO
 
     ldr rbx,p
-
     _gotoxy([rbx].x, [rbx].y)
     movzx eax,[rbx].type
     movzx ecx,[rbx].visible
@@ -23,7 +22,6 @@ _setcursor proc uses rbx p:PCURSOR
     mov cu.bVisible,ecx
     _setconsolecursorinfo(_confh, &cu)
     ret
-
-_setcursor endp
+    endp
 
     end

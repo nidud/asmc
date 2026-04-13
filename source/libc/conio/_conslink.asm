@@ -20,7 +20,6 @@ _conslink proc hwnd:THWND
         mov [rcx].TDIALOG.next,rax
     .endif
     ret
-
-_conslink endp
+    endp
 
     end

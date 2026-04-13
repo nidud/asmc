@@ -9,15 +9,12 @@ include conio.inc
 .code
 
 _cendpaint proc
-
     mov rax,_console
     inc [rax].TCONSOLE.paint
     .if ( [rax].TCONSOLE.paint >= 0 )
-
         _conpaint()
     .endif
     ret
-
-_cendpaint endp
+    endp
 
     end

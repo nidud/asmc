@@ -13,15 +13,11 @@ include conio.inc
 _dlhide proc uses rbx hwnd:THWND
 
     ldr rbx,hwnd
-
     movzx edx,[rbx].flags
     .if ( !( edx & W_ISOPEN ) )
-
         .return(0)
     .endif
-
     .if ( edx & W_VISIBLE )
-
         _rcxchg([rbx].rc, [rbx].window)
         .if ( [rbx].flags & W_SHADE )
             _rcshade([rbx].rc, [rbx].window, 0)
@@ -29,7 +25,6 @@ _dlhide proc uses rbx hwnd:THWND
         and [rbx].flags,not W_VISIBLE
     .endif
     .return(1)
-
-_dlhide endp
+    endp
 
     end

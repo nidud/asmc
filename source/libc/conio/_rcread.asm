@@ -49,7 +49,6 @@ _rcread proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
         lea   rsi,[rax+rcx*4]
     .endf
     .return( p )
-
-_rcread endp
+    endp
 
     end

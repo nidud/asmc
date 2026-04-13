@@ -9,11 +9,9 @@ include conio.inc
 .code
 
 _scgeta proc x:BYTE, y:BYTE
-
     _scgetw(x, y)
     shr eax,16
     ret
-
-_scgeta endp
+    endp
 
     end

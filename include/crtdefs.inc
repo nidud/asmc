@@ -56,9 +56,10 @@ endif
 ifndef _TIME_T_DEFINED
 define _TIME_T_DEFINED
 ifdef _WIN64
-time_t typedef sqword
+time_t	typedef sqword
 else
-time_t typedef sdword
+time_t	typedef sdword
+define _USE_32BIT_TIME_T
 endif
 endif
 

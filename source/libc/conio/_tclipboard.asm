@@ -26,33 +26,24 @@ _clipset proc uses rbx string:tstring_t, len:uint_t
 
     ldr rbx,string
     inc len
-
 ifdef __UNIX__
-
     free(clipboard)
-
     mov clipbsize,0
     mov clipboard,malloc(len)
-
     .if ( rax )
-
         dec len
         memcpy(rax, rbx, len)
         mov ecx,len
         mov byte ptr [rax+rcx],0
         mov clipbsize,ecx
     .endif
-
 else
-
     .if OpenClipboard(0)
-
         EmptyClipboard()
 ifdef _UNICODE
         shl len,1
 endif
         .if GlobalAlloc(GMEM_MOVEABLE or GMEM_DDESHARE, len)
-
             mov string,rax
             mov rbx,memcpy(GlobalLock(rax), rbx, len)
             GlobalUnlock(string)
@@ -62,8 +53,7 @@ endif
     .endif
 endif
     ret
-
-_clipset endp
+    endp
 
 
 _clipget proc uses rbx
@@ -74,14 +64,12 @@ ifdef __UNIX__
     .endif
 else
     .if OpenClipboard(0)
-
         mov rbx,GetClipboardData(CLFLAGS)
         CloseClipboard()
         mov rax,rbx
     .endif
 endif
     ret
-
-_clipget endp
+    endp
 
     end

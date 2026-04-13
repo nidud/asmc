@@ -9,9 +9,7 @@ include conio.inc
 .code
 
 rchide proc rc:TRECT, flag:uint_t, p:PCHAR_INFO
-
     ldr edx,flag
-
     xor eax,eax
     and edx,W_ISOPEN or W_VISIBLE
     .ifnz
@@ -25,7 +23,6 @@ rchide proc rc:TRECT, flag:uint_t, p:PCHAR_INFO
         .endif
     .endif
     ret
-
-rchide endp
+    endp
 
     end

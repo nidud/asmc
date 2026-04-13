@@ -11,11 +11,9 @@ include tchar.inc
     .code
 
 _scputf proc x:BYTE, y:BYTE, format:tstring_t, argptr:vararg
-
     _vstprintf( &_bufin, format, &argptr )
     _scputs( x, y, &_bufin )
     ret
-
-_scputf endp
+    endp
 
     end

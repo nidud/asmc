@@ -9,7 +9,6 @@ include conio.inc
     .code
 
 wcputw proc p:PCHAR_INFO, l:int_t, w:uint_t
-
     ldr eax,w
     ldr rcx,p
     ldr edx,l
@@ -26,7 +25,6 @@ wcputw proc p:PCHAR_INFO, l:int_t, w:uint_t
         .until !edx
     .endif
     ret
-
-wcputw endp
+    endp
 
     END

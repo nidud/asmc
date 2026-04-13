@@ -9,11 +9,9 @@ include conio.inc
     .code
 
 _rcbprc proc w:TRECT, rc:TRECT, p:PCHAR_INFO
-
     ldr     eax,w
     ldr     rcx,p
     ldr     edx,rc
-
     shr     eax,16
     mul     dh
     movzx   edx,dl
@@ -21,7 +19,6 @@ _rcbprc proc w:TRECT, rc:TRECT, p:PCHAR_INFO
     shl     eax,2
     add     rax,rcx
     ret
-
-_rcbprc endp
+    endp
 
     end

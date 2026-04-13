@@ -263,8 +263,7 @@ _dlmove proc uses rsi rdi rbx hwnd:THWND, direction:int_t
         mov rbx,_console
         inc [rbx].paint
     .endif
-   .return(retval)
-
-_dlmove endp
+    .return(retval)
+    endp
 
     end

@@ -60,8 +60,7 @@ ifdef __TTY__
  endif
 endif
     ret
-
-__initconin endp
+    endp
 
 ifdef __TTY__
 
@@ -75,8 +74,7 @@ else
     SetConsoleMode(_coninpfh, _modein)
 endif
     ret
-
-__exitconin endp
+    endp
 
 .pragma exit(__exitconin, 11)
 endif

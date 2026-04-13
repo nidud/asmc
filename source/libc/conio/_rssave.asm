@@ -33,9 +33,7 @@ _rssave proc uses rbx hwnd:THWND, file:string_t
     mov     flags,eax
     mov     d.flags,ax
     fwrite(&d, 1, RIDD, fp)
-
     .for ( rbx = [rbx].object : rbx : rbx = [rbx].next )
-
         mov ax,[rbx].flags
         and ax,O_RESBITS
         mov o.flags,ax
@@ -44,7 +42,6 @@ _rssave proc uses rbx hwnd:THWND, file:string_t
         mov o.rc,[rbx].rc
         fwrite(&o, 1, ROBJ, fp)
     .endf
-
     mov rbx,hwnd
     movzx eax,[rbx].rc.col
     mul [rbx].rc.row
@@ -54,8 +51,7 @@ _rssave proc uses rbx hwnd:THWND, file:string_t
     fwrite(wp, 1, size, fp)
     free(wp)
     fclose(fp)
-   .return( 1 )
-
-_rssave endp
+    .return( 1 )
+    endp
 
     end

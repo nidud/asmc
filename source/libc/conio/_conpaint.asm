@@ -89,7 +89,6 @@ ifdef __TTY__
     fflush(_confp)
 endif
     ret
-
-_conpaint endp
+    endp
 
     end

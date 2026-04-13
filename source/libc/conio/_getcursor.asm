@@ -48,7 +48,6 @@ endif
         mov [rbx].CURSOR.visible,cu.bVisible
     .endif
     ret
-
-_getcursor endp
+    endp
 
     end

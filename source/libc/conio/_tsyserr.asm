@@ -14,7 +14,6 @@ include tchar.inc
 _syserr proc title:tstring_t, format:tstring_t, argptr:vararg
 
    .new msg:string_t = _sys_err_msg(errno)
-
     _vstprintf(&_bufin, format, &argptr)
     lea rcx,_bufin
     lea rcx,[rcx+rax*tchar_t]
@@ -22,17 +21,13 @@ _syserr proc title:tstring_t, format:tstring_t, argptr:vararg
     mov [rcx],_tal
     mov [rcx+tchar_t],_tal
     add rcx,tchar_t*2
-
     .for ( rdx = msg : eax : rdx++, rcx+=tchar_t )
-
         mov al,[rdx]
         mov [rcx],_tal
     .endf
-
     _vmsgbox(MB_OK or MB_ICONERROR, title, &_bufin)
     xor eax,eax
     ret
-
-_syserr endp
+    endp
 
     end

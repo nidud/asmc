@@ -11,15 +11,11 @@ include conio.inc
     assume rbx:PDOBJ
 
 dlhide proc uses rbx dobj:PDOBJ
-
     ldr rbx,dobj
-
     .ifd rchide([rbx].rc, [rbx].flags, [rbx].window)
-
         and [rbx].flags,not W_VISIBLE
     .endif
     ret
-
-dlhide endp
+    endp
 
     end

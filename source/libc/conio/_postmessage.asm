@@ -11,12 +11,10 @@ include conio.inc
     assume rbx:PMESSAGE
 
 _postmessage proc uses rbx hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
-
     mov rax,_console
     mov rbx,[rax].TCONSOLE.msgptr
     mov rbx,[rbx].next
     mov [rax].TCONSOLE.msgptr,rbx
-
     ldr rax,hwnd
     mov [rbx].hwnd,rax
     ldr eax,uiMsg
@@ -27,7 +25,6 @@ _postmessage proc uses rbx hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARA
     mov [rbx].lParam,rax
     xor eax,eax
     ret
-
-_postmessage endp
+    endp
 
     end

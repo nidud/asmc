@@ -71,20 +71,16 @@ _dlopen proc uses rbx rc:TRECT, count:uint_t, flags:uint_t, size:uint_t
         _rcclear(rc, [rbx].window, eax)
     .endif
     .for ( rdx = rbx, rbx = [rbx].object, ecx = 0 : ecx < count : ecx++, rbx+=TDIALOG )
-
         lea eax,[rcx+1]
         mov [rbx].flags,W_CHILD
         mov [rbx].prev,rdx
         mov [rbx].oindex,al
-
         .if ( eax < count )
-
             lea rax,[rbx+TDIALOG]
             mov [rbx].next,rax
         .endif
     .endf
     .return( _conslink(hwnd) )
-
-_dlopen endp
+    endp
 
     end

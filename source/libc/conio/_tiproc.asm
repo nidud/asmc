@@ -33,7 +33,6 @@ ClipSet proto fastcall :PTEDIT {
     assume rcx:PTEDIT
 
 IncreaseX proc fastcall ti:PTEDIT
-
     mov eax,[rcx].boffs
     add eax,[rcx].xoffs
     inc eax
@@ -52,12 +51,10 @@ IncreaseX proc fastcall ti:PTEDIT
         mov [rcx].boffs,edx
     .endif
     ret
-
-IncreaseX endp
+    endp
 
 
 tinocando proc fastcall ti:PTEDIT
-
     .if ( [rcx].flags & TE_USEBEEP )
 ifdef __UNIX__
         _write(_confd, "\x7", 1)
@@ -66,19 +63,15 @@ else
 endif
     .endif
     .return( 0 ) ; operation fail (end of line/buffer)
-
-tinocando endp
+    endp
 
 
 tistripend proc fastcall uses rbx string:tstring_t
-
     mov rbx,rcx
     .ifd _tcsclen(rcx)
-
         mov ecx,eax
         lea rbx,[rbx+rax*tchar_t]
         .repeat
-
             sub rbx,tchar_t
             movzx eax,tchar_t ptr [rbx]
             .break .if ( eax != ' ' && eax != 9 )
@@ -87,14 +80,12 @@ tistripend proc fastcall uses rbx string:tstring_t
         mov rax,rcx
     .endif
     ret
-
-tistripend endp
+    endp
 
 
     assume rbx:PTEDIT
 
 getline proc fastcall uses rdi rbx ti:PTEDIT
-
     mov rax,[rcx].base
     .if rax
         mov     rbx,rcx
@@ -116,48 +107,36 @@ getline proc fastcall uses rdi rbx ti:PTEDIT
         mov     rax,[rcx].base
     .endif
     ret
-
-getline endp
+    endp
 
 
 curlptr proc fastcall ti:PTEDIT
-
     .if getline(rcx)
-
         mov edx,[rcx].boffs
         add edx,[rcx].xoffs
         lea rax,[rax+rdx*tchar_t]
     .endif
     ret
-
-curlptr endp
+    endp
 
 
 event_home proc fastcall ti:PTEDIT
-
     .if getline(rcx)
-
         xor eax,eax
         mov [rcx].boffs,eax
         mov [rcx].xoffs,eax
         inc eax
     .endif
     ret
-
-event_home endp
+    endp
 
 
 event_toend proc fastcall uses rbx ti:PTEDIT
-
     mov rbx,rcx
     event_home(rcx)
-
     .if getline(rcx)
-
         tistripend(rax)
-
         .if ecx
-
             mov eax,[rbx].scols
             dec eax
             .ifs ecx <= eax
@@ -181,40 +160,31 @@ event_toend proc fastcall uses rbx ti:PTEDIT
         mov eax,1
     .endif
     ret
-
-event_toend endp
+    endp
 
 
 event_left proc fastcall ti:PTEDIT
-
     .if ( [rcx].xoffs )
-
         dec [rcx].xoffs
        .return( 1 )
     .endif
-
     .if ( [rcx].boffs )
-
         dec [rcx].boffs
        .return( 1 )
     .endif
     .return( 0 )
-
-event_left endp
+    endp
 
 
 event_right proc fastcall uses rbx ti:PTEDIT
-
     mov rbx,rcx
     .if curlptr(rcx)
-
         mov rcx,rax
         movzx eax,tchar_t ptr [rax]
         mov edx,[rbx].xoffs
         shl edx,1
         sub rcx,rdx
         .if eax
-
             mov eax,[rbx].scols
             dec eax
             .if eax > [rbx].xoffs
@@ -222,7 +192,6 @@ event_right proc fastcall uses rbx ti:PTEDIT
                .return( 1 )
             .endif
         .endif
-
         _tcsclen(rcx)
         .if eax >= [rbx].scols
             inc [rbx].boffs
@@ -231,18 +200,14 @@ event_right proc fastcall uses rbx ti:PTEDIT
         xor eax,eax
     .endif
     ret
-
-event_right endp
+    endp
 
 
 event_delete proc fastcall uses rbx ti:PTEDIT
-
     mov rbx,rcx
     .if curlptr(rcx)
-
         tistripend(rax)
         .if ( ecx )
-
             curlptr(rbx)
             .if tchar_t ptr [rax]
                 dec [rbx].bcount
@@ -254,66 +219,48 @@ event_delete proc fastcall uses rbx ti:PTEDIT
         .endif
     .endif
     .return(tinocando(rbx))
-
-event_delete endp
+    endp
 
 
 event_back proc fastcall uses rbx ti:PTEDIT
-
     mov rbx,rcx
     .if getline(rcx)
-
         mov eax,[rbx].xoffs
         add eax,[rbx].boffs
         .if ( !eax || ![rbx].bcount )
             .return( 0 )
         .endif
-
         event_left(rbx)
         .if tistripend(curlptr(rbx))
-
             event_delete(rbx)
         .endif
     .endif
     ret
-
-event_back endp
+    endp
 
 
 event_add proc fastcall uses rsi rdi rbx ti:PTEDIT, c:int_t
-
     mov rbx,rcx
     movzx esi,dx
-
     .if ( edx == 0 || edx == 10 || edx == 13 )
-
         .return( 0 )
     .endif
-
     .if ( getline(rcx) == NULL )
-
         .return( 0 )
     .endif
-
     lea rcx,_ltype
     mov eax,esi
-
     .if ( !ah && byte ptr [rcx+rax] & _CONTROL )
         .if ( !( [rbx].flags & TE_CONTROL ) )
             .return( 0 )
         .endif
     .endif
-
     mov eax,[rbx].bcount
     inc eax
-
     .if ( eax < [rbx].bcols )
-
         .ifd IncreaseX(rbx)
-
             inc [rbx].bcount
             .if getline(rbx)
-
                 or      [rbx].flags,TE_MODIFIED
                 mov     eax,[rbx].boffs
                 add     eax,[rbx].xoffs
@@ -331,52 +278,39 @@ event_add proc fastcall uses rsi rdi rbx ti:PTEDIT, c:int_t
                 rep     _tmovsb
                 mov     [rdi],_tdl
                 cld
-
                .return( 1 )
             .endif
         .endif
     .endif
-
     mov eax,[rbx].bcols
     dec eax
     mov [rbx].bcount,eax
-   .return(tinocando(rbx))
-
-event_add endp
+    .return(tinocando(rbx))
+    endp
 
 
 event_nextword proc fastcall uses rsi rbx ti:PTEDIT
-
     mov rbx,rcx
-   .return .if !curlptr(rcx)
-
+    .return .if !curlptr(rcx)
     lea rsi,_ltype
     mov rdx,rax
     mov rcx,rax
     movzx eax,tchar_t ptr [rcx]
-
     .while ( ah || byte ptr [rsi+rax] & _LABEL )
-
         add rcx,tchar_t
         movzx eax,tchar_t ptr [rcx]
     .endw
-
     .while ( eax && !ah && !( byte ptr [rsi+rax] & _LABEL ) )
-
         add rcx,tchar_t
         movzx eax,tchar_t ptr [rcx]
     .endw
-
-   .return .ifd !eax
-
+    .return .ifd !eax
     sub rcx,rdx
     shr ecx,tchar_t-1
-
     mov eax,[rbx].boffs
     add eax,[rbx].xoffs
     add eax,ecx
-   .return( 0 ) .if ( eax > [rbx].bcount )
-
+    .return( 0 ) .if ( eax > [rbx].bcount )
     sub eax,[rbx].boffs
     mov ecx,[rbx].scols
     .if ( eax >= ecx )
@@ -388,57 +322,41 @@ event_nextword proc fastcall uses rsi rbx ti:PTEDIT
         mov [rbx].xoffs,eax
     .endif
     .return( 1 )
-
-event_nextword endp
+    endp
 
 
 event_prevword proc fastcall uses rsi rbx ti:PTEDIT
-
     mov rbx,rcx
-   .return .if !curlptr(rcx)
-
+    .return .if !curlptr(rcx)
     mov rcx,rax
     mov eax,[rbx].boffs
     add eax,[rbx].xoffs
-   .return .ifz
-
+    .return .ifz
     lea rsi,_ltype
     movzx eax,tchar_t ptr [rcx]
-
     .if ( ah || byte ptr [rsi+rax] & _LABEL )
-
         sub rcx,tchar_t
     .endif
-
     mov rdx,[rbx].base
     movzx eax,tchar_t ptr [rcx]
-
     .while ( rcx > rdx && !( ah || byte ptr [rsi+rax] & _LABEL ) )
-
         sub rcx,tchar_t
         movzx eax,tchar_t ptr [rcx]
     .endw
-
     .while ( rcx > rdx && ( ah || byte ptr [rsi+rax] & _LABEL ) )
-
         sub rcx,tchar_t
         movzx eax,tchar_t ptr [rcx]
     .endw
-
     .if ( !( ah || byte ptr [rsi+rax] & _LABEL ) )
-
         movzx eax,tchar_t ptr [rcx+tchar_t]
         .if ( ah || byte ptr [rsi+rax] & _LABEL )
             add rcx,tchar_t
         .endif
         movzx eax,tchar_t ptr [rcx]
     .endif
-
     sub rcx,[rbx].base
     shr ecx,tchar_t-1
-
     .if ( ecx > [rbx].xoffs )
-
         sub ecx,[rbx].xoffs
         mov [rbx].xoffs,0
         mov [rbx].boffs,ecx
@@ -446,27 +364,20 @@ event_prevword proc fastcall uses rsi rbx ti:PTEDIT
         mov [rbx].xoffs,ecx
     .endif
     .return( 1 )
-
-event_prevword endp
+    endp
 
 
 ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
-
     .if ClipIsSelected(rcx)
-
         mov edi,[rcx].clip_so
         mov esi,[rcx].xoffs
         add esi,[rcx].boffs
-
         .if ( esi < edi )
-
             .repeat
                .break .ifd !IncreaseX(rcx)
                 inc esi
             .until ( edi == esi )
-
         .elseif ( esi > edi )
-
             .repeat
                 .if [rcx].xoffs
                     dec [rcx].xoffs
@@ -478,7 +389,6 @@ ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
                 dec esi
             .until ( edi == esi )
         .endif
-
         or  [rcx].flags,TE_MODIFIED
         mov rdi,[rcx].base
         mov eax,[rcx].clip_so
@@ -486,27 +396,22 @@ ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
         lea rax,[rdi+rax*tchar_t]
         lea rdx,[rdi+rdx*tchar_t]
         mov rsi,rcx
-
         _tcscpy(rax, rdx)
         getline(rsi)
         ClipSet(rcx)
         mov eax,1
     .endif
     ret
-
-ClipDelete endp
+    endp
 
 
 ClipCopy proc uses rbx ti:PTEDIT, Cut:BOOL
-
     ldr rbx,ti
     .if ClipIsSelected(rbx) ; get size of selection
-
         mov edx,eax
         mov eax,[rbx].clip_so
         mov rcx,[rbx].base
         lea rcx,[rcx+rax*tchar_t]
-
         .if _clipset(rcx, edx)
             .if Cut
                 ClipDelete(rbx)
@@ -515,26 +420,21 @@ ClipCopy proc uses rbx ti:PTEDIT, Cut:BOOL
         ClipSet(rbx)
     .endif
     .return( 0 )
-
-ClipCopy endp
+    endp
 
 
 ClipPaste proc fastcall uses rbx ti:PTEDIT
-
    .new bo:int_t
    .new xo:int_t
    .new n:int_t
    .new p:string_t
-
     mov rbx,rcx
     .if [rcx].flags & TE_OVERWRITE
         ClipDelete(rcx)
     .else
         ClipSet(rcx)
     .endif
-
     .if _clipget()
-
         mov p,rax
         mov eax,[rbx].xoffs
         mov ecx,[rbx].boffs
@@ -543,9 +443,7 @@ ClipPaste proc fastcall uses rbx ti:PTEDIT
         mov n,edx
         mov xo,eax
         mov bo,ecx
-
         .for ( : n > 0 : n-- )
-
             mov rax,p
             movzx edx,tchar_t ptr [rax]
             add p,tchar_t
@@ -555,33 +453,26 @@ ClipPaste proc fastcall uses rbx ti:PTEDIT
         mov [rbx].xoffs,xo
     .endif
     ClipSet(rbx)
-   .return( 0 )
-
-ClipPaste endp
+    .return( 0 )
+    endp
 
 
 _tiputs proc public uses rsi rdi rbx ti:PTEDIT
-
    .new ci[MAXSCRLINE]:CHAR_INFO
    .new i:int_t
    .new x:byte
-
     ldr rbx,ti
     lea rdi,ci
     mov ecx,[rbx].scols
     mov eax,[rbx].clrattrib
     rep stosd
-
     _tcslen([rbx].base)
     mov rsi,[rbx].base
-
     .if ( eax > [rbx].boffs )
-
         mov eax,[rbx].boffs
         lea rsi,[rsi+rax*tchar_t]
         mov ecx,[rbx].scols
         lea rdi,ci
-
         .repeat
             movzx eax,tchar_t ptr [rsi]
             .break .if !eax
@@ -590,20 +481,15 @@ _tiputs proc public uses rsi rdi rbx ti:PTEDIT
             add rdi,4
         .untilcxz
     .endif
-
     mov edi,[rbx].boffs
     mov ecx,[rbx].clip_eo
-
     .if ( edi < ecx )
-
         sub ecx,edi
         xor eax,eax
         .if ( ecx >= [rbx].scols )
-
             mov ecx,[rbx].scols
         .endif
         .if ( [rbx].clip_so >= edi )
-
             mov eax,[rbx].clip_so
             sub eax,edi
             .if eax <= ecx
@@ -613,7 +499,6 @@ _tiputs proc public uses rsi rdi rbx ti:PTEDIT
             .endif
         .endif
         .if ecx
-
             lea rdi,ci
             lea rdi,[rdi+rax*4+2]
             mov al,[rdi]
@@ -625,9 +510,7 @@ _tiputs proc public uses rsi rdi rbx ti:PTEDIT
             .untilcxz
         .endif
     .endif
-
     .for ( i = 0 : i < [rbx].scols : i++ )
-
         mov ecx,i
         mov eax,[rbx].xpos
         add eax,ecx
@@ -635,8 +518,7 @@ _tiputs proc public uses rsi rdi rbx ti:PTEDIT
         _scputw(x, byte ptr [rbx].ypos, 1, ci[rcx*4])
     .endf
     .return( 0 )
-
-_tiputs endp
+    endp
 
 
 define VK_SETCLIP 0x07
@@ -649,9 +531,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
 
     ldr rax,hwnd
     mov rbx,[rax].TDIALOG.tedit
-
     .ifd !ClipIsSelected(rbx)
-
         ClipSet(rbx) ; reset clipboard if not selected
     .endif
 
@@ -670,15 +550,12 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
     .elseif ( ecx & ( RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED ) )
         mov edx,VK_CONTROL
     .endif
-
     .if ( ecx & ENHANCED_KEY )
-
         .switch eax
         .case VK_UP
         .case VK_DOWN
             ClipSet(rbx)
            .return( 1 ) ; return current event
-
         .case <vk_delete> VK_DELETE
             .if ( edx == VK_SHIFT )
                 ClipCopy(rbx, 1)
@@ -687,7 +564,6 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
             .endc .ifd ClipDelete(rbx)
              event_delete(rbx)
             .endc
-
         .case <vk_insert> VK_INSERT
             .if ( edx == VK_CONTROL )
                 ClipCopy(rbx, 0)
@@ -698,23 +574,18 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
                .endc
             .endif
             .gotosw(VK_UP)
-
         .case VK_SETCLIP
             .if ( eax && edx == VK_SHIFT )
-
                 mov clip_clear,false
                 mov eax,[rbx].boffs
                 add eax,[rbx].xoffs
-
                 .if ( eax >= [rbx].clip_so )
-
                     mov [rbx].clip_eo,eax
                    .endc
                 .endif
                 mov [rbx].clip_so,eax
             .endif
            .endc
-
         .case VK_LEFT
             .if ( edx == VK_CONTROL )
                 event_prevword(rbx)
@@ -722,22 +593,17 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
             .endif
             .gotosw(VK_UP) .ifd !event_left(rbx)
             .gotosw(VK_SETCLIP)
-
         .case VK_RIGHT
             .if ( edx == VK_CONTROL )
                 event_nextword(rbx)
                .endc
             .endif
             .gotosw(VK_UP) .ifd !event_right(rbx)
-
             .if ( edx == VK_SHIFT )
-
                 mov clip_clear,false
                 mov eax,[rbx].boffs
                 add eax,[rbx].xoffs
-
                 .if ( eax >= [rbx].clip_so )
-
                     mov edx,eax
                     dec edx
                     .if ( edx == [rbx].clip_so )
@@ -752,7 +618,6 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
                 mov [rbx].clip_so,eax
             .endif
             .endc
-
         .case VK_HOME
             event_home(rbx)
            .gotosw(VK_SETCLIP)
@@ -760,9 +625,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
             event_toend(rbx)
            .gotosw(VK_SETCLIP)
         .endsw
-
     .else
-
         .switch eax
         .case VK_ESCAPE
         .case VK_RETURN
@@ -775,7 +638,6 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
             .gotosw(VK_RETURN) .if !( [rbx].flags & TE_CONTROL )
         .default
             .if ( edx == VK_CONTROL )
-
                 .if ( cx == 'C' ) ; Copy
                     jmp vk_insert
                 .endif
@@ -793,24 +655,19 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
            .endc
         .endsw
     .endif
-
     .if ( clip_delete )
         ClipDelete(rbx)
     .elseif ( clip_clear )
         ClipSet(rbx)
     .endif
-
     .if ( add_char )
-
         event_add(rbx, wParam)
     .endif
-
     mov ecx,[rbx].xpos
     add ecx,[rbx].xoffs
     _gotoxy(ecx, [rbx].ypos)
-   .return(_tiputs(rbx))
-
-wm_char endp
+    .return(_tiputs(rbx))
+    endp
 
     assume rcx:THWND
 
@@ -829,7 +686,6 @@ _tiproc proc public uses rsi rdi rbx hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lP
     mov al,[rcx].rc.x
     add al,[rsi].TDIALOG.rc.x
     mov [rbx].xpos,eax
-
     .switch uiMsg
     .case WM_SETFOCUS
         mov ecx,eax
@@ -853,21 +709,15 @@ _tiproc proc public uses rsi rdi rbx hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lP
        .return( _tiputs(rbx) )
     .case WM_LBUTTONDOWN
         .endc
-
     .case WM_CHAR
         .if ( edx )
-
             mov ebx,edx
-
             ; inserting char needs focus..
-
             mov al,[rsi].TDIALOG.index
            .endc .if al != [rcx].oindex
-
            .return wm_char(rcx, ebx, edi)
         .endif
         .endc
-
     .case WM_KEYDOWN
         .endc .if !( edi & ENHANCED_KEY )
         .switch edx
@@ -887,8 +737,6 @@ _tiproc proc public uses rsi rdi rbx hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lP
         .endsw
     .endsw
     .return( 1 )
-    ret
-
-_tiproc endp
+    endp
 
     end

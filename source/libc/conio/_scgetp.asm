@@ -26,14 +26,11 @@ _scgetp proc x:BYTE, y:BYTE, l:BYTE
     mov     rcx,rax
     mov     al,x
     add     al,dl
-
     .if ( al > dh )
-
         mov dl,dh
         sub dl,x
     .endif
     ret
-
-_scgetp endp
+    endp
 
     end

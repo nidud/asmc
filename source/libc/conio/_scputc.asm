@@ -17,7 +17,6 @@ _scputc proc x:BYTE, y:BYTE, l:BYTE, a:int_t
     .endf
     _cendpaint()
     ret
-
-_scputc endp
+    endp
 
     end

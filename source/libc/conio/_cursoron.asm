@@ -11,7 +11,6 @@ include conio.inc
 _cursoron proc
 
   local cu:CONSOLE_CURSOR_INFO
-
 ifdef __TTY__
     mov rcx,_console
     mov cu.dwSize,[rcx].TCONSOLE.csize
@@ -21,7 +20,6 @@ endif
     mov cu.bVisible,1
     _setconsolecursorinfo(_confh, &cu)
     ret
-
-_cursoron endp
+    endp
 
     end

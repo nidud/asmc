@@ -22,7 +22,6 @@ _dlclose proc uses rbx hwnd:THWND
     _consunlink(rbx)
     free(rbx)
     ret
-
-_dlclose endp
+    endp
 
     end

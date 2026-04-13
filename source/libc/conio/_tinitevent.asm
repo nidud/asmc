@@ -12,20 +12,16 @@ include conio.inc
 .code
 
 _initevent proc event:DPROC
-
     ldr rcx,event
     mov rax,tgetevent
     mov tgetevent,rcx
     ret
-
-_initevent endp
+    endp
 
 __initevent proc private
-
     _initevent(&getevent)
     ret
-
-__initevent endp
+    endp
 
 .pragma init(__initevent, 50)
 

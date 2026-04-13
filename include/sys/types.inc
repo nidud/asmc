@@ -5,9 +5,10 @@ include libc.inc
 ifndef _TIME_T_DEFINED
 define _TIME_T_DEFINED
 ifdef _WIN64
-time_t typedef sqword
+time_t  typedef sqword
 else
-time_t typedef sdword
+time_t  typedef sdword
+define _USE_32BIT_TIME_T
 endif
 endif
 ifndef _INO_T_DEFINED
@@ -22,11 +23,7 @@ ifndef _OFF_T_DEFINED
 define _OFF_T_DEFINED
 off32_t typedef sdword
 off64_t typedef qword
-ifdef _WIN64
-off_t typedef qword
-else
 off_t typedef sdword
-endif
 endif
 ifndef _UID_T_DEFINED
 define _UID_T_DEFINED

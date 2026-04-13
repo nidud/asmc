@@ -13,9 +13,7 @@ include stdlib.inc
 ifdef __TTY__
 
 _getconsolecursorinfo proc WINAPI fh:HANDLE, cp:PCONSOLE_CURSOR_INFO
-
     ldr rdx,cp
-
     mov rcx,_console
     mov eax,[rcx].TCONSOLE.csize
     mov [rdx].CONSOLE_CURSOR_INFO.dwSize,eax
@@ -23,19 +21,14 @@ _getconsolecursorinfo proc WINAPI fh:HANDLE, cp:PCONSOLE_CURSOR_INFO
     mov [rdx].CONSOLE_CURSOR_INFO.bVisible,eax
     mov eax,1
     ret
-
-_getconsolecursorinfo endp
+    endp
 
 _setconsolecursorinfo proc WINAPI uses rbx fh:HANDLE, cp:PCONSOLE_CURSOR_INFO
-
     ldr rbx,cp
-
     mov rcx,_console
     mov [rcx].TCONSOLE.cvisible,[rbx].CONSOLE_CURSOR_INFO.bVisible
     mov eax,[rbx].CONSOLE_CURSOR_INFO.dwSize
-
     .if ( eax != [rcx].TCONSOLE.csize )
-
         .if ( eax > CURSOR_BAR )
             mov eax,CURSOR_DEFAULT
         .endif
@@ -50,11 +43,9 @@ _setconsolecursorinfo proc WINAPI uses rbx fh:HANDLE, cp:PCONSOLE_CURSOR_INFO
     fflush(_confp)
     mov eax,1
     ret
-
-_setconsolecursorinfo endp
+    endp
 
 _setconsolecursorposition proc WINAPI fh:HANDLE, pos:COORD
-
     ldr     edx,pos
     mov     ecx,edx
     shr     edx,16
@@ -64,8 +55,7 @@ _setconsolecursorposition proc WINAPI fh:HANDLE, pos:COORD
     fprintf(_confp, CSI "%d;%dH", edx, ecx)
     fflush(_confp)
     ret
-
-_setconsolecursorposition endp
+    endp
 
     assume rbx:PCONSOLE_SCREEN_BUFFER_INFO
 
@@ -74,17 +64,14 @@ _getconsolescreenbufferinfo proc WINAPI uses rbx fh:HANDLE, pc:PCONSOLE_SCREEN_B
    .new a:CINPUT
 
     ldr rbx,pc
-
     xor eax,eax
     mov [rbx].wAttributes,ax
     mov [rbx].srWindow.Top,ax
     mov [rbx].srWindow.Left,ax
     mov [rbx].dwCursorPosition,eax
     mov [rbx].dwSize,eax
-
     _write(_confd, CSI "6n", 4) ; get cursor
     .ifd ( _readansi( &a ) && a.count == 2 )
-
         mov eax,a.n
         mov ecx,a.n[4]
         .if ( eax )
@@ -96,10 +83,8 @@ _getconsolescreenbufferinfo proc WINAPI uses rbx fh:HANDLE, pc:PCONSOLE_SCREEN_B
         mov [rbx].dwCursorPosition.Y,ax
         mov [rbx].dwCursorPosition.X,cx
     .endif
-
     _write(_confd, ESC "7" CSI "256;256H" CSI "6n", 16)
     .ifd ( _readansi( &a ) && a.count == 2 )
-
         mov eax,a.n
         mov ecx,a.n[4]
         mov [rbx].dwSize.Y,ax
@@ -118,16 +103,13 @@ _getconsolescreenbufferinfo proc WINAPI uses rbx fh:HANDLE, pc:PCONSOLE_SCREEN_B
     _write(_confd, ESC "8", 2)
     mov eax,1
     ret
-
-_getconsolescreenbufferinfo endp
+    endp
 
     assume rbx:PCONSOLE_SCREEN_BUFFER_INFOEX
 
 _getconsolescreenbufferinfoex proc WINAPI uses rsi rdi rbx fh:HANDLE, pc:PCONSOLE_SCREEN_BUFFER_INFOEX
-
     ldr rbx,pc
     ldr rcx,fh
-
     _getconsolescreenbufferinfo( rcx, &[rbx].dwSize )
     mov [rbx].wPopupAttributes,0
     mov [rbx].bFullscreenSupported,1
@@ -137,8 +119,7 @@ _getconsolescreenbufferinfoex proc WINAPI uses rsi rdi rbx fh:HANDLE, pc:PCONSOL
     rep movsd
     mov eax,1
     ret
-
-_getconsolescreenbufferinfoex endp
+    endp
 
 _writeconsoleoutputw proc WINAPI uses rbx hConsoleOutput:HANDLE, lpBuffer:PCHAR_INFO,
         dwBufferSize:COORD, dwBufferCoord:COORD, lpWriteRegion:PSMALL_RECT
@@ -154,7 +135,6 @@ _writeconsoleoutputw proc WINAPI uses rbx hConsoleOutput:HANDLE, lpBuffer:PCHAR_
 
     ldr rbx,lpBuffer
     ldr rcx,lpWriteRegion
-
     movzx   eax,[rcx].SMALL_RECT.Left
     inc     eax
     mov     x,eax
@@ -165,22 +145,16 @@ _writeconsoleoutputw proc WINAPI uses rbx hConsoleOutput:HANDLE, lpBuffer:PCHAR_
     sub     ax,[rcx].SMALL_RECT.Left
     inc     eax
     mov     cols,eax
-
     fprintf(_confp, CSI "%d;%dH", y, x)
-
     .for ( l = cols : l : l--, rbx += 4 )
-
         movzx   eax,byte ptr [rbx+2]
         mov     ecx,eax
         and     eax,0x0F
         shr     ecx,4
-
         .if ( eax != foreground || ecx != background )
-
             mov color_changed,1
             mov foreground,eax
             mov background,ecx
-
             lea rdx,_terminalcolorid
             mov al,[rdx+rax]
             mov cl,[rdx+rcx]
@@ -195,9 +169,6 @@ _writeconsoleoutputw proc WINAPI uses rbx hConsoleOutput:HANDLE, lpBuffer:PCHAR_
     .endif
     mov eax,1
     ret
-
-_writeconsoleoutputw endp
-
+    endp
 endif
-
     end

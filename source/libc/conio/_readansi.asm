@@ -162,11 +162,9 @@ _readansi proc uses rbx csi:PCINPUT
             mov [rbx].param,al
         .endsw
     .endw
-
     mov ecx,value
     add [rbx].count,cl
     .if ( [rbx].final == 'M' )
-
         _getch()
         mov [rbx].param,al
         _getch()
@@ -179,7 +177,6 @@ _readansi proc uses rbx csi:PCINPUT
     .endif
     mov eax,count
     ret
-
-_readansi endp
+    endp
 
     end

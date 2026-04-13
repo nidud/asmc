@@ -209,7 +209,6 @@ compress:
     jnz     compress
 .8:
     retn
-
-_rczip endp
+    endp
 
     end

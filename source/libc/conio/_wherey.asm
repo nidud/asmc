@@ -9,15 +9,11 @@ include conio.inc
     .code
 
 _wherey proc
-
     .new ci:CONSOLE_SCREEN_BUFFER_INFO
-
     .ifd _getconsolescreenbufferinfo(_confh, &ci)
-
         movzx eax,ci.dwCursorPosition.Y
     .endif
     ret
-
-_wherey endp
+    endp
 
     end

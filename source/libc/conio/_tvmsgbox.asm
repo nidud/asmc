@@ -72,10 +72,8 @@ INFO PBINFO {
     .code
 
 WndProc proc private hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
-
     ldr eax,uiMsg
     .if ( eax == WM_CREATE || eax == WM_CLOSE )
-
         .return( 0 )
     .endif
 ifdef _WIN64
@@ -84,8 +82,7 @@ else
     _defwinproc(hwnd, uiMsg, wParam, lParam)
 endif
     ret
-
-WndProc endp
+    endp
 
     assume rbx:THWND
     assume rcx:THWND
@@ -111,12 +108,9 @@ _vmsgbox proc uses rbx flags:uint_t, title:tstring_t, string:tstring_t
     lea rcx,INFO
     add rcx,rax
     mov pb,[rcx]
-
     .if ( title == NULL )
-
         mov edx,flags
         and edx,MB_ICONERROR or MB_ICONQUESTION or MB_ICONWARNING
-
         .if ( edx == MB_ICONERROR )
             mov title,&@CStr("Error")
         .elseif ( edx == MB_ICONWARNING )
@@ -129,9 +123,7 @@ _vmsgbox proc uses rbx flags:uint_t, title:tstring_t, string:tstring_t
     mov line,0
     mov width,_tcslen(title)
     mov rbx,string
-
     .if tchar_t ptr [rbx]
-
         .repeat
             .break .if !_tcschr(rbx, 10)
             mov rdx,rax
@@ -150,20 +142,16 @@ endif
         mov width,eax
     .endif
     mov eax,width
-
     mov dl,2
     mov dh,76
     .if ( al && al < 70 )
-
         mov dh,al
         add dh,8
         mov dl,80
         sub dl,dh
         shr dl,1
     .endif
-
     .if ( dh < 48 )
-
         mov dl,16
         mov dh,48
     .endif
@@ -186,7 +174,6 @@ endif
         mov eax,W_MOVEABLE or W_TRANSPARENT or W_UNICODE
         mov attrib,cx
     .endif
-
     movzx ebx,pb.count
     or  eax,W_CURSOR
     mov hwnd,_dlopen(rc, ebx, eax, 0)
@@ -196,13 +183,10 @@ endif
     mov eax,flags
     and eax,0x00000070
     .if ( eax == MB_ICONERROR || eax == MB_ICONWARNING )
-
         _at BG_ERROR,7,' '
         _rcclear([rbx].rc, [rbx].window, eax)
     .endif
-
     _dltitle(rbx, title)
-
     mov rc,[rbx].rc
     mov al,rc.row
     mov rc.row,1
@@ -214,9 +198,7 @@ endif
 
     movzx eax,pb.count
     .new count:int_t = eax
-
     .for ( edx = 0, ecx = 0 : ecx < count : ecx++ )
-
         add dl,pb.col[rcx]
         add dl,2
     .endf
@@ -225,9 +207,7 @@ endif
     add  eax,edx
     shr  eax,1
     sub  rc.x,al
-
     .for ( rbx=[rbx].object, ecx=0 : ecx < count : ecx++, rbx=[rbx].next )
-
         mov al,pb.col[rcx]
         sub al,2
         add al,4
@@ -242,15 +222,11 @@ endif
         add al,3
         add rc.x,al
     .endf
-
     .for ( rbx=hwnd, rbx=[rbx].object : rbx : rbx=[rbx].next )
-
         mov rcx,hwnd
         mov [rbx].window,_rcbprc([rcx].rc, [rbx].rc, [rcx].window)
-
         _dlinit(rbx, [rbx].buffer)
     .endf
-
     mov rbx,hwnd
     mov rcx,[rbx].object
     mov eax,flags
@@ -262,18 +238,14 @@ endif
         mov rcx,[rcx].next
     .endif
     mov [rbx].index,[rcx].oindex
-
     mov rc,[rbx].rc
     mov rc.y,2
     mov rc.x,2
     sub rc.col,4
     mov p,string
-
     .repeat
-
         .break .if !tchar_t ptr [rax]
         .if ( _tcschr(rax, 10) != NULL )
-
             mov tchar_t ptr [rax],0
             add rax,tchar_t
         .endif
@@ -289,7 +261,6 @@ endif
     _dlclose(rax)
     mov eax,ebx
     ret
-
-_vmsgbox endp
+    endp
 
     end

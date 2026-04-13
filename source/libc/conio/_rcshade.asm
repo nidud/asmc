@@ -47,7 +47,6 @@ _rcshade proc uses rbx rc:TRECT, wp:PCHAR_INFO, shade:int_t
     movzx eax,b.col
     _rcxchg(r, &[rbx+rax*4])
     ret
-
-_rcshade endp
+    endp
 
     end

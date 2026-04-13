@@ -9,7 +9,6 @@ include conio.inc
     .code
 
 wcputxg proc private
-
     add rcx,2
     .repeat
         and [rcx],ah
@@ -18,22 +17,18 @@ wcputxg proc private
         dec edx
     .until !edx
     ret
-
-wcputxg endp
+    endp
 
 wcputa proc p:PCHAR_INFO, l:int_t, attrib:int_t
-
     ldr eax,attrib
     and eax,0xFF
     ldr rcx,p
     ldr edx,l
     wcputxg()
     ret
-
-wcputa endp
+    endp
 
 wcputbg proc p:PCHAR_INFO, l:int_t, attrib:int_t
-
     ldr eax,attrib
     mov ah,0x0F
     and al,0xF0
@@ -41,11 +36,9 @@ wcputbg proc p:PCHAR_INFO, l:int_t, attrib:int_t
     ldr edx,l
     wcputxg()
     ret
-
-wcputbg endp
+    endp
 
 wcputfg proc p:PCHAR_INFO, l:int_t, attrib:int_t
-
     ldr eax,attrib
     mov ah,0x70
     and al,0x0F
@@ -53,8 +46,6 @@ wcputfg proc p:PCHAR_INFO, l:int_t, attrib:int_t
     ldr edx,l
     wcputxg()
     ret
-
-wcputfg endp
-
+    endp
 
     END

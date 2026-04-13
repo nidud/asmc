@@ -46,8 +46,7 @@ if not defined(__UNIX__) and defined(__TTY__)
     SetConsoleOutputCP(65001)
 endif
     ret
-
-__initconout endp
+    endp
 
 if not defined(__UNIX__) and defined(__TTY__)
 __exitconout proc private
@@ -57,8 +56,7 @@ __exitconout proc private
     .endif
     SetConsoleOutputCP(_conoutcp)
     ret
-
-__exitconout endp
+    endp
 
 .pragma exit(__exitconout, 10)
 endif

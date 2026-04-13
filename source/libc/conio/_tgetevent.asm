@@ -28,12 +28,12 @@ include conio.inc
 mousex proc
     mov eax,mouse_x
     ret
-mousex endp
+    endp
 
 mousey proc
     mov eax,mouse_y
     ret
-mousey endp
+    endp
 
 
 readevent proc private
@@ -52,7 +52,6 @@ endif
         _tidle()
         mov msg.message,0
     .endif
-
 ifdef __TTY__
     _write(_confd, RST_ANY_EVENT_MOUSE, 8)
 else
@@ -82,60 +81,46 @@ endif
     .endsw
     xor eax,eax
     ret
-
-readevent endp
+    endp
 
 
 mousep proc
-
     readevent()
     mov eax,mouse_b
     and eax,MK_LBUTTON or MK_RBUTTON
     ret
-
-mousep endp
+    endp
 
 
 mousewait proc uses rbx x:int_t, y:int_t, l:int_t
-
     ldr ebx,x
     add ebx,l
-
     .whiled mousep()
-
         .break .if mouse_y != y
         .break .if mouse_x < x
         .break .if mouse_x > ebx
     .endw
     ret
-
-mousewait endp
+    endp
 
 
 msloop proc
-
     .repeat
     .untild !mousep()
     ret
-
-msloop endp
+    endp
 
 
 getkey proc
-
     readevent()
-
     movzx ecx,word ptr msg.wParam
     mov edx,msg.message
-
     .switch edx
     .case WM_KEYDOWN
         mov  edx,dword ptr msg.lParam
-
         .endc .if ( edx & KEY_WMCHAR )
         .endc .if ( cx == VK_SHIFT )
         .endc .if ( cx == VK_CONTROL )
-
         shl     ecx,8
         mov     eax,ecx
         or      ecx,KEY_ALT
@@ -157,16 +142,12 @@ getkey proc
        .endc
     .endsw
     ret
-
-getkey endp
+    endp
 
 
 getevent proc
-
     .whiled !getkey()
-
         .if ( msg.message == WM_MOUSEWHEEL )
-
             mov ecx,dword ptr msg.wParam
             mov eax,KEY_MOUSEUP
             .ifs ecx <= 0
@@ -174,16 +155,13 @@ getevent proc
             .endif
             .break
         .endif
-
         .if ( mouse_b & MK_LBUTTON or MK_RBUTTON )
-
             _postmessage(0, msg.message, msg.wParam, msg.lParam)
             mov eax,MOUSECMD
            .break
         .endif
     .endw
     ret
-
-getevent endp
+    endp
 
     END

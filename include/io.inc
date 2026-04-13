@@ -5,9 +5,17 @@ include libc.inc
 
 .pragma comment(lib, libc, msvcrt)
 
+ifndef _TIME32_T_DEFINED
+define _TIME32_T_DEFINED
+__time32_t typedef sdword
+endif
 ifndef _TIME64_T_DEFINED
 define _TIME64_T_DEFINED
 __time64_t typedef sqword
+endif
+ifndef _FSIZE_T_DEFINED
+define _FSIZE_T_DEFINED
+_fsize_t	typedef dword
 endif
 
 ifdef _CRTBLD
@@ -137,51 +145,115 @@ endif
 ifndef _TIME_T_DEFINED
 define _TIME_T_DEFINED
 ifdef _WIN64
-time_t		typedef sqword
+time_t	typedef sqword
 else
-time_t		typedef sdword
+time_t	typedef sdword
+define _USE_32BIT_TIME_T
 endif
 endif
 
 .pragma pack(push, size_t)
 
-_finddata_t	STRUC
+_finddata32_t	STRUC
 attrib		uint_t ?
-time_create	time_t ?	; File creation time
-time_access	time_t ?	; Last access time
-time_write	time_t ?	; Last modification time
-size		uint_t ?
+time_create	__time32_t ?	; File creation time
+time_access	__time32_t ?	; Last access time
+time_write	__time32_t ?	; Last modification time
+size		_fsize_t ?
 name		char_t 260 dup(?)
-_finddata_t	ENDS
+_finddata32_t	ENDS
 
-_finddatai64_t	STRUC
+_finddata32i64_t STRUC
 attrib		uint_t ?
-time_create	time_t ?	; File creation time
-time_access	time_t ?	; Last access time
-time_write	time_t ?	; Last modification time
+time_create	__time32_t ?
+time_access	__time32_t ?
+time_write	__time32_t ?
 size		uint64_t ?
 name		char_t 260 dup(?)
-_finddatai64_t	ENDS
+_finddata32i64_t ENDS
+
+__finddata64_t STRUC
+attrib		uint_t ?
+time_create	__time64_t ?
+time_access	__time64_t ?
+time_write	__time64_t ?
+size		uint64_t ?
+name		char_t 260 dup(?)
+__finddata64_t ENDS
+
+_finddata64i32_t STRUC
+attrib		uint_t ?
+time_create	__time64_t ?
+time_access	__time64_t ?
+time_write	__time64_t ?
+size		_fsize_t ?
+name		char_t 260 dup(?)
+_finddata64i32_t ENDS
+
+ifdef _USE_32BIT_TIME_T
+_finddata_t	typedef _finddata32_t
+_finddatai64_t	typedef _finddata32i64_t
+define _findfirst	<_findfirst32>
+define _findnext	<_findnext32>
+define _findfirsti64	<_findfirst32i64>
+define _findnexti64	<_findnext32i64>
+else
+_finddata_t	typedef _finddata64i32_t
+_finddatai64_t	typedef __finddata64_t
+define _findfirst	<_findfirst64i32>
+define _findnext	<_findnext64i32>
+define _findfirsti64	<_findfirst64>
+define _findnexti64	<_findnext64>
+endif
 
 ifndef _WFINDDATA_T_DEFINED
 define _WFINDDATA_T_DEFINED
-_wfinddata_t	STRUC
+_wfinddata32_t	STRUC
 attrib		uint_t ?
-time_create	time_t ?	;; -1 for FAT file systems
-time_access	time_t ?	;; -1 for FAT file systems
-time_write	time_t ?
-size		uint_t ?
+time_create	__time32_t ?	;; -1 for FAT file systems
+time_access	__time32_t ?	;; -1 for FAT file systems
+time_write	__time32_t ?
+size		_fsize_t ?
 name		wchar_t 260 dup(?)
-_wfinddata_t	ENDS
-if _INTEGRAL_MAX_BITS GE 64
-_wfinddatai64_t STRUC
+_wfinddata32_t	ENDS
+_wfinddata32i64_t STRUC
 attrib		uint_t ?
-time_create	time_t ?
-time_access	time_t ?
-time_write	time_t ?
+time_create	__time32_t ?
+time_access	__time32_t ?
+time_write	__time32_t ?
 size		uint64_t ?
 name		wchar_t 260 dup(?)
-_wfinddatai64_t ENDS
+_wfinddata32i64_t ENDS
+__wfinddata64_t STRUC
+attrib		uint_t ?
+time_create	__time64_t ?
+time_access	__time64_t ?
+time_write	__time64_t ?
+size		uint64_t ?
+name		wchar_t 260 dup(?)
+__wfinddata64_t ENDS
+_wfinddata64i32_t STRUC
+attrib		uint_t ?
+time_create	__time64_t ?
+time_access	__time64_t ?
+time_write	__time64_t ?
+size		_fsize_t ?
+name		wchar_t 260 dup(?)
+_wfinddata64i32_t ENDS
+ifdef _USE_32BIT_TIME_T
+_wfinddata_t	typedef _wfinddata32_t
+_wfinddatai64_t typedef _wfinddata32i64_t
+define _wfindfirst	<_wfindfirst32>
+define _wfindnext	<_wfindnext32>
+define _wfindfirsti64	<_wfindfirst32i64>
+define _wfindnexti64	<_wfindnext32i64>
+else
+_wfinddata_t	typedef _wfinddata64i32_t
+_wfinddatai64_t typedef __wfinddata64_t
+define _wfindfirst	<_wfindfirst64i32>
+define _wfindnext	<_wfindnext64i32>
+define _wfindfirsti64	<_wfindfirst64>
+define _wfindnexti64	<_wfindnext64>
 endif
 endif
 

@@ -9,7 +9,6 @@ include conio.inc
     .code
 
 _rcgetw proc rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE
-
     movzx   eax,rc.col
     mul     y
     movzx   edx,x
@@ -18,7 +17,6 @@ _rcgetw proc rc:TRECT, p:PCHAR_INFO, x:BYTE, y:BYTE
     add     rdx,p
     mov     eax,[rdx]
     ret
-
-_rcgetw endp
+    endp
 
     end

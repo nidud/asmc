@@ -26,7 +26,6 @@ _rsopen proc uses rsi rdi rbx res:PIDD
    .new rdata:string_t
 
     ldr     rbx,res
-
     movzx   eax,[rbx].flags
     or      eax,W_UNICODE
     mov     rsize,_rcmemsize([rbx].rc, eax)
@@ -36,19 +35,15 @@ _rsopen proc uses rsi rdi rbx res:PIDD
     imul    eax,eax,TDIALOG
     mov     dsize,eax
     lea     rdi,[rbx+RIDD]
-
     .for ( ecx = 0, edx = 0 : dl < [rbx].count : edx++, rdi+=ROBJ )
-
         movzx eax,[rdi].ROBJ.flags
         .if ( eax & O_LIST )
-
             mov olist,TLIST
         .endif
         and eax,O_TYPEMASK
         cmp eax,O_TEDIT
         mov al,[rdi].ROBJ.count
         .ifz
-
             add ecx,TEDIT
 ifdef _UNICODE
             add eax,eax
@@ -57,7 +52,6 @@ endif
         shl eax,4
         add ecx,eax
     .endf
-
     add     ecx,olist
     mov     xsize,ecx
     add     ecx,dsize
@@ -65,17 +59,14 @@ endif
     mov     size,ecx
     mov     hwnd,malloc(ecx)
     .return .if !rax
-
     mov     rsi,rax
     mov     rdi,rax
     xor     eax,eax
     mov     ecx,size
     rep     stosb
-
     mov     [rsi].rc,[rbx].rc
     mov     [rsi].index,[rbx].index
     mov     [rsi].count,[rbx].count
-
     mov     eax,count
     inc     eax
     imul    edx,eax,TDIALOG
@@ -85,7 +76,6 @@ endif
     imul    edx,eax,ROBJ
     add     rdx,rbx
     mov     rdata,rdx
-
     lea     rax,[rsi+TDIALOG]
     cmp     cl,[rbx].count
     cmovz   rax,rcx
@@ -97,12 +87,9 @@ endif
     or      eax,W_ISOPEN
     or      eax,edx
     mov     [rsi].flags,ax
-
     .for ( rdi = rsi : ecx < count : ecx++ )
-
         add     rsi,TDIALOG
         add     rbx,ROBJ
-
         movzx   eax,[rbx].flags
         and     eax,O_RESBITS
         or      eax,O_WNDPROC or W_CHILD
@@ -116,11 +103,9 @@ endif
         mov     [rsi].next,rax
     .endf
     mov     [rsi].next,NULL
-
     assume  rbx:THWND
     mov     rbx,rdi
     invoke  _rcunzip([rbx].rc, [rbx].window, rdata, [rbx].flags)
-
     mov     edi,dsize
     add     edi,rsize
     add     rdi,rbx
@@ -131,9 +116,7 @@ endif
     cmovz   rcx,rax
     mov     [rbx].llist,rcx
     add     rdi,rax
-
     .for ( rsi = [rbx].object : rsi : rsi = [rsi].next )
-
         movzx   eax,[rbx].rc.col
         mul     [rsi].rc.y
         movzx   ecx,[rsi].rc.x
@@ -143,7 +126,6 @@ endif
         mov     [rsi].window,rax
         movzx   edx,[rsi].flags
         and     edx,O_TYPEMASK
-
         lea     rcx,_tiproc
         lea     rax,_defwinproc
         cmp     edx,O_TEDIT
@@ -153,11 +135,8 @@ endif
             mov [rsi].tedit,rdi
             add rdi,TEDIT
         .endif
-
         .if ( [rsi].count )
-
             .if ( edx == O_TEDIT )
-
                 lea     rcx,[rdi-TEDIT]
                 assume  rcx:PTEDIT
                 movzx   eax,[rsi].count
@@ -189,13 +168,11 @@ endif
             .endif
         .endif
     .endf
-
     .if ( [rbx].flags & W_CURSOR )
         _getcursor(&[rbx].cursor)
     .endif
     _conslink(rbx)
     ret
-
-_rsopen endp
+    endp
 
     end

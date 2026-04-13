@@ -11,9 +11,7 @@ include conio.inc
 rcmove proc uses rbx pRECT:ptr TRECT, p:PCHAR_INFO, flag:int_t, x:int_t, y:int_t
 
     ldr rbx,pRECT
-
     .ifd rchide([rbx], flag, p)
-
         mov al,byte ptr x
         mov ah,byte ptr y
         mov [rbx],ax
@@ -23,7 +21,6 @@ rcmove proc uses rbx pRECT:ptr TRECT, p:PCHAR_INFO, flag:int_t, x:int_t, y:int_t
     .endif
     mov eax,[rbx]
     ret
-
-rcmove endp
+    endp
 
     end

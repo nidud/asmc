@@ -19,15 +19,12 @@ _dlgetfocus proc hwnd:THWND
     movzx   edx,word ptr [rcx].rc
 
     .for ( rcx = [rcx].object : rcx : rcx = [rcx].next )
-
         .if ( al == [rcx].oindex )
-
             add edx,[rcx].rc
             .return( rcx )
         .endif
     .endf
     .return( 0 )
-
-_dlgetfocus endp
+    endp
 
     end

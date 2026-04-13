@@ -103,7 +103,6 @@ _rcframe proc uses rdi rbx wz:TRECT, rc:TRECT, wp:PCHAR_INFO, type:int_t, attrib
             stosd
             mov     [rdi+rcx*4],eax
         .endf
-
         mov     rdi,rbx
         mov     ax,ft.BottomLeft
         stosd
@@ -112,23 +111,17 @@ _rcframe proc uses rdi rbx wz:TRECT, rc:TRECT, wp:PCHAR_INFO, type:int_t, attrib
         rep     stosd
         mov     ax,ft.BottomRight
         stosd
-
     .else
-
         mov     [rdi],ax
         mov     ax,ft.Horizontal
         add     rdi,4
-
         .for ( cl = 0 : cl < cols : cl++, rdi += 4 )
-
             mov [rdi],ax
         .endf
-
         mov     ax,ft.TopRight
         mov     [rdi],ax
         mov     ax,ft.Vertical
         movzx   ecx,cols
-
         .for ( : rows : rows-- )
 
             mov rdi,rbx
@@ -136,22 +129,18 @@ _rcframe proc uses rdi rbx wz:TRECT, rc:TRECT, wp:PCHAR_INFO, type:int_t, attrib
             mov [rdi],ax
             mov [rdi+rcx*4+4],ax
         .endf
-
         mov     rdi,rbx
         mov     ax,ft.BottomLeft
         mov     [rdi],ax
         add     rdi,4
         mov     ax,ft.Horizontal
-
         .for ( cl = 0 : cl < cols : cl++, rdi += 4 )
-
             mov [rdi],ax
         .endf
         mov     ax,ft.BottomRight
         mov     [rdi],ax
     .endif
     ret
-
-_rcframe endp
+    endp
 
     end

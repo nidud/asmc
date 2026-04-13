@@ -10,10 +10,8 @@ include tchar.inc
     .code
 
 WndProc proc private hwnd:THWND, uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
-
     ldr eax,uiMsg
     .if ( eax == WM_CREATE || eax == WM_CLOSE )
-
         .return( 0 )
     .endif
 ifdef _WIN64
@@ -22,8 +20,7 @@ else
     _defwinproc(hwnd, uiMsg, wParam, lParam)
 endif
     ret
-
-WndProc endp
+    endp
 
     assume rbx:THWND
     assume rcx:THWND
@@ -79,7 +76,6 @@ _tgetline proc uses rdi rbx title:tstring_t, buffer:tstring_t, line_size:int_t, 
     invoke  _dlclose(rax)
     mov     eax,ebx
     ret
-
-_tgetline endp
+    endp
 
     end

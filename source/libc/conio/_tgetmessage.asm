@@ -24,15 +24,11 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
     .new Input:INPUT_RECORD
 
     .while 1
-
         mov rbx,hwnd
         mov rcx,_console
         mov rdx,[rcx].TCONSOLE.msgptr
-
         .if ( [rdx].message && !rbx )
-
             returnmsg:
-
             mov rbx,msg
             mov [rbx].next,rdx
             mov [rbx].hwnd,[rdx].hwnd
@@ -40,45 +36,30 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
             mov [rbx].lParam,[rdx].lParam
             mov [rbx].message,[rdx].message
             mov [rdx].message,WM_NULL
-
             .if ( eax == WM_QUIT )
-
                 _dispatchmsg(rbx)
                 .return( 0 )
             .endif
             .return( 1 )
-
         .elseif ( [rdx].message && ebx == -1 )
-
             .for ( rcx = [rdx].prev, rbx = 0 : rdx != rcx : rdx = [rdx].next )
-
                 .if ( rbx == [rdx].hwnd )
-
                     jmp returnmsg
                 .endif
             .endf
-
         .elseif ( [rdx].message )
-
             .for ( rcx = [rdx].prev : rdx != rcx : rdx = [rdx].next )
-
                 .if ( rbx == [rdx].hwnd )
-
                     jmp returnmsg
                 .endif
             .endf
         .endif
-
         .while 1
-
             .ifd ( _readinput(&Input) == -1 )
-
                 .return
             .endif
             .break .if ( eax )
-
             .if ( eax == Idle )
-
                 .return
             .endif
             _tidle()
@@ -257,7 +238,6 @@ endif
         .endsw
     .endw
     ret
-
-_getmessage endp
+    endp
 
     end

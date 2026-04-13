@@ -24,7 +24,6 @@ _tcprintf proc format:tstring_t, argptr:vararg
     mov tchar_t ptr [rax],0
     _cputts(&_bufin)
     ret
-
-_tcprintf endp
+    endp
 
     end

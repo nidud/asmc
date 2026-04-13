@@ -15,20 +15,15 @@ _cgetts proc uses rbx string:tstring_t
 
    .new len:tchar_t = 0
    .new maxlen:tchar_t
-
     ldr rbx,string
     .if ( rbx == NULL )
         .return( NULL )
     .endif
-
     mov maxlen,[rbx]
     lea rbx,[rbx+2*tchar_t]
     dec maxlen
-
     .while ( len < maxlen )
-
         _gettch()
-
         movzx ecx,len
         .switch
         .case eax == 8 ; '\b'
@@ -59,7 +54,6 @@ endif
             _puttch( eax )
         .endsw
     .endw
-
     movzx ecx,maxlen
     mov [rbx+rcx*tchar_t],0
     movzx ecx,len
@@ -70,7 +64,6 @@ else
 endif
     mov rax,rbx
     ret
-
-_cgetts endp
+    endp
 
     end

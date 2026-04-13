@@ -13,19 +13,15 @@ include winbase.inc
 .code
 
 _initidle proc idle:DPROC
-
     ldr rcx,idle
     mov rax,tidle
     mov tidle,rcx
     ret
-
-_initidle endp
+    endp
 
 _tidle proc
-
     mov rax,tidle
     .if ( rax )
-
         rax()
     .else
 ifdef __UNIX__
@@ -35,7 +31,6 @@ endif
     .endif
     xor eax,eax
     ret
-
-_tidle endp
+    endp
 
     end

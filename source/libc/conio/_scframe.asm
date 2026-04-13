@@ -111,7 +111,6 @@ _scframe proc rc:TRECT, type:int_t, attrib:WORD
     mov x,al
     _scputw(x, rc.y, 1, ci)
     ret
-
-_scframe endp
+    endp
 
     end

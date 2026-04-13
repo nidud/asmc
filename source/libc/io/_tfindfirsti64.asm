@@ -123,15 +123,12 @@ copyblock proc private
     mov dword ptr [rdi].size,eax
     mov eax,[rsi].nFileSizeHigh
     mov dword ptr [rdi].size[4],eax
-    __timet_from_ft( addr [rsi].ftCreationTime )
-    mov [rdi].time_create,rax
-    __timet_from_ft( addr [rsi].ftLastAccessTime )
-    mov [rdi].time_access,rax
-    __timet_from_ft( addr [rsi].ftLastWriteTime )
-    mov [rdi].time_write,rax
+    mov [rdi].time_create,__timet_from_ft( addr [rsi].ftCreationTime )
+    mov [rdi].time_access,__timet_from_ft( addr [rsi].ftLastAccessTime )
+    mov [rdi].time_write,__timet_from_ft( addr [rsi].ftLastWriteTime )
     lea rsi,[rsi].cFileName
     lea rdi,[rdi].name
-    mov rcx,(260/4)*tchar_t
+    mov ecx,sizeof(WIN32_FIND_DATA.cFileName) / 4
     rep movsd
     xor eax,eax
     ret

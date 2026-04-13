@@ -17,13 +17,10 @@ _rcunzipat proc uses rsi rdi rbx rc:TRECT, pc:PCHAR_INFO
     movzx eax,cl
     mul ch
     mov count,eax
-
     ldr rbx,pc
     lea rdi,at_foreground
     lea rsi,at_background
-
     .for ( ecx = 0 : ecx < count : ecx++ )
-
         mov     al,[rbx+rcx*4+2]
         mov     ah,al
         and     eax,0x0FF0
@@ -35,7 +32,6 @@ _rcunzipat proc uses rsi rdi rbx rc:TRECT, pc:PCHAR_INFO
         mov     [rbx+rcx*4+2],al
     .endf
     ret
-
-_rcunzipat endp
+    endp
 
     end

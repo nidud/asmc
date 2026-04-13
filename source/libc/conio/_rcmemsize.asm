@@ -10,13 +10,11 @@ include conio.inc
 .code
 
 _rcmemsize proc rc:TRECT, flags:uint_t
-
     movzx eax,rc.col
     movzx edx,rc.row
     mov   ecx,eax
     mul   dl
     add   eax,eax
-
     .if ( flags & W_SHADE )
 
         ; ( ( col + ( row * 2 ) - 2 ) * n )
@@ -26,11 +24,9 @@ _rcmemsize proc rc:TRECT, flags:uint_t
         add eax,ecx
     .endif
     .if (  flags & W_UNICODE )
-
         add eax,eax
     .endif
     ret
-
-_rcmemsize endp
+    endp
 
     end

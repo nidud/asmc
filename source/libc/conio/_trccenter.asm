@@ -11,12 +11,10 @@ include tchar.inc
     .code
 
 _rccenter proc wc:TRECT, p:PCHAR_INFO, rc:TRECT, attrib:WORD, string:tstring_t
-
     _tcslen( string )
     movzx ecx,rc.col
     movzx edx,rc.x
     .if ( eax > ecx )
-
 ifdef _UNICODE
         add eax,eax
         add ecx,ecx
@@ -30,7 +28,6 @@ endif
     .endif
     _rcputs(wc, p, dl, rc.y, attrib, string)
     ret
-
-_rccenter endp
+    endp
 
     end

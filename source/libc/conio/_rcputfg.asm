@@ -29,7 +29,6 @@ _rcputfg proc w:TRECT, rc:TRECT, p:PCHAR_INFO, a:uchar_t
         .endf
     .endf
     ret
-
-_rcputfg endp
+    endp
 
     end

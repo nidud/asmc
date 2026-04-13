@@ -12,12 +12,9 @@ include tchar.inc
 wcenter proc uses rbx p:PCHAR_INFO, maxlen:int_t, string:tstring_t
 
     ldr rbx,string
-
     mov ecx,_tcslen(rbx)
     mov rdx,p
-
     .if ( ecx > maxlen )
-
         lea rbx,[rbx+rcx*tchar_t]
         mov ecx,maxlen
         sub rbx,rcx
@@ -35,9 +32,7 @@ endif
         xor eax,eax
     .endif
     .ifs ( ecx > 0 )
-
         .if ecx == eax
-
             mov eax,maxlen
             sub eax,ecx
             shr eax,1
@@ -51,7 +46,6 @@ endif
         .untilcxz
     .endif
     ret
-
-wcenter endp
+    endp
 
     end

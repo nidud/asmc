@@ -15,15 +15,12 @@ wcputs proc uses rsi rdi rbx p:PCHAR_INFO, l:int_t, m:int_t, string:tstring_t
     ldr     rdi,p
     ldr     edx,l
     ldr     ecx,m
-
     movzx   edx,dl
     shl     edx,2
-
     movzx   ecx,cx
     mov     ah,ch
     mov     ch,[rdi+2]
     and     ch,0xF0
-
     .if ch == at_background[BG_MENU]
         or  ch,at_foreground[FG_MENUKEY]
     .elseif ch == at_background[BG_DIALOG]
@@ -31,18 +28,13 @@ wcputs proc uses rsi rdi rbx p:PCHAR_INFO, l:int_t, m:int_t, string:tstring_t
     .else
         xor ch,ch
     .endif
-
     mov  rbx,rdi
-
     and  eax,0x0000FF00
     shl  eax,8
-
     .if !cl
         dec cl
     .endif
-
     .while cl
-
         _tlodsb
         .switch _tal
         .case 0
@@ -80,7 +72,6 @@ ifdef _UNICODE
     shr eax,1
 endif
     ret
-
-wcputs endp
+    endp
 
     END

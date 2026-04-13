@@ -59,7 +59,6 @@ _rcxchg proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
     _cendpaint()
     mov eax,1
     ret
-
-_rcxchg endp
+    endp
 
     end

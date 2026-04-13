@@ -34,16 +34,12 @@ chbuf int_t EOF
 _gettch proc
 
     .if ( chbuf != EOF )
-
         movzx eax,byte ptr chbuf
         mov chbuf,EOF
        .return
     .endif
-
     .if ( count == 0 )
-
         .if ( _coninpfd == -1 )
-
             .return( EOF )
         .endif
         lea rcx,inbuf
@@ -58,7 +54,6 @@ else
         .endif
 endif
         .if ( eax == 0 )
-
             .return( EOF )
         .endif
     .endif
@@ -68,15 +63,12 @@ endif
     inc rdx
     mov chptr,rdx
     ret
-
-_gettch endp
+    endp
 
 _kbhit proc
 
     .new NumPending:DWORD
-
     .if ( count || chbuf != EOF )
-
         .return( 1 )
     .endif
 ifdef __UNIX__
@@ -85,14 +77,12 @@ else
     .ifd GetNumberOfConsoleInputEvents( _coninpfh, &NumPending )
 endif
         .if ( NumPending )
-
             .return( 1 )
         .endif
     .endif
     xor eax,eax
     ret
-
-_kbhit endp
+    endp
 
 else
 
@@ -254,12 +244,10 @@ _gettch proc uses rbx
     .new NumRead:DWORD
 
     .if ( chbuf != EOF )
-
         movzx eax,tchar_t ptr chbuf
         mov chbuf,EOF
        .return
     .endif
-
     .if ( _coninpfd == -1 )
         .return EOF
     .endif
@@ -268,26 +256,18 @@ _gettch proc uses rbx
 
     GetConsoleMode(_coninpfh, &oldstate)
     SetConsoleMode(_coninpfh, 0)
-
     .for ( : : )
-
         .ifd ( ReadConsoleInput( _coninpfh, &ConInpRec, 1, &NumRead ) == 0 || NumRead == 0 )
-
             mov c,EOF
            .break
         .endif
-
         .if ( ConInpRec.EventType == KEY_EVENT && ConInpRec.Event.KeyEvent.bKeyDown )
-
             movzx eax,tchar_t ptr ConInpRec.Event.KeyEvent.uChar.UnicodeChar
             .if ( eax )
-
                 mov c,eax
                .break
             .endif
-
             .if _getextendedkeycode( &ConInpRec.Event.KeyEvent )
-
                 movzx ecx,[rax].CharPair.LeadChar
                 movzx eax,[rax].CharPair.SecondChar
                 mov chbuf,eax
@@ -297,22 +277,17 @@ _gettch proc uses rbx
         .endif
     .endf
     SetConsoleMode(_coninpfh, oldstate)
-   .return( c )
-
-_gettch endp
+    .return( c )
+    endp
 
 
 _gettche proc
-
     .new c:int_t
-
     .if ( chbuf != EOF )
-
         mov eax,chbuf
         mov chbuf,EOF
        .return
     .endif
-
     mov c,_gettch()
     .if ( c != EOF )
         .if ( _puttch(c) != EOF )
@@ -320,8 +295,7 @@ _gettche proc
         .endif
     .endif
     .return EOF
-
-_gettche endp
+    endp
 
 
 _kbhit proc uses rbx
@@ -332,34 +306,22 @@ else
     .new NumPeeked:DWORD
     .new retval:int_t = FALSE
     .new pIRBuf:PINPUT_RECORD = NULL
-
     .if ( chbuf != -1 )
         .return TRUE
     .endif
-
     GetNumberOfConsoleInputEvents( _coninpfh, &NumPending )
-
     .if ( ( _coninpfh == -1 ) || !eax || ( NumPending == 0 ) )
-
         .return FALSE
     .endif
-
     mov pIRBuf,_calloca(NumPending, sizeof(INPUT_RECORD))
-
     .if ( rax == NULL )
-
         .return FALSE
     .endif
-
     mov ecx,PeekConsoleInput( _coninpfh, pIRBuf, NumPending, &NumPeeked )
-
     .if ( ecx && ( NumPeeked != 0 ) && ( NumPeeked <= NumPending ) )
-
         assume rbx:PINPUT_RECORD
         .for ( rbx = pIRBuf : NumPeeked > 0 : NumPeeked--, rbx += INPUT_RECORD )
-
             .if ( [rbx].EventType == KEY_EVENT && [rbx].Event.KeyEvent.bKeyDown )
-
                 .if ( [rbx].Event.KeyEvent.uChar.AsciiChar )
                     mov retval,TRUE
                     .break
@@ -373,7 +335,7 @@ else
     _freea( pIRBuf )
     .return retval
 endif
-_kbhit endp
+    endp
 
 _getextendedkeycode proc private pKE:ptr KEY_EVENT_RECORD
 
@@ -438,34 +400,27 @@ _getextendedkeycode proc private pKE:ptr KEY_EVENT_RECORD
         .endif
     .endif
     ret
-
-_getextendedkeycode endp
+    endp
 
 endif
 
 _ungettch proc c:int_t
-
     ldr ecx,c
-
     mov eax,EOF
     .if ( eax != ecx && eax == chbuf )
-
         movzx eax,cl
         mov chbuf,eax
     .endif
     ret
-
-_ungettch endp
+    endp
 
 
 _kbflush proc
-
     mov chbuf,EOF
 ifdef __TTY__
     mov count,0
 endif
     ret
-
-_kbflush endp
+    endp
 
     end

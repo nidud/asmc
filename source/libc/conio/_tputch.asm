@@ -11,15 +11,11 @@ include tchar.inc
     .code
 
 _puttch proc character:int_t
-
     .new n:int_t
     .new c:int_t
-
     .if ( _confd == -1 )
-
         .return( -1 )
     .endif
-
     ldr ecx,character
     mov c,ecx
 if defined(_UNICODE) and defined(__UNIX__)
@@ -36,7 +32,6 @@ endif
         dec rax
     .endif
     ret
-
-_puttch endp
+    endp
 
     end

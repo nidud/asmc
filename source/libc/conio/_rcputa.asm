@@ -26,7 +26,6 @@ _rcputa proc w:TRECT, rc:TRECT, p:PCHAR_INFO, a:word
         .endf
     .endf
     ret
-
-_rcputa endp
+    endp
 
     end

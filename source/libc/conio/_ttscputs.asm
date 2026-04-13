@@ -11,7 +11,6 @@ include conio.inc
 scputs proc uses rsi rdi rbx x:int_t, y:int_t, a:int_t, maxlen:int_t, string:tstring_t
 
    .new q:byte
-
     ldr eax,x
     ldr rbx,string
 
@@ -19,19 +18,14 @@ scputs proc uses rsi rdi rbx x:int_t, y:int_t, a:int_t, maxlen:int_t, string:tst
     .if ( maxlen == 0 )
         dec maxlen
     .endif
-
     .for ( rbx = string : maxlen && tchar_t ptr [rbx] : maxlen--, rbx+=tchar_t, q++ )
-
         movzx ecx,tchar_t ptr [rbx]
         .if ( ecx == 10 )
-
             inc y
             mov q,x
             dec q
            .continue
-
         .elseif ( ecx == 9 )
-
             mov al,q
             add al,4
             and al,-4
@@ -41,7 +35,6 @@ scputs proc uses rsi rdi rbx x:int_t, y:int_t, a:int_t, maxlen:int_t, string:tst
         .endif
         _scputc(q, byte ptr y, 1, cx)
         .if ( byte ptr a )
-
             _scputa(q, byte ptr y, 1, byte ptr a)
         .endif
     .endf
@@ -51,7 +44,6 @@ ifdef _UNICODE
     shr eax,1
 endif
     ret
-
-scputs endp
+    endp
 
     end

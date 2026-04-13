@@ -63,9 +63,7 @@ _rcunzip proc uses rsi rdi rbx rc:TRECT, dst:PCHAR_INFO, src:ptr, flags:uint_t
         _rcunzipat(rc, dst)
     .endif
     ret
-
 decompress:
-
     .repeat
         lodsb
         mov dl,al
@@ -89,7 +87,6 @@ decompress:
         .endif
     .untilcxz
     retn
-
-_rcunzip endp
+    endp
 
     end

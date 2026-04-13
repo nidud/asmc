@@ -9,9 +9,7 @@ include conio.inc
     .code
 
 _rcclear proc uses rdi rc:TRECT, p:PCHAR_INFO, c:CHAR_INFO
-
     .if ( c.Char.UnicodeChar )
-
         movzx eax,rc.col
         mul   rc.row
         mov   ecx,eax
@@ -24,7 +22,6 @@ _rcclear proc uses rdi rc:TRECT, p:PCHAR_INFO, c:CHAR_INFO
         _rcputa(rc, eax, p, c.Attributes )
     .endif
     ret
-
-_rcclear endp
+    endp
 
     end

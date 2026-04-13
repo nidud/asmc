@@ -74,8 +74,7 @@ _rcmoveu proc uses rbx rc:TRECT, p:PCHAR_INFO
         .endif
     .endif
     .return( rc )
-
-_rcmoveu endp
+    endp
 
 
 _rcmoved proc uses rbx rc:TRECT, p:PCHAR_INFO
@@ -136,8 +135,7 @@ _rcmoved proc uses rbx rc:TRECT, p:PCHAR_INFO
         .endif
     .endif
     .return( rc )
-
-_rcmoved endp
+    endp
 
 
 _rcmovel proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
@@ -215,8 +213,7 @@ _rcmovel proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
         _cendpaint()
     .endif
     .return( rc )
-
-_rcmovel endp
+    endp
 
 
 _rcmover proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
@@ -236,12 +233,9 @@ _rcmover proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
     mov     esi,ecx
     add     ecx,edx
     mov     eax,rc
-
     .if ( edi <= ecx )
-
         .return
     .endif
-
     mov     z,ecx
     mov     x,esi
     mov     cl,rc.y
@@ -262,15 +256,12 @@ _rcmover proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
         inc rc.x
         _rcwrite( rc, rbx )
         free( rbx )
-
         movzx   ebx,rc.col
         dec     ebx
         movzx   edx,rc.row
         mov     rsi,p
         mov     rdi,b
-
         .repeat
-
             mov     ecx,[rsi]
             mov     eax,[rdi]
             mov     [rdi],ecx
@@ -284,12 +275,10 @@ _rcmover proc uses rsi rdi rbx rc:TRECT, p:PCHAR_INFO
             add     rdi,4
             dec     edx
         .untilz
-
         _scputl( x, y, l, b )
         _cendpaint()
     .endif
     .return( rc )
-
-_rcmover endp
+    endp
 
     end

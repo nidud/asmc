@@ -9,12 +9,10 @@ include conio.inc
     .code
 
 wctitle proc p:PCHAR_INFO, l:int_t, string:tstring_t
-
     _at BG_TITLE,FG_TITLE,' '
     wcputw(p, l, eax)
     wcenter(p, l, string)
     ret
-
-wctitle endp
+    endp
 
     END

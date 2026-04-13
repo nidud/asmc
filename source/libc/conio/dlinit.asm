@@ -10,35 +10,25 @@ include malloc.inc
 .code
 
 dlinit proc uses rsi rdi rbx td:PDOBJ
-
   local object:PTOBJ, wp:PCHAR_INFO, window:ptr
-
     ldr rbx,td
     mov edi,[rbx]
-
     .if ( edi & W_VISIBLE )
-
         mov wp,[rbx].DOBJ.window
         .if ( _rcalloc([rbx].DOBJ.rc, W_UNICODE) == NULL )
-
             .return
         .endif
-
         mov [rbx].DOBJ.window,rax
         _rcread( [rbx].DOBJ.rc, rax)
     .endif
-
     .new flags:int_t  = edi
     .new count:byte   = [rbx].DOBJ.count
     .new rc:TRECT     = [rbx].DOBJ.rc
     .new p:PCHAR_INFO = [rbx].DOBJ.window
-
     .for ( rbx = [rbx].DOBJ.object : count : count--, rbx += TOBJ )
-
         mov     rdi,_rcbprc(rc, [rbx].TOBJ.rc, p)
         movzx   eax,[rbx].TOBJ.flags
         and     eax,0x000F
-
         .switch eax
         .case _O_PBUTT
             movzx ecx,[rbx].TOBJ.rc.col
@@ -73,7 +63,6 @@ dlinit proc uses rsi rdi rbx td:PDOBJ
             .endif
             mov [rdi+4],ax
            .endc
-
         .case _O_XCELL
             .for ( ecx = 0 : cl < [rbx].TOBJ.rc.col : ecx++ )
                 mov word ptr [rdi+rcx*4],' '
@@ -86,7 +75,6 @@ dlinit proc uses rsi rdi rbx td:PDOBJ
                 wcpath(rdi, ecx, rsi)
             .endif
             .endc
-
         .case _O_TEDIT
             mov edx,U_MIDDLE_DOT
             .for ( ecx = 0 : cl < [rbx].TOBJ.rc.col : ecx++ )
@@ -95,7 +83,6 @@ dlinit proc uses rsi rdi rbx td:PDOBJ
             mov rsi,[rbx].TOBJ.data
             .if rsi
                 .for ( eax = 0, ecx = 0 : cl < [rbx].TOBJ.rc.col : ecx++ )
-
                     mov al,[rsi+rcx]
                     .break .if !al
                     mov [rdi+rcx*4],ax
@@ -111,16 +98,13 @@ dlinit proc uses rsi rdi rbx td:PDOBJ
             .endc
         .endsw
     .endf
-
     .if ( flags & W_VISIBLE )
-
         mov rbx,td
         _rcwrite([rbx].DOBJ.rc, [rbx].DOBJ.window)
         free([rbx].DOBJ.window)
         mov [rbx].DOBJ.window,wp
     .endif
     ret
-
-dlinit endp
+    endp
 
     end

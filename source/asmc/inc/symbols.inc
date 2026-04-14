@@ -518,7 +518,7 @@ SymLCreate      proto __ccall :string_t
 SymAddGlobal    proto __ccall :asym_t
 SymAddLocal     proto __ccall :asym_t, :string_t
 SymLookup       proto __ccall :string_t
-SymLookupLocal  proto __ccall :string_t
+SymLookupLocal  proto __ccall :token_t, :string_t
 SymFind         proto fastcall :string_t
 SymFindID       proto fastcall :token_t
 SymInit         proto __ccall

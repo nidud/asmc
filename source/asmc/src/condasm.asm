@@ -326,12 +326,12 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endc
     .case CC_PASS1 ; [ELSE]IF1
         mov esi,BLOCK_ACTIVE
-        .endc
+       .endc
 
     .case CC_PASS2 ; [ELSE]IF2
         .if ( MODULE.setif2 == FALSE )
             asmerr( 2061 )
-            .endc
+           .endc
         .endif
         ; v2.04: changed
         mov esi,BLOCK_ACTIVE

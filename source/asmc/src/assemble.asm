@@ -101,7 +101,7 @@ ConvertSectionName proc __ccall uses rsi rdi rbx sym:asym_t, pst:ptr dword, buff
     assume rbx:ptr conv_section
     .for ( rbx = &cst, rdi = sym, esi = 0 : esi < 4 : rbx += conv_section )
         inc esi
-        .if !tmemcmp( [rdi].asym.name, [rbx].src, [rbx].len )
+        .ifd !tmemcmp( [rdi].asym.name, [rbx].src, [rbx].len )
             mov edx,[rbx].len
             add rdx,[rdi].asym.name
             mov al,[rdx]
@@ -1187,11 +1187,7 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
     .if ( Options.asm_info )
         mov ebx,GetLineNumber()
         clock()
-        sub  eax,starttime
-        imul eax,eax,1000
-        mov ecx,CLOCKS_PER_SEC
-        xor edx,edx
-        div ecx
+        sub eax,starttime
         mov starttime,eax
         mov rdx,GetFName( MODULE.srcfile )
         mov edi,Parse_Pass

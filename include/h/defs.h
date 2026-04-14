@@ -32,22 +32,35 @@ typedef unsigned long long QWORD;
 typedef unsigned __int64 QWORD;
 #endif
 
+#ifndef _TIME32_T_DEFINED
+#define _TIME32_T_DEFINED
+typedef long __time32_t;
+#endif
+#ifndef _TIME64_T_DEFINED
+#define _TIME64_T_DEFINED
+typedef __int64 __time64_t;
+#endif
+#ifndef _FSIZE_T_DEFINED
+#define _FSIZE_T_DEFINED
+typedef unsigned _fsize_t;
+#endif
+
 #ifndef _TIME_T_DEFINED
 #define _TIME_T_DEFINED
 #ifdef _WIN64
 typedef __int64 time_t;
 #else
 typedef long time_t;
+#define _USE_32BIT_TIME_T
 #endif
 #endif
 
 #ifndef _OFF_T_DEFINED
-#define _OFF_T_DEFINED
-#ifdef _WIN64
-typedef __int64 _off_t;
-#else
 typedef long _off_t;
+#if !__STDC__
+typedef long off_t;
 #endif
+#define _OFF_T_DEFINED
 #endif
 
 #ifndef _SIZE_T_DEFINED

@@ -7,6 +7,8 @@
  extern "C" {
 #endif
 
+#define CLOCKS_PER_SEC 1000
+
 #ifndef _TM_DEFINED
 struct tm {
 	int	tm_sec;	    /* seconds after the minute - [0,59] */

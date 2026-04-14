@@ -68,18 +68,56 @@
  extern "C" {
 #endif
 
+#ifdef _USE_32BIT_TIME_T
+    #define _finddata_t	    _finddata32_t
+    #define _finddatai64_t  _finddata32i64_t
+#else
+    #define _finddata_t	    _finddata64i32_t
+    #define _finddatai64_t  __finddata64_t
+#endif
+
+struct _finddata32_t
+{
+    unsigned	attrib;
+    __time32_t	time_create;	// -1 for FAT file systems
+    __time32_t	time_access;	// -1 for FAT file systems
+    __time32_t	time_write;
+    _fsize_t	size;
+    char	name[260];
+};
+
+struct _finddata32i64_t
+{
+    unsigned	attrib;
+    __time32_t	time_create;	// -1 for FAT file systems
+    __time32_t	time_access;	// -1 for FAT file systems
+    __time32_t	time_write;
+    __int64	size;
+    char	name[260];
+};
+
+struct _finddata64i32_t
+{
+    unsigned	attrib;
+    __time64_t	time_create;	// -1 for FAT file systems
+    __time64_t	time_access;	// -1 for FAT file systems
+    __time64_t	time_write;
+    _fsize_t	size;
+    char	name[260];
+};
+
+struct __finddata64_t
+{
+    unsigned	attrib;
+    __time64_t	time_create;	// -1 for FAT file systems
+    __time64_t	time_access;	// -1 for FAT file systems
+    __time64_t	time_write;
+    __int64	size;
+    char	name[260];
+};
+
 extern int _nfile;
 extern int _umaskval;
-extern BYTE _osfile[_NFILE_];
-
-struct _finddata_t {
-	unsigned attrib;
-	time_t	time_create;
-	time_t	time_access;
-	time_t	time_write;
-	size_t	size;
-	char	name[260];
-      };
 
 struct _wfinddata_t {
 	unsigned attrib;
@@ -90,15 +128,6 @@ struct _wfinddata_t {
 	wchar_t name[260];
       };
 
-struct _finddatai64_t {
-	unsigned attrib;
-	time_t	time_create;
-	time_t	time_access;
-	time_t	time_write;
-	__int64 size;
-	char	name[260];
-      };
-
 struct _wfinddatai64_t {
 	unsigned attrib;
 	time_t	time_create;
@@ -107,6 +136,18 @@ struct _wfinddatai64_t {
 	__int64 size;
 	wchar_t name[260];
       };
+
+#ifdef _USE_32BIT_TIME_T
+    #define _findfirst	    _findfirst32
+    #define _findnext	    _findnext32
+    #define _findfirsti64   _findfirst32i64
+    #define _findnexti64    _findnext32i64
+#else
+    #define _findfirst	    _findfirst64i32
+    #define _findnext	    _findnext64i32
+    #define _findfirsti64   _findfirst64
+    #define _findnexti64    _findnext64
+#endif
 
 _CRTIMP int __cdecl _access(const char *, int);
 _CRTIMP int __cdecl _chmod(const char *, int);
@@ -126,8 +167,16 @@ _CRTIMP int __cdecl _dup2(int);
 _CRTIMP int __cdecl _eof(int);
 _CRTIMP long __cdecl filelength(int);
 #define _filelength filelength
-_CRTIMP intptr_t __cdecl _findfirst(char *, struct _finddata_t *);
-_CRTIMP int __cdecl _findnext(intptr_t, struct _finddata_t *);
+
+_CRTIMP intptr_t __cdecl _findfirst32(char *, struct _finddata32_t *);
+_CRTIMP int __cdecl _findnext32(intptr_t, struct _finddata32_t *);
+_CRTIMP intptr_t __cdecl _findfirst32i64(char *, struct _finddata32i64_t *);
+_CRTIMP int __cdecl _findnext32i64(intptr_t, struct _finddata32i64_t *);
+_CRTIMP intptr_t __cdecl _findfirst64i32(char *, struct _finddata64i32_t *);
+_CRTIMP int __cdecl _findnext64i32(intptr_t, struct _finddata64i32_t *);
+_CRTIMP intptr_t __cdecl _findfirst64(char *, struct _finddata64_t *);
+_CRTIMP int __cdecl _findnext64(intptr_t, struct _finddata64_t *);
+
 _CRTIMP int __cdecl _findclose(intptr_t);
 _CRTIMP int __cdecl _isatty(int);
 _CRTIMP long __cdecl _lseek(int, long, int);

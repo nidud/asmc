@@ -61,11 +61,11 @@ typedef struct _iobuf FILE;
 #define _FILE_DEFINED
 #endif
 
-extern	FILE _iob[];
-#define __iob _iob
-#define stdin	(&_iob[0])
-#define stdout	(&_iob[1])
-#define stderr	(&_iob[2])
+FILE* __cdecl __acrt_iob_func(unsigned);
+
+#define stdin  (__acrt_iob_func(0))
+#define stdout (__acrt_iob_func(1))
+#define stderr (__acrt_iob_func(2))
 
 extern	char _bufin[];
 

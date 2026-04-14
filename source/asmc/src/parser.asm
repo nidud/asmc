@@ -3746,7 +3746,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
         .if ( MODULE.scoped && CurrProc && [rbx+asm_tok].token != T_DBL_COLON )
             inc eax
         .endif
-        .if CreateLabel( [rbx].string_ptr, MT_NEAR, NULL, eax ) == NULL
+        .if CreateLabel( rbx, [rbx].string_ptr, MT_NEAR, NULL, eax ) == NULL
             .return ERROR
         .endif
         ;

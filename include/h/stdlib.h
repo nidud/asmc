@@ -10,6 +10,9 @@
 #define _MAX_FNAME  256
 #define _MAX_EXT    256
 
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
+
 #ifdef __cplusplus
  extern "C" {
 #endif

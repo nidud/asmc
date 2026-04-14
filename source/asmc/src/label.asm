@@ -41,7 +41,7 @@ LabelInit proc __ccall
 ; - bLocal: if TRUE, code label is to be defined locally; it's ensured
 ;   that CurrProc is != NULL and ModuleInfo.scoped == TRUE then.
 
-CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr qualified_type, bLocal:int_t
+CreateLabel proc __ccall uses rsi rdi rbx tokenarray:token_t, name:string_t, mem_type:byte, ti:ptr qualified_type, bLocal:int_t
 
   local adr:uint_t
   local buffer[20]:char_t
@@ -55,7 +55,10 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
     ; assumed ERROR. This was previously checked for labels with
     ; trailing colon only [in ParseLine()].
 
-    mov al,mem_type
+    ldr rbx,tokenarray
+    ldr rsi,name
+    ldr al,mem_type
+
     and al,MT_SPECIAL_MASK
     .if ( al == MT_ADDRESS )
         .if ( SegAssumeTable[ASSUME_CS*assume_info].error ) ; CS assumed to ERROR?
@@ -63,16 +66,17 @@ CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr q
            .return( NULL )
         .endif
     .endif
-    mov rsi,name
+
     mov eax,[rsi]
     and eax,0x00FFFFFF
     .if ( eax == '@@' )
         lea rsi,buffer
         inc MODULE.anonymous_label
         tsprintf( rsi, "L&_%04u", MODULE.anonymous_label )
+        xor ebx,ebx
     .endif
     .if ( bLocal )
-        SymLookupLocal( rsi )
+        SymLookupLocal( rbx, rsi )
     .else
         SymLookup( rsi )
     .endif
@@ -262,7 +266,7 @@ endif
     ; v2.08: if label is a DATA label, set total_size and total_length
 
     mov rbx,tokenarray
-    .if ( CreateLabel( [rbx].string_ptr, ti.mem_type, &ti, FALSE ) )
+    .if ( CreateLabel( rbx, [rbx].string_ptr, ti.mem_type, &ti, FALSE ) )
 
         ; sym->isdata must be 0, else the LABEL directive was generated within data_item()
         ; and fields total_size & total_length must not be modified then!

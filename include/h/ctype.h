@@ -16,7 +16,7 @@
 #define _LEADBYTE	0x8000
 #define _ALPHA		(0x0100|_UPPER|_LOWER)
 
-extern unsigned short _ctype[]; /* Character type array */
+extern unsigned short * _pctype; /* Character type array */
 
 #ifdef __cplusplus
  extern "C" {
@@ -75,18 +75,18 @@ _CRTIMP int __cdecl iswctype(wint_t, wctype_t);
  }
 #endif
 
-#define isalnum(c)  (_ctype[(unsigned char)(c) + 1] & (_DIGIT | _UPPER | _LOWER))
-#define isalpha(c)  (_ctype[(unsigned char)(c) + 1] & (_UPPER | _LOWER))
+#define isalnum(c)  (_pctype[(unsigned char)(c)] & (_DIGIT | _UPPER | _LOWER))
+#define isalpha(c)  (_pctype[(unsigned char)(c)] & (_UPPER | _LOWER))
 #define isascii(c)  ((unsigned char)(c) < 128)
-#define iscntrl(c)  (_ctype[(unsigned char)(c) + 1] & _CONTROL)
-#define isdigit(c)  (_ctype[(unsigned char)(c) + 1] & _DIGIT)
+#define iscntrl(c)  (_pctype[(unsigned char)(c)] & _CONTROL)
+#define isdigit(c)  (_pctype[(unsigned char)(c)] & _DIGIT)
 #define isgraph(c)  ((unsigned char)(c) >= 0x21 && (unsigned char)(c) <= 0x7e)
-#define islower(c)  (_ctype[(unsigned char)(c) + 1] & _LOWER)
+#define islower(c)  (_pctype[(unsigned char)(c)] & _LOWER)
 #define isprint(c)  ((unsigned char)(c) >= 0x20 && (unsigned char)(c) <= 0x7e)
-#define ispunct(c)  (_ctype[(unsigned char)(c) + 1] & _PUNCT)
-#define isspace(c)  (_ctype[(unsigned char)(c) + 1] & _SPACE)
-#define isupper(c)  (_ctype[(unsigned char)(c) + 1] & _UPPER)
-#define isxdigit(c) (_ctype[(unsigned char)(c) + 1] & _HEX)
+#define ispunct(c)  (_pctype[(unsigned char)(c)] & _PUNCT)
+#define isspace(c)  (_pctype[(unsigned char)(c)] & _SPACE)
+#define isupper(c)  (_pctype[(unsigned char)(c)] & _UPPER)
+#define isxdigit(c) (_pctype[(unsigned char)(c)] & _HEX)
 
 #define _tolower(_c)	((_c)-'A'+'a')
 #define _toupper(_c)	((_c)-'a'+'A')

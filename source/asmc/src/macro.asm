@@ -127,7 +127,7 @@ replace_parm proc __ccall private uses rsi rdi rbx line:string_t, start:string_t
         .if ( [rbx].len != len )
             .continue
         .endif
-        .if !SymCmpFunc( start, [rbx].name, len )
+        .ifd !SymCmpFunc( start, [rbx].name, len )
 
             ; found a macro parameter/local!
 

@@ -193,8 +193,9 @@ main proc
     .assert strcmp(rdi,"abcd") == -1
     .assert strcmp(rdi,"ab") == 1
     .assert memcmp(rdi,rdi,3) == 0
-    .assert memcmp(rdi,"abd",3) == 1
+    .assert memcmp(rdi,"abd",3) == -1
     .assert memcmp(rdi,"abcd",3) == 0
+    .assert memcmp("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",33) == 0
     .assert strncmp(rdi,"abc",3) == 0
     .assert _strnicmp(rdi,"AbC",3) == 0
     .assert strncmp(rdi,"abc ",4) == -1

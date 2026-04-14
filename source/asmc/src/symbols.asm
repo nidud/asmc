@@ -380,9 +380,8 @@ SymFindID proc fastcall tok:token_t
     mov     r9d,[rcx].asm_tok.hash2
     movzx   ecx,[rcx].asm_tok.idlen
     test    ecx,ecx
-    jz      .null
+    jz      .done
     _LK_SYMFIND
-.null:
     ret
     endp
 
@@ -394,7 +393,7 @@ SymFind proc fastcall string:string_t
     mov     r9d,FNVBASE
     mov     rdx,rcx
     test    eax,eax
-    jz      .null
+    jz      .done
 .0:
     imul    r9d,r9d,FNVPRIME
     imul    r8d,r8d,FNVPRIME
@@ -407,7 +406,6 @@ SymFind proc fastcall string:string_t
     jnz     .0
     sub     rcx,rdx
     _LK_SYMFIND
-.null:
     ret
     endp
 
@@ -435,15 +433,22 @@ SymLookup proc __ccall uses rbx name:string_t
 ; SymLookupLocal() creates a local label if it isn't defined yet.
 ; called by LabelCreate() [see labels.c]
 
-SymLookupLocal proc __ccall name:string_t
+SymLookupLocal proc __ccall uses rbx tokenarray:token_t, name:string_t
 
-    SymFind( name )
+    ldr rcx,tokenarray
+    ldr rbx,name
+
+    .if ( rcx )
+        SymFindID( rcx )
+    .else
+        SymFind( rbx )
+    .endif
 
     ; v2.19: don't move a label marked as public if -Zm isn't set
 
     .if ( rax == NULL || ( [rax].asym.ispublic && MODULE.m510 == 0 ) )
 
-        SymAlloc( name )
+        SymAlloc( rbx )
         mov [rax].asym.scoped,1
 
         ; add the label to the local hash table

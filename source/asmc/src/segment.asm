@@ -491,7 +491,7 @@ CloseSeg proc fastcall private uses rsi rdi sname:string_t
     xor edi,edi
     .if ( rcx == NULL )
         inc edi
-    .elseif ( SymCmpFunc( [rcx].asym.name, rsi, [rcx].asym.name_size ) != 0 )
+    .elseifd ( SymCmpFunc( [rcx].asym.name, rsi, [rcx].asym.name_size ) != 0 )
         inc edi
     .endif
     .if ( edi )
@@ -652,7 +652,7 @@ FindClass proc fastcall private uses rsi rdi rbx classname:string_t, len:int_t
            rdi = MODULE.LnameQueue.head : rdi : rdi = [rdi].qnode.next )
         mov rcx,[rdi].qnode.sym
         .if ( [rcx].asym.state == SYM_CLASS_LNAME )
-            .if ( SymCmpFunc( [rcx].asym.name, rbx, esi ) == 0 )
+            .ifd ( SymCmpFunc( [rcx].asym.name, rbx, esi ) == 0 )
                 .return( [rdi].qnode.sym )
             .endif
         .endif
@@ -1289,7 +1289,7 @@ endif
     mov esi,SetOfssize()
     .if ( newseg && [rdi].seg_info.segtype == SEGTYPE_CODE )
         .if ( Options.debug_symbols == 4 && CV8Label == NULL )
-            mov CV8Label,CreateLabel( "$$000000", 0, 0, 0 )
+            mov CV8Label,CreateLabel( NULL, "$$000000", 0, 0, 0 )
         .endif
         .if ( !ImageBase && Options.output_format == OFORMAT_BIN && Options.sub_format != SFORMAT_NONE )
             .new ti:qualified_type
@@ -1297,7 +1297,7 @@ endif
                SymGCreate("IMAGE_DOS_HEADER")
             .endif
             mov ti.symtype,rax
-            CreateLabel( "__ImageBase", MT_TYPE, &ti, 0 )
+            CreateLabel( NULL, "__ImageBase", MT_TYPE, &ti, 0 )
             mov [rax].asym.offs,-0x1000
             inc ImageBase
         .endif

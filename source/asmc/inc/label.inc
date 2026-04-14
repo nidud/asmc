@@ -9,6 +9,6 @@ ifndef __LABEL_INC
 define __LABEL_INC
 
 LabelInit           proto __ccall
-CreateLabel         proto __ccall :string_t, :uchar_t, :ptr qualified_type, :int_t
+CreateLabel         proto __ccall :token_t, :string_t, :uchar_t, :ptr qualified_type, :int_t
 
 endif

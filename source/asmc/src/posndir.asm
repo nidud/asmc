@@ -233,21 +233,26 @@ AlignDirective proc __ccall i:int_t, tokenarray:token_t
             asmerr( 2189, align_value )
         .endif
     .endif
-    ; v2.04: added, Skip backpatching after ALIGN occured
-    .if ( Parse_Pass == PASS_1 && CurrSeg )
 
-        mov rax,CurrSeg
-        mov rcx,[rax].asym.seginfo
-        mov rax,[rcx].seg_info.head
-        .if rax
-            mov [rax].fixup.orgoccured,1
-        .endif
-    .endif
     ; find out how many bytes past alignment we are & add the remainder
     ; store temp. value
+
     mov CurrAddr,GetCurrOffset()
     cdq
     div align_value
+    mov rax,CurrSeg
+
+    ; v2.04: added, Skip backpatching after ALIGN occured
+
+    .if ( rax )
+        mov rcx,[rax].asym.seginfo
+        .if ( Parse_Pass == PASS_1 )
+            mov rax,[rcx].seg_info.head
+            .if rax
+                mov [rax].fixup.orgoccured,1
+            .endif
+        .endif
+    .endif
     .if ( edx )
         sub align_value,edx
         fill_in_objfile_space( align_value )

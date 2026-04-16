@@ -113,6 +113,9 @@ CreateLabel proc __ccall uses rsi rdi rbx tokenarray:token_t, name:string_t, mem
         mov rcx,[rcx].asym.seginfo
         mov [rdi].asym.next,[rcx].seg_info.label_list
         mov [rcx].seg_info.label_list,rdi
+        .if ( rax && ![rax].asym.isproc )
+            mov [rax].asym.nextl,rdi
+        .endif
 
         ; a possible language type set by EXTERNDEF must be kept!
 
@@ -165,7 +168,6 @@ CreateLabel proc __ccall uses rsi rdi rbx tokenarray:token_t, name:string_t, mem
     .if ( Parse_Pass == PASS_1 )
         BackPatch( rdi )
     .elseif ( eax != adr )
-
         mov MODULE.PhaseError,TRUE
         ;
         ; Label offset changes cannot always be resolved in pass 1. In that
@@ -175,14 +177,8 @@ CreateLabel proc __ccall uses rsi rdi rbx tokenarray:token_t, name:string_t, mem
         ; directive is used without RET (see EndpDir()).
         ;
         .if ( [rdi].asym.asmpass == 1 && MODULE.OrgOccured )
-
-            mov rcx,[rdi].asym.segm
-            mov rdx,[rcx].asym.seginfo
-            mov ebx,eax
-            sub ebx,adr
-            .for ( rcx = [rdx].seg_info.label_list : rcx : rcx = [rcx].asym.next )
-                .break .if ( eax >= [rcx].asym.offs )
-                add [rcx].asym.offs,ebx
+            .for ( eax -= adr, rcx = [rdi].asym.nextl : rcx : rcx = [rcx].asym.nextl )
+                add [rcx].asym.offs,eax
             .endf
         .endif
     .endif

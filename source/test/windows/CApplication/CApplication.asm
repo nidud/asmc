@@ -344,8 +344,8 @@ CApplication::GoFullScreen proc uses rdi
 
     mov m_isFullScreen,TRUE
 
-    SetWindowLong(m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED); or WS_EX_TRANSPARENT)
-    SetWindowLong(m_hwnd, GWL_STYLE,  WS_CAPTION or WS_SYSMENU)
+    SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED); or WS_EX_TRANSPARENT)
+    SetWindowLongPtr(m_hwnd, GWL_STYLE,  WS_CAPTION or WS_SYSMENU)
 
     mov rdi,GetDC(NULL)
     mov xSpan,GetSystemMetrics(SM_CXSCREEN)
@@ -596,7 +596,7 @@ CApplication::RenderTextInfo proc
    .new c:D3DCOLORVALUE(Black, 0.5)
    .new rc:RECT
    .new rr:D2D1_ROUNDED_RECT = { { 30.0, 10.0, 250.0, 100.0 }, 10.0, 10.0 }
-   .new rd[3]:LPWSTR = { "CPU", "LIBC", "PCG32" }
+   .new rd[3]:LPWSTR = { "LIBC", "PCG32", "CPU" }
 
     mov ecx,m_rand
     and ecx,3
@@ -805,33 +805,33 @@ CApplication::CreateApplicationWindow proc
     endp
 
 
-CApplication::BoundRand proc uses rsi rdi b:uint_t
+CApplication::BoundRand proc uses rsi b:uint_t
 
-    ldr esi,b
-
-    mov eax,esi
-    neg eax
-    xor edx,edx
-    div esi
-    mov edi,edx
-    .while 1
+    ldr eax,b
+    .if ( eax )
+        mov esi,eax
         .if ( m_rand == 0 )
-            rdrand eax
-        .elseif ( m_rand == 1 )
             rand()
-        .else
+        .elseif ( m_rand == 1 )
             pcg32_random()
+        .else
+            rdrand eax
+            .ifnc
+                rand()
+            .endif
         .endif
-        .break .ifd ( eax >= edi )
-    .endw
-    xor edx,edx
-    div esi
-    mov eax,edx
+        xor edx,edx
+        div esi
+        mov eax,edx
+    .endif
     ret
     endp
 
 
 CApplication::RangeRand proc b:uint_t, m:uint_t
+    .if ( b == 0 )
+        .return( 0 )
+    .endif
     .for ( :: )
         .break .ifd ( BoundRand(b) > m )
     .endf

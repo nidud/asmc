@@ -126,8 +126,7 @@ if LABELOPT
                         ; v2.04: if there's an ORG between src and dst, skip
                         ; the optimization!
 
-                        mov eax,[rbx].locofs
-                        .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
+                        .for ( eax = [rbx].locofs, rcx = [rdx].head : rcx : rcx = [rcx].fixup.nextrlc )
                             .if ( [rcx].fixup.orgoccured )
                                 mov MODULE.OrgOccured,1 ; v2.37.93: added - see CreateLabel()
                                .continue( 1 )
@@ -173,11 +172,8 @@ endif
                     asmerr( 2075, edx ) ; warning ?
                 .endsw
             .endif
-            ; v2.04: fixme: is it ok to remove the fixup?
-            ; it might still be needed in a later backpatch.
         .endsw
     .endf
-    xor eax,eax ; NOT_ERROR
     ret
     endp
 

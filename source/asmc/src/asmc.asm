@@ -437,6 +437,9 @@ else
 endif
         assume rbx:nothing
 endif
+if 0
+        tprintf( "File : %s\n", Options.names[TASM] )
+endif
         asmerr( 1901 )
     .endif
     close_files()

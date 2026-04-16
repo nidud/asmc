@@ -156,7 +156,6 @@ IS_SIGNED proto watcall :byte {
     langtype        db ?
     segoffsize      db ?
     is_far          db ?
-
     type            asym_t ?        ; set if memtype is MT_TYPE
 
     union
@@ -189,6 +188,7 @@ IS_SIGNED proto watcall :byte {
       hlvalue       dq ?
      ends
      class          asym_t ?        ; used by SYM_TYPE, SYM_INTERNAL, SYM_EXTERNAL
+     nextl          asym_t ?        ; used by CreateLabel()
     ends
 
     union

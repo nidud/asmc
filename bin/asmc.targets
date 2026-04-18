@@ -83,6 +83,7 @@
       TreatWarningsAsErrors="%(ASMC.TreatWarningsAsErrors)"
       MakeAllSymbolsPublic="%(ASMC.MakeAllSymbolsPublic)"
       GenerateDebugInformation="%(ASMC.GenerateDebugInformation)"
+      SelectRuntimeLibrary="%(ASMC.SelectRuntimeLibrary)"
       EnableMASM51Compatibility="%(ASMC.EnableMASM51Compatibility)"
       PerformSyntaxCheckOnly="%(ASMC.PerformSyntaxCheckOnly)"
       IgnoreINCLUDELIB="%(ASMC.IgnoreINCLUDELIB)"

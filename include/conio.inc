@@ -12,7 +12,7 @@ ifdef __TTY__
 include stdio.inc
 endif
 
-.pragma comment(lib, libc, msvcrt)
+.pragma comment(lib, libcmt, msvcrt)
 
 ifdef _CONIO_RETRO_COLORS
 .enum CONIO_RETRO_COLORS {

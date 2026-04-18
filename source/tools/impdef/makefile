@@ -2,6 +2,6 @@ impdef.exe:
 ifdef msvcrt
 	asmc -pe $*.asm
 else
-	asmc $*.asm
+	asmc -coff $*.asm
 endif
 	pause

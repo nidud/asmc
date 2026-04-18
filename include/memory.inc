@@ -4,7 +4,7 @@ define _INC_MEMORY
 include stdlib.inc
 include crtdefs.inc
 
-.pragma comment(lib, libc, msvcrt)
+.pragma comment(lib, libcmt, msvcrt)
 
 ifndef _CRT_MEMORY_DEFINED
 define _CRT_MEMORY_DEFINED

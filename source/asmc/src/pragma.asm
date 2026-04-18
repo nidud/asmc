@@ -354,7 +354,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov quote_s,0
 
             ;
-            ; .pragma comment(lib, "libc.lib", "msvcrt.lib")
+            ; .pragma comment(lib, "libcmt.lib", "msvcrt.lib")
             ;
             ;  if (/pe)
             ;   option dllimport:<msvcrt>
@@ -362,13 +362,24 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             ;   ifdef _MSVCRT
             ;    includelib msvcrt.lib
             ;   else
-            ;    includelib libc.lib
+            ;    includelib libcmt.lib
             ;   endif
             ;  endif
             ;
 
             mov rsi,[rbx].string_ptr
             tstrcpy(&stdlib, rsi)
+
+            ; if -MTd used, flip LIBCMT to LIBCMTD
+
+            .if ( Options.link_mtd )
+                .if ( byte ptr [rax] == '"' )
+                    inc rax
+                .endif
+                .ifd !tstricmp( rax, "LIBCMT" )
+                    tstrcat(&stdlib, "d")
+                .endif
+            .endif
 
             .while ( [rbx+asm_tok].token == T_DOT )
 
@@ -383,7 +394,6 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 inc rsi
                 inc quote_s
                 .if tstrchr(tstrcpy(&stdlib, rsi), '"')
-
                     mov byte ptr [rax],0
                 .endif
             .endif
@@ -403,12 +413,9 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     add i,2
                     add rbx,asm_tok*2
                 .endw
-
                 .if ( byte ptr [rsi] == '"' )
-
                     inc rsi
                     .if tstrchr(tstrcpy(&dynlib, rsi), '"')
-
                         mov byte ptr [rax],0
                     .endif
                 .endif

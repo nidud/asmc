@@ -85,7 +85,6 @@ targets = \
 	kernelbase.lib	\
 	ksuser.lib	\
 	ktmw32.lib	\
-	libcmt.lib	\
 	loadperf.lib	\
 	lz32.lib	\
 	Magnification.lib \
@@ -212,14 +211,14 @@ import:
 	impdef64 -p$(lib_dir)\x64\def $(targets)
 
 obj_src = \
-	crt/_tcrt0.obj	\
+	crt/_tcrt0.obj \
 	crt/_tWinStart.obj \
 	stdio/acrtiobfunc.obj
 
 obj_lib = \
-	_tcrt0.obj	\
-	_tcrt0W.obj	\
-	_tWinStart.obj	\
+	_tcrt0.obj \
+	_tcrt0W.obj \
+	_tWinStart.obj \
 	_tWinStartW.obj \
 	acrtiobfunc.obj
 
@@ -228,6 +227,6 @@ obj_lib = \
 	asmc -c -nologo -nolib -win64 -Cs -MT -MD -ws -Fo*W $<
 
 libc: $(obj_src)
-	libw -q -b -c -fac msvcrt.lib $(obj_lib)
+	libw -q -b -c -fac %AsmcDir%\lib\x64\msvcrt.lib $(obj_lib)
 	del $(obj_lib)
 	del *W.obj

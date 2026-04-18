@@ -5,7 +5,7 @@ ifndef _LIBC_
 include libc.inc
 endif
 
-.pragma comment(lib, libc, msvcrt)
+.pragma comment(lib, libcmt, msvcrt)
 
 ifndef float
 float  typedef real4

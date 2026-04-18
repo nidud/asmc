@@ -141,9 +141,9 @@ obj_src = \
 	stdio/acrtiobfunc.obj
 
 obj_lib = \
-	_tcrt0.obj	\
-	_tcrt0W.obj	\
-	_tWinStart.obj	\
+	_tcrt0.obj \
+	_tcrt0W.obj \
+	_tWinStart.obj \
 	_tWinStartW.obj \
 	acrtiobfunc.obj
 
@@ -152,7 +152,7 @@ obj_lib = \
 	asmc -c -nologo -nolib -coff -Cs -MT -MD -ws -Fo*W $<
 
 libc: $(obj_src)
-	libw -q -b -c -fac msvcrt.lib $(obj_lib)
+	libw -q -b -c -fac %AsmcDir%\lib\x86\msvcrt.lib $(obj_lib)
 	del $(obj_lib)
 	del *W.obj
 

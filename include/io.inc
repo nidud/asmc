@@ -3,7 +3,7 @@ ifndef __IO_INC
 define __IO_INC
 include libc.inc
 
-.pragma comment(lib, libc, msvcrt)
+.pragma comment(lib, libcmt, msvcrt)
 
 ifndef _TIME32_T_DEFINED
 define _TIME32_T_DEFINED

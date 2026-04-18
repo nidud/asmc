@@ -437,7 +437,7 @@ else
 endif
         assume rbx:nothing
 endif
-if 0
+if 1
         tprintf( "File : %s\n", Options.names[TASM] )
 endif
         asmerr( 1901 )
@@ -662,9 +662,9 @@ ifdef __UNIX__
                 .if ( Options.link_mt && !( flags & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) )
                     CollectLinkOption("-nostdlib")
                     .if ( Options.fctype == FCT_ELF64 )
-                        CollectLinkObject("-l:libasmc.a")
+                        CollectLinkObject("-l:libcmt.a")
                     .else
-                        CollectLinkObject("-l:x86/libasmc.a")
+                        CollectLinkObject("-l:x86/libcmt.a")
                     .endif
                 .endif
             .endif
@@ -711,7 +711,7 @@ else
                     .if ( Options.output_format == OFORMAT_ELF )
                         tstrcat(rdi, "linux")
                         .if ( !( flags & O_DEFAULTLIB ) )
-                            CollectLinkOption("-d:libc.a")
+                            CollectLinkOption("-d:libcmt.a")
                             CollectLinkOption("-nor")
                         .endif
                     .elseif ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT )

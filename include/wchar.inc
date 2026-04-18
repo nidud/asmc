@@ -11,7 +11,7 @@ ifndef _WIN64
 endif
 endif
 
-.pragma comment(lib, libc, msvcrt)
+.pragma comment(lib, libcmt, msvcrt)
 
 ifndef _TIME32_T_DEFINED
 define _TIME32_T_DEFINED

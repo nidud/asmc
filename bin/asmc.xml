@@ -232,6 +232,35 @@
         Switch="/Z7" />
     </EnumProperty>
     <EnumProperty
+        Name="SelectRuntimeLibrary"
+        DisplayName="Select Runtime Library"
+        Description="Specify runtime library for linking. (/MT, /MTd, /MD, /MDd)">
+        <EnumValue
+           Name="MultiThreaded"
+           Switch="/MT"
+           DisplayName="Multi-threaded"
+           Description="Defines _MT.">
+        </EnumValue>
+        <EnumValue
+           Name="MultiThreadedDebug"
+           Switch="/MTd"
+           DisplayName="Multi-threaded Debug"
+           Description="Defines _DEBUG and _MT. This option also causes the assembler to flip .pragma lib(LIBCMT... to LIBCMTD.">
+        </EnumValue>
+        <EnumValue
+           Name="MultiThreadedDLL"
+           Switch="/MD"
+           DisplayName="Multi-threaded DLL"
+           Description="Defines _MSVCRT.">
+        </EnumValue>
+        <EnumValue
+           Name="MultiThreadedDebugDLL"
+           Switch="/MDd"
+           DisplayName="Multi-threaded Debug DLL"
+           Description="Defines _MSVCRT and _DEBUG.">
+        </EnumValue>
+    </EnumProperty>
+    <EnumProperty
       Name="PreserveIdentifierCase"
       HelpUrl="https://github.com/nidud/asmc/"
       DisplayName="Preserve Identifier Case"

@@ -46,6 +46,12 @@ CreateTypeSymbol proc __ccall uses rsi rdi sym:asym_t, name:string_t, global:int
     ldr rsi,sym
     .if ( rsi )
         sym_remove_table( &SymTables[TAB_UNDEF], rsi )
+        SymHash([rsi].asym.name)
+        mov [rsi].asym.hash,eax
+        mov [rsi].asym.casesensitive,0
+        .if ( MODULE.case_sensitive )
+            mov [rsi].asym.casesensitive,1
+        .endif
     .else
         .if ( global )
             SymCreate( name )

@@ -2,7 +2,20 @@
 # Makefile for LIBC
 #
 
-flag = -c -MT -Cs
+flag = -c -Cs
+
+ifdef YACC
+flag += -Zd -MT
+name = libcmt
+else
+ifdef debug
+flag += -Zi -MTd
+name = libcmtd
+else
+flag += -MT
+name = libcmt
+endif
+endif
 
 ifdef avx
 flag += -arch:AVX
@@ -12,9 +25,11 @@ ifdef zip
 flag += -DSTDZIP
 name = zlibc
 endif
+
 ifdef noutf
 flag += -DNOUTF8
 endif
+
 # auto link using -MT
 ifdef noflt
 flag += -DNOSTDFLT
@@ -22,16 +37,12 @@ endif
 
 ifdef YACC
 
-ifndef name
-name = libasmc
-endif
-
 $(name).a:
-	asmc64 $(flag) -Zd -Zp8 -r *.asm *.s
+	asmc $(flag) -elf64 -Zp8 -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc
-	asmc $(flag) -6 -elf -Zd -Zp4 -r *.asm *.s
+	asmc $(flag) -6 -elf -Zp4 -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc/x86
@@ -40,11 +51,7 @@ else
 
 include srcpath
 
-ifndef name
-name = libc
-endif
-
-flag += -Zi -I$(inc_dir)
+flag += -I$(inc_dir)
 
 ifdef tty
 flag += -D__TTY__
@@ -78,8 +85,8 @@ terminal:
 linux:
 	asmc -c -q -mscrt -elf -Fo $(lib_dir)\x86\noflt $(lib_dir)\noflt.asm
 	asmc -c -q -mscrt -elf64 -Fo $(lib_dir)\x64\noflt $(lib_dir)\noflt.asm
-	asmc -BlLIBW -6 -mscrt -MT -elf -Zp4 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x86\libc.a
-	asmc -BlLIBW -mscrt -MT -elf64 -Zp8 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x64\libc.a
+	asmc -BlLIBW -6 -mscrt -MT -elf -Zp4 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x86\libcmt.a
+	asmc -BlLIBW -mscrt -MT -elf64 -Zp8 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x64\libcmt.a
 	del *.o
 
 regress:

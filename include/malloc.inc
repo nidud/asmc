@@ -4,7 +4,7 @@ define _INC_MALLOC
 ifndef _LIBC_
 include libc.inc
 endif
-.pragma comment(lib, libc, msvcrt)
+.pragma comment(lib, libcmt, msvcrt)
 
 ; All allocations are of size n * _GRANULARITY
 

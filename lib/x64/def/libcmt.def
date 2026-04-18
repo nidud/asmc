@@ -1,3 +1,0 @@
-LIBRARY libcmt.dll
-EXPORTS
-libcmt_dummy

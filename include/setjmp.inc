@@ -125,7 +125,7 @@ endif
 
 else ; _CRT_SETJMP
 
-.pragma comment(lib, libc, msvcrt)
+.pragma comment(lib, libcmt, msvcrt)
 
 _setjmp proto __cdecl :jmp_buf
 longjmp proto __cdecl :jmp_buf, :int_t

@@ -59,7 +59,7 @@ system begin con_32D
 
 system begin watcom_c
     system  386
-    library libc
+    library libcmt
     option  start=_cstart_
     end
 
@@ -128,7 +128,7 @@ system begin dgui_64W
 system begin dll_32
     libpath %ASMCDIR%\lib\x86
     format windows pe dll ^
-    library libc,kernel32,user32,gdi32
+    library libcmt,kernel32,user32,gdi32
     runtime windows=4.0
     end
 
@@ -147,7 +147,7 @@ system begin dll_64
 
 system begin elf
     libpath %ASMCDIR%\lib\x86
-    library libc.a
+    library libcmt.a
     symt    _start
     format  elf
     runtime linux
@@ -157,7 +157,7 @@ system begin elf
 
 system begin elf64
     libpath %ASMCDIR%\lib\x64
-    library libc.a
+    library libcmt.a
     symt    _start
     format  elf
     runtime linux

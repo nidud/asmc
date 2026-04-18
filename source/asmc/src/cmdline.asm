@@ -700,6 +700,7 @@ ifndef ASMC64
 endif
     .case 'dTM'             ; -MTd
         define_name( "_DEBUG", "1" )
+        mov Options.link_mtd,1
     .case 'TM'              ; -MT
         define_name( "_MT", "1" )
         .if ( Options.no_linking == 0 )

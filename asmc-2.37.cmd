@@ -12,11 +12,27 @@ asmc -logo
 echo.
 echo AsmcDir: %AsmcDir%
 
-if not exist %~dp0lib\x86\libc.lib (
+if not exist %~dp0lib\x86\libcmt.lib (
     choice /c YN /M "Runtime Library Missing: Build it now"
     if not errorlevel 2 (
         make -fsource\libc\makefile
         make -fsource\libc\makefile x86=1
+    )
+)
+
+if not exist %~dp0lib\x86\libcmtd.lib (
+    echo.
+    choice /c YN /M "Runtime Debug Library Missing: Build it now"
+    if not errorlevel 2 (
+        make -fsource\libc\makefile debug=1
+        make -fsource\libc\makefile debug=1 x86=1
+    )
+)
+
+if not exist %~dp0lib\x86\libcmt.a (
+    echo.
+    choice /c YN /M "Runtime Library for Linux Missing: Build it now"
+    if not errorlevel 2 (
         make -fsource\libc\makefile linux
     )
 )

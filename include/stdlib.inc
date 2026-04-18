@@ -26,7 +26,7 @@ define _CRTFINI_E <__fini_array_end>
 endif
 endif
 
-.pragma comment(lib, libc, msvcrt)
+.pragma comment(lib, libcmt, msvcrt)
 
 ifndef _ONEXIT_T_DEFINED
 define _ONEXIT_T_DEFINED

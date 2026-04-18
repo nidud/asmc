@@ -4,7 +4,7 @@ define __CTYPE_INC
 ifndef _LIBC_
 include libc.inc
 endif
-.pragma comment(lib, libc, msvcrt)
+.pragma comment(lib, libcmt, msvcrt)
 
 ifndef WEOF
 define WEOF 0xFFFF

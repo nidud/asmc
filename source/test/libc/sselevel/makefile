@@ -1,5 +1,5 @@
 test:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
 	@pause

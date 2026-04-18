@@ -24,9 +24,11 @@ _tmain proc
    mov result,scanf( "%d %f %c %C %80s %80S", &i, &fp, &c, &wc, &s, &ws )
    printf( "The number of fields input is %d\n", result )
    printf( "The contents are: %d %f %c %C %s %S\n", i, fp, c, wc, &s, &ws )
+ifndef __UNIX__
    mov result,wscanf( L"%d %f %hc %lc %80S %80ls", &i, &fp, &c, &wc, &s, &ws )
    wprintf( L"The number of fields input is %d\n", result )
    wprintf( L"The contents are: %d %f %C %c %hs %s\n", i, fp, c, wc, &s, &ws )
+endif
   .return( 0 )
 
 _tmain endp

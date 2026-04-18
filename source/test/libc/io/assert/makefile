@@ -2,14 +2,14 @@
 # Sat Nov 30 16:14:59 2024
 
 assert:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
-	asmc -q -elf $@.asm
+	asmc -q -elf -MT $@.asm
 	./$@
 else
 	$@
-	asmc -q -coff $@.asm
+	asmc -q -coff -MT $@.asm
 	$@
 endif
 	@pause

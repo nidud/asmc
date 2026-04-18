@@ -44,22 +44,16 @@ float_equ_float proto :abs, :abs {
     .code
 
 foo proc a:float, b:float, c:float, d:float
-
    .new n:float = 2.0
-
     n = (a + b * d - c) / n
     ret
-
-foo endp
+    endp
 
 _tmain proc
-
    .new result:real4 = foo(1.0, 2.0, 3.0, 4.0)
-
     cout << "(a + b * d - c) / 2.0 = " << result << endl
     xor eax,eax
     ret
-
-_tmain endp
+    endp
 
     end _tstart

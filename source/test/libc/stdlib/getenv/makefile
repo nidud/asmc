@@ -2,18 +2,18 @@
 all: getenv clean
 
 getenv:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
-	asmc -q -elf $@.asm
+	asmc -q -elf -MT $@.asm
 	./$@
 else
 	$@
-	asmc64 -q -ws $@.asm
+	asmc64 -q -ws -MT $@.asm
 	$@
-	asmc -q $@.asm
+	asmc -q -coff -MT $@.asm
 	$@
-	asmc -q -ws $@.asm
+	asmc -q -ws -coff -MT $@.asm
 	$@
 endif
 	@pause

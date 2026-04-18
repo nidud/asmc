@@ -1,12 +1,12 @@
 findfirst:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@ "*.*"
-	asmc -elf $@.asm
+	asmc -elf -MT $@.asm
 	./$@ "*.*"
 else
 	$@ *.*
-	asmc64 -q -ws $@.asm
+	asmc64 -q -ws -MT $@.asm
 	$@ *.*
 	asmc64 -q -pe $@.asm
 	$@ *.*

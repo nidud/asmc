@@ -1,5 +1,5 @@
 
-flags = -q
+flags = -q -MT
 
 all: mktemp clean
 
@@ -16,9 +16,11 @@ clean:
 ifdef YACC
 	rm ./mktemp.o
 	rm ./mktemp
+	rm ./fn*
 else
 	del mktemp.exe
 	del mktemp.obj
+	del fn*
 endif
 
 vs:

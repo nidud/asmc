@@ -2,10 +2,10 @@
 # Fri Nov 15 21:20:25 2024
 
 fgetb:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
-	asmc -q -elf $@.asm
+	asmc -q -elf -MT $@.asm
 	./$@
 else
 	$@

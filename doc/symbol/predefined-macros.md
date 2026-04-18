@@ -19,7 +19,9 @@ The macros listed in the following table.
 <tr><td><b>__AVX512F__</b></td><td>Defined as 1 when the -arch:AVX512 option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__AVX512VL__</b></td><td>Defined as 1 when the -arch:AVX512 option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__COMPACT__</b></td><td>Defined as 1 when the -mc option is set. Otherwise, undefined.</td></tr>
+<tr><td><b>_DEBUG</b></td><td>Defined as 1 when the -MDd or -MTd option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__DEBUG__</b></td><td>Defined as 1 when the -Zi option is set. Otherwise, undefined.</td></tr>
+<tr><td><b>_DLL</b></td><td>Defined as 1 when the -MD[d] option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__FLAT__</b></td><td>Defined as 1 when the -mf option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__GUI__</b></td><td>Defined as 1 when the -peg option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__HUGE__</b></td><td>Defined as 1 when the -mh option is set. Otherwise, undefined.</td></tr>
@@ -28,7 +30,8 @@ The macros listed in the following table.
 <tr><td><b>_M_IX86_FP</b></td><td>Defined as 1 when the -arch:IA32 option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__MEDIUM__</b></td><td>Defined as 1 when the -mm option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__MSCRT__</b></td><td>Defined as 1 when the -mscrt option is set. Otherwise, undefined.</td></tr>
-<tr><td><b>_MSVCRT</b></td><td>Defined as 1 when the -MD option is set. Otherwise, undefined.</td></tr>
+<tr><td><b>_MSVCRT</b></td><td>Defined as 1 when the -MD[d] option is set. Otherwise, undefined.</td></tr>
+<tr><td><b>_MT</b></td><td>Defined as 1 when the -MD[d] or -MT[d] option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__PE__</b></td><td>Defined as 1 when the -pe option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__P186__</b></td><td>Defined as 1 when the -1 option is set. Otherwise, undefined.</td></tr>
 <tr><td><b>__P286__</b></td><td>Defined as 1 when the -2 option is set. Otherwise, undefined.</td></tr>

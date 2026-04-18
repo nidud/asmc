@@ -1,5 +1,5 @@
 signal:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
 	@pause
@@ -7,7 +7,7 @@ ifdef YACC
 	@rm -f $@
 else
 	$@
-	asmc -q $*.asm
+	asmc -q -coff -MT $*.asm
 	$@
 	pause
 	del $*.obj

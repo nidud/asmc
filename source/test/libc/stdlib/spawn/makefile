@@ -2,8 +2,8 @@
 all: spawn clean
 
 spawn:
-	asmc64 -q $@.asm
-	asmc64 -q ../exec/args.asm
+	asmc64 -q -MT $@.asm
+	asmc64 -q -MT ../exec/args.asm
 ifdef YACC
 	./$@ 2 ./args
 else
@@ -14,7 +14,7 @@ endif
 clean:
 ifdef YACC
 	rm ./*.o
-	rm ./exec
+	rm ./spawn
 	rm ./args
 else
 	del *.exe

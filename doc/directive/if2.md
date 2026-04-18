@@ -1,10 +1,14 @@
 Asmc Macro Assembler Reference
 
-## IF2
+## IF1 and IF2
 
-**IF2** _expression_
+**IF1**
 
-[IF](if.md) block is evaluated on every assembly pass if OPTION:SETIF2 is TRUE.
+**IF2**
+
+IF1 block is evaluated on first assembly pass.
+
+IF2 block is evaluated on every assembly pass if OPTION:SETIF2 is TRUE.
 
 #### See Also
 

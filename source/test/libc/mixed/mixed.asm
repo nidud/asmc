@@ -1,4 +1,4 @@
-.pragma comment(linker, "/defaultlib:libc.lib")
+.pragma comment(linker, "/defaultlib:libcmt.lib")
 
 public Rect
 

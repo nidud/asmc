@@ -660,7 +660,6 @@ define PE_DLL               0x04
      nolib                  dd: 1 ? ; skip includelib directives
      no_linking             dd: 1 ? ; -c used, assembles only
      link_mt                dd: 1 ? ; -MT used, -c not used --> use LIBCMT
-     link_mtd               dd: 1 ? ; -MTd used, flip .pragma lib(LIBCMT --> LIBCMTD
      float_used             dd: 1 ? ; float used as :vararg param
      main_found             dd: 1 ? ; [w]main proc defined
      argv_used              dd: 1 ? ; [w]main has params

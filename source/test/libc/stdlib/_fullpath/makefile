@@ -4,7 +4,7 @@
 all: _fullpath clean
 
 _fullpath:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@ ../_fullpath
 else

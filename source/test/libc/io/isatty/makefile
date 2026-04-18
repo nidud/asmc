@@ -1,5 +1,5 @@
 isatty:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
 	@pause
@@ -7,9 +7,9 @@ ifdef YACC
 	rm -f $@
 else
 	$@
-	asmc -q $*.asm
-	asmc -q -ws $*.asm
-	asmc64 -q -ws $*.asm
+	asmc -q -coff -MT $*.asm
+	asmc -q -coff -ws -MT $*.asm
+	asmc64 -q -ws -MT $*.asm
 	asmc64 -q -ws -pe $*.asm
 	$@
 	pause

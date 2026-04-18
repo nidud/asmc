@@ -35,20 +35,14 @@ float_div_flt proto :real4, :abs {
     .code
 
 foo proc a:float, b:float, c:float, d:float
-
     b * xmm3 - xmm2 + a / 2.0
     ret
-
-foo endp
+    endp
 
 _tmain proc
-
    .new result:real4 = foo(1.0, 2.0, 3.0, 4.0)
-
     cout << "2.0 * 4.0 - 3.0 + 1.0 / 2.0 = " << result << endl
     xor eax,eax
     ret
-
-_tmain endp
-
+    endp
     end _tstart

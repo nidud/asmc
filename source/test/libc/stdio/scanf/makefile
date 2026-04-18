@@ -1,5 +1,5 @@
 
-flags = -q
+flags = -q -MT
 
 all: scanf clean
 

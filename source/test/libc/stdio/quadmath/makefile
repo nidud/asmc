@@ -1,5 +1,5 @@
 quadmath:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
 	@pause
@@ -7,12 +7,12 @@ ifdef YACC
 	@rm -f $@
 else
 	$@
-	asmc64 -q -ws $*.asm
+	asmc64 -q -ws -MT $*.asm
 	$@
 	pause
-	asmc -q $*.asm
+	asmc -q -coff -MT $*.asm
 	$@
-	asmc -q -ws $*.asm
+	asmc -q -coff -ws -MT $*.asm
 	$@
 	pause
 	del *.obj

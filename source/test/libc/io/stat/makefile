@@ -1,18 +1,18 @@
 stat:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
-	asmc -elf $@.asm
+	asmc -elf -MT $@.asm
 	./$@
 	@pause
 	@rm -f $@.o
 	@rm -f $@
 else
 	$@
-	asmc -q $*.asm
-	asmc -q -ws $*.asm
+	asmc -q -coff -MT $*.asm
+	asmc -q -coff -MT -ws $*.asm
 	$@
-	asmc64 -q -ws $*.asm
+	asmc64 -q -ws -MT $*.asm
 	asmc64 -q -pe $*.asm
 	$@
 	pause

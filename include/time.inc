@@ -6,7 +6,7 @@ ifndef _LIBC_
 include libc.inc
 endif
 
-.pragma comment(lib, libcmt, msvcrt)
+.pragma comment(lib, _LIB_STEM, msvcrt)
 .pragma pack(push, size_t)
 
 ifndef _TIME32_T_DEFINED

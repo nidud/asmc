@@ -27,4 +27,4 @@ _tmain proc argc:int_t, argv:tarray_t
 
 _tmain endp
 
-    end
+    end _tstart

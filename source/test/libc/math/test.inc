@@ -2,16 +2,7 @@ include math.inc
 include stdio.inc
 include tchar.inc
 
-ifdef _WIN64
-define BITS 64
-else
-define BITS 32
-endif
-ifdef __PE__
-define INFO <"msvcrt">
-else
-define INFO <"libc">
-endif
+define INFO @CatStr(<!">, %_LIB_STEM, <!">)
 
     .code
 
@@ -28,10 +19,9 @@ endif
 else
     fstp x
 endif
-    _tprintf("%.14f " INFO "(%d)\n", x, BITS)
+    _tprintf("%.14f " INFO " (%d)\n", x, size_t*8)
     xor eax,eax
     ret
-
-_tmain endp
+    endp
 
     end _tstart

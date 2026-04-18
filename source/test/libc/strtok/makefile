@@ -1,5 +1,5 @@
 strtok:
-	asmc64 -q -Cs $@.asm
+	asmc64 -q -Cs -MT $@.asm
 ifdef YACC
 	./$@ $@.asm
 	@pause

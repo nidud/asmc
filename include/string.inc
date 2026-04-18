@@ -3,7 +3,7 @@ define _STRING_
 ifndef _LIBC_
 include libc.inc
 endif
-.pragma comment(lib, libcmt, msvcrt)
+.pragma comment(lib, _LIB_STEM, msvcrt)
 
 ifdef __UNIX__
 define _stricmp <strcasecmp>

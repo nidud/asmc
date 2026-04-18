@@ -1,5 +1,5 @@
 float3:
-	asmc64 -q -fpic $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
 	@pause

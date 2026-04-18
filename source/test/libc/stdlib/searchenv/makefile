@@ -4,14 +4,14 @@
 all: searchenv clean
 
 searchenv:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
-	asmc -elf $@.asm
+	asmc -elf -MT $@.asm
 	./$@
 else
 	$@
-	asmc -q $@.asm
+	asmc -q -coff -MT $@.asm
 	$@
 endif
 	@pause

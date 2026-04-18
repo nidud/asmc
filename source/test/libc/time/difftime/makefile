@@ -1,10 +1,8 @@
 
-flags = -q
-
 all: difftime clean
 
 difftime:
-	asmc64 $(flags) $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
 else

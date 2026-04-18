@@ -44,7 +44,7 @@ Asmc Macro Assembler Reference
 
 <table>
 <tr><td><a href="defined.md">DEFINED</a></td><td><a href="else.md">ELSE</a></td><td><a href="elseif.md">ELSEIF</a></td></tr>
-<tr><td><a href="elseif2.md">ELSEIF2</a></td><td><a href="if.md">IF</a></td><td><a href="if2.md">IF2</a></td></tr>
+<tr><td><a href="elseif2.md">ELSEIF2</a></td><td><a href="if.md">IF</a></td><td><a href="if2.md">IF1 and IF2</a></td></tr>
 <tr><td><a href="ifb.md">IFB</a></td><td><a href="ifdef.md">IFDEF</a></td><td><a href="ifdif.md">IFDIF</a></td></tr>
 <tr><td><a href="ifdif.md">IFDIFI</a></td><td><a href="ife.md">IFE</a></td><td><a href="ifidn.md">IFIDN</a></td></tr>
 <tr><td><a href="ifidn.md">IFIDNI</a></td><td><a href="ifnb.md">IFNB</a></td><td><a href="ifndef.md">IFNDEF</a></td></tr>

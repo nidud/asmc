@@ -2,8 +2,8 @@
 all: exec clean
 
 exec:
-	asmc64 -q $@.asm
-	asmc64 -q args.asm
+	asmc64 -q -MT $@.asm
+	asmc64 -q -MT args.asm
 ifdef YACC
 	./$@ ./args 2
 else

@@ -2,18 +2,18 @@
 all: system clean
 
 system:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
-	asmc -q -elf $@.asm
+	asmc -q -elf -MT $@.asm
 	./$@
 else
 	$@
-	asmc -q $@.asm
+	asmc -q -coff -MT $@.asm
 	$@
-	asmc -q -ws -Cs $@.asm
+	asmc -q -coff -ws -Cs -MT $@.asm
 	$@
-	asmc64 -q -Zp8 -ws -Cs $@.asm
+	asmc64 -q -Zp8 -ws -Cs -MT $@.asm
 	$@
 endif
 	@pause

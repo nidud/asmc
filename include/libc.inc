@@ -34,14 +34,24 @@ define _M_IX86_16
 endif
 endif
 
-ifdef _MT
+ifndef _LIB_STEM
+ifdef _DLL
+define _LIB_STEM <msvcrt>
+elseifdef _DEBUG
+define _LIB_STEM <libcmtd>
+else
+define _LIB_STEM <libcmt>
+endif
+endif
+
+if defined(_MT) and not defined(_DLL)
 define _CRTBLD
 elseifdef __PE__ ; -pe option used
 ifndef _MSVCRT	 ; msvcrt.lib
 define _MSVCRT
 endif
 endif
-ifdef _MSVCRT
+if defined(_MSVCRT) and not defined(_DLL)
 define _DLL
 endif
 

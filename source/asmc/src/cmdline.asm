@@ -700,7 +700,6 @@ ifndef ASMC64
 endif
     .case 'dTM'             ; -MTd
         define_name( "_DEBUG", "1" )
-        mov Options.link_mtd,1
     .case 'TM'              ; -MT
         define_name( "_MT", "1" )
         .if ( Options.no_linking == 0 )
@@ -709,12 +708,18 @@ endif
         .return
     .case 'dDM'             ; -MDd
         define_name( "_DEBUG", "1" )
+    .case 'DM'              ; -MD
+        define_name( "_MT", "1" )
+        define_name( "_DLL", "1" )
+        define_name( "_MSVCRT", "1" )
+ifdef __UNIX__
+       .gotosw('cipf')      ; -fpic for dynamic link..
+else
+       .return
+endif
     .case 'ilon'            ; -nolib
         mov Options.nolib,TRUE
        .return ; v2.37.04: added
-    .case 'DM'              ; -MD
-        define_name( "_MSVCRT", "1" )
-       .return
     .case 'rcsm'            ; -mscrt
         mov Options.mscrt,1
         define_name( "__MSCRT__", "1" )

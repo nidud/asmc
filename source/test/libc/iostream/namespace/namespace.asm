@@ -20,15 +20,11 @@ include tchar.inc
 .code
 
 _tmain proc
-
    .new box_side:int_t = 42
-
     cout << box1::box_side << endl  ; Outputs 4.
     cout << box2::box_side << endl  ; Outputs 12.
     cout << box_side << endl        ; Outputs 42.
     xor eax,eax
     ret
-
-_tmain endp
-
+    endp
     end _tstart

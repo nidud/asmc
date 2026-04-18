@@ -1,54 +1,57 @@
-targets = \
-	acos.asm \
-	acosf.asm \
-	asin.asm \
-	asinf.asm \
-	atan.asm \
-	atan2.asm \
-	atan2f.asm \
-	atanf.asm \
-	ceil.asm \
-	ceilf.asm \
-	cos.asm \
-	cosf.asm \
-	exp.asm \
-	exp2.asm \
-	exp2f.asm \
-	expf.asm \
-	floor.asm \
-	floorf.asm \
-	fmod.asm \
-	fmodf.asm \
-	log.asm \
-	log10.asm \
-	log10f.asm \
-	logf.asm \
-	pow.asm \
-	powf.asm \
-	round.asm \
-	roundf.asm \
-	sin.asm \
-	sinf.asm \
-	sqrt.asm \
-	sqrtf.asm \
-	tan.asm \
-	tanf.asm
+.SUFFIXES: .asm .o
 
-.asm.obj:
+targets = \
+	acos.o \
+	acosf.o \
+	asin.o \
+	asinf.o \
+	atan.o \
+	atan2.o \
+	atan2f.o \
+	atanf.o \
+	ceil.o \
+	ceilf.o \
+	cos.o \
+	cosf.o \
+	exp.o \
+	exp2.o \
+	exp2f.o \
+	expf.o \
+	floor.o \
+	floorf.o \
+	fmod.o \
+	fmodf.o \
+	log.o \
+	log10.o \
+	log10f.o \
+	logf.o \
+	pow.o \
+	powf.o \
+	round.o \
+	roundf.o \
+	sin.o \
+	sinf.o \
+	sqrt.o \
+	sqrtf.o \
+	tan.o \
+	tanf.o
+
+.asm.o:
 	echo $*: >> result.txt
-	asmc64 -q $*.asm
+	asmc64 -q -MT $<
 ifdef YACC
 	./$* >> result.txt
-	@pause
+	asmc64 -q -MD $<
+	./$* >> result.txt
 	@rm -f $*.o
 	@rm -f $*
 else
 	$* >> result.txt
-	asmc64 -q -pe $*.asm
+	asmc64 -q -pe $<
 	$* >> result.txt
-	asmc -q -coff $*.asm
+	asmc -q -coff $<
 	$* >> result.txt
-	asmc -q -pe $*.asm
+	asmc -q -pe $<
 	$* >> result.txt
 	del $*.obj
 	del $*.exe

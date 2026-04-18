@@ -43,24 +43,17 @@ operator al, byte
 .code
 
 foo proc a:byte_t, b:byte_t, c:byte_t, d:byte_t
-
    .new n:byte_t = 2
-
     n = (a + b * d - c) / n
-
     movzx eax,n
     ret
-
-foo endp
+    endp
 
 _tmain proc
-
    .new i:int_t = foo(1, 2, 3, 4)
-
     cout << "(1 + 2 * 4 - 3) / 2 = " << i << endl
     xor eax,eax
     ret
-
-_tmain endp
+    endp
 
     end _tstart

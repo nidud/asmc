@@ -1,8 +1,8 @@
 _ftime:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
-	asmc64 -q -fpic $@.asm
+	asmc64 -q -MD $@.asm
 	./$@
 	@pause
 	@rm $@.o

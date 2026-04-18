@@ -1,15 +1,15 @@
 pragma:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
-	asmc -q -MT -elf $@.asm
+	asmc -q -elf -MT $@.asm
 	./$@
 	@pause
 	@rm -f $@.o
 	@rm -f $@
 else
 	$@
-	asmc -coff -q $@.asm
+	asmc -q -coff -MT $@.asm
 	$@
 	pause
 	del $@.obj

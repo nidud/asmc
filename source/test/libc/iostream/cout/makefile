@@ -1,6 +1,6 @@
 cout:
-	asmc64 -q $@.asm
-	asmc64 -q stdio.asm
+	asmc64 -q -MT $@.asm
+	asmc64 -q -MT stdio.asm
 ifdef YACC
 	./$@
 	./stdio

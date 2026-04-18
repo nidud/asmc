@@ -647,7 +647,7 @@ ifdef __UNIX__
 
         .if ( Options.link_linker == NULL )
 
-            ; gcc [-m32 [-no-pie]] [-static] [-nostdlib] [-s] -o <name> *.o [-l:[x86/]libasmc.a]
+            ; gcc [-m32 [-no-pie]] [-static] [-nostdlib] [-s] -o <name> *.o [-l:[x86/]libcmt.a]
 
             .if ( Options.fctype != FCT_ELF64 )
                 CollectLinkOption("-m32")
@@ -667,6 +667,8 @@ ifdef __UNIX__
                         CollectLinkObject("-l:x86/libcmt.a")
                     .endif
                 .endif
+            .else ; Add math library for dynamic linking using GCC
+                CollectLinkOption("-lm")
             .endif
             .if ( !( flags & ( O_DEFAULTLIB or O_NODEFAULTLIB ) ) && !Options.line_numbers )
                 CollectLinkOption("-Wl,-z,noexecstack")

@@ -73,8 +73,10 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-link</b></td><td>The link options. For more information, see <a href="option-link.md">Linker options</a>.</td></tr>
 <tr><td><b>-logo</b></td><td>Print logo string and exit.</td></tr>
 <tr><td><b>-m</b>&lt;<i>model</i>&gt;</td><td>Set <a href="option-m.md">memory model</a>. Not available in ASMC64.</td></tr>
-<tr><td><b>-MD[d]</b></td><td>Defines _MSVCRT [_DEBUG].</td></tr>
-<tr><td><b>-MT[d]</b></td><td>Defines _MT [_DEBUG].</td></tr>
+<tr><td><b>-MD</b></td><td>Multi-threaded DLL. Defines _MT, _DLL, and _MSVCRT.</td></tr>
+<tr><td><b>-MDd</b></td><td>Multi-threaded Debug DLL. Defines _MT, _DLL, _MSVCRT and _DEBUG.</td></tr>
+<tr><td><b>-MT</b></td><td>Multi-threaded. Defines _MT.</td></tr>
+<tr><td><b>-MTd</b></td><td>Multi-threaded Debug. This option causes the assembler to select LIBCMTD if .PRAGMA comment(lib, LIBCMT) is used. Defines _MT and _DEBUG.</td></tr>
 <tr><td><b>-mscrt</b></td><td>Generate MSCRT init/exit segments for ELF.</td></tr>
 <tr><td><b>-mz</b></td><td>Generate DOS MZ binary file. Not available in ASMC64.</td></tr>
 <tr><td><b>-nc</b> <i>name</i></td><td>Set class name of code segment.</td></tr>

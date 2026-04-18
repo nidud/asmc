@@ -1,15 +1,15 @@
 localtime:
-	asmc64 -q $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
-	asmc64 -q -fpic $@.asm
+	asmc64 -q -MD $@.asm
 	./$@
 	@pause
 	@rm $@.o
 	@rm $@
 else
 	$@
-	asmc64 -q -pe $@.asm
+	asmc64 -q -MD $@.asm
 	$@
 	pause
 	del $@.obj

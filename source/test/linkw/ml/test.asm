@@ -1,7 +1,9 @@
     .486
     .model flat, stdcall
 
-includelib msvcrt0.lib
+includelib msvcrt.lib
+includelib kernel32.lib
+includelib user32.lib
 
 MessageBoxA proto :ptr, :ptr, :ptr, :sdword
 

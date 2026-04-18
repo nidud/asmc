@@ -16,7 +16,7 @@ define _P_OVERLAY       2
 define _WAIT_CHILD      0
 define _WAIT_GRANDCHILD 1
 
-.pragma comment(lib, libcmt, msvcrt)
+.pragma comment(lib, _LIB_STEM, msvcrt)
 
 _beginthread    proto __cdecl :ptr, :uint_t, :ptr
 _endthread      proto __cdecl

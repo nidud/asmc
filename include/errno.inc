@@ -4,7 +4,7 @@ ifndef _LIBC_
 include libc.inc
 endif
 
-.pragma comment(lib, libcmt, msvcrt)
+.pragma comment(lib, _LIB_STEM, msvcrt)
 
 ; Declare reference to errno
 

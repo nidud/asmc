@@ -245,7 +245,7 @@
            Name="MultiThreadedDebug"
            Switch="/MTd"
            DisplayName="Multi-threaded Debug"
-           Description="Defines _DEBUG and _MT. This option also causes the assembler to flip .pragma lib(LIBCMT... to LIBCMTD.">
+           Description="Defines _DEBUG and _MT. This option also causes the assembler to select LIBCMTD.lib">
         </EnumValue>
         <EnumValue
            Name="MultiThreadedDLL"

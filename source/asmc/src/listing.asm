@@ -1072,7 +1072,9 @@ LstCaption proc __ccall uses rsi caption:string_t, prefNL:int_t
     endp
 
 
-compare_syms proc fastcall p1:ptr, p2:ptr
+compare_syms proc p1:ptr, p2:ptr
+    ldr rcx,p1
+    ldr rdx,p2
     mov rcx,[rcx]
     mov rdx,[rdx]
     .return( tstrcmp( [rcx].asym.name, [rdx].asym.name ) )
@@ -1109,7 +1111,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx
     SymGetAll( syms )
 
     ; sort 'em
-    tqsort( syms, SymCount, sizeof( asym_t ), &compare_syms )
+    qsort( syms, SymCount, sizeof( asym_t ), &compare_syms )
     tmemset( &queues, 0, sizeof( queues ) )
 
     .for ( ebx = 0: ebx < SymCount: ++ebx )

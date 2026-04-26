@@ -49,12 +49,6 @@ IsWeak proto watcall :asym_t {
     }
 endif
 
-movl macro a, b
-ifdef _LIN64
-    mov a,b
-endif
-    endm
-
 ;
 ; section attributes for ELF
 ;         execute write  alloc  type
@@ -769,10 +763,6 @@ elf_write_section_table proc __ccall uses rsi rdi rbx em:ptr elfmod, fileoffset:
    .new sh:ElfShdr
    .new size:dword
    .new addralign:dword
-ifdef _LIN64
-   .new _rsi:ptr
-   .new _rdi:ptr
-endif
 
     ldr rbx,em
 
@@ -858,11 +848,7 @@ endif
             mov sh.dr32.sh_size,edx
             mov sh.dr32.sh_addralign,eax
         .endif
-        movl _rsi,rsi
-        movl _rdi,rdi
-        fwrite( &sh, 1, size, CurrFile[TOBJ] )
-        movl rdi,_rdi
-        movl rsi,_rsi
+        tfwrite( &sh, 1, size, CurrFile[TOBJ] )
 
         .if ( eax != size )
             WriteError()
@@ -946,11 +932,7 @@ endif
             mov sh.dr32.sh_addralign,addralign
         .endif
 
-        movl _rsi,rsi
-        movl _rdi,rdi
-        fwrite( &sh, 1, size, CurrFile[TOBJ] )
-        movl rsi,_rsi
-        movl rdi,_rdi
+        tfwrite( &sh, 1, size, CurrFile[TOBJ] )
         .if ( eax != size )
             WriteError()
         .endif
@@ -1023,11 +1005,7 @@ endif
             mov sh.dr32.sh_info,eax
             mov sh.dr32.sh_addralign,ecx
         .endif
-        movl _rsi,rsi
-        movl _rdi,rdi
-        fwrite( &sh, 1, size, CurrFile[TOBJ] )
-        movl rsi,_rsi
-        movl rdi,_rdi
+        tfwrite( &sh, 1, size, CurrFile[TOBJ] )
         .if ( eax != size )
             WriteError()
         .endif
@@ -1140,12 +1118,9 @@ endif
 
         mov rcx,[rsi].sym
         mov reloc32.r_info,ELF32_R_INFO( [rcx].asym.ext_idx, edx )
-        movl rbx,rsi
-        .ifd ( fwrite( &reloc32, 1, sizeof(reloc32), CurrFile[TOBJ] ) != sizeof(reloc32) )
+        .ifd ( tfwrite( &reloc32, 1, sizeof(reloc32), CurrFile[TOBJ] ) != sizeof(reloc32) )
             WriteError()
         .endif
-        movl rsi,rbx
-        movl rbx,em
     .endf
     ret
     endp
@@ -1271,15 +1246,9 @@ endif
         .endsw
         mov dword ptr reloc64.r_info[0],edx
         mov dword ptr reloc64.r_info[4],edi
-ifdef _LIN64
-       .new _rsi:ptr = rsi
-       .new _rdi:ptr = rdi
-endif
-        .ifd ( fwrite( &reloc64, 1, sizeof( reloc64 ), CurrFile[TOBJ] ) != sizeof(reloc64) )
+        .ifd ( tfwrite( &reloc64, 1, sizeof( reloc64 ), CurrFile[TOBJ] ) != sizeof(reloc64) )
             WriteError()
         .endif
-        movl rsi,_rsi
-        movl rdi,_rdi
     .endf
     ret
     endp
@@ -1291,10 +1260,6 @@ endif
 
 
 elf_write_data proc __ccall uses rsi rdi rbx em:ptr elfmod
-ifdef _LIN64
-    .new _rsi:ptr
-    .new _rdi:ptr
-endif
     .new i:int_t
     .new b:byte = 0
 
@@ -1304,23 +1269,17 @@ endif
         mov ebx,[rsi].asym.max_offset
         sub ebx,[rdi].seg_info.start_loc
         .if ( [rdi].seg_info.segtype != SEGTYPE_BSS && ebx )
-            movl _rsi,rsi
-            movl _rdi,rdi
             .for ( i = [rdi].seg_info.start_loc : i : i-- )
-                fwrite( &b, 1, 1, CurrFile[TOBJ] )
+                tfwrite( &b, 1, 1, CurrFile[TOBJ] )
             .endf
-            movl rsi,_rsi
-            movl rdi,_rdi
             .if ( [rdi].seg_info.CodeBuffer == NULL )
-                fseek( CurrFile[TOBJ], ebx, SEEK_CUR )
+                tfseek( CurrFile[TOBJ], ebx, SEEK_CUR )
             .else
-                fseek( CurrFile[TOBJ], [rsi].asym.fileoffset_elf, SEEK_SET )
-                movl rdi,_rdi
-                .if ( fwrite( [rdi].seg_info.CodeBuffer, 1, ebx, CurrFile[TOBJ] ) != rbx )
+                tfseek( CurrFile[TOBJ], [rsi].asym.fileoffset_elf, SEEK_SET )
+                .if ( tfwrite( [rdi].seg_info.CodeBuffer, 1, ebx, CurrFile[TOBJ] ) != rbx )
                     WriteError()
                 .endif
             .endif
-            movl rsi,_rsi
         .endif
     .endf
 
@@ -1331,13 +1290,8 @@ endif
 
         imul edi,esi,intseg
         .if ( [rbx].internal_segs[rdi].data )
-            movl _rsi,rsi
-            movl _rdi,rdi
-            fseek( CurrFile[TOBJ], [rbx].internal_segs[rdi].fileoffset, SEEK_SET )
-            movl rdi,_rdi
-            fwrite( [rbx].internal_segs[rdi].data, 1, [rbx].internal_segs[rdi].size, CurrFile[TOBJ] )
-            movl rsi,_rsi
-            movl rdi,_rdi
+            tfseek( CurrFile[TOBJ], [rbx].internal_segs[rdi].fileoffset, SEEK_SET )
+            tfwrite( [rbx].internal_segs[rdi].data, 1, [rbx].internal_segs[rdi].size, CurrFile[TOBJ] )
             .if ( eax != [rbx].internal_segs[rdi].size )
                 WriteError()
             .endif
@@ -1350,11 +1304,7 @@ endif
 
         mov rdi,[rsi].asym.seginfo
         .if ( [rdi].seg_info.num_relocs )
-            movl _rsi,rsi
-            movl _rdi,rdi
-            fseek( CurrFile[TOBJ], [rdi].seg_info.reloc_offset, SEEK_SET )
-            movl rsi,_rsi
-            movl rdi,_rdi
+            tfseek( CurrFile[TOBJ], [rdi].seg_info.reloc_offset, SEEK_SET )
             .if ( MODULE.defOfssize == USE64 )
                 write_relocs64( rbx, rsi )
             .else

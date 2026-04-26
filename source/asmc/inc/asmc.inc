@@ -19,7 +19,6 @@ option dotname
 
 include stdio.inc
 include stdlib.inc
-include string.inc
 include inttype.inc
 
 ifndef NOSPAWN
@@ -65,6 +64,8 @@ endif
 else
 define MODULE <ModuleInfo>
 endif
+
+include tstring.inc
 
 define USE_COMALLOC
 define USE_INDIRECTION
@@ -919,37 +920,14 @@ tfprintf                proto __ccall :ptr FILE, :string_t, :vararg
 tvsprintf               proto __ccall :string_t, :string_t, :ptr
 tvfprintf               proto __ccall :ptr FILE, :string_t, :ptr
 tstrupr                 proto fastcall :string_t
-
-tmemcpy                 proto fastcall :ptr, :ptr, :uint_t
-tmemmove                proto fastcall :ptr, :ptr, :uint_t
-tmemcmp                 proto fastcall :ptr, :ptr, :uint_t
-tmemicmp                proto fastcall :ptr, :ptr, :uint_t
-tmemset                 proto fastcall :ptr, :int_t, :uint_t
-tstrlen                 proto fastcall :string_t
-tstrchr                 proto fastcall :string_t, :int_t
-tstrrchr                proto fastcall :string_t, :int_t
-tstrcpy                 proto fastcall :string_t, :string_t
-tstrcat                 proto fastcall :string_t, :string_t
-tstrncpy                proto fastcall :string_t, :string_t, :int_t
-tstrcmp                 proto fastcall :string_t, :string_t
-tstricmp                proto fastcall :string_t, :string_t
-tstrstr                 proto fastcall :string_t, :string_t
-tgetenv                 proto fastcall :string_t
 tstrstart               proto fastcall :string_t
 
-PQSORTCMDT              typedef proto fastcall :ptr, :ptr
-PQSORTCMD               typedef ptr PQSORTCMDT
-
-tqsort                  proto __ccall :ptr, :int_t, :int_t, :PQSORTCMD
 QEnqueue                proto fastcall :qdesc_t, :ptr
 QAddItem                proto fastcall :qdesc_t, :ptr
-
 NameSpace               proto watcall :string_t, :string_t
 NameSpaceDirective      proto __ccall :int_t, :token_t
-
 CreateConstant          proto __ccall :token_t
 CreateVariable          proto __ccall :string_t, :int_t
-
 Mangle                  proto __ccall :asym_t, :string_t
 SetMangler              proto __ccall :asym_t, :int_t, :string_t
 

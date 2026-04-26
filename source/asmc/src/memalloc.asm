@@ -72,12 +72,7 @@ ifdef __UNIX__
 MemAlloc proc fastcall uses rsi rdi rbx len:uint_t
     mov ebx,ecx
     .if malloc( ecx )
-        mov ecx,ebx
-        mov rdx,rax
-        mov rdi,rax
-        xor eax,eax
-        rep stosb
-        mov rax,rdx
+        memset(rax, 0, rbx)
     .else
 else
 MemAlloc proc fastcall len:uint_t

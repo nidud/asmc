@@ -169,7 +169,7 @@ replace_parm proc __ccall private uses rsi rdi rbx line:string_t, start:string_t
 
                 ; v2.10: tstrcpy should not be used if strings overlap
 
-                tmemmove( rdi, rsi, &[tstrlen(rsi)+1] )
+                mov rdi,memmove( rdi, rsi, &[tstrlen(rsi)+1] )
             .endif
             .return rdi ; word has been replaced
         .endif

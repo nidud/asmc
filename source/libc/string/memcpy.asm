@@ -3,220 +3,279 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+; void *memcpy(void *dst, void *src, size_t count);
+; void *memmove(void *dst, void *src, size_t count);
+;
 
-include string.inc
+include isa_availability.inc
 
-ifndef __UNIX__
-undef memmove
-ALIAS <memmove>=<memcpy>
-endif
+.code
 
-    .code
+memcpy::
+memmove::
 
-    option dotname
-
-memcpy proc dst:ptr, src:ptr, size:size_t
-ifdef __SSE__
-ifdef _WIN64
-    define reg <r8>
-    define rdb <r8b>
-    define rd1 <r9>
-    define rd2 <r10>
+ifndef _WIN64
+    mov     eax,[esp+4]
+    mov     edx,[esp+8]
+    mov     ecx,[esp+12]
+    define  r9  <[esp+16]>
+    define  r10 <esi>
+elseifdef __UNIX__
+    mov     rcx,rdx
+    mov     rax,rdi
+    mov     rdx,rsi
 else
-    push esi
-    push edi
-    push ebx
-    define reg <esi>
-    define rdb <esi>
-    define rd1 <edi>
-    define rd2 <ebx>
-endif
-    ldr     reg,size
-    ldr     rcx,dst
-    ldr     rdx,src
     mov     rax,rcx
-ifdef __AVX__
-    cmp     reg,64
-    ja      .64
-    test    rdb,0x60
-    jnz     .32
-else
-    cmp     reg,32
-    ja      .32
+    mov     rcx,r8
 endif
-    test    rdb,0x30
-    jnz     .16
-    test    rdb,0x08
-    jnz     .08
-    test    rdb,0x04
-    jnz     .04
-    test    rdb,0x02
-    jnz     .02
-    test    rdb,0x01
-    jnz     .01
-    jmp     .3
-.01:
+
+ifdef __SSE__
+
+    cmp     rcx,64
+    ja      copy_64
+    test    cl,0x60
+    jnz     copy_32to64
+    test    cl,0x30
+    jnz     copy_16to31
+    test    cl,0x08
+    jnz     copy_8to15
+    test    cl,0x04
+    jnz     copy_4to7
+    cmp     cl,2
+    ja      copy_3
+    je      copy_2
+    test    ecx,ecx
+    jz      copy_0
+copy_1:
     mov     cl,[rdx]
     mov     [rax],cl
-    jmp     .3
-.02:
+copy_0:
+    ret
+copy_2:
     mov     cx,[rdx]
-    mov     dx,[rdx+reg-2]
-    mov     [rax+reg-2],dx
     mov     [rax],cx
-    jmp     .3
-.04:
-    mov     ecx,[rdx]
-    mov     edx,[rdx+reg-4]
-    mov     [rax+reg-4],edx
-    mov     [rax],ecx
-    jmp     .3
-.08:
-    mov     rcx,[rdx]
-    mov     rdx,[rdx+reg-8]
-    mov     [rax],rcx
-    mov     [rax+reg-8],rdx
-    jmp     .3
-.16:
-    movups  xmm0,[rdx]
-    movups  xmm1,[rdx+reg-16]
-    movups  [rax],xmm0
-    movups  [rax+reg-16],xmm1
-    jmp     .3
-.32:
-ifdef __AVX__
-    vmovups ymm0,[rdx]
-    vmovups ymm1,[rdx+reg-32]
-    vmovups [rax],ymm0
-    vmovups [rax+reg-32],ymm1
-    vzeroupper
-    jmp     .3
-.64:
-    vmovups ymm2,[rdx]
-    vmovups ymm3,[rdx+32]
-    vmovups ymm4,[rdx+reg-32]
-    vmovups ymm5,[rdx+reg-64]
-    cmp     reg,128
-    jbe     .2
-    mov     rd2,-64
-    mov     ecx,eax
-    neg     ecx
-    and     ecx,64-1
-    add     rdx,rcx
-    mov     rd1,reg
-    sub     rd1,rcx
-    add     rcx,rax
-    and     rd1,rd2
-    cmp     rcx,rdx
-    ja     .1
-    lea     rcx,[rcx+rd1-64]
-    lea     rdx,[rdx+rd1-64]
-    neg     rd2
-    neg     rd1
-.1:
-    add     rd1,rd2
-    vmovups ymm0,[rdx+rd1]
-    vmovups ymm1,[rdx+rd1+32]
-    vmovaps [rcx+rd1],ymm0
-    vmovaps [rcx+rd1+32],ymm1
-    jnz     .1
-.2:
-    vmovups [rax],ymm2
-    vmovups [rax+32],ymm3
-    vmovups [rax+reg-32],ymm4
-    vmovups [rax+reg-64],ymm5
-    vzeroupper
+    ret
+copy_3:
+    mov     cl,[rdx+2]
+    mov     dx,[rdx]
+    mov     [rax],dx
+    mov     [rax+2],cl
+    ret
+copy_4to7:
+ifdef _WIN64
+    mov     r8d,[rdx]
+    mov     r9d,[rdx+rcx-4]
+    mov     [rax],r8d
+    mov     [rax+rcx-4],r9d
 else
-    movups  xmm2,[rdx]
-    movups  xmm3,[rdx+16]
-    movups  xmm4,[rdx+reg-16]
-    movups  xmm5,[rdx+reg-32]
-    cmp     reg,64
-    jbe     .2
-    mov     rd2,-32
-    movzx   ecx,al
-    neg     ecx
-    and     ecx,32-1
-    add     rdx,rcx
-    mov     rd1,reg
-    sub     rd1,rcx
-    add     rcx,rax
-    and     rd1,rd2
-    cmp     rcx,rdx
-    ja     .1
-    lea     rcx,[rcx+rd1-32]
-    lea     rdx,[rdx+rd1-32]
-    neg     rd2
-    neg     rd1
-.1:
-    add     rd1,rd2
-    movups  xmm0,[rdx+rd1]
-    movups  xmm1,[rdx+rd1+16]
-    movaps  [rcx+rd1],xmm0
-    movaps  [rcx+rd1+16],xmm1
-    jnz     .1
-.2:
-    movups  [rax],xmm2
-    movups  [rax+16],xmm3
-    movups  [rax+reg-16],xmm4
-    movups  [rax+reg-32],xmm5
-endif
-.3:
-ifndef _WIN64
-    pop     ebx
-    pop     edi
-    pop     esi
+    movss   xmm0,[rdx]
+    movss   xmm1,[rdx+rcx-4]
+    movss   [rax],xmm0
+    movss   [rax+rcx-4],xmm1
 endif
     ret
-else
+copy_8to15:
 ifdef _WIN64
-ifdef __UNIX__
-    mov     rax,rdi
-    mov     rcx,rdx
+    mov     r8,[rdx]
+    mov     r9,[rdx+rcx-8]
+    mov     [rax],r8
+    mov     [rax+rcx-8],r9
 else
-    mov     r9,rdi
-    mov     rax,rcx
-    mov     rdi,rcx
-    mov     rcx,r8
-    xchg    rsi,rdx
+    movsd   xmm0,[rdx]
+    movsd   xmm1,[rdx+rcx-8]
+    movsd   [rax],xmm0
+    movsd   [rax+rcx-8],xmm1
 endif
+    ret
+copy_16to31:
+    movups  xmm0,[rdx]
+    movups  xmm1,[rdx+rcx-16]
+    movups  [rax],xmm0
+    movups  [rax+rcx-16],xmm1
+    ret
+copy_32to64:
+    movups  xmm0,[rdx]
+    movups  xmm1,[rdx+16]
+    movups  xmm2,[rdx+rcx-32]
+    movups  xmm3,[rdx+rcx-16]
+    movups  [rax],xmm0
+    movups  [rax+16],xmm1
+    movups  [rax+rcx-32],xmm2
+    movups  [rax+rcx-16],xmm3
+    ret
+
+ifdef __AVX__
+
+ifndef _WIN64
+    db      7 dup(0x90)
+elseifndef __UNIX__
+    align   8
+endif
+
+copy_64:
+
+ifdef __TEST__
+    db      13 dup(0x90)
+else
+    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
+    jz      copy_gpr
+endif
+
+    vmovups ymm2,[rdx]              ; save 128 byte overlap
+    vmovups ymm3,[rdx+32]
+    vmovups ymm4,[rdx+rcx-64]
+    vmovups ymm5,[rdx+rcx-32]
+
+    cmp     rcx,128
+    jbe     copy_128
+
+ifdef _WIN64
+    mov     r9,rax
+    mov     r8,rcx
 else
     push    esi
-    mov     edx,edi
-    mov     eax,dst
-    mov     esi,src
-    mov     ecx,size
-    mov     edi,eax
+    push    ecx
+    push    eax
 endif
-    cmp     rax,rsi
-    ja      .0
+ifdef __UNIX__
+    neg     eax                     ; alignment for System-V
+else
+    neg     rax
+endif
+    and     eax,64-1                ; aligned writes
+    add     rdx,rax                 ; advance source pointer
+    sub     rcx,rax                 ; adjust count
+    add     rax,r9                  ; align dest to 64
+    mov     r10,-64                 ; chunk size
+    and     rcx,-64                 ; align count
+    cmp     rax,rdx                 ; copy direction
+    ja      loop_avx
+    lea     rax,[rax+rcx-64]        ; flip direction
+    lea     rdx,[rdx+rcx-64]
+    neg     r10                     ; +
+    neg     rcx                     ; -
+
+    align   size_t*2                ; should be 0100 for 64 bit
+
+loop_avx:
+    add     rcx,r10                 ; copy aligned blocks
+    vmovups ymm0,[rdx+rcx]
+    vmovups ymm1,[rdx+rcx+32]
+    vmovaps [rax+rcx],ymm0
+    vmovaps [rax+rcx+32],ymm1
+    jnz     loop_avx
+
+ifdef _WIN64
+    mov     rax,r9                  ; dest pointer = return value
+    mov     rcx,r8                  ; reset count
+else
+    pop     eax
+    pop     ecx
+    pop     esi
+endif
+
+copy_128:
+    vmovups [rax],ymm2              ; overlapping head and tail bytes
+    vmovups [rax+32],ymm3
+    vmovups [rax+rcx-64],ymm4
+    vmovups [rax+rcx-32],ymm5
+    vzeroupper
+    ret
+
+copy_gpr:
+
+else
+
+ifndef _WIN64
+    db      5 dup(0x90)
+elseifdef __UNIX__
+    db      10 dup(0x90)
+endif
+
+copy_64:
+
+    movups  xmm2,[rdx]              ; save 64 byte overlap
+    movups  xmm3,[rdx+16]
+    movups  xmm4,[rdx+rcx-32]
+    movups  xmm5,[rdx+rcx-16]
+
+ifdef _WIN64
+ifdef __UNIX__
+    mov     r8,rcx
+endif
+    mov     r9,rax
+else
+    push    esi
+    push    ecx
+    push    eax
+endif
+    neg     rax
+    and     eax,32-1
+    add     rdx,rax
+    sub     rcx,rax
+    add     rax,r9
+    mov     r10,-32
+    and     rcx,r10
+    cmp     rax,rdx
+    ja      loop_xmm
+    lea     rax,[rax+rcx-32]
+    lea     rdx,[rdx+rcx-32]
+    neg     r10
+    neg     rcx
+    align   8
+loop_xmm:
+    add     rcx,r10
+    movups  xmm0,[rdx+rcx]
+    movups  xmm1,[rdx+rcx+16]
+    movaps  [rax+rcx],xmm0
+    movaps  [rax+rcx+16],xmm1
+    jnz     loop_xmm
+ifdef _WIN64
+    mov     rax,r9
+    mov     rcx,r8
+else
+    pop     eax
+    pop     ecx
+    pop     esi
+endif
+    movups  [rax],xmm2
+    movups  [rax+16],xmm3
+    movups  [rax+rcx-32],xmm4
+    movups  [rax+rcx-16],xmm5
+    ret
+
+endif
+endif ; __SSE__
+
+if defined(__AVX__) or not defined(__SSE__)
+
+ifndef _WIN64
+    push    esi
+    push    edi
+elseifndef __UNIX__
+    mov     r8,rsi
+    mov     r9,rdi
+endif
+    mov     rsi,rdx
+    mov     rdi,rax
+    cmp     rax,rdx
+    ja      L1
     rep     movsb
-    jmp     .1
-.0:
+    jmp     L2
+L1:
     lea     rsi,[rsi+rcx-1]
     lea     rdi,[rdi+rcx-1]
     std
     rep     movsb
     cld
-.1:
-ifdef _WIN64
-ifndef __UNIX__
-    mov     rsi,rdx
+L2:
+ifndef _WIN64
+    pop     edi
+    pop     esi
+elseifndef __UNIX__
+    mov     rsi,r8
     mov     rdi,r9
 endif
-else
-    mov     edi,edx
-    pop     esi
-endif
     ret
 endif
-    endp
-
-ifdef __UNIX__
-memmove proc dst:ptr, src:ptr, size:size_t
-    memcpy( ldr(dst), ldr(src), ldr(size) )
-    ret
-    endp
-endif
-
     end

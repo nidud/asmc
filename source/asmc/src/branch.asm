@@ -301,13 +301,6 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                 .if ( IS_CONDJMP( eax ) )
                     dec edx     ; 1 extra byte for opcode ( 0F )
                 .endif
-if 0
-                ; displacement now in range?
-                .ifs ( ecx == OP_I32 && edx >= SCHAR_MIN && edx <= SCHAR_MAX &&
-                       eax != T_CALL && [rsi].mem_type != MT_NEAR )
-                    mov ecx,OP_I8
-                .endif
-endif
             .endif
 
             ; store the displacement

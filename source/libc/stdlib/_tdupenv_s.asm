@@ -6,6 +6,7 @@
 
 include stdlib.inc
 include errno.inc
+include string.inc
 include tchar.inc
 
 .code

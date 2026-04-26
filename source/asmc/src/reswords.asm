@@ -852,9 +852,10 @@ RenameKeyword proc __ccall uses rsi rdi rbx token:uint_t, name:string_t, length:
     movzx ecx,length
     mov [rbx].len,cl
     mov edi,ecx
-    mov [rsi],LclAlloc(ecx)
+    mov rcx,LclAlloc(ecx)
+    mov [rsi],rax
     ; convert to lowercase?
-    tmemcpy(rax, &newname, edi)
+    tmemcpy(rcx, &newname, edi)
     AddResWord(token)
     ret
     endp

@@ -4,23 +4,18 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include libc.inc
 include isa_availability.inc
-
-public __favor
-public __isa_available
-public __isa_enabled
 
 option dotname
 
 .data
- __favor            dd 0
+ __favor            int_t 0
 ifdef _WIN64
- __isa_available    dd __ISA_AVAILABLE_SSE2
- __isa_enabled      dd 1 shl __ISA_AVAILABLE_SSE2
+ __isa_available    int_t __ISA_AVAILABLE_SSE2
+ __isa_enabled      int_t 1 shl __ISA_AVAILABLE_SSE2
 else
- __isa_available    dd __ISA_AVAILABLE_X86
- __isa_enabled      dd 1 shl __ISA_AVAILABLE_X86
+ __isa_available    int_t __ISA_AVAILABLE_X86
+ __isa_enabled      int_t 1 shl __ISA_AVAILABLE_X86
 endif
 
 ifdef __P586__
@@ -120,6 +115,6 @@ endif
     ret
     endp
 
-.pragma init(_cpu_disp, 7)
+.pragma init(_cpu_disp, 2)
 endif
     end

@@ -60,7 +60,7 @@ _ftccmp		equ <_tccmp>
 
 ifdef  _UNICODE
 
-include wchar.inc
+;include wchar.inc
 
 define _tal		<ax>
 define _tbl		<bx>
@@ -695,7 +695,7 @@ endif
 else
 
 
-include string.inc
+;include string.inc
 
 define _tal		<al>
 define _tbl		<bl>
@@ -1114,7 +1114,7 @@ _tsetlocale		equ <setlocale>
 
 ifdef  _MBCS
 
-include mbstring.inc
+;include mbstring.inc
 
 ifdef  _MB_MAP_DIRECT
 

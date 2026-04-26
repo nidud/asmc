@@ -528,7 +528,7 @@ SymGetAll       proto __ccall :ptr asym_t
 SymEnum         proto __ccall :asym_t, :ptr int_t
 SymGetCount     proto __ccall
 
-StrCmpFunc_t    typedef proto fastcall :ptr, :ptr, :size_t
+StrCmpFunc_t    typedef proto __ccall :ptr, :ptr, :size_t
 StrCmpFunc      typedef ptr StrCmpFunc_t
 
 externdef       SymCmpFunc:StrCmpFunc

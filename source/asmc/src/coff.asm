@@ -273,17 +273,9 @@ coff_write_section_table proc __ccall uses rsi rdi rbx cm:ptr coffmod
             imul eax,eax,sizeof( IMAGE_LINENUMBER )
             add esi,eax
         .endif
-ifdef _LIN64
-        push rsi
-        push rdi
-endif
-        .ifd ( fwrite( &ish, 1, sizeof( ish ), CurrFile[TOBJ] ) != sizeof( ish ) )
+        .ifd ( tfwrite( &ish, 1, sizeof( ish ), CurrFile[TOBJ] ) != sizeof( ish ) )
             WriteError()
         .endif
-ifdef _LIN64
-        pop rdi
-        pop rsi
-endif
     .endf
     .return( NOT_ERROR )
     endp
@@ -1092,10 +1084,6 @@ coff_write_data proc __ccall uses rsi rdi rbx cm:ptr coffmod
 
         .continue .if ( [rsi].combine == COMB_STACK && [rsi].bytes_written == 0 )
         .continue .if ( [rsi].segtype == SEGTYPE_BSS )
-ifdef _LIN64
-        .new _rsi:ptr = rsi
-        .new _rdi:ptr = rdi
-endif
         .if ( ebx )
             add offs,ebx
             .if ( ( offs & 1 ) && [rsi].head )
@@ -1103,7 +1091,7 @@ endif
                 inc ebx
             .endif
             .if ( [rsi].CodeBuffer == NULL )
-                fseek( CurrFile[TOBJ], ebx, SEEK_CUR )
+                tfseek( CurrFile[TOBJ], ebx, SEEK_CUR )
             .else
                 ; if there was an ORG, the buffer content will
                 ; start with the ORG address. The bytes from
@@ -1115,22 +1103,15 @@ endif
                     ;fseek( CurrFile[TOBJ], [rsi].start_loc, SEEK_CUR )
                     .new nullbyt:char_t = NULLC
                     .for ( i = eax : i : i-- )
-                        fwrite( &nullbyt, 1, 1, CurrFile[TOBJ] )
+                        tfwrite( &nullbyt, 1, 1, CurrFile[TOBJ] )
                     .endf
-ifdef _LIN64
-                    mov rsi,_rsi
-endif
                     sub ebx,[rsi].start_loc
                 .endif
                 mov rax,[rsi].CodeBuffer
-                .if ( fwrite( rax, 1, ebx, CurrFile[TOBJ] ) != rbx )
+                .if ( tfwrite( rax, 1, ebx, CurrFile[TOBJ] ) != rbx )
                     WriteError()
                 .endif
             .endif
-ifdef _LIN64
-            mov rsi,_rsi
-            mov rdi,_rdi
-endif
             coff_write_fixups( rdi, &offs, &index )
         .endif
         mov rbx,cm
@@ -1197,17 +1178,9 @@ endif
                 mov rcx,[rcx].asym.debuginfo
                 inc [rcx].debug_info.line_numbers
                 mov [rcx].debug_info.end_line,[rsi].number
-ifdef _LIN64
-                mov _rsi,rsi
-                mov _rdi,rdi
-endif
-                .ifd ( fwrite( &il, 1, sizeof(il), CurrFile[TOBJ] ) != sizeof(il) )
+                .ifd ( tfwrite( &il, 1, sizeof(il), CurrFile[TOBJ] ) != sizeof(il) )
                     WriteError()
                 .endif
-ifdef _LIN64
-                mov rsi,_rsi
-                mov rdi,_rdi
-endif
                 add offs,sizeof(il)
                 inc line_numbers
             .endf
@@ -1472,14 +1445,8 @@ coff_write_module proc uses rsi rdi rbx
     assume rbx:ptr stringitem
     .for ( rbx = cm.head : rbx : rbx = [rbx].next )
         inc tstrlen( &[rbx].string )
-ifdef _LIN64
-        .new len:int_t = eax
-        fwrite( &[rbx].string, 1, len, CurrFile[TOBJ] )
-        .if ( eax != len )
-else
         mov edi,eax
-        .if ( fwrite( &[rbx].string, 1, edi, CurrFile[TOBJ] ) != rdi )
-endif
+        .if ( tfwrite( &[rbx].string, 1, edi, CurrFile[TOBJ] ) != rdi )
             WriteError()
         .endif
     .endf

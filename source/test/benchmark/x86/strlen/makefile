@@ -1,2 +1,0 @@
-timeit.exe:
-    timeit.cmd

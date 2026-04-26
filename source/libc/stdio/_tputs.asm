@@ -5,6 +5,7 @@
 ;
 
 include stdio.inc
+include string.inc
 ifdef _UNICODE
 include conio.inc
 include wchar.inc

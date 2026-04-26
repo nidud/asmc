@@ -42,7 +42,6 @@ init_win64 proto
 .data
  _pgmptr string_t 0
  my_environ array_t 0
-
 .code
 
 ;
@@ -446,14 +445,12 @@ endif
     exit(1)
     endp
 
-
 main proc argc:int_t, argv:array_t, environ:array_t
 
    .new rc:int_t = 0
    .new numArgs:int_t = 0
    .new numFiles:int_t = 0
     mov my_environ,environ
-
 ifdef __UNIX__
    .new buffer[_MAX_PATH]:char_t
    .new path:string_t = &buffer

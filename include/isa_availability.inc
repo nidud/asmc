@@ -1,5 +1,6 @@
 ifndef __ISA_AVAILABILITY__H__
 define __ISA_AVAILABILITY__H__
+include libc.inc
 
 .enum {
     __ISA_AVAILABLE_X86     = 0,
@@ -16,5 +17,9 @@ define __ISA_AVAILABILITY__H__
 
 define __FAVOR_ATOM    0
 define __FAVOR_ENFSTRG 1
+
+externdef __favor:int_t
+externdef __isa_available:int_t
+externdef __isa_enabled:int_t
 
 endif

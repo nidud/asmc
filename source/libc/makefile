@@ -4,6 +4,14 @@
 
 flag = -c -Cs
 
+ifdef avx
+flags += -arch:AVX
+else
+ifndef default_cpu
+default_cpu = -6
+endif
+endif
+
 ifdef YACC
 flag += -Zd -MT
 name = libcmt
@@ -15,10 +23,6 @@ else
 flag += -MT
 name = libcmt
 endif
-endif
-
-ifdef avx
-flag += -arch:AVX
 endif
 
 ifdef zip
@@ -42,7 +46,7 @@ $(name).a:
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc
-	asmc $(flag) -6 -elf -Zp4 -r *.asm *.s
+	asmc $(flag) $(default_cpu) -elf -Zp4 -r *.asm *.s
 	ar rcs $@ *.o
 	rm *.o
 	sudo cp $@ /usr/lib/asmc/x86
@@ -59,7 +63,7 @@ endif
 ifdef x86
 path = $(lib_dir)\x86
 libn = $(lib_dir)\x86\$(name).lib
-flag += -6 -coff -Zp4
+flag += $(default_cpu) -coff -Zp4
 else
 path = $(lib_dir)\x64
 libn = $(lib_dir)\x64\$(name).lib
@@ -85,7 +89,7 @@ terminal:
 linux:
 	asmc -c -q -mscrt -elf -Fo $(lib_dir)\x86\noflt $(lib_dir)\noflt.asm
 	asmc -c -q -mscrt -elf64 -Fo $(lib_dir)\x64\noflt $(lib_dir)\noflt.asm
-	asmc -BlLIBW -6 -mscrt -MT -elf -Zp4 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x86\libcmt.a
+	asmc -BlLIBW $(default_cpu) -mscrt -MT -elf -Zp4 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x86\libcmt.a
 	asmc -BlLIBW -mscrt -MT -elf64 -Zp8 -Cs -r $(src_dir)\libc\*.asm $(src_dir)\libc\*.s -link -q -b -n -c $(lib_dir)\x64\libcmt.a
 	del *.o
 

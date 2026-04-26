@@ -995,7 +995,9 @@ name    string_t ?
 idx     dd ?
 expitem ends
 
-compare_exp proc fastcall p1:ptr expitem, p2:ptr expitem
+compare_exp proc p1:ptr expitem, p2:ptr expitem
+    ldr rcx,p1
+    ldr rdx,p2
     tstrcmp( [rcx].expitem.name, [rdx].expitem.name )
     ret
     endp
@@ -1047,7 +1049,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
             add rsi,expitem
         .endif
     .endf
-    tqsort( pitems, cnt, sizeof( expitem ), &compare_exp )
+    qsort( pitems, cnt, sizeof( expitem ), &compare_exp )
     ; emit export address table.
     ; would be possible to just use the array of sorted names,
     ; but we want to emit the EAT being sorted by address.

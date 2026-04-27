@@ -6,7 +6,7 @@
 .pragma list(push, 0)
 
 ifndef ASMC_VERSION
-define ASMC_VERSION 237
+define ASMC_VERSION 238
 ifdef SUBVERSION
 define ASMC_SUBVER SUBVERSION
 else

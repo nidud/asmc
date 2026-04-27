@@ -11,7 +11,7 @@ Build environment usually refers to a batch file that configures the local envir
 
 ### Asmc Build Environment
 
-The batch file for the Asmc environment is located in the root directory and is currently named `asmc-2.37.cmd`. Run it at least once; it generates additional batch files, binaries, build import libraries, and `libc`. You may use this batch file to enter the Asmc environment. For more precise local console control (font, window size, startup directory, etc.), prefer a direct link to the main shell, `bin/dz.exe`.
+The batch file for the Asmc environment is located in the root directory and is currently named `asmc-2.38.cmd`. Run it at least once; it generates additional batch files, binaries, build import libraries, and `libc`. You may use this batch file to enter the Asmc environment. For more precise local console control (font, window size, startup directory, etc.), prefer a direct link to the main shell, `bin/dz.exe`.
 
 In Linux, the `asmc-profile.sh` script sets the environment. This is installed in the `/etc/profile.d` directory and will be sourced automatically for users whose shells read `/etc/profile.d/*`. The script adds `/usr/lib/asmc` to `LIBRARY_PATH`, and adds `/usr/lib/asmc/include` to `INCLUDE`, allowing compilers and linkers to find Asmc headers and libraries from any terminal session.
 

@@ -152,7 +152,7 @@ linux32:
 linux64:
 	md $@
 	asmc -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libcmt.a -o:$@\asmc.
-	asmc -DSUBVERSION=68 -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libcmt.a -o:$@\asmc64.
+	asmc -DASMC64 -Iinc -elf64 -Zp8 -Cs src\*.asm -link -nor -st:0x300000 -d:libcmt.a -o:$@\asmc64.
 	del *.o
 
 owlinux:

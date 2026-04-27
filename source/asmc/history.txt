@@ -2,7 +2,7 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
-Changes in 2.38 - xx xxx 2026
+Changes in 2.38 - 27 Apr 2026
 - added option -info -- display module assembly information
 - removed option DOTNAMEX
 - removed option -Fd

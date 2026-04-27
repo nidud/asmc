@@ -1872,8 +1872,10 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_
   local pfastcall:byte
   local langid:ptr fc_info
 
-    imul ebx,i,asm_tok
-    add  rbx,tokenarray
+    mov opnd.type,NULL ; v2.38: added - fast_param(opnd)->SizeFromMemtype(type)
+
+    imul ebx,ldr(i),asm_tok
+    add  rbx,ldr(tokenarray)
     .for ( ecx = 0 : ecx <= reqParam : )
         .if ( [rbx].token == T_FINAL ) ; this is no real error!
             .return( ERROR )

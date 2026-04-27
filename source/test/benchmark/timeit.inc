@@ -318,7 +318,7 @@ SSE_AVX512BF16          equ 0x20000000
 SSE_AVXOS               equ 0x40000000
 
 setsselevel proc uses rbx
-ifdef _WIN64
+ifndef _WIN64
     pushfq
     pop     rax
     mov     ecx,0x200000
@@ -330,20 +330,8 @@ ifdef _WIN64
     pop     rax
     xor     rax,rdx
     and     rax,rcx
-else
-    pushfd
-    pop     eax
-    mov     ecx,0x200000
-    mov     edx,eax
-    xor     eax,ecx
-    push    eax
-    popfd
-    pushfd
-    pop     eax
-    xor     eax,edx
-    and     eax,ecx
-endif
     .ifnz
+endif
         xor eax,eax
         cpuid
         .if rax
@@ -442,7 +430,9 @@ endif
                 .endif
             .endif
         .endif
+ifndef _WIN64
     .endif
+endif
     mov eax,sselev
     ret
     endp

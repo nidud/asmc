@@ -35,6 +35,7 @@ targets = \
 	d2d1.lib	\
 	d3d11.lib	\
 	d3d9.lib	\
+	d3dx9_40.lib	\
 	d3dcompiler_43.lib \
 	d3dcompiler_47.lib \
 	davclnt.lib	\
@@ -210,23 +211,14 @@ import:
 	md $(lib_dir)\x64\def
 	impdef64 -p$(lib_dir)\x64\def $(targets)
 
-obj_src = \
-	crt/_tcrt0.obj \
-	crt/_tWinStart.obj \
-	stdio/acrtiobfunc.obj
-
-obj_lib = \
-	_tcrt0.obj \
-	_tcrt0W.obj \
-	_tWinStart.obj \
-	_tWinStartW.obj \
-	acrtiobfunc.obj
+obj_src = crt\_tcrt0.obj crt\_tWinStart.obj stdio\acrtiobfunc.obj
+obj_lib = _tcrt0.obj _tcrt0W.obj _tWinStart.obj _tWinStartW.obj acrtiobfunc.obj
 
 {$(src_dir)\libc}.asm.obj:
 	asmc -c -nologo -nolib -win64 -Cs -MT -MD $<
 	asmc -c -nologo -nolib -win64 -Cs -MT -MD -ws -Fo*W $<
 
 libc: $(obj_src)
-	libw -q -b -c -fac %AsmcDir%\lib\x64\msvcrt.lib $(obj_lib)
+	libw -q -b -c -fac $(lib_dir)\x64\msvcrt.lib $(obj_lib)
 	del $(obj_lib)
 	del *W.obj

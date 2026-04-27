@@ -1,6 +1,6 @@
 include srcpath
 
-all: import build libc
+all: build libc
 
 .SUFFIXES: .lib
 .EXTENSIONS: .def .lib
@@ -127,32 +127,14 @@ targets = \
 
 build: $(targets)
 
-import:
-	if not exist %AsmcDir%\bin\impdef32.exe (
-	   asmc -pe -Fo%AsmcDir%\bin\impdef32.exe $(src_dir)\tools\impdef\impdef.asm
-	)
-	md $(lib_dir)\x86\def
-	impdef32 -p$(lib_dir)\x86\def -c msvcrt sensorsapi wldap32
-	impdef32 -p$(lib_dir)\x86\def $(targets)
-
-obj_src = \
-	crt/_tcrt0.obj	\
-	crt/_tWinStart.obj \
-	stdio/acrtiobfunc.obj
-
-obj_lib = \
-	_tcrt0.obj \
-	_tcrt0W.obj \
-	_tWinStart.obj \
-	_tWinStartW.obj \
-	acrtiobfunc.obj
+obj_src = crt\_tcrt0.obj crt\_tWinStart.obj stdio\acrtiobfunc.obj
+obj_lib = _tcrt0.obj _tcrt0W.obj _tWinStart.obj _tWinStartW.obj acrtiobfunc.obj
 
 {$(src_dir)\libc}.asm.obj:
 	asmc -c -nologo -nolib -coff -Cs -MT -MD $<
 	asmc -c -nologo -nolib -coff -Cs -MT -MD -ws -Fo*W $<
 
 libc: $(obj_src)
-	libw -q -b -c -fac %AsmcDir%\lib\x86\msvcrt.lib $(obj_lib)
+	libw -q -b -c -fac $(lib_dir)\x86\msvcrt.lib $(obj_lib)
 	del $(obj_lib)
 	del *W.obj
-

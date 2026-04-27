@@ -5,7 +5,7 @@
 flag = -c -Cs
 
 ifdef avx
-flags += -arch:AVX
+flag += -arch:AVX
 else
 ifndef default_cpu
 default_cpu = -6

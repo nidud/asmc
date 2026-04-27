@@ -465,7 +465,7 @@ ifdef _WIN64
     mov rdx,[rdx+rax*size_t]
     mov rax,[r8+_Rip]
     sub rax,proc_x
-    printf( "Exception(" BITS "):    %d.bin %s\n"
+    printf( "Exception%d:   %d.bin %s\n"
             "\tCode: \t     %08X\n"
             "\tFlags:\t     %08X\n"
             "\tRAX: %p R8:  %p\n"
@@ -476,7 +476,7 @@ ifdef _WIN64
             "\tRDI: %p R13: %p\n"
             "\tRBP: %p R14: %p\n"
             "\tRSP: %p R15: %p\n"
-            "\tRIP: %p:\n", file_x, rdx, [rcx], [rcx+4],
+            "\tRIP: %p:\n", size_t*8, file_x, rdx, [rcx], [rcx+4],
             [r8+_Rax], [r8+_R8],
             [r8+_Rbx], [r8+_R9],
             [r8+_Rcx], [r8+_R10],
@@ -496,14 +496,14 @@ else
     mov ebx,file_x
     mov rbx,info_p[rbx*size_t]
     assume edx:ptr dword
-    printf( "Exception(" BITS "):    %d.bin %s\n"
+    printf( "Exception%d:   %d.bin %s\n"
             "\tCode: \t     %08X\n"
             "\tFlags:\t     %08X\n"
             "\tEAX: %p EDX: %p\n"
             "\tEBX: %p ECX: %p\n"
             "\tESI: %p EDI: %p\n"
             "\tESP: %p EBP: %p\n"
-            "\tEIP: %p\n\n", file_x, ebx, [ecx], [ecx+4],
+            "\tEIP: %p\n\n", size_t*8, file_x, ebx, [ecx], [ecx+4],
             [edx+_Eax], [edx+_Edx],
             [edx+_Ebx], [edx+_Ecx],
             [edx+_Esi], [edx+_Edi],

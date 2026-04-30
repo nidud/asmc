@@ -104,6 +104,7 @@ validate_x proc uses rsi rdi rbx x:dword
     endp
 
 main proc
+    mov proc_p,memcpy
     mov rax,m_4096
     mov arg_2,rax
     lea rdi,str_1
@@ -113,8 +114,6 @@ main proc
     rep stosb
     xor eax,eax
     stosb
-    mov rax,memcpy
-    mov proc_p,rax
     procs
         validate_x(x)
         .if nerror
@@ -123,12 +122,11 @@ main proc
             .return( 1 )
         .endif
         endm
-    printf("valid...\n")
-    GetCycleCount(0, 15, 1, 1000)
-    GetCycleCount(16, 127, 5, 1000)
-    GetCycleCount(128, 511, 10, 1000)
-    GetCycleCount(511, 1023, 20, 500)
-    GetCycleCount(4096-4, 4096, 1, 500)
+    GetCycleCount(   0,   15,  1, 1000)
+    GetCycleCount(  16,  127,  5, 1000)
+    GetCycleCount( 128,  511, 10,  800)
+    GetCycleCount( 511, 1023, 20,  400)
+    GetCycleCount(4092, 4096,  1,  200)
     mov rcx,arg_1
     mov rdx,arg_2
     mov arg_1,rdx

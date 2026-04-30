@@ -169,30 +169,64 @@ AlignCurrOffset proc __ccall value:int_t
 
 define align_value <opndx.value>
 
-AlignDirective proc __ccall i:int_t, tokenarray:token_t
+    assume rbx:token_t
 
-  local opndx:expr
-  local CurrAddr:uint_t
+AlignDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
-    imul ecx,i,asm_tok
-    add rcx,tokenarray
+   .new sym:asym_t = NULL
+   .new opndx:expr
+   .new CurrAddr:uint_t
+   .new forward:int_t = 0
 
-    .switch( [rcx].asm_tok.tokval )
+    ldr rbx,tokenarray
+    imul ecx,ldr(i),asm_tok
+
+    .switch( [rbx+rcx].tokval )
     .case T_ALIGN
         inc i
-        .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
+        EvalOperand( &i, rbx, TokenCount, &opndx, EXPF_NOUNDEF or EXPF_NOERRMSG )
+        imul ecx,i,asm_tok
+
+        .if ( [rbx+rcx].token != T_FINAL )
+            ;
+            ; v2.38.01: ALIGN <forward_label> <value>
+            ;
+            .endc .if ( eax != ERROR )
+            .if ( Parse_Pass == PASS_1 )
+                .if ( [rbx+rcx+asm_tok].token == T_FINAL )
+                    .return asmerr( 2006, [rbx+rcx].string_ptr )
+                .endif
+                inc i
+                xor eax,eax
+            .elseif ( opndx.kind == EXPR_ADDR )
+                mov rcx,opndx.sym
+                .if ( rcx && [rcx].asym.state == SYM_INTERNAL )
+                    xor eax,eax
+                    mov sym,rcx
+                .endif
+            .endif
+            .endc .if ( eax )
+            inc forward
+            .ifd ( EvalOperand( &i, rbx, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
+                .return
+            .endif
+        .elseif ( eax == ERROR )
             .return
         .endif
+
         .if ( opndx.kind == EXPR_CONST )
-            ;int_32 power
+
             ; check that the parm is a power of 2
+
             .fors ( ecx = 1: ecx < align_value: ecx <<= 1 )
             .endf
             .if ( ecx != align_value )
                 .return( asmerr( 2063, align_value ) )
             .endif
         .elseif ( opndx.kind == EXPR_EMPTY )  ; ALIGN without argument?
+
             ; v2.03: special STRUCT handling was missing
+
             .if ( CurrStruct )
                 mov rcx,CurrStruct
                 mov rcx,[rcx].asym.structinfo
@@ -207,13 +241,13 @@ AlignDirective proc __ccall i:int_t, tokenarray:token_t
     .case T_EVEN
         mov align_value,2
         inc i
-        .endc
+       .endc
     .endsw
 
     imul ecx,i,asm_tok
-    add rcx,tokenarray
-    .if ( [rcx].asm_tok.token != T_FINAL )
-        .return( asmerr(2008, [rcx].asm_tok.string_ptr ) )
+    add rbx,rcx
+    .if ( [rbx].token != T_FINAL )
+        .return( asmerr(2008, [rbx].string_ptr ) )
     .endif
 
     ; ALIGN/EVEN inside a STRUCT definition?
@@ -238,16 +272,31 @@ AlignDirective proc __ccall i:int_t, tokenarray:token_t
     ; store temp. value
 
     mov CurrAddr,GetCurrOffset()
-    cdq
-    div align_value
+    mov rcx,sym
+    .if ( forward )
+        xor edx,edx
+        .if ( rcx )
+            .if ( Parse_Pass == PASS_2 )
+                mov MODULE.PhaseError,TRUE ; force a second pass
+                mov eax,[rcx].asym.offs    ; align symbol
+                cdq
+                div align_value
+            .else
+                movzx edx,[rcx].asym.align_fill
+            .endif
+        .endif
+    .else
+        cdq
+        div align_value
+    .endif
     mov rax,CurrSeg
 
     ; v2.04: added, Skip backpatching after ALIGN occured
 
-    .if ( rax )
-        mov rcx,[rax].asym.seginfo
-        .if ( Parse_Pass == PASS_1 )
-            mov rax,[rcx].seg_info.head
+    .if ( Parse_Pass == PASS_1 )
+        .if ( rax )
+            mov rax,[rax].asym.seginfo
+            mov rax,[rax].seg_info.head
             .if rax
                 mov [rax].fixup.orgoccured,1
             .endif
@@ -255,6 +304,9 @@ AlignDirective proc __ccall i:int_t, tokenarray:token_t
     .endif
     .if ( edx )
         sub align_value,edx
+        .if ( rcx && Parse_Pass == PASS_2 )
+            mov [rcx].asym.align_fill,dl
+        .endif
         fill_in_objfile_space( align_value )
     .endif
     .if ( CurrFile[TLST] )

@@ -193,21 +193,30 @@ _finddata64i32_t ENDS
 ifdef _USE_32BIT_TIME_T
 _finddata_t	typedef _finddata32_t
 _finddatai64_t	typedef _finddata32i64_t
+ifndef _MSVCRT
 define _findfirst	<_findfirst32>
 define _findnext	<_findnext32>
+endif
 define _findfirsti64	<_findfirst32i64>
 define _findnexti64	<_findnext32i64>
 else
+ifdef _MSVCRT
+_finddata_t	typedef __finddata64_t
+define _findfirst	<_findfirst64>
+define _findnext	<_findnext64>
+else
 _finddata_t	typedef _finddata64i32_t
-_finddatai64_t	typedef __finddata64_t
 define _findfirst	<_findfirst64i32>
 define _findnext	<_findnext64i32>
+endif
+_finddatai64_t	typedef __finddata64_t
 define _findfirsti64	<_findfirst64>
 define _findnexti64	<_findnext64>
 endif
 
 ifndef _WFINDDATA_T_DEFINED
 define _WFINDDATA_T_DEFINED
+
 _wfinddata32_t	STRUC
 attrib		uint_t ?
 time_create	__time32_t ?	;; -1 for FAT file systems
@@ -216,6 +225,7 @@ time_write	__time32_t ?
 size		_fsize_t ?
 name		wchar_t 260 dup(?)
 _wfinddata32_t	ENDS
+
 _wfinddata32i64_t STRUC
 attrib		uint_t ?
 time_create	__time32_t ?
@@ -224,6 +234,7 @@ time_write	__time32_t ?
 size		uint64_t ?
 name		wchar_t 260 dup(?)
 _wfinddata32i64_t ENDS
+
 __wfinddata64_t STRUC
 attrib		uint_t ?
 time_create	__time64_t ?
@@ -232,6 +243,7 @@ time_write	__time64_t ?
 size		uint64_t ?
 name		wchar_t 260 dup(?)
 __wfinddata64_t ENDS
+
 _wfinddata64i32_t STRUC
 attrib		uint_t ?
 time_create	__time64_t ?
@@ -243,15 +255,23 @@ _wfinddata64i32_t ENDS
 ifdef _USE_32BIT_TIME_T
 _wfinddata_t	typedef _wfinddata32_t
 _wfinddatai64_t typedef _wfinddata32i64_t
+ifndef _MSVCRT
 define _wfindfirst	<_wfindfirst32>
 define _wfindnext	<_wfindnext32>
+endif
 define _wfindfirsti64	<_wfindfirst32i64>
 define _wfindnexti64	<_wfindnext32i64>
 else
+ifdef _MSVCRT
+_wfinddata_t	typedef __wfinddata64_t
+define _wfindfirst	<_wfindfirst64>
+define _wfindnext	<_wfindnext64>
+else
 _wfinddata_t	typedef _wfinddata64i32_t
-_wfinddatai64_t typedef __wfinddata64_t
 define _wfindfirst	<_wfindfirst64i32>
 define _wfindnext	<_wfindnext64i32>
+endif
+_wfinddatai64_t typedef __wfinddata64_t
 define _wfindfirsti64	<_wfindfirst64>
 define _wfindnexti64	<_wfindnext64>
 endif

@@ -318,7 +318,7 @@ SSE_AVX512BF16          equ 0x20000000
 SSE_AVXOS               equ 0x40000000
 
 setsselevel proc uses rbx
-ifndef _WIN64
+ifdef _WIN64
     pushfq
     pop     rax
     mov     ecx,0x200000
@@ -330,8 +330,20 @@ ifndef _WIN64
     pop     rax
     xor     rax,rdx
     and     rax,rcx
-    .ifnz
+else
+    pushfd
+    pop     eax
+    mov     ecx,0x200000
+    mov     edx,eax
+    xor     eax,ecx
+    push    eax
+    popfd
+    pushfd
+    pop     eax
+    xor     eax,edx
+    and     eax,ecx
 endif
+    .ifnz
         xor eax,eax
         cpuid
         .if rax
@@ -430,9 +442,7 @@ endif
                 .endif
             .endif
         .endif
-ifndef _WIN64
     .endif
-endif
     mov eax,sselev
     ret
     endp
@@ -482,7 +492,9 @@ else
     mov ecx,[ecx]
     add edx,0x9C
     mov eax,[edx+_Eip]
-    sub eax,proc_x
+    .if ( eax > proc_x )
+        sub eax,proc_x
+    .endif
     mov ebx,file_x
     mov rbx,info_p[rbx*size_t]
     assume edx:ptr dword
@@ -520,7 +532,7 @@ endif
         exit(1)
     .endif
     mov fp,rax
-    fprintf(fp, "----------------------------------------------------\n" )
+;    fprintf(fp, "----------------------------------------------------\n" )
 ifdef _WIN64
     fprintf(fp, "x64: ")
 else
@@ -548,7 +560,8 @@ endif
     .case eax & SSE_SSSE3:   lea rcx,@CStr("SSSE3")  : .endc
     .case eax & SSE_SSE3:    lea rcx,@CStr("SSE3")   : .endc
     .endsw
-    fprintf(fp, "%s)\n----------------------------------------------------\n", rcx)
+    fprintf(fp, "%s)\n", rcx)
+;    fprintf(fp, "%s)\n----------------------------------------------------\n", rcx)
     lea rax,proc_b
     and rax,-64
     mov proc_x,rax

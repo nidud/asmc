@@ -186,8 +186,8 @@ readfiles proc uses rbx directory:string_t
     .new path[_MAX_PATH]:char_t
     .new ff:_finddata_t
 
-    .ifd _findfirst(strfcat(&path, directory, "*.md"), &ff) != -1
-
+    mov rcx,strfcat(&path, directory, "*.md")
+    .ifd _findfirst(rcx, &ff) != -1
         mov rbx,rax
         .repeat
             .if !( ff.attrib & _F_SUBDIR )
@@ -199,7 +199,8 @@ readfiles proc uses rbx directory:string_t
         _findclose(rbx)
     .endif
 
-    .ifd ( _findfirst(strfcat(&path, directory, "*.*"), &ff) != -1 )
+    mov rcx,strfcat(&path, directory, "*.*")
+    .ifd ( _findfirst(rcx, &ff) != -1 )
 
         mov rbx,rax
         .repeat
@@ -613,7 +614,7 @@ makehtm proc uses rsi rdi rbx pm:pmd
                 mov ecx,3
                .endc
             .case '_'
-                .endc .if ( byte ptr [rbx-2] == '\' )
+                .endc .if ( samp || byte ptr [rbx-2] == '\' )
                 .if ( i == 0 )
                     .ifd !strchr(rbx, '_')
 

@@ -279,6 +279,7 @@ IS_SIGNED proto watcall :byte {
       bitf_size     db ?            ; bit field info for fixed sized records
       bitf_offs     db ?
       bitf_bits     db ?
+      align_fill    db ?            ; ALIGN <forward_label> <value>
      ends
     ends
 

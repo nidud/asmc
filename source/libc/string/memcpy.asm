@@ -106,21 +106,14 @@ copy_32to64:
 
 ifdef __AVX__
 
-ifndef _WIN64
-    db      7 dup(0x90)
-elseifndef __UNIX__
-    align   8
-endif
+    align loop_avx size_t*2
 
 copy_64:
 
-ifdef __TEST__
-    db      13 dup(0x90)
-else
+ifndef __TEST__
     test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
     jz      copy_gpr
 endif
-
     vmovups ymm2,[rdx]              ; save 128 byte overlap
     vmovups ymm3,[rdx+32]
     vmovups ymm4,[rdx+rcx-64]
@@ -154,9 +147,6 @@ endif
     lea     rdx,[rdx+rcx-64]
     neg     r10                     ; +
     neg     rcx                     ; -
-
-    align   size_t*2                ; should be 0100 for 64 bit
-
 loop_avx:
     add     rcx,r10                 ; copy aligned blocks
     vmovups ymm0,[rdx+rcx]
@@ -186,11 +176,7 @@ copy_gpr:
 
 else
 
-ifndef _WIN64
-    db      5 dup(0x90)
-elseifdef __UNIX__
-    db      10 dup(0x90)
-endif
+    align loop_xmm 8
 
 copy_64:
 
@@ -222,7 +208,6 @@ endif
     lea     rdx,[rdx+rcx-32]
     neg     r10
     neg     rcx
-    align   8
 loop_xmm:
     add     rcx,r10
     movups  xmm0,[rdx+rcx]

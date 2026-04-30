@@ -44,15 +44,11 @@ ifdef __SSE__
     test    ecx,ecx
     jnz     set_1
     ret
-
-    align   size_t
 set_2to3:
     mov     [rax+rcx-2],dx
 set_1:
     mov     [rax],dl
     ret
-
-    align   size_t
 set_16to32:
     mov     [rax+8],edx
     mov     [rax+12],edx
@@ -66,7 +62,11 @@ set_4to7:
     mov     [rax+rcx-4],edx
     ret
 
-    align   size_t*2
+ifdef __AVX__
+    align   set_avx size_t*2
+else
+    align   set_xmm size_t*2
+endif
 set_32:
     movd    xmm0,edx
     pshufd  xmm0,xmm0,0
@@ -83,14 +83,11 @@ set_32:
     jz      toend
 
 ifdef __AVX__
-ifdef __TEST__
-    db      9 dup(0x90)
-else
+ifndef __TEST__
     test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
     jz      set_xmm
 endif
     vperm2f128 ymm0,ymm0,ymm0,0
-    align   size_t*2
 set_avx:
     vmovaps [rdx],ymm0
     dec     rcx

@@ -13,8 +13,10 @@ include sys/syscall.inc
 else
 include winbase.inc
 include tchar.inc
+ifndef _UNICODE
 undef mkdir
 ALIAS <mkdir>=<_mkdir>
+endif
 endif
 
 .code

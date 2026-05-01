@@ -296,7 +296,9 @@ is_valid_first_char proto watcall c:byte {
 
 
 add_cmdline_tmacros proc __ccall private uses rsi rdi rbx
+   .new flags:dword = MODULE.flags
     mov rsi,Options.queues[OPTQ_MACRO*string_t]
+    mov MODULE.case_sensitive,1 ; v2.38.02: added
     .while rsi
         lea rdi,[rsi].qitem.value
         .if !tstrchr( rdi, '=' )
@@ -343,6 +345,7 @@ add_cmdline_tmacros proc __ccall private uses rsi rdi rbx
         mov [rax].asym.string_ptr,rbx
         mov rsi,[rsi].qitem.next
     .endw
+    mov MODULE.flags,flags
     ret
     endp
 

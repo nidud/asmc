@@ -132,8 +132,6 @@ targets = \
 	oledlg.lib	\
 	oldnames.lib	\
 	opengl32.lib	\
-	p2p.lib		\
-	p2pgraph.lib	\
 	pdh.lib		\
 	powrprof.lib	\
 	psapi.lib	\

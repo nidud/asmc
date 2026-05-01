@@ -74,7 +74,6 @@ targets = \
 	oleaut32.lib	\
 	oledlg.lib	\
 	opengl32.lib	\
-	p2p.lib		\
 	pdh.lib		\
 	powrprof.lib	\
 	psapi.lib	\

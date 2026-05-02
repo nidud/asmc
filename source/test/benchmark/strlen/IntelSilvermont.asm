@@ -30,13 +30,16 @@
 ;
 ; 2015-03-23 - converted from AT&T syntax (nidud)
 ;
+include libc.inc
 
 	.code
 
 ;	OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
 ;strlen proc string
-
+ifndef _WIN64
+	mov	ecx,[esp+4]	; string
+endif
 	mov	rdx,rcx ; string
 	and	ecx,3Fh
 	pxor	xmm0,xmm0

@@ -442,6 +442,15 @@ endif
         mov eax,[rdi+5]
         xor ebx,ebx
         .switch eax
+        .case '1XVA'
+            mov eax,[rdi+8]
+            .if ( eax == '1.01' )       ; -arch:AVX10.1
+                define_name( "__AVX10_VER__", "1" )
+            .elseif ( eax == '2.01' )   ; -arch:AVX10.2
+                define_name( "__AVX10_VER__", "2" )
+            .else
+                asmerr( 1006, rdi )
+            .endif
         .case '5XVA'    ; -arch:AVX512
             define_name( "__AVX512BW__", "1" )
             define_name( "__AVX512CD__", "1" )

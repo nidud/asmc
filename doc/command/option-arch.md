@@ -14,6 +14,8 @@ Specifies the architecture for code generation. Valid options are:
 <tr><td>AVX</td><td>__AVX__</td></tr>
 <tr><td>AVX2</td><td>__AVX2__</td></tr>
 <tr><td>AVX512</td><td>__AVX512BW__, __AVX512CD__, __AVX512DQ__, __AVX512F__, __AVX512VL__</td></tr>
+<tr><td>AVX10.1</td><td>__AVX10_VER__ (1)</td></tr>
+<tr><td>AVX10.2</td><td>__AVX10_VER__ (2)</td></tr>
 </table>
 
 #### See Also

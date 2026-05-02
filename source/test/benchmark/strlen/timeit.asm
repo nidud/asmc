@@ -1,5 +1,5 @@
 ifdef _WIN64
-procs equ <for x,<0,2,3,4,5>> ; functions to test...
+procs equ <for x,<0,2,3,4,5,6>> ; functions to test...
 else
 procs equ <for x,<0,1,2,3,4,5>>
 endif
@@ -27,6 +27,7 @@ option dllimport:none
  info_3 db "libc(__AVX__)",0
  info_4 db "Intel Silvermont",0
  info_5 db "Intel Atom",0
+ info_6 db "AVX512",0
 
 .code
 

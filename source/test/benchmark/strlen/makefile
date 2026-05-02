@@ -5,8 +5,8 @@ timeit:
         asmc -q -bin -D__TEST__ -Fo 1 ../../../libc/string/_tcslen.asm
         asmc -q -bin -D__TEST__ -arch:SSE -Fo 2 ../../../libc/string/_tcslen.asm
         asmc -q -bin -D__TEST__ -arch:AVX -Fo 3 ../../../libc/string/_tcslen.asm
-        asmc -q -bin -Fo 4 IntelSilvermont32.asm
-        asmc -q -bin -Fo 5 IntelAtom32.asm
+        asmc -q -bin -arch:SSE -Fo 4 IntelSilvermont.asm
+        asmc -q -bin -arch:SSE -Fo 5 IntelAtom.asm
 ifdef OBJDUMP
         objdump -M intel -b binary -D -m i386 1.bin > 1_32.asm
         objdump -M intel -b binary -D -m i386 2.bin > 2_32.asm
@@ -16,8 +16,9 @@ endif
         $@
         asmc64 -q -bin -D__TEST__ -Fo 2 ../../../libc/string/_tcslen.asm
         asmc64 -q -bin -D__TEST__ -arch:AVX -Fo 3 ../../../libc/string/_tcslen.asm
-        asmc64 -q -bin -Fo 4 IntelSilvermont64.asm
-        asmc64 -q -bin -Fo 5 IntelAtom64.asm
+        asmc64 -q -bin -Fo 4 IntelSilvermont.asm
+        asmc64 -q -bin -Fo 5 IntelAtom.asm
+        asmc64 -q -bin -Fo 6 avx512.asm
 ifdef OBJDUMP
         objdump -M intel -b binary -D -m i386:x86-64 2.bin > 2_64.asm
         objdump -M intel -b binary -D -m i386:x86-64 3.bin > 3_64.asm

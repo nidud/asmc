@@ -112,7 +112,7 @@ endif
 .code
 ifdef __UNIX__
 get_logo proc __ccall buffer:string_t
-    tsprintf( ldr(buffer), &cp_logo, _ASMC_MAJOR, _ASMC_MINOR, ASMC_BUILD )
+    tsprintf( ldr(buffer), &cp_logo, _ASMC_MAJOR, _ASMC_MINOR, _ASMC_BUILD )
     ret
     endp
 endif

@@ -1,0 +1,33 @@
+ifndef _RPCNDR500_
+include rpcndr500.inc
+endif
+ifndef __windows2Esystem2Eprofile2Esystemmanufacturers_h__
+define __windows2Esystem2Eprofile2Esystemmanufacturers_h__
+ifndef __windows2Efoundation_h__
+include Windows.Foundation.inc
+endif
+
+.namespace System
+.namespace Profile
+.namespace SystemManufacturers
+
+ifndef ____x_ABI_CWindows_CSystem_CProfile_CSystemManufacturers_CISmbiosInformationStatics_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CSystem_CProfile_CSystemManufacturers_CISmbiosInformationStatics_INTERFACE_DEFINED__
+
+.comdef ISmbiosInformationStatics : public IInspectable
+
+    get_SerialNumber    proc :ptr
+   .ends
+
+endif
+
+.endn
+.endn
+.endn
+
+ifndef RUNTIMECLASS_Windows_System_Profile_SystemManufacturers_SmbiosInformation_DEFINED
+define RUNTIMECLASS_Windows_System_Profile_SystemManufacturers_SmbiosInformation_DEFINED
+define RuntimeClass_Windows_System_Profile_SystemManufacturers_SmbiosInformation <L"Windows.System.Profile.SystemManufacturers.SmbiosInformation">
+endif
+
+endif

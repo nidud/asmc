@@ -1,0 +1,17 @@
+; XMVECTORSPLATSIGNMASK.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+include DirectXMath.inc
+
+    .code
+
+XMVectorSplatSignMask proc XM_CALLCONV
+    mov eax,0x80000000
+    movd xmm0,eax
+    XM_PERMUTE_PS()
+    ret
+    endp
+
+    end

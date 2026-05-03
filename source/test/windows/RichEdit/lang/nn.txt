@@ -1,0 +1,48 @@
+option          codepage:65001
+LANGUAGEID      equ LANGID_NN
+
+IDS_FILE        equ <"&Fil">
+ IDS_OPEN       equ <"&Åpne">
+ IDS_CLOSE      equ <"&Lukk">
+ IDS_SAVE       equ <"La&gre">
+ IDS_SAVEAS     equ <"Lagre &Som">
+ IDS_EXIT       equ <"&Avslutt">
+IDS_EDIT        equ <"&Rediger">
+ IDS_UNDO       equ <"&Angre">
+ IDS_REDO       equ <"&Gjer om">
+ IDS_COPY       equ <"&Kopier">
+ IDS_CUT        equ <"Klipp ut">
+ IDS_PASTE      equ <"&Lim inn">
+ IDS_DELETE     equ <"&Slett">
+ IDS_FIND       equ <"&Søk...",9,"Ctrl+F">
+ IDS_FINDNEXT   equ <"Søk etter &neste",9,"F3">
+ IDS_FINDPREV   equ <"Søk etter &førre",9,"Ctrl+F3">
+ IDS_REPLACE    equ <"&Erstatt..",9,"Ctrl+R">
+ IDS_GOTO       equ <"&Gå til",9,"Ctrl+G">
+ IDS_SELECTALL  equ <"Merk alt">
+IDS_FORMAT      equ <"Format">
+ IDS_FONT       equ <"Font...">
+ IDS_COLOR      equ <"Farger...">
+IDS_VIEW        equ <"Vis">
+ IDS_STATUSBAR  equ <"Status Linje">
+IDS_HELP        equ <"Hjelp">
+ IDS_VIEWHELP   equ <"Vis Hjelp">
+ IDS_ABOUT      equ <"Om">
+IDS_SEARCH      equ <"&Søk">
+IDS_OPTIONS     equ <"Alternativer">
+IDS_OK          equ <"OK">
+IDS_CANCEL      equ <"Avbryt">
+IDS_BACKGR      equ <"Bakgrunn:">
+IDS_FOREGR      equ <"Forgrunn:">
+IDS_FIND2       equ <"Søk..">
+IDS_MATCHCASE   equ <"Skiftsensitiv">
+IDS_WHOLEWORD   equ <"Heile ord">
+IDS_DOWN        equ <"Ned">
+IDS_UP          equ <"Opp">
+IDS_FINDWHAT    equ <"Finn :">
+IDS_DIRECTION   equ <"Retning">
+IDS_GOTO2       equ <"Gå til">
+IDS_LINE        equ <"Linje :">
+IDS_REPLACE2    equ <"Erstatt">
+IDS_REPLACEWITH equ <"Erstatt med">
+

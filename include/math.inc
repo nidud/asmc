@@ -1,0 +1,220 @@
+.pragma list(push, 0)
+ifndef _INC_MATH
+define _INC_MATH
+ifndef _LIBC_
+include libc.inc
+endif
+
+.pragma comment(lib, _LIB_STEM, msvcrt)
+
+ifndef float
+float  typedef real4
+endif
+ifndef double
+double typedef real8
+endif
+
+ifndef _EXCEPTION_DEFINED
+define _EXCEPTION_DEFINED
+_exception      struc
+type            SINT ?      ; exception type - see below
+name            LPSTR ?     ; name of function where error occured
+arg1            double ?    ; first argument to function
+arg2            double ?    ; second argument (if any) to function
+retval          double ?    ; value to be returned by function
+_exception      ends
+endif
+
+ifndef _COMPLEX_DEFINED
+define _COMPLEX_DEFINED
+_complex        struc
+x               double ? ; real and imaginary parts
+y               double ?
+_complex        ends
+ifndef __STDC__
+complex         equ <_complex>
+endif
+endif
+
+define _DOMAIN         1 ; argument domain error
+define _SING           2 ; argument singularity
+define _OVERFLOW       3 ; overflow range error
+define _UNDERFLOW      4 ; underflow range error
+define _TLOSS          5 ; total loss of precision
+define _PLOSS          6 ; partial loss of precision
+
+define EDOM            33
+define ERANGE          34
+
+ifndef __assembler ; Protect from assembler
+ifndef _M_CEE_PURE
+externdef       _HUGE:double
+else
+;const double _HUGE = System::Double::PositiveInfinity;
+endif ; !defined(_M_CEE_PURE)
+endif ; __assembler
+
+define HUGE_VAL        <_HUGE>
+
+ifndef _CRT_ABS_DEFINED
+define _CRT_ABS_DEFINED
+abs     proto __cdecl _X:int_t
+labs    proto __cdecl _X:int_t
+endif
+
+acos    proto __cdecl _X:double
+asin    proto __cdecl _X:double
+asinh   proto __cdecl _X:double
+atan    proto __cdecl _X:double
+atan2   proto __cdecl _Y:double, _X:double
+ifndef _SIGN_DEFINED
+copysign proto __cdecl _Number:double, _Sign:double
+_chgsign proto __cdecl _X:double
+define _SIGN_DEFINED
+endif
+cos     proto __cdecl _X:double
+cosh    proto __cdecl _X:double
+exp     proto __cdecl _X:double
+exp2    proto __cdecl _X:double
+_fabs   proto __cdecl _X:double
+fmod    proto __cdecl _X:double, _Y:double
+log     proto __cdecl _X:double
+log10   proto __cdecl _X:double
+pow     proto __cdecl _X:double, _Y:double
+sin     proto __cdecl _X:double
+sinh    proto __cdecl _X:double
+tan     proto __cdecl _X:double
+tanh    proto __cdecl _X:double
+sqrt    proto __cdecl _X:double
+
+ifndef _CRT_ATOF_DEFINED
+define _CRT_ATOF_DEFINED
+atof    proto __cdecl _String:LPSTR
+;_atof_l proto __cdecl _String:LPSTR, _Locale:SINT;_locale_t
+endif
+
+_cabs   proto __cdecl _Complex_value:_complex
+ceil    proto __cdecl _X:double
+floor   proto __cdecl _X:double
+frexp   proto __cdecl _X:double, _Y:ptr SINT
+_hypot  proto __cdecl _X:double, _Y:double
+_j0     proto __cdecl _X:double
+_j1     proto __cdecl _X:double
+_jn     proto __cdecl _X:int_t, _Y:double
+ldexp   proto __cdecl _X:double, _Y:int_t
+ifndef _CRT_MATHERR_DEFINED
+define _CRT_MATHERR_DEFINED
+_matherr proto __cdecl _Except:ptr _exception
+endif
+modf    proto __cdecl _X:double, _Y:ptr double
+
+_y0     proto __cdecl _X:double
+_y1     proto __cdecl _X:double
+_yn     proto __cdecl _X:int_t, _Y:double
+
+round   proto __cdecl _X:double
+
+ifdef _M_IX86
+
+_set_SSE2_enable proto __cdecl _Flag:int_t
+_hypotf proto __cdecl _X:float, _Y:float
+
+endif
+
+;ifdef _M_IA64
+
+acosf   proto __cdecl _X:float
+asinf   proto __cdecl _X:float
+asinhf  proto __cdecl _X:float
+atanf   proto __cdecl _X:float
+atan2f  proto __cdecl _X:float, _Y:float
+cosf    proto __cdecl _X:float
+sinf    proto __cdecl _X:float
+tanf    proto __cdecl _X:float
+
+coshf   proto __cdecl _X:float
+sinhf   proto __cdecl _X:float
+tanhf   proto __cdecl _X:float
+
+expf    proto __cdecl _X:float
+exp2f   proto __cdecl _X:float
+logf    proto __cdecl _X:float
+log10f  proto __cdecl _X:float
+modff   proto __cdecl _X:float, _Y:ptr float
+
+powf    proto __cdecl _Base:float, _Exp:float
+sqrtf   proto __cdecl _X:float
+
+ceilf   proto __cdecl _X:float
+fabsf   proto __cdecl _X:float
+floorf  proto __cdecl _X:float
+fmodf   proto __cdecl _X:float, _Y:float
+
+_hypotf proto __cdecl _X:float, _Y:float
+ldexpf  proto __cdecl _X:float, _Y:int_t
+
+;endif
+
+roundf  proto __cdecl _X:float
+
+ifdef _M_AMD64
+
+acosf   proto __cdecl _X:float
+asinf   proto __cdecl _X:float
+atanf   proto __cdecl _X:float
+atan2f  proto __cdecl _X:float, _Y:float
+cosf    proto __cdecl _X:float
+sinf    proto __cdecl _X:float
+tanf    proto __cdecl _X:float
+
+coshf   proto __cdecl _X:float
+sinhf   proto __cdecl _X:float
+tanhf   proto __cdecl _X:float
+
+expf    proto __cdecl _X:float
+logf    proto __cdecl _X:float
+log10f  proto __cdecl _X:float
+modff   proto __cdecl _X:float, _Y:ptr float
+
+powf    proto __cdecl _X:float, _Y:float
+sqrtf   proto __cdecl _X:float
+
+ceilf   proto __cdecl _X:float
+floorf  proto __cdecl _X:float
+fmodf   proto __cdecl _X:float, _Y:float
+
+_hypotf proto __cdecl _X:float, _Y:float
+
+copysignf   proto __cdecl _Number:float, _Sign:float
+_chgsignf   proto __cdecl _X:float
+_logbf      proto __cdecl _X:float
+_nextafterf proto __cdecl _X:float, _Y:float
+_finitef    proto __cdecl _X:float
+_isnanf     proto __cdecl _X:float
+_fpclassf   proto __cdecl _X:float
+
+endif
+endif
+
+ifdef _USE_MATH_DEFINES
+ifndef _MATH_DEFINES_DEFINED
+define _MATH_DEFINES_DEFINED
+define M_E             2.71828182845904523536
+define M_LOG2E         1.44269504088896340736
+define M_LOG10E        0.434294481903251827651
+define M_LN2           0.693147180559945309417
+define M_LN10          2.30258509299404568402
+define M_PI            3.14159265358979323846
+define M_PI_2          1.57079632679489661923
+define M_PI_4          0.785398163397448309616
+define M_1_PI          0.318309886183790671538
+define M_2_PI          0.636619772367581343076
+define M_2_SQRTPI      1.12837916709551257390
+define M_SQRT2         1.41421356237309504880
+define M_SQRT1_2       0.707106781186547524401
+define INFINITY        1.0e999999999
+define NAN             (0.0 / 0.0)
+endif
+endif
+
+.pragma list(pop)

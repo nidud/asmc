@@ -1,0 +1,808 @@
+ifndef _INCLUDED_MM2
+define _INCLUDED_MM2
+.pragma list(push, 0)
+ifndef _LIBC_
+include libc.inc
+endif
+
+ifndef _M_IX86
+ifndef _M_X64
+.err <This header is specific to X86 and X64 targets>
+endif
+endif
+
+ifdef _M_CEE_PURE
+.err <ERROR: EMM intrinsics not supported in the pure mode>
+endif
+
+ifndef _MMINTRIN_H_INCLUDED
+include mmintrin.inc
+endif
+
+ifdef _MM2_FUNCTIONALITY
+ifndef _MM_FUNCTIONALITY
+define _MM_FUNCTIONALITY
+endif
+endif
+
+ifdef __ICL
+ifdef _MM_FUNCTIONALITY
+include xmm_func.inc
+else
+__m128		typedef sqword
+endif
+else
+__m128		union
+m128_f32	real4 4 dup(?)
+m128_u64	dq 2 dup(?)
+m128_i8		sbyte 16 dup(?)
+m128_i16	sword 8 dup(?)
+m128_i32	sdword 4 dup(?)
+m128_i64	sqword 2 dup(?)
+m128_u8		db 16 dup(?)
+m128_u16	dw 8 dup(?)
+m128_u32	dd 4 dup(?)
+__m128		ends
+ifndef _VCRT_BUILD
+ifndef _INC_MALLOC
+include malloc.inc
+endif
+endif
+endif
+
+ifndef XMVECTOR
+XMVECTOR typedef REAL16
+endif
+
+_MM_SHUFFLE macro fp3, fp2, fp1, fp0
+    exitm<(((fp3) SHL 6) OR ((fp2) SHL 4) OR ((fp1) SHL 2) OR ((fp0)))>
+    endm
+
+_MM_TRANSPOSE4_PS proto :XMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR
+_MM_TRANSPOSE4_PS macro row0, row1, row2, row3
+    _mm_store_ps(xmm4, xmm0)
+    _mm_store_ps(xmm5, xmm2)
+    _mm_shuffle_ps(xmm0, xmm1, _MM_SHUFFLE(1,0,1,0))
+    _mm_shuffle_ps(xmm4, xmm1, _MM_SHUFFLE(3,2,3,2))
+    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(1,0,1,0))
+    _mm_shuffle_ps(xmm5, xmm3, _MM_SHUFFLE(3,2,3,2))
+    _mm_store_ps(xmm1, xmm0)
+    _mm_store_ps(xmm3, xmm2)
+    _mm_shuffle_ps(xmm0, xmm4, _MM_SHUFFLE(2,0,2,0))
+    _mm_shuffle_ps(xmm1, xmm4, _MM_SHUFFLE(3,1,3,1))
+    _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
+    _mm_shuffle_ps(xmm3, xmm5, _MM_SHUFFLE(3,1,3,1))
+    exitm<>
+    endm
+
+_MM_HINT_NTA		equ 0
+_MM_HINT_T0		equ 1
+_MM_HINT_T1		equ 2
+_MM_HINT_T2		equ 3
+_MM_HINT_ENTA		equ 4
+
+_MM_ALIGN16		equ _VCRT_ALIGN(16)
+
+_MM_EXCEPT_MASK		equ 0x003f
+_MM_EXCEPT_INVALID	equ 0x0001
+_MM_EXCEPT_DENORM	equ 0x0002
+_MM_EXCEPT_DIV_ZERO	equ 0x0004
+_MM_EXCEPT_OVERFLOW	equ 0x0008
+_MM_EXCEPT_UNDERFLOW	equ 0x0010
+_MM_EXCEPT_INEXACT	equ 0x0020
+
+_MM_MASK_MASK		equ 0x1f80
+_MM_MASK_INVALID	equ 0x0080
+_MM_MASK_DENORM		equ 0x0100
+_MM_MASK_DIV_ZERO	equ 0x0200
+_MM_MASK_OVERFLOW	equ 0x0400
+_MM_MASK_UNDERFLOW	equ 0x0800
+_MM_MASK_INEXACT	equ 0x1000
+
+_MM_ROUND_MASK		equ 0x6000
+_MM_ROUND_NEAREST	equ 0x0000
+_MM_ROUND_DOWN		equ 0x2000
+_MM_ROUND_UP		equ 0x4000
+_MM_ROUND_TOWARD_ZERO	equ 0x6000
+
+_MM_FLUSH_ZERO_MASK	equ 0x8000
+_MM_FLUSH_ZERO_ON	equ 0x8000
+_MM_FLUSH_ZERO_OFF	equ 0x0000
+
+_mm_getcsr proto fastcall {
+    stmxcsr [rsp]
+    mov	    eax,[rsp]
+    }
+
+_mm_setcsr proto watcall :dword {
+    mov	    [rsp],eax
+    ldmxcsr [rsp]
+    }
+
+_MM_SET_EXCEPTION_STATE macro mask
+    and	    _mm_getcsr(),NOT _MM_EXCEPT_MASK
+    or	    eax,mask
+    exitm   <_mm_setcsr(eax)>
+    endm
+
+_MM_GET_EXCEPTION_STATE macro
+    and	    _mm_getcsr(),NOT _MM_EXCEPT_MASK
+    retm    <eax>
+    endm
+
+_MM_SET_EXCEPTION_MASK macro mask
+    and	    _mm_getcsr(),NOT _MM_MASK_MASK
+    or	    eax,mask
+    exitm   <_mm_setcsr(eax)>
+    endm
+
+_MM_GET_EXCEPTION_MASK macro
+    and	    _mm_getcsr(),_MM_MASK_MASK
+    retm    <eax>
+    endm
+
+_MM_SET_ROUNDING_MODE macro mode
+    and	    _mm_getcsr(),NOT _MM_ROUND_MASK
+    or	    eax,mode
+    exitm   <_mm_setcsr(eax)>
+    endm
+
+_MM_GET_ROUNDING_MODE macro
+    and	    _mm_getcsr(),_MM_ROUND_MASK
+    retm    <eax>
+    endm
+
+_MM_SET_FLUSH_ZERO_MODE macro mode
+    and	    _mm_getcsr(),NOT _MM_FLUSH_ZERO_MASK
+    or	    eax,mode
+    exitm   <_mm_setcsr(eax)>
+    endm
+
+_MM_GET_FLUSH_ZERO_MODE macro
+    and	    _mm_getcsr(),_MM_FLUSH_ZERO_MASK
+    retm    <eax>
+    endm
+
+_mm_add_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(addss, a, b)>
+    endm
+_mm_add_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(addps, a, b)>
+    endm
+_mm_sub_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(subss, a, b)>
+    endm
+_mm_sub_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(subps, a, b)>
+    endm
+_mm_mul_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(mulss, a, b)>
+    endm
+_mm_mul_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(mulps, a, b)>
+    endm
+_mm_div_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(divss, a, b)>
+    endm
+_mm_div_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(divps, a, b)>
+    endm
+
+_mm_sqrt_ss macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_mmopab(sqrtss, a, b)>
+    else
+	exitm<_mmopab(sqrtss, a, a)>
+    endif
+    endm
+_mm_sqrt_ps macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_mmopab(sqrtps, a, b)>
+    else
+	exitm<_mmopab(sqrtps, a, a)>
+    endif
+    endm
+_mm_rcp_ss macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_mmopab(rcpss, a, b)>
+    else
+	exitm<_mmopab(rcpss, a, a)>
+    endif
+    endm
+_mm_rcp_ps macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_mmopab(rcpps, a, b)>
+    else
+	exitm<_mmopab(rcpps, a, a)>
+    endif
+    endm
+_mm_rsqrt_ss macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_mmopab(rsqrtss, a, b)>
+    else
+	exitm<_mmopab(rsqrtss, a, a)>
+    endif
+    endm
+_mm_rsqrt_ps macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_mmopab(rsqrtps, a, b)>
+    else
+	exitm<_mmopab(rsqrtps, a, a)>
+    endif
+    endm
+_mm_min_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(minss, a, b)>
+    endm
+_mm_min_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(minps, a, b)>
+    endm
+_mm_max_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(maxss, a, b)>
+    endm
+_mm_max_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(maxps, a, b)>
+    endm
+
+_mm_and_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(andps, a, b)>
+    endm
+_mm_andnot_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(andnps, a, b)>
+    endm
+_mm_or_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(orps, a, b)>
+    endm
+_mm_xor_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(xorps, a, b)>
+    endm
+
+_mm_cmpeq_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpeqss, a, b)>
+    endm
+_mm_cmpeq_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpeqps, a, b)>
+    endm
+_mm_cmplt_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpltss, a, b)>
+    endm
+_mm_cmplt_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpltps, a, b)>
+    endm
+_mm_cmple_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpless, a, b)>
+    endm
+_mm_cmple_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpleps, a, b)>
+    endm
+
+_mm_cmpgt_ss macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movss x,b
+    endif
+    exitm<_mmopab(cmpltss, x, a)>
+    endm
+_mm_cmpgt_ps macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+    exitm<_mmopab(cmpltps, x, a)>
+    endm
+_mm_cmpge_ss macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movss x,b
+    endif
+    exitm<_mmopab(cmpless, x, a)>
+    endm
+_mm_cmpge_ps macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+    exitm<_mmopab(cmpleps, x, a)>
+    endm
+
+_mm_cmpneq_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpneqss, a, b)>
+    endm
+_mm_cmpneq_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpneqps, a, b)>
+    endm
+_mm_cmpnlt_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpnltss, a, b)>
+    endm
+_mm_cmpnlt_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpnltps, a, b)>
+    endm
+_mm_cmpnle_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpnless, a, b)>
+    endm
+_mm_cmpnle_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpnleps, a, b)>
+    endm
+
+_mm_cmpngt_ss macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+    exitm<_mmopab(cmpnltss, x, a)>
+    endm
+_mm_cmpngt_ps macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+    exitm<_mmopab(cmpnltps, x, a)>
+    endm
+_mm_cmpnge_ss macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+    exitm<_mmopab(cmpnless, x, a)>
+    endm
+_mm_cmpnge_ps macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+    exitm<_mmopab(cmpnleps, x, a)>
+    endm
+
+_mm_cmpord_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpordss, a, b)>
+    endm
+_mm_cmpord_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpordps, a, b)>
+    endm
+_mm_cmpunord_ss macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpunordss, a, b)>
+    endm
+_mm_cmpunord_ps macro a:=<xmm0>, b:=<xmm1>
+    exitm<_mmopab(cmpunordps, a, b)>
+    endm
+
+_mm_comieq_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<ZERO?>
+    endm
+_mm_comilt_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<CARRY?>
+    endm
+_mm_comile_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<CARRY? || ZERO?>
+    endm
+_mm_comigt_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<!CARRY? && !ZERO?>
+    endm
+_mm_comige_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<!CARRY?>
+    endm
+_mm_comineq_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<!ZERO?>
+    endm
+_mm_ucomieq_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<ZERO?>
+    endm
+_mm_ucomilt_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<CARRY?>
+    endm
+_mm_ucomile_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<CARRY? || ZERO?>
+    endm
+_mm_ucomigt_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<!CARRY? && !ZERO?>
+    endm
+_mm_ucomige_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<!CARRY?>
+    endm
+_mm_ucomineq_ss macro a:=<xmm0>, b:=<xmm1>
+    ucomiss a, b
+    retm<!ZERO?>
+    endm
+
+_mm_cvt_ss2si macro a:=<xmm0>
+    cvtss2si eax,a
+    retm<eax>
+    endm
+_mm_cvtt_ss2si macro a:=<xmm0>
+    cvttss2si eax,a
+    retm<eax>
+    endm
+_mm_cvt_si2ss macro x:=<xmm0>, d
+    if (typeof d) eq 4 and (opattr d) eq 48
+	cvtsi2ss x,d
+    else
+	mov eax,d
+	cvtsi2ss x,eax
+    endif
+    retm<x>
+    endm
+_mm_cvtss_f32 macro m32, xmm
+ifnb <xmm>
+    movss m32,xmm
+    retm<xmm>
+endif
+    retm<m32>
+    endm
+
+ifdef _M_IX86
+_mm_cvt_ps2pi macro x:=<xmm0>
+    cvtps2pi mm0,x
+    retm<mm0>
+    endm
+_mm_cvtt_ps2pi macro x:=<xmm0>
+    cvttps2pi mm0,x
+    retm<mm0>
+    endm
+_mm_cvt_pi2ps macro x:=<xmm0>, m:=<mm0>
+    cvtpi2ps x,m
+    retm<xmm0>
+    endm
+endif
+
+ifdef _M_X64
+_mm_cvtss_si64 macro a:=<xmm0>
+    cvtss2si rax,a
+    retm<rax>
+    endm
+_mm_cvttss_si64 macro a:=<xmm0>
+    cvttss2si rax,a
+    retm<rax>
+    endm
+_mm_cvtsi64_ss macro a:=<xmm0>, p
+    cvtsi2ss a,p
+    retm<a>
+    endm
+endif
+
+_mm_shuffle_ps macro a:=<xmm0>, b:=<xmm1>, imm:=<0>
+    shufps a,b,imm
+    retm<a>
+    endm
+_mm_unpackhi_ps macro a, b
+    exitm<_mmopab(unpckhps, a, b)>
+    endm
+_mm_unpacklo_ps macro a, b
+    exitm<_mmopab(unpcklps, a, b)>
+    endm
+_mm_loadh_pi macro x:=<xmm0>, p
+    movhps x,p
+    retm<x>
+    endm
+_mm_movehl_ps macro a, b
+    exitm<_mmopab(movhlps, a, b)>
+    endm
+_mm_movelh_ps macro a, b
+    exitm<_mmopab(movlhps, a, b)>
+    endm
+_mm_storeh_pi macro p, x:=<xmm0>
+    movhps p,x
+    retm<p>
+    endm
+_mm_loadl_pi macro x:=<xmm0>, p
+    movlps x,p
+    retm<x>
+    endm
+_mm_storel_pi macro p, x:=<xmm0>
+    movlps p,x
+    retm<p>
+    endm
+_mm_movemask_ps macro x:=<xmm0>
+    movmskps eax,x
+    retm<eax>
+    endm
+
+ifdef _M_IX86
+_m_pextrw macro m, imm
+   pextrw eax,m,imm
+   retm<eax>
+   endm
+_m_pinsrw macro m, i1, i2
+   mov eax,i1
+   pextrw m,eax,i2
+   retm<m>
+   endm
+_m_pmaxsw macro a, b
+   pmaxsw a,b
+   retm<a>
+   endm
+_m_pmaxub macro a, b
+   pmaxub a,b
+   retm<a>
+   endm
+_m_pminsw macro a, b
+   pminsw a,b
+   retm<a>
+   endm
+_m_pminub macro a, b
+   pminub a,b
+   retm<a>
+   endm
+_m_pmovmskb macro m
+   pmovmskb eax,m
+   retm<eax>
+   endm
+_m_pmulhuw macro a, b
+   pmulhuw a,b
+   retm<a>
+   endm
+_m_pshufw macro m, imm
+   pshufw m,m,imm
+   retm<mm0>
+   endm
+_m_maskmovq macro a, b, p
+   push rdi
+   mov rdi,p
+   movq mm2,a
+   movq a,b
+   maskmovq mm2,a
+   pop rdi
+   retm<>
+   endm
+_m_pavgb macro a, b
+   pavgb a,b
+   retm<a>
+   endm
+_m_pavgw macro a, b
+   pavgw a,b
+   retm<a>
+   endm
+_m_psadbw macro a, b
+   psadbw a,b
+   retm<a>
+   endm
+endif
+
+_mm_set_ss macro x:=<xmm0>
+    movd eax,x
+    movd x,eax
+    retm<x>
+    endm
+_mm_set_ps1 macro x:=<xmm0>
+    shufps x,x,0
+    retm<x>
+    endm
+_mm_set_ps macro x0:=<xmm0>, x1:=<xmm1>, x2:=<xmm2>, x3:=<xmm3>
+    unpcklps x3,x2
+    unpcklps x1,x0
+    movaps x0,x3
+    movlhps x0,x1
+    retm<x0>
+    endm
+_mm_setr_ps macro x0:=<xmm0>, x1:=<xmm1>, x2:=<xmm2>, x3:=<xmm3>
+    unpcklps x2,x3
+    unpcklps x0,x1
+    movlhps x0,x2
+    retm<x0>
+    endm
+_mm_setzero_ps macro x:=<xmm0>
+    xorps x,x
+    retm<x>
+    endm
+_mm_movemm_ps macro a, b
+    movaps xmm0,oword ptr b
+    movaps oword ptr a,xmm0
+    retm<xmm0>
+    endm
+
+_mm_load_ss macro x, p
+    ifnb <p>
+	movss x,p
+	retm<x>
+    else
+	movss xmm0,x
+	retm<xmm0>
+    endif
+    endm
+_mm_load_ps1 macro x, p
+    ifnb <p>
+	movss x,p
+	shufps x,x,0
+	retm<x>
+    else
+	movss xmm0,x
+	shufps xmm0,xmm0,0
+	retm<xmm0>
+    endif
+    endm
+_mm_load_ps macro x, p
+    ifnb <p>
+	movaps x,p
+	retm<x>
+    else
+	movaps xmm0,x
+	retm<xmm0>
+    endif
+    endm
+_mm_loadr_ps macro x, p
+    ifnb <p>
+	movaps x,p
+	shufps x,x,27
+	retm<x>
+    else
+	movaps xmm0,x
+	shufps xmm0,xmm0,27
+	retm<xmm0>
+    endif
+    endm
+_mm_loadu_ps macro x, p
+    ifnb <p>
+	movups x,p
+	retm<x>
+    else
+	movups xmm0,x
+	retm<xmm0>
+    endif
+    endm
+_mm_store_ss macro p, x:=<xmm0>
+    ifdif <p>,<x>
+	movss p,x
+    endif
+    retm<p>
+    endm
+_mm_store_ps1 macro p, x:=<xmm0>
+    shufps x,x,0
+    movups p,x
+    retm<p>
+    endm
+_mm_store_ps macro p, x:=<xmm0>
+    ifdif <p>,<x>
+	movaps p,x
+    endif
+    retm<p>
+    endm
+_mm_storer_ps macro p, x:=<xmm0>
+    shufps x,x,27
+    movaps p,x
+    retm<p>
+    endm
+_mm_storeu_ps macro p, x:=<xmm0>
+    movups p,x
+    retm<p>
+    endm
+_mm_prefetch proto asmcall :ptr, :abs {
+    @CatStr(prefetcht, %(_2 - 1)) byte ptr [_1]
+    }
+ifdef _M_IX86
+_mm_stream_pi proto asmcall :ptr, :abs=<mm0> {
+    movntq [_1],_2
+    }
+endif
+_mm_stream_ps macro p, x:=<xmm0>
+    movntps p,x
+    retm<p>
+    endm
+_mm_move_ss macro a:=<xmm0>, b:=<xmm1>
+    movss a, b
+    retm<a>
+    endm
+
+_mm_sfence macro
+    exitm<sfence>
+    endm
+
+ifdef __ICL
+_mm_malloc		equ <_aligned_malloc>
+_mm_free		equ <_aligned_free>
+endif
+
+ifdef _M_IX86
+_mm_cvtps_pi32		equ <_mm_cvt_ps2pi>
+_mm_cvttps_pi32		equ <_mm_cvtt_ps2pi>
+_mm_cvtpi32_ps		equ <_mm_cvt_pi2ps>
+_mm_extract_pi16	equ <_m_pextrw>
+_mm_insert_pi16		equ <_m_pinsrw>
+_mm_max_pi16		equ <_m_pmaxsw>
+_mm_max_pu8		equ <_m_pmaxub>
+_mm_min_pi16		equ <_m_pminsw>
+_mm_min_pu8		equ <_m_pminub>
+_mm_movemask_pi8	equ <_m_pmovmskb>
+_mm_mulhi_pu16		equ <_m_pmulhuw>
+_mm_shuffle_pi16	equ <_m_pshufw>
+_mm_maskmove_si64	equ <_m_maskmovq>
+_mm_avg_pu8		equ <_m_pavgb>
+_mm_avg_pu16		equ <_m_pavgw>
+_mm_sad_pu8		equ <_m_psadbw>
+endif
+_mm_cvtss_si32		equ <_mm_cvt_ss2si>
+_mm_cvttss_si32		equ <_mm_cvtt_ss2si>
+_mm_cvtsi32_ss		equ <_mm_cvt_si2ss>
+_mm_set1_ps		equ <_mm_set_ps1>
+_mm_load1_ps		equ <_mm_load_ps1>
+_mm_store1_ps		equ <_mm_store_ps1>
+
+ifdef _M_IX86
+_mm_cvtpi16_ps macro m:=<mm0>
+    movq	mm3,m
+    pxor	mm1,mm1
+    movq	mm2,mm1
+    xorps	xmm0,xmm0
+    pcmpgtw	mm2,mm3
+    punpckhwd	mm0,mm2
+    cvtpi2ps	xmm0,mm0
+    movq	mm0,mm3
+    punpcklwd	mm0,mm2
+    movlhps	xmm0,xmm0
+    cvtpi2ps	xmm0,mm0
+    retm<xmm0>
+    endm
+_mm_cvtpu16_ps macro m:=<mm0>
+    movq	mm3,m
+    pxor	mm0,mm0
+    xorps	xmm0,xmm0
+    movq	mm1,mm3
+    punpckhwd	mm1,mm0
+    cvtpi2ps	xmm0,mm1
+    movq	mm1,mm3
+    punpcklwd	mm1,mm0
+    movq	mm0,mm1
+    movlhps	xmm0,xmm0
+    cvtpi2ps	xmm0,mm0
+    retm<xmm0>
+    endm
+_mm_cvtps_pi16 macro x:=<xmm0>
+    cvtps2pi	mm0,x
+    movhlps	x,x
+    cvtps2pi	mm1,x
+    packssdw	mm0,mm1
+    retm<mm0>
+    endm
+_mm_cvtpi8_ps macro m:=<mm0>
+    movq	mm4,m
+    pxor	mm1,mm1
+    xorps	xmm0,xmm0
+    movq	mm3,mm1
+    pcmpgtb	mm1,mm4
+    punpcklbw	mm4,mm1
+    movq	mm2,mm3
+    pcmpgtw	mm2,mm4
+    movq	mm0,mm4
+    punpckhwd	mm0,mm2
+    cvtpi2ps	xmm0,mm0
+    movq	mm0,mm4
+    punpcklwd	mm0,mm2
+    movlhps	xmm0,xmm0
+    cvtpi2ps	xmm0,mm0
+    retm<mm0>
+    endm
+_mm_cvtpu8_ps macro m:=<mm0>
+    movq	mm3,m
+    pxor	mm1,mm1
+    pxor	mm2,mm2
+    xorps	xmm0,xmm0
+    punpcklbw	mm3,mm2
+    movq	mm0,mm3
+    punpckhwd	mm0,mm2
+    cvtpi2ps	xmm0,mm0
+    movq	mm0,mm3
+    punpcklwd	mm0,mm2
+    movlhps	xmm0,xmm0
+    cvtpi2ps	xmm0,mm0
+    retm<xmm0>
+    endm
+_mm_cvtps_pi8 macro x:=<xmm0>
+    cvtps2pi	mm1,x
+    movhlps	x,x
+    cvtps2pi	mm0,x
+    packssdw	mm1,mm0
+    movq	mm0,mm1
+    pxor	mm1,mm1
+    packsswb	mm0,mm1
+    retm<mm0>
+    endm
+_mm_cvtpi32x2_ps macro a:=<xmm0>, b:=<xmm1>
+    cvtpi2ps	xmm2,b
+    cvtpi2ps	xmm0,a
+    movlhps	xmm0,xmm2
+    retm<xmm0>
+    endm
+endif
+
+.pragma list(pop)
+endif

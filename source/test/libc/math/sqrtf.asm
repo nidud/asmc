@@ -1,0 +1,5 @@
+define FUNC  <sqrtf>
+define VALUE <3.14159265358979323846264338327950288419716939937511>
+define ISFLOAT
+
+include test.inc

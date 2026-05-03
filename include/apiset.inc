@@ -1,0 +1,6 @@
+ifndef _API_SET_H_
+define _API_SET_H_
+ifndef _APISET_MINWIN_VERSION
+define _APISET_MINWIN_VERSION 0x0100
+endif
+endif

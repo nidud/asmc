@@ -1,0 +1,3 @@
+ifndef __SPECSTRINGS_UNDEF_INC
+define __SPECSTRINGS_UNDEF_INC
+endif

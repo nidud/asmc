@@ -1,0 +1,171 @@
+include malloc.inc
+include assert.inc
+include signal.inc
+
+    .data
+    core size_t 20 dup(?)
+    diff size_t 20 dup(?)
+    memp size_t 20 dup(?)
+
+    .code
+
+    getcore macro i
+	call __coreleft
+	mov core[i*size_t],rax
+	endm
+    getmemp macro i,z
+	invoke malloc,z
+	mov memp[i*size_t],rax
+	.assert rax
+	endm
+    setdiff macro i,x
+	mov rax,core
+	sub rax,core[x*size_t]
+	mov diff[i*size_t],rax
+	endm
+    getcdm macro i,d,m
+	getcore i
+	setdiff d,d+1
+	getmemp m,64000
+	endm
+
+
+__coreleft proc uses rsi rdi
+
+    xor rax,rax		; RAX: free memory
+    xor rcx,rcx		; RCX: total allocated
+    mov rsi,_heap_base
+
+    .while rsi
+
+	.for ( rdx = rsi : [rdx].HEAP.size : rdx += rdi )
+
+	    mov rdi,[rdx].HEAP.size
+	    add rcx,rdi
+
+	    .if [rdx].HEAP.type == _HEAP_FREE
+
+		add rax,rdi
+	    .endif
+	.endf
+	mov rsi,[rsi].HEAP.next
+    .endw
+    ret
+
+__coreleft endp
+
+option cstack:on
+
+alloc proc uses rsi rdi rbx a:ptr, b:ptr
+
+  .new l[128]:dword = {0}
+
+    lea rdi,l
+    mov eax,1
+    mov ecx,lengthof(l)
+    rep stosd
+    mov rdi,alloca(sizeof(l))
+    mov eax,2
+    mov ecx,lengthof(l)
+    rep stosd
+
+    .for ( rsi = &l,
+	   eax = lengthof(l),
+	   ebx = 0 : ebx < lengthof(l) : ebx++, rsi += 4 )
+
+	sub eax,[rsi]
+    .endf
+    ret
+
+alloc endp
+
+option cstack:off
+
+main proc
+
+  local stk:size_t
+
+    signal(SIGSEGV, &__crtGeneralFailure)
+
+    mov stk,rsp
+    .assert malloc(8)
+    .assert free(rax)
+    getcore 0
+
+    .assert _aligned_malloc(_SEGSIZE_, _SEGSIZE_)
+    .assert ax == 0
+    .assert free(rax)
+
+    getmemp 0,124
+    getcore 1
+    setdiff 0,1
+    .assert rax
+    free(memp)
+
+    getcore 2
+    setdiff 1,2
+    .assert !rax
+
+    getmemp 1,65531
+    getcore 3
+    setdiff 2,3
+    free(memp[1*size_t])
+
+    getcore 4
+    setdiff 3,4
+    .assert !rax
+
+    getmemp 2,64000
+    getcdm  5,4,3
+    getcdm  6,5,4
+    getcdm  7,6,5
+    getcdm  8,7,6
+    getcdm  9,8,7
+    getcdm  10,9,8
+    getcore 11
+    setdiff 10,11
+    getmemp 9,32000
+    getcore 12
+    setdiff 11,12
+    getmemp 10,16000
+    getcore 13
+    setdiff 12,13
+    free(memp[2*size_t])
+    free(memp[3*size_t])
+    free(memp[4*size_t])
+    free(memp[5*size_t])
+    free(memp[6*size_t])
+    free(memp[7*size_t])
+    free(memp[8*size_t])
+    free(memp[9*size_t])
+    free(memp[10*size_t])
+    getcore 14
+    setdiff 13,14
+    .assert !rax
+
+    .assert malloc(_HEAP_GROWSIZE*2)
+    .assert free(rax)
+
+    mov rsp,stk
+
+    mov esi,9
+    mov edi,9
+    mov ebx,9
+
+    alloc(rsi, rdi)
+
+    .assert( eax == 0 )
+    .assert( edi == 9 )
+    .assert( edi == 9 )
+    .assert( ebx == 9 )
+
+    _aligned_malloc(100, 512)
+
+    .assert( rax != NULL )
+    .assert( !( eax & 512-1 ) )
+
+    .return( 0 )
+
+main endp
+
+    end

@@ -1,0 +1,29 @@
+
+.enum unary_operand_types {
+
+    UOT_LOW,
+    UOT_HIGH,
+    UOT_LOWWORD,
+    UOT_HIGHWORD,
+    UOT_LOW32,
+    UOT_HIGH32,
+    UOT_OFFSET,
+    UOT_LROFFSET,
+    UOT_IMAGEREL,
+    UOT_SECTIONREL,
+    UOT_SEG,
+    UOT_OPATTR,
+    UOT_DOT_TYPE,
+    UOT_SIZE,
+    UOT_LENGTH,
+    UOT_LENGTHOF,
+    UOT_SHORT,
+    UOT_THIS,
+    UOT_TYPE,
+    UOT_TYPEOF,
+    UOT_MASK,
+    UOT_WIDTH,
+    UOT_LOW64,
+    UOT_HIGH64,
+    UOT_SQRT
+    }

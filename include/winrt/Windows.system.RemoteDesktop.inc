@@ -1,0 +1,34 @@
+ifndef _RPCNDR500_
+include rpcndr500.inc
+endif
+ifndef __windows2Esystem2Eremotedesktop_h__
+define __windows2Esystem2Eremotedesktop_h__
+ifndef __windows2Efoundation_h__
+include Windows.Foundation.inc
+endif
+
+.namespace Windows
+.namespace System
+.namespace RemoteDesktop
+
+ifndef ____x_ABI_CWindows_CSystem_CRemoteDesktop_CIInteractiveSessionStatics_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CSystem_CRemoteDesktop_CIInteractiveSessionStatics_INTERFACE_DEFINED__
+define InterfaceName_Windows_System_RemoteDesktop_IInteractiveSessionStatics <L"Windows.System.RemoteDesktop.IInteractiveSessionStatics">
+DEFINE_IIDX(IInteractiveSessionStatics, "60884631-DD3A-4576-9C8D-E8027618BDCE")
+
+.comdef IInteractiveSessionStatics : public IInspectable
+
+    get_IsRemote        proc :ptr
+   .ends
+
+endif
+
+.endn
+.endn
+.endn
+
+ifndef RUNTIMECLASS_Windows_System_RemoteDesktop_InteractiveSession_DEFINED
+define RUNTIMECLASS_Windows_System_RemoteDesktop_InteractiveSession_DEFINED
+define RuntimeClass_Windows_System_RemoteDesktop_InteractiveSession <L"Windows.System.RemoteDesktop.InteractiveSession">
+endif
+endif

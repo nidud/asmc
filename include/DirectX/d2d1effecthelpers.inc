@@ -1,0 +1,7 @@
+ifndef _D2D1_EFFECT_HELPERS_H_
+define _D2D1_EFFECT_HELPERS_H_
+include d2d1effectauthor.inc
+if _MSC_VER GE 1600
+define D2D1_SIMPLE_BINDING_MACROS
+endif
+endif

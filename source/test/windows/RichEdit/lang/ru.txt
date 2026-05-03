@@ -1,0 +1,48 @@
+
+option          codepage:65001
+LANGUAGEID      equ LANGID_RU
+
+IDS_FILE        equ <"&Файл">
+ IDS_OPEN       equ <"&Открыть">
+ IDS_CLOSE      equ <"Закрыть">
+ IDS_SAVE       equ <"Сохранить">
+ IDS_SAVEAS     equ <"Сохранить как...">
+ IDS_EXIT       equ <"Выход">
+IDS_EDIT        equ <"&Правка">
+ IDS_UNDO       equ <"&Отменить">
+ IDS_REDO       equ <"&Вернуть">
+ IDS_COPY       equ <"Копировать">
+ IDS_CUT        equ <"В&ырезать">
+ IDS_PASTE      equ <"Вставить">
+ IDS_DELETE     equ <"&Удалить">
+ IDS_FIND       equ <"Найти...",9,"Ctrl+F">
+ IDS_FINDNEXT   equ <"&Найти далее",9,"F3">
+ IDS_FINDPREV   equ <"В&верх",9,"Ctrl+F3">
+ IDS_REPLACE    equ <"Заменить..",9,"Ctrl+R">
+ IDS_GOTO       equ <"Перейти к",9,"Ctrl+G">
+ IDS_SELECTALL  equ <"Вы&делить все">
+IDS_FORMAT      equ <"Format">
+ IDS_FONT       equ <"Font...">
+ IDS_COLOR      equ <"Color...">
+IDS_VIEW        equ <"View">
+ IDS_STATUSBAR  equ <"Status Bar">
+IDS_HELP        equ <"Help">
+ IDS_VIEWHELP   equ <"View Help">
+ IDS_ABOUT      equ <"About">
+IDS_OPTIONS     equ <"Цвета">
+IDS_SEARCH      equ <"Найти">
+IDS_OK          equ <"OK">
+IDS_CANCEL      equ <"Отмена">
+IDS_BACKGR      equ <"&Фон:">
+IDS_FOREGR      equ <"Цвета:">
+IDS_FIND2       equ <"Найти..">
+IDS_MATCHCASE   equ <"С у&четом регистра">
+IDS_WHOLEWORD   equ <"Только &целые слова">
+IDS_DOWN        equ <"В&низ">
+IDS_UP          equ <"В&верх">
+IDS_FINDWHAT    equ <"Чт&о:">
+IDS_DIRECTION   equ <"Направление">
+IDS_GOTO2       equ <"Перейти к">
+IDS_LINE        equ <"Строка :">
+IDS_REPLACE2    equ <"Заменить">
+IDS_REPLACEWITH equ <"Заменить">

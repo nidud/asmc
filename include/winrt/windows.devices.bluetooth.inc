@@ -1,0 +1,9 @@
+ifndef _RPC500_
+include rpc500.inc
+endif
+ifndef __windows2Edevices2Ebluetooth_h__
+define __windows2Edevices2Ebluetooth_h__
+ifndef __windows2Efoundation_h__
+include Windows.Foundation.inc
+endif
+endif

@@ -1,0 +1,10 @@
+LIBRARY aclui.dll
+EXPORTS
+CreateSecurityPage@4
+EditSecurity@8
+EditSecurityAdvanced@12
+EditResourceCondition@20
+EditConditionalAceClaims@24
+GetLocalizedStringForCondition@16
+GetTlsIndexForClaimDictionary@16
+IID_ISecurityInformation

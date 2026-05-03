@@ -1,0 +1,23 @@
+; _FABSF.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
+include math.inc
+
+    .code
+
+_fabsf proc x:float
+ifdef _WIN64
+    pcmpeqw xmm1,xmm1
+    psrld   xmm1,1
+    andps   xmm0,xmm1
+else
+    fld     x
+    fabs
+endif
+    ret
+    endp
+
+    end

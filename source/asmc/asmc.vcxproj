@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <AsmcDir>$(AsmcDir)</AsmcDir>
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>asmc</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{0040DBA9-EC22-43D3-B298-73504F3072B3}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(AsmcDir)\bin\asmc.props" />
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(AsmcDir)\lib\x64</AdditionalLibraryDirectories>
+      <Profile>false</Profile>
+      <StackCommitSize>0x200000</StackCommitSize>
+      <StackReserveSize>0x300000</StackReserveSize>
+      <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
+      <TypeLibraryResourceID>1</TypeLibraryResourceID>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
+    </Link>
+    <ASMC>
+      <WarningLevel>2</WarningLevel>
+      <IncludePaths>inc;$(AsmcDir)\include</IncludePaths>
+      <GenerateUnwindInformation>true</GenerateUnwindInformation>
+      <PackAlignmentBoundary>4</PackAlignmentBoundary>
+      <GenerateCStackFrame>true</GenerateCStackFrame>
+    </ASMC>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <AdditionalLibraryDirectories>$(AsmcDir)\lib\x86</AdditionalLibraryDirectories>
+      <Profile>false</Profile>
+      <StackCommitSize>0x200000</StackCommitSize>
+      <StackReserveSize>0x300000</StackReserveSize>
+      <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
+      <TypeLibraryResourceID>1</TypeLibraryResourceID>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
+    </Link>
+    <ASMC>
+      <WarningLevel>2</WarningLevel>
+      <IncludePaths>inc;$(AsmcDir)\include</IncludePaths>
+      <PackAlignmentBoundary>3</PackAlignmentBoundary>
+      <GenerateCStackFrame>true</GenerateCStackFrame>
+      <ObjectFileTypeCOFF>true</ObjectFileTypeCOFF>
+    </ASMC>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ASMC Include="src\asmc.asm" />
+    <ASMC Include="src\asmerr.asm" />
+    <ASMC Include="src\assemble.asm" />
+    <ASMC Include="src\assert.asm" />
+    <ASMC Include="src\assume.asm" />
+    <ASMC Include="src\backptch.asm" />
+    <ASMC Include="src\bin.asm" />
+    <ASMC Include="src\branch.asm" />
+    <ASMC Include="src\class.asm" />
+    <ASMC Include="src\cmdline.asm" />
+    <ASMC Include="src\codegen.asm" />
+    <ASMC Include="src\coff.asm" />
+    <ASMC Include="src\com.asm" />
+    <ASMC Include="src\condasm.asm" />
+    <ASMC Include="src\context.asm" />
+    <ASMC Include="src\cpumodel.asm" />
+    <ASMC Include="src\data.asm" />
+    <ASMC Include="src\dbgcv.asm" />
+    <ASMC Include="src\dbgdw.asm" />
+    <ASMC Include="src\directiv.asm" />
+    <ASMC Include="src\elf.asm" />
+    <ASMC Include="src\end.asm" />
+    <ASMC Include="src\enum.asm" />
+    <ASMC Include="src\equate.asm" />
+    <ASMC Include="src\expans.asm" />
+    <ASMC Include="src\expreval.asm" />
+    <ASMC Include="src\extern.asm" />
+    <ASMC Include="src\fastpass.asm" />
+    <ASMC Include="src\fixup.asm" />
+    <ASMC Include="src\for.asm" />
+    <ASMC Include="src\fpfixup.asm" />
+    <ASMC Include="src\hll.asm" />
+    <ASMC Include="src\Indirect.asm" />
+    <ASMC Include="src\input.asm" />
+    <ASMC Include="src\invoke.asm" />
+    <ASMC Include="src\label.asm" />
+    <ASMC Include="src\linnum.asm" />
+    <ASMC Include="src\listing.asm" />
+    <ASMC Include="src\logo.asm" />
+    <ASMC Include="src\loop.asm" />
+    <ASMC Include="src\lqueue.asm" />
+    <ASMC Include="src\ltype.asm" />
+    <ASMC Include="src\macro.asm" />
+    <ASMC Include="src\mangle.asm" />
+    <ASMC Include="src\mem2mem.asm" />
+    <ASMC Include="src\memalloc.asm" />
+    <ASMC Include="src\namespace.asm" />
+    <ASMC Include="src\new.asm" />
+    <ASMC Include="src\omf.asm" />
+    <ASMC Include="src\omffixup.asm" />
+    <ASMC Include="src\omfint.asm" />
+    <ASMC Include="src\operator.asm" />
+    <ASMC Include="src\option.asm" />
+    <ASMC Include="src\parser.asm" />
+    <ASMC Include="src\posndir.asm" />
+    <ASMC Include="src\pragma.asm" />
+    <ASMC Include="src\preproc.asm" />
+    <ASMC Include="src\proc.asm" />
+    <ASMC Include="src\qfloat.asm" />
+    <ASMC Include="src\reswords.asm" />
+    <ASMC Include="src\return.asm" />
+    <ASMC Include="src\safeseh.asm" />
+    <ASMC Include="src\segment.asm" />
+    <ASMC Include="src\simsegm.asm" />
+    <ASMC Include="src\string.asm" />
+    <ASMC Include="src\switch.asm" />
+    <ASMC Include="src\symbols.asm" />
+    <ASMC Include="src\tokenize.asm" />
+    <ASMC Include="src\typeid.asm" />
+    <ASMC Include="src\types.asm" />
+    <ASMC Include="src\undef.asm" />
+    <ASMC Include="src\ldr.asm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(AsmcDir)\bin\asmc.targets" />
+  </ImportGroup>
+</Project>

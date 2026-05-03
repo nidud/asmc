@@ -1,0 +1,335 @@
+ifndef __TIME_INC
+define __TIME_INC
+.pragma list(push, 0)
+
+ifndef _LIBC_
+include libc.inc
+endif
+
+.pragma comment(lib, _LIB_STEM, msvcrt)
+.pragma pack(push, size_t)
+
+ifndef _TIME32_T_DEFINED
+define _TIME32_T_DEFINED
+__time32_t typedef int_t	;; 32-bit time value
+endif
+
+ifndef _TIME64_T_DEFINED
+define _TIME64_T_DEFINED
+__time64_t typedef int64_t	;; 64-bit time value
+endif
+
+ifndef _TIME_T_DEFINED
+define _TIME_T_DEFINED
+ifdef _WIN64
+time_t	typedef sqword
+else
+time_t	typedef sdword
+define _USE_32BIT_TIME_T
+endif
+endif
+
+ifndef _CLOCK_T_DEFINED
+define _CLOCK_T_DEFINED
+clock_t typedef int_t
+endif
+
+define _MAX__TIME32_T	0x7FFFD27F
+define _MAX__TIME64_T	0x793406FFF
+define _MIN_LOCAL_TIME	(-12 * 60 * 60)
+define _MAX_LOCAL_TIME	(13 * 60 * 60)
+
+;
+; ISO 8601:	YYYY-MM-DD hh:mm:ss
+; Short form:	YY-MM-DD hh:mm
+;
+; input accept: MM/DD/YY[YY] | DD.MM.YY[YY] | [YY]YY-MM-DD
+;
+define DT_BASEYEAR	1980
+
+define _DAY_SEC		(24 * 60 * 60)		; secs in a day
+define _YEAR_SEC	(365 * _DAY_SEC)	; secs in a year
+define _FOUR_YEAR_SEC	(1461 * _DAY_SEC)	; secs in a 4 year interval
+define _DEC_SEC		315532800		; secs in 1970-1979
+define _BASE_YEAR	70			; 1970 is the base year
+define _BASE_DOW	4			; 01-01-70 was a Thursday
+define _LEAP_YEAR_ADJUST 17			; Leap years 1900 - 1970
+ifdef _WIN64
+define _MAX_YEAR	1100			; 3000 is the max year
+else
+define _MAX_YEAR	138			; 2038 is the max year
+endif
+ifndef _TZ_STRINGS_SIZE
+define _TZ_STRINGS_SIZE 64
+endif
+
+ifndef LPFILETIME
+FILETIME	STRUC
+dwLowDateTime	dd ?
+dwHighDateTime	dd ?
+FILETIME	ENDS
+LPFILETIME	typedef ptr FILETIME
+endif
+
+ifndef LPSYSTEMTIME
+SYSTEMTIME	STRUC
+wYear		dw ?
+wMonth		dw ?
+wDayOfWeek	dw ?
+wDay		dw ?
+wHour		dw ?
+wMinute		dw ?
+wSecond		dw ?
+wMilliseconds	dw ?
+SYSTEMTIME	ENDS
+LPSYSTEMTIME	typedef ptr SYSTEMTIME
+endif
+
+ifndef _TM_DEFINED
+define _TM_DEFINED
+tm		STRUC
+tm_sec		SINT ?	;; seconds after the minute - [0,59]
+tm_min		SINT ?	;; minutes after the hour - [0,59]
+tm_hour		SINT ?	;; hours since midnight - [0,23]
+tm_mday		SINT ?	;; day of the month - [1,31]
+tm_mon		SINT ?	;; months since January - [0,11]
+tm_year		SINT ?	;; years since 1900
+tm_wday		SINT ?	;; days since Sunday - [0,6]
+tm_yday		SINT ?	;; days since January 1 - [0,365]
+tm_isdst	SINT ?	;; daylight savings time flag
+tm		ENDS
+endif
+
+define CLOCKS_PER_SEC 1000
+
+LPTIME		typedef ptr time_t
+
+asctime		proto __cdecl :ptr tm
+ctime		proto __cdecl :ptr time_t
+clock		proto __cdecl
+csftime		proto __cdecl :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
+strdate		proto __cdecl :ptr sbyte
+strtime		proto __cdecl :ptr sbyte
+difftime	proto __cdecl :time_t, :time_t
+difftm64	proto __cdecl :__time64_t, :__time64_t
+
+gmtime		proto __cdecl :ptr time_t
+_sleep		proto __cdecl :uint_t
+
+localtime	proto __cdecl :ptr time_t
+_localtime32	proto __cdecl :ptr __time32_t
+_localtime64	proto __cdecl :ptr __time64_t
+mktime		proto __cdecl :ptr tm
+_mktime32	proto __cdecl :ptr tm
+_mktime64	proto __cdecl :ptr tm
+_mkgmtime	proto __cdecl :ptr tm
+_mkgmtime32	proto __cdecl :ptr tm
+_mkgmtime64	proto __cdecl :ptr tm
+strftime	proto __cdecl :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
+strdate		proto __cdecl :ptr sbyte
+strtime		proto __cdecl :ptr sbyte
+_tzset		proto __cdecl
+time		proto __cdecl :ptr time_t
+_time32		proto __cdecl :ptr __time32_t
+_time64		proto __cdecl :ptr __time64_t
+_isindst	proto __cdecl :ptr tm
+_loctotime_t	proto __cdecl :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+_loctotime32_t	proto __cdecl :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+_loctotime64_t	proto __cdecl :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+_gmtime32	proto __cdecl :ptr __time32_t
+_gmtime64	proto __cdecl :ptr __time64_t
+_gmtime32_s	proto __cdecl :ptr tm, :ptr __time32_t
+_gmtime64_s	proto __cdecl :ptr tm, :ptr __time64_t
+_localtime32_s	proto __cdecl :ptr tm, :ptr __time32_t
+_localtime64_s	proto __cdecl :ptr tm, :ptr __time64_t
+
+ifdef _WIN64
+define _gmtime_s	<_gmtime64_s>
+define _localtime_s	<_localtime64_s>
+else
+define _gmtime_s	<_gmtime32_s>
+define _localtime_s	<_localtime32_s>
+endif
+define _time		<time>
+define _strdate		<strdate>
+define _strtime		<strtime>
+
+ifndef _WTIME_DEFINED
+define _WTIME_DEFINED
+_wasctime	proto __cdecl :ptr tm
+_wctime		proto __cdecl :ptr time_t
+wcsftime	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :ptr tm
+_wstrdate	proto __cdecl :ptr wchar_t
+_wstrtime	proto __cdecl :ptr wchar_t
+endif
+
+ifdef __UNIX__
+
+define CLOCK_REALTIME		0
+define CLOCK_MONOTONIC		1
+define CLOCK_PROCESS_CPUTIME_ID 2
+define CLOCK_THREAD_CPUTIME_ID	3
+define CLOCK_MONOTONIC_RAW	4
+define CLOCK_REALTIME_COARSE	5
+define CLOCK_MONOTONIC_COARSE	6
+define CLOCK_BOOTTIME		7
+define CLOCK_REALTIME_ALARM	8
+define CLOCK_BOOTTIME_ALARM	9
+define CLOCK_TAI		11
+
+tms		struct
+tms_utime	clock_t ? ; user time
+tms_stime	clock_t ? ; system time
+tms_cutime	clock_t ? ; user time of children
+tms_cstime	clock_t ? ; system time of children
+tms		ends
+
+timespec	struct
+tv_sec		long_t ?
+tv_nsec		long_t ?
+timespec	ends
+
+timeval		struct
+tv_sec		size_t ? ; Seconds
+tv_usec		size_t ? ; Microseconds
+timeval		ends
+
+itimerval	struct
+it_interval	timeval <>
+it_value	timeval <>
+itimerval	ends
+
+timezone	struct
+tz_minuteswest	int_t ? ; Minutes west of GMT.
+tz_dsttime	int_t ? ; Nonzero if DST is ever in effect.
+timezone	ends
+
+times		proto __cdecl :ptr tms
+nanosleep	proto __cdecl :ptr timespec, :ptr timespec
+gettimeofday	proto __cdecl :ptr timeval, :ptr timezone
+settimeofday	proto __cdecl :ptr timeval, :ptr timezone
+
+clock_getres	proto __cdecl :int_t, :ptr timespec
+clock_gettime	proto __cdecl :int_t, :ptr timespec
+clock_settime	proto __cdecl :int_t, :ptr timespec
+clock_nanosleep proto __cdecl :int_t, :int_t, :ptr timespec, :ptr timespec
+
+endif
+
+__daylight	proto __cdecl
+__dstbias	proto __cdecl
+__timezone	proto __cdecl
+__tzname	proto __cdecl
+
+_get_daylight	proto __cdecl :ptr int_t
+_get_dstbias	proto __cdecl :ptr int_t
+_get_timezone	proto __cdecl :ptr int_t
+_get_tzname	proto __cdecl :ptr size_t, :string_t, :size_t, :int_t
+
+externdef __cdecl _CRTIMP _timezone:int_t
+externdef __cdecl _CRTIMP _tzname:string_t
+if not defined(_DLL) or defined(_CRTBLD)
+externdef __cdecl _CRTIMP _daylight:int_t
+externdef __cdecl _CRTIMP _dstbias:int_t
+else
+define _daylight <int_t ptr [__daylight()]>
+define _dstbias	 <int_t ptr [__dstbias()]>
+endif
+
+ifdef _CRTBLD
+externdef __cdecl _days:uint_t
+externdef __cdecl _lpdays:uint_t
+externdef __cdecl __dnames:char_t
+externdef __cdecl __mnames:char_t
+endif
+
+DaysInFebruary		proto __cdecl :uint_t
+DaysInMonth		proto __cdecl :uint_t, :uint_t
+GetDayCount		proto __cdecl :uint_t, :uint_t, :uint_t
+GetWeekDay		proto __cdecl :uint_t, :uint_t, :uint_t
+__timet_from_ft		proto __cdecl :LPFILETIME
+FileTimeToTime		proto __cdecl :LPFILETIME
+SystemTimeToTime	proto __cdecl :LPSYSTEMTIME
+TimeToFileTime		proto __cdecl :time_t, :LPFILETIME
+TimeToSystemTime	proto __cdecl :time_t, :LPSYSTEMTIME
+StringToSystemTimeA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
+StringToSystemTimeW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
+StringToSystemDateA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
+StringToSystemDateW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
+SystemTimeToStringA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
+SystemTimeToStringW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
+SystemDateToStringA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
+SystemDateToStringW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
+FileTimeToStringA	proto __cdecl :LPSTR,  :LPFILETIME
+FileTimeToStringW	proto __cdecl :LPWSTR, :LPFILETIME
+FileDateToStringA	proto __cdecl :LPSTR,  :LPFILETIME
+FileDateToStringW	proto __cdecl :LPWSTR, :LPFILETIME
+
+ifdef _UNICODE
+define StringToSystemTime <StringToSystemTimeW>
+define StringToSystemDate <StringToSystemDateW>
+define SystemDateToString <SystemDateToStringW>
+define SystemTimeToString <SystemTimeToStringW>
+define FileTimeToString	  <FileTimeToStringW>
+define FileDateToString	  <FileDateToStringW>
+else
+define StringToSystemTime <StringToSystemTimeA>
+define StringToSystemDate <StringToSystemDateA>
+define SystemDateToString <SystemDateToStringA>
+define SystemTimeToString <SystemTimeToStringA>
+define FileTimeToString	  <FileTimeToStringA>
+define FileDateToString	  <FileDateToStringA>
+endif
+
+ifdef _CRTBLD
+;
+; Macro to determine if a given year, expressed as the number of years since
+; 1900, is a leap year.
+;
+_IS_LEAP_YEAR proto asmcall :uint_t {
+    xor edx,edx
+    .if ( eax & 3 )
+	add	eax,1900
+	mov	ecx,400
+	div	ecx
+	xor	eax,eax
+	test	edx,edx
+	setz	al
+    .else
+	mov	ecx,100
+	div	ecx
+	xor	eax,eax
+	test	edx,edx
+	setnz	al
+    .endif
+    }
+;
+; Number of leap years from 1970 up to, but not including, the specified year
+; (expressed as the number of years since 1900).
+;
+_ELAPSED_LEAP_YEARS proto fastcall :uint_t {
+	lea	eax,[rcx+299]
+	dec	ecx
+ifdef _WIN64
+	imul	rax,rax,1374389535
+	imul	rdx,rcx,1374389535
+	shr	rax,39
+	shr	rdx,37
+else
+	mov	edx,1374389535
+	mul	edx
+	shr	edx,7
+	push	edx
+	mov	eax,1374389535
+	mul	ecx
+	shr	edx,5
+	pop	eax
+endif
+	shr	ecx,2
+	lea	rax,[rax+rcx-_LEAP_YEAR_ADJUST]
+	sub	rax,rdx
+	}
+endif
+.pragma pack(pop)
+.pragma list(pop)
+endif

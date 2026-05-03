@@ -1,0 +1,7 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\CLSID\{5e9ddec7-5767-11cf-beab-00aa006c3606}]
+@="Simple Object Server"
+
+[HKEY_CLASSES_ROOT\CLSID\{5e9ddec7-5767-11cf-beab-00aa006c3606}\LocalServer32]
+@="D:\asmc\source\test\COM\dcom\sserver.exe"

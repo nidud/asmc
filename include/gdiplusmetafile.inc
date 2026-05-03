@@ -1,0 +1,4 @@
+ifndef _GDIPLUSMETAFILE_H
+define _GDIPLUSMETAFILE_H
+endif
+

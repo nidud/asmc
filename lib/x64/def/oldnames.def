@@ -1,0 +1,3 @@
+LIBRARY oldnames.dll
+EXPORTS
+oldnames_dummy

@@ -1,0 +1,400 @@
+ifndef _RPCNDR500_
+include rpcndr500.inc
+endif
+ifndef __directmanipulation_h__
+define __directmanipulation_h__
+ifndef __oaidl_h__
+include oaidl.inc
+endif
+ifndef __ocidl_h__
+include ocidl.inc
+endif
+ifndef _WINAPIFAMILY_
+include winapifamily.inc
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+if (NTDDI_VERSION GE NTDDI_WIN8)
+
+.enum DIRECTMANIPULATION_STATUS {
+	DIRECTMANIPULATION_BUILDING	= 0,
+	DIRECTMANIPULATION_ENABLED	= 1,
+	DIRECTMANIPULATION_DISABLED	= 2,
+	DIRECTMANIPULATION_RUNNING	= 3,
+	DIRECTMANIPULATION_INERTIA	= 4,
+	DIRECTMANIPULATION_READY	= 5,
+	DIRECTMANIPULATION_SUSPENDED	= 6
+	}
+
+.enum DIRECTMANIPULATION_HITTEST_TYPE {
+	DIRECTMANIPULATION_HITTEST_TYPE_ASYNCHRONOUS	= 0,
+	DIRECTMANIPULATION_HITTEST_TYPE_SYNCHRONOUS	= 0x1,
+	DIRECTMANIPULATION_HITTEST_TYPE_AUTO_SYNCHRONOUS = 0x2
+	}
+
+.enum DIRECTMANIPULATION_CONFIGURATION {
+	DIRECTMANIPULATION_CONFIGURATION_NONE = 0,
+	DIRECTMANIPULATION_CONFIGURATION_INTERACTION = 0x1,
+	DIRECTMANIPULATION_CONFIGURATION_TRANSLATION_X = 0x2,
+	DIRECTMANIPULATION_CONFIGURATION_TRANSLATION_Y = 0x4,
+	DIRECTMANIPULATION_CONFIGURATION_SCALING = 0x10,
+	DIRECTMANIPULATION_CONFIGURATION_TRANSLATION_INERTIA = 0x20,
+	DIRECTMANIPULATION_CONFIGURATION_SCALING_INERTIA = 0x80,
+	DIRECTMANIPULATION_CONFIGURATION_RAILS_X = 0x100,
+	DIRECTMANIPULATION_CONFIGURATION_RAILS_Y = 0x200
+	}
+
+.enum DIRECTMANIPULATION_GESTURE_CONFIGURATION {
+	DIRECTMANIPULATION_GESTURE_NONE = 0,
+	DIRECTMANIPULATION_GESTURE_DEFAULT = 0,
+	DIRECTMANIPULATION_GESTURE_CROSS_SLIDE_VERTICAL = 0x8,
+	DIRECTMANIPULATION_GESTURE_CROSS_SLIDE_HORIZONTAL = 0x10,
+	DIRECTMANIPULATION_GESTURE_PINCH_ZOOM = 0x20
+	}
+
+.enum DIRECTMANIPULATION_MOTION_TYPES {
+	DIRECTMANIPULATION_MOTION_NONE = 0,
+	DIRECTMANIPULATION_MOTION_TRANSLATEX = 0x1,
+	DIRECTMANIPULATION_MOTION_TRANSLATEY = 0x2,
+	DIRECTMANIPULATION_MOTION_ZOOM = 0x4,
+	DIRECTMANIPULATION_MOTION_CENTERX = 0x10,
+	DIRECTMANIPULATION_MOTION_CENTERY = 0x20,
+	DIRECTMANIPULATION_MOTION_ALL = ( ( ( ( DIRECTMANIPULATION_MOTION_TRANSLATEX or DIRECTMANIPULATION_MOTION_TRANSLATEY ) or DIRECTMANIPULATION_MOTION_ZOOM ) or DIRECTMANIPULATION_MOTION_CENTERX ) or DIRECTMANIPULATION_MOTION_CENTERY )
+	}
+
+.enum DIRECTMANIPULATION_VIEWPORT_OPTIONS {
+	DIRECTMANIPULATION_VIEWPORT_OPTIONS_DEFAULT = 0,
+	DIRECTMANIPULATION_VIEWPORT_OPTIONS_AUTODISABLE = 0x1,
+	DIRECTMANIPULATION_VIEWPORT_OPTIONS_MANUALUPDATE = 0x2,
+	DIRECTMANIPULATION_VIEWPORT_OPTIONS_INPUT = 0x4,
+	DIRECTMANIPULATION_VIEWPORT_OPTIONS_EXPLICITHITTEST = 0x8
+	}
+
+.enum DIRECTMANIPULATION_SNAPPOINT_TYPE {
+	DIRECTMANIPULATION_SNAPPOINT_MANDATORY = 0,
+	DIRECTMANIPULATION_SNAPPOINT_OPTIONAL = 1,
+	DIRECTMANIPULATION_SNAPPOINT_MANDATORY_SINGLE = 2,
+	DIRECTMANIPULATION_SNAPPOINT_OPTIONAL_SINGLE = 3
+	}
+
+.enum DIRECTMANIPULATION_SNAPPOINT_COORDINATE {
+	DIRECTMANIPULATION_COORDINATE_BOUNDARY = 0,
+	DIRECTMANIPULATION_COORDINATE_ORIGIN   = 0x1,
+	DIRECTMANIPULATION_COORDINATE_MIRRORED = 0x10
+	}
+
+.enum DIRECTMANIPULATION_HORIZONTALALIGNMENT {
+	DIRECTMANIPULATION_HORIZONTALALIGNMENT_NONE = 0,
+	DIRECTMANIPULATION_HORIZONTALALIGNMENT_LEFT = 0x1,
+	DIRECTMANIPULATION_HORIZONTALALIGNMENT_CENTER = 0x2,
+	DIRECTMANIPULATION_HORIZONTALALIGNMENT_RIGHT = 0x4,
+	DIRECTMANIPULATION_HORIZONTALALIGNMENT_UNLOCKCENTER = 0x8
+	}
+
+.enum DIRECTMANIPULATION_VERTICALALIGNMENT {
+	DIRECTMANIPULATION_VERTICALALIGNMENT_NONE = 0,
+	DIRECTMANIPULATION_VERTICALALIGNMENT_TOP = 0x1,
+	DIRECTMANIPULATION_VERTICALALIGNMENT_CENTER = 0x2,
+	DIRECTMANIPULATION_VERTICALALIGNMENT_BOTTOM = 0x4,
+	DIRECTMANIPULATION_VERTICALALIGNMENT_UNLOCKCENTER = 0x8
+	}
+
+.enum DIRECTMANIPULATION_INPUT_MODE {
+	DIRECTMANIPULATION_INPUT_MODE_AUTOMATIC = 0,
+	DIRECTMANIPULATION_INPUT_MODE_MANUAL = 1
+	}
+
+
+DIRECTMANIPULATION_KEYBOARDFOCUS equ 0xfffffffe
+DIRECTMANIPULATION_MOUSEFOCUS equ 0xfffffffd
+DIRECTMANIPULATION_MINIMUM_ZOOM equ 0.1
+
+DEFINE_GUID(CLSID_VerticalIndicatorContent,0xa10b5f17,0xafe0,0x4aa2,0x91,0xe9,0x3e,0x70,0x1,0xd2,0xe6,0xb4)
+DEFINE_GUID(CLSID_HorizontalIndicatorContent,0xe7d18cf5,0x3ec7,0x44d5,0xa7,0x6b,0x37,0x70,0xf3,0xcf,0x90,0x3d)
+DEFINE_GUID(CLSID_VirtualViewportContent,0x3206a19a,0x86f0,0x4cb4,0xa7,0xf3,0x16,0xe3,0xb7,0xe2,0xd8,0x52)
+DEFINE_GUID(CLSID_DragDropConfigurationBehavior,0x09b01b3e,0xba6c,0x454d,0x82,0xe8,0x95,0xe3,0x52,0x32,0x9f,0x23)
+DEFINE_GUID(CLSID_AutoScrollBehavior,0x26126a51,0x3c70,0x4c9a,0xae,0xc2,0x94,0x88,0x49,0xee,0xb0,0x93)
+
+
+ifndef __IDirectManipulationManager_INTERFACE_DEFINED__
+define __IDirectManipulationManager_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationManager, "FBF5D3B4-70C7-4163-9322-5A6F660D6FBC")
+
+.comdef IDirectManipulationManager : public IUnknown
+
+    Activate		proc :HWND
+    Deactivate		proc :HWND
+    RegisterHitTestTarget proc :HWND, :HWND, :DIRECTMANIPULATION_HITTEST_TYPE
+    ProcessInput	proc :ptr, :ptr
+    GetUpdateManager	proc :REFIID, :ptr
+    CreateViewport	proc :ptr, :HWND, :REFIID, :ptr
+    CreateContent	proc :ptr, :REFCLSID, :REFIID, :ptr
+   .ends
+
+endif
+
+ifndef __IDirectManipulationManager2_INTERFACE_DEFINED__
+define __IDirectManipulationManager2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationManager2, "923CCAAC-61E1-4385-B726-017AF189882A")
+
+.comdef IDirectManipulationManager2 : public IDirectManipulationManager
+
+    CreateBehavior	proc :REFCLSID, :REFIID, :ptr
+   .ends
+
+endif
+
+ifndef __IDirectManipulationViewport_INTERFACE_DEFINED__
+define __IDirectManipulationViewport_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationViewport, "952121DA-D69F-45F9-B0F9-F23944321A6D")
+
+.comdef IDirectManipulationViewport : public IUnknown
+
+    Enable		proc
+    Disable		proc
+    SetContact		proc :UINT32
+    ReleaseContact	proc :UINT32
+    ReleaseAllContacts	proc
+    GetStatus		proc :ptr
+    GetTag		proc :REFIID, :ptr, :ptr
+    SetTag		proc :ptr, :UINT32
+    GetViewportRect	proc :ptr
+    SetViewportRect	proc :ptr
+    ZoomToRect		proc :real4, :real4, :real4, :real4, :BOOL
+    SetViewportTransform proc :ptr, :DWORD
+    SyncDisplayTransform proc :ptr, :DWORD
+    GetPrimaryContent	proc :REFIID, :ptr
+    AddContent		proc :ptr
+    RemoveContent	proc :ptr
+    SetViewportOptions	proc :DIRECTMANIPULATION_VIEWPORT_OPTIONS
+    AddConfiguration	proc :DIRECTMANIPULATION_CONFIGURATION
+    RemoveConfiguration proc :DIRECTMANIPULATION_CONFIGURATION
+    ActivateConfiguration proc :DIRECTMANIPULATION_CONFIGURATION
+    SetManualGesture	proc :DIRECTMANIPULATION_GESTURE_CONFIGURATION
+    SetChaining		proc :DIRECTMANIPULATION_MOTION_TYPES
+    AddEventHandler	proc :HWND, :ptr, :ptr
+    RemoveEventHandler	proc :DWORD
+    SetInputMode	proc :DIRECTMANIPULATION_INPUT_MODE
+    SetUpdateMode	proc :DIRECTMANIPULATION_INPUT_MODE
+    Stop		proc
+    Abandon		proc
+   .ends
+
+endif
+
+ifndef __IDirectManipulationViewport2_INTERFACE_DEFINED__
+define __IDirectManipulationViewport2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationViewport2, "923CCAAC-61E1-4385-B726-017AF189882A")
+
+.comdef IDirectManipulationViewport2 : public IDirectManipulationViewport
+
+    AddBehavior		proc :ptr, :ptr
+    RemoveBehavior	proc :DWORD
+    RemoveAllBehaviors	proc
+   .ends
+
+endif
+
+ifndef __IDirectManipulationViewportEventHandler_INTERFACE_DEFINED__
+define __IDirectManipulationViewportEventHandler_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationViewportEventHandler, "952121DA-D69F-45F9-B0F9-F23944321A6D")
+
+.comdef IDirectManipulationViewportEventHandler : public IUnknown
+
+    OnViewportStatusChanged proc :ptr, :DIRECTMANIPULATION_STATUS, :DIRECTMANIPULATION_STATUS
+    OnViewportUpdated	proc :ptr
+    OnContentUpdated	proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef __IDirectManipulationContent_INTERFACE_DEFINED__
+define __IDirectManipulationContent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationContent, "B89962CB-3D89-442B-BB58-5098FA0F9F16")
+
+.comdef IDirectManipulationContent : public IUnknown
+
+    GetContentRect	proc :ptr
+    SetContentRect	proc :ptr
+    GetViewport		proc :REFIID, :ptr
+    GetTag		proc :REFIID, :ptr, :ptr
+    SetTag		proc :ptr, :UINT32
+    GetOutputTransform	proc
+    GetContentTransform proc
+    SyncContentTransform proc
+   .ends
+
+endif
+
+ifndef __IDirectManipulationPrimaryContent_INTERFACE_DEFINED__
+define __IDirectManipulationPrimaryContent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationPrimaryContent, "C12851E4-1698-4625-B9B1-7CA3EC18630B")
+
+.comdef IDirectManipulationPrimaryContent : public IUnknown
+
+    SetSnapInterval	proc :DIRECTMANIPULATION_MOTION_TYPES, :float, :float
+    SetSnapPoints	proc :DIRECTMANIPULATION_MOTION_TYPES
+    SetSnapType		proc :DIRECTMANIPULATION_MOTION_TYPES, :DIRECTMANIPULATION_SNAPPOINT_TYPE
+    SetSnapCoordinate	proc :DIRECTMANIPULATION_MOTION_TYPES, :DIRECTMANIPULATION_SNAPPOINT_COORDINATE, :float
+    SetZoomBoundaries	proc :float, :float
+    SetHorizontalAlignment proc :DIRECTMANIPULATION_HORIZONTALALIGNMENT
+    SetVerticalAlignment proc :DIRECTMANIPULATION_VERTICALALIGNMENT
+    GetInertiaEndTransform proc
+    GetCenterPoint	proc :ptr, :ptr
+   .ends
+
+endif
+
+DIRECTMANIPULATION_DRAG_DROP_STATUS typedef SDWORD
+DIRECTMANIPULATION_DRAG_DROP_READY equ 0
+DIRECTMANIPULATION_DRAG_DROP_PRESELECT equ 1
+DIRECTMANIPULATION_DRAG_DROP_SELECTING equ 2
+DIRECTMANIPULATION_DRAG_DROP_DRAGGING equ 3
+DIRECTMANIPULATION_DRAG_DROP_CANCELLED equ 4
+DIRECTMANIPULATION_DRAG_DROP_COMMITTED equ 5
+
+ifndef __IDirectManipulationDragDropEventHandler_INTERFACE_DEFINED__
+define __IDirectManipulationDragDropEventHandler_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationDragDropEventHandler, "1FA11B10-701B-41AE-B5F2-49E36BD595AA")
+
+.comdef IDirectManipulationDragDropEventHandler : public IUnknown
+
+    OnDragDropStatusChange proc :ptr, :DIRECTMANIPULATION_DRAG_DROP_STATUS, :DIRECTMANIPULATION_DRAG_DROP_STATUS
+   .ends
+
+endif
+
+DIRECTMANIPULATION_DRAG_DROP_CONFIGURATION typedef SDWORD
+DIRECTMANIPULATION_DRAG_DROP_CONFIGURATION_VERTICAL equ 0x1
+DIRECTMANIPULATION_DRAG_DROP_CONFIGURATION_HORIZONTAL equ 0x2
+DIRECTMANIPULATION_DRAG_DROP_CONFIGURATION_SELECT_ONLY equ 0x10
+DIRECTMANIPULATION_DRAG_DROP_CONFIGURATION_SELECT_DRAG equ 0x20
+DIRECTMANIPULATION_DRAG_DROP_CONFIGURATION_HOLD_DRAG equ 0x40
+
+ifndef __IDirectManipulationDragDropBehavior_INTERFACE_DEFINED__
+define __IDirectManipulationDragDropBehavior_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationDragDropBehavior, "814B5AF5-C2C8-4270-A9B7-A198CE8D02FA")
+
+.comdef IDirectManipulationDragDropBehavior : public IUnknown
+
+    SetConfiguration	proc :DIRECTMANIPULATION_DRAG_DROP_CONFIGURATION
+    GetStatus		proc :ptr
+   .ends
+
+endif
+
+DIRECTMANIPULATION_INTERACTION_TYPE typedef SDWORD
+DIRECTMANIPULATION_INTERACTION_BEGIN equ 0
+DIRECTMANIPULATION_INTERACTION_TYPE_MANIPULATION equ 1
+DIRECTMANIPULATION_INTERACTION_TYPE_GESTURE_TAP equ 2
+DIRECTMANIPULATION_INTERACTION_TYPE_GESTURE_HOLD equ 3
+DIRECTMANIPULATION_INTERACTION_TYPE_GESTURE_CROSS_SLIDE equ 4
+DIRECTMANIPULATION_INTERACTION_TYPE_GESTURE_PINCH_ZOOM equ 5
+DIRECTMANIPULATION_INTERACTION_END equ 100
+
+ifndef __IDirectManipulationInteractionEventHandler_INTERFACE_DEFINED__
+define __IDirectManipulationInteractionEventHandler_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationInteractionEventHandler, "E43F45B8-42B4-403E-B1F2-273B8F510830")
+
+.comdef IDirectManipulationInteractionEventHandler : public IUnknown
+
+    OnInteraction	proc :ptr, :DIRECTMANIPULATION_INTERACTION_TYPE
+   .ends
+
+endif
+
+ifndef __IDirectManipulationFrameInfoProvider_INTERFACE_DEFINED__
+define __IDirectManipulationFrameInfoProvider_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationFrameInfoProvider, "fb759dba-6f4c-4c01-874e-19c8a05907f9")
+
+.comdef IDirectManipulationFrameInfoProvider : public IUnknown
+
+    GetNextFrameInfo	proc :ptr, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef __IDirectManipulationCompositor_INTERFACE_DEFINED__
+define __IDirectManipulationCompositor_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationCompositor, "537A0825-0387-4EFA-B62F-71EB1F085A7E")
+
+.comdef IDirectManipulationCompositor : public IUnknown
+
+    AddContent		proc :ptr, :ptr, :ptr, :ptr
+    RemoveContent	proc :ptr
+    SetUpdateManager	proc :ptr
+    Flush		proc
+   .ends
+
+endif
+
+ifndef __IDirectManipulationUpdateHandler_INTERFACE_DEFINED__
+define __IDirectManipulationUpdateHandler_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationUpdateHandler, "790B6337-64F8-4FF5-A269-B32BC2AF27A7")
+
+.comdef IDirectManipulationUpdateHandler : public IUnknown
+
+    Update		proc
+   .ends
+
+endif
+
+ifndef __IDirectManipulationUpdateManager_INTERFACE_DEFINED__
+define __IDirectManipulationUpdateManager_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationUpdateManager, "B0AE62FD-BE34-46E7-9CAA-D361FACBB9CC")
+
+.comdef IDirectManipulationUpdateManager : public IUnknown
+
+    RegisterWaitHandleCallback proc :HANDLE, :ptr, :ptr
+    UnregisterWaitHandleCallback proc :DWORD
+    Update		proc :ptr
+   .ends
+
+endif
+
+DIRECTMANIPULATION_AUTOSCROLL_CONFIGURATION typedef SDWORD
+DIRECTMANIPULATION_AUTOSCROLL_CONFIGURATION_STOP equ 0
+DIRECTMANIPULATION_AUTOSCROLL_CONFIGURATION_FORWARD equ 1
+DIRECTMANIPULATION_AUTOSCROLL_CONFIGURATION_REVERSE equ 2
+
+ifndef __IDirectManipulationAutoScrollBehavior_INTERFACE_DEFINED__
+define __IDirectManipulationAutoScrollBehavior_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDirectManipulationAutoScrollBehavior, "6D5954D4-2003-4356-9B31-D051C9FF0AF7")
+
+.comdef IDirectManipulationAutoScrollBehavior : public IUnknown
+
+    SetConfiguration	proc :DIRECTMANIPULATION_MOTION_TYPES, :DIRECTMANIPULATION_AUTOSCROLL_CONFIGURATION
+   .ends
+
+endif
+
+endif
+
+ifndef __DirectManipulation_LIBRARY_DEFINED__
+define __DirectManipulation_LIBRARY_DEFINED__
+
+externdef LIBID_DirectManipulation:IID
+DEFINE_GUIDS(CLSID_DirectManipulationViewport,		"34E211B6-3650-4F75-8334-FA359598E1C5")
+DEFINE_GUIDS(CLSID_DirectManipulationUpdateManager,	"9FC1BFD5-1835-441A-B3B1-B6CC74B727D0")
+DEFINE_GUIDS(CLSID_DirectManipulationPrimaryContent,	"CAA02661-D59E-41C7-8393-3BA3BACB6B57")
+DEFINE_GUIDS(CLSID_DirectManipulationManager,		"54E211B6-3650-4F75-8334-FA359598E1C5")
+DEFINE_GUIDS(CLSID_DCompManipulationCompositor,		"79DEA627-A08A-43AC-8EF5-6900B9299126")
+
+endif
+endif
+endif

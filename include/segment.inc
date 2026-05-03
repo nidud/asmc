@@ -1,0 +1,1633 @@
+ifndef _RPCNDR500_
+include rpcndr500.inc
+endif
+
+ifndef __segment_h__
+define __segment_h__
+
+ifndef __oaidl_h__
+include oaidl.inc
+endif
+ifndef __ocidl_h__
+include ocidl.inc
+endif
+include strmif.inc
+include tuner.inc
+include tvratings.inc
+include evr.inc
+ifndef _WINAPIFAMILY_
+include winapifamily.inc
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+include olectl.inc
+
+.enum SegDispidList {
+    dispidName,
+    dispidStatus,
+    dispidDevImageSourceWidth,
+    dispidDevImageSourceHeight,
+    dispidDevCountryCode,
+    dispidDevOverScan,
+    dispidSegment,
+    dispidDevVolume,
+    dispidDevBalance,
+    dispidDevPower,
+    dispidTuneChan,
+    dispidDevVideoSubchannel,
+    dispidDevAudioSubchannel,
+    dispidChannelAvailable,
+    dispidDevVideoFrequency,
+    dispidDevAudioFrequency,
+    dispidCount,
+    dispidDevFileName,
+    dispidVisible,
+    dispidOwner,
+    dispidMessageDrain,
+    dispidViewable,
+    dispidDevView,
+    dispidKSCat,
+    dispidCLSID,
+    dispid_KSCat,
+    dispid_CLSID,
+    dispidTune,
+    dispidTS,
+    dispidDevSAP,
+    dispidClip,
+    dispidRequestedClipRect,
+    dispidClippedSourceRect,
+    dispidAvailableSourceRect,
+    dispidMediaPosition,
+    dispidDevRun,
+    dispidDevPause,
+    dispidDevStop,
+    dispidCCEnable,
+    dispidDevStep,
+    dispidDevCanStep,
+    dispidSourceSize,
+    dispid_playtitle,
+    dispid_playchapterintitle,
+    dispid_playchapter,
+    dispid_playchaptersautostop,
+    dispid_playattime,
+    dispid_playattimeintitle,
+    dispid_playperiodintitleautostop,
+    dispid_replaychapter,
+    dispid_playprevchapter,
+    dispid_playnextchapter,
+    dispid_playforwards,
+    dispid_playbackwards,
+    dispid_stilloff,
+    dispid_audiolanguage,
+    dispid_showmenu,
+    dispid_resume,
+    dispid_returnfromsubmenu,
+    dispid_buttonsavailable,
+    dispid_currentbutton,
+    dispid_SelectAndActivateButton,
+    dispid_ActivateButton,
+    dispid_SelectRightButton,
+    dispid_SelectLeftButton,
+    dispid_SelectLowerButton,
+    dispid_SelectUpperButton,
+    dispid_ActivateAtPosition,
+    dispid_SelectAtPosition,
+    dispid_ButtonAtPosition,
+    dispid_NumberOfChapters,
+    dispid_TotalTitleTime,
+    dispid_TitlesAvailable,
+    dispid_VolumesAvailable,
+    dispid_CurrentVolume,
+    dispid_CurrentDiscSide,
+    dispid_CurrentDomain,
+    dispid_CurrentChapter,
+    dispid_CurrentTitle,
+    dispid_CurrentTime,
+    dispid_FramesPerSecond,
+    dispid_DVDTimeCode2bstr,
+    dispid_DVDDirectory,
+    dispid_IsSubpictureStreamEnabled,
+    dispid_IsAudioStreamEnabled,
+    dispid_CurrentSubpictureStream,
+    dispid_SubpictureLanguage,
+    dispid_CurrentAudioStream,
+    dispid_AudioStreamsAvailable,
+    dispid_AnglesAvailable,
+    dispid_CurrentAngle,
+    dispid_CCActive,
+    dispid_CurrentCCService,
+    dispid_SubpictureStreamsAvailable,
+    dispid_SubpictureOn,
+    dispid_DVDUniqueID,
+    dispid_EnableResetOnStop,
+    dispid_AcceptParentalLevelChange,
+    dispid_NotifyParentalLevelChange,
+    dispid_SelectParentalCountry,
+    dispid_SelectParentalLevel,
+    dispid_TitleParentalLevels,
+    dispid_PlayerParentalCountry,
+    dispid_PlayerParentalLevel,
+    dispid_Eject,
+    dispid_UOPValid,
+    dispid_SPRM,
+    dispid_GPRM,
+    dispid_DVDTextStringType,
+    dispid_DVDTextString,
+    dispid_DVDTextNumberOfStrings,
+    dispid_DVDTextNumberOfLanguages,
+    dispid_DVDTextLanguageLCID,
+    dispid_RegionChange,
+    dispid_DVDAdm,
+    dispid_DeleteBookmark,
+    dispid_RestoreBookmark,
+    dispid_SaveBookmark,
+    dispid_SelectDefaultAudioLanguage,
+    dispid_SelectDefaultSubpictureLanguage,
+    dispid_PreferredSubpictureStream,
+    dispid_DefaultMenuLanguage,
+    dispid_DefaultSubpictureLanguage,
+    dispid_DefaultAudioLanguage,
+    dispid_DefaultSubpictureLanguageExt,
+    dispid_DefaultAudioLanguageExt,
+    dispid_LanguageFromLCID,
+    dispid_KaraokeAudioPresentationMode,
+    dispid_KaraokeChannelContent,
+    dispid_KaraokeChannelAssignment,
+    dispid_RestorePreferredSettings,
+    dispid_ButtonRect,
+    dispid_DVDScreenInMouseCoordinates,
+    dispid_CustomCompositorClass,
+    dispidCustomCompositorClass,
+    dispid_CustomCompositor,
+    dispidMixerBitmap,
+    dispid_MixerBitmap,
+    dispidMixerBitmapOpacity,
+    dispidMixerBitmapRect,
+    dispidSetupMixerBitmap,
+    dispidUsingOverlay,
+    dispidDisplayChange,
+    dispidRePaint,
+    dispid_IsEqualDevice,
+    dispidrate,
+    dispidposition,
+    dispidpositionmode,
+    dispidlength,
+    dispidChangePassword,
+    dispidSaveParentalLevel,
+    dispidSaveParentalCountry,
+    dispidConfirmPassword,
+    dispidGetParentalLevel,
+    dispidGetParentalCountry,
+    dispidDefaultAudioLCID,
+    dispidDefaultSubpictureLCID,
+    dispidDefaultMenuLCID,
+    dispidBookmarkOnStop,
+    dispidMaxVidRect,
+    dispidMinVidRect,
+    dispidCapture,
+    dispid_DecimateInput,
+    dispidAlloctor,
+    dispid_Allocator,
+    dispidAllocPresentID,
+    dispidSetAllocator,
+    dispid_SetAllocator,
+    dispidStreamBufferSinkName,
+    dispidStreamBufferSourceName,
+    dispidStreamBufferContentRecording,
+    dispidStreamBufferReferenceRecording,
+    dispidstarttime,
+    dispidstoptime,
+    dispidrecordingstopped,
+    dispidrecordingstarted,
+    dispidNameSetLock,
+    dispidrecordingtype,
+    dispidstart,
+    dispidRecordingAttribute,
+    dispid_RecordingAttribute,
+    dispidSBEConfigure,
+    dispid_CurrentRatings,
+    dispid_MaxRatingsLevel,
+    dispid_audioencoderint,
+    dispid_videoencoderint,
+    dispidService,
+    dispid_BlockUnrated,
+    dispid_UnratedDelay,
+    dispid_SuppressEffects,
+    dispidsbesource,
+    dispidSetSinkFilter,
+    dispid_SinkStreams,
+    dispidTVFormats,
+    dispidModes,
+    dispidAuxInputs,
+    dispidTeleTextFilter,
+    dispid_channelchangeint,
+    dispidUnlockProfile,
+    dispid_AddFilter,
+    dispidSetMinSeek,
+    dispidRateEx,
+    dispidaudiocounter,
+    dispidvideocounter,
+    dispidcccounter,
+    dispidwstcounter,
+    dispid_audiocounter,
+    dispid_videocounter,
+    dispid_cccounter,
+    dispid_wstcounter,
+    dispidaudioanalysis,
+    dispidvideoanalysis,
+    dispiddataanalysis,
+    dispidaudio_analysis,
+    dispidvideo_analysis,
+    dispiddata_analysis,
+    dispid_resetFilterList,
+    dispidDevicePath,
+    dispid_SourceFilter,
+    dispid__SourceFilter,
+    dispidUserEvent,
+    dispid_Bookmark,
+    LastReservedDeviceDispid	= 0x3fff
+    }
+
+.enum SegEventidList {
+    eventidStateChange,
+    eventidOnTuneChanged,
+    eventidEndOfMedia,
+    eventidDVDNotify,
+    eventidPlayForwards,
+    eventidPlayBackwards,
+    eventidShowMenu,
+    eventidResume,
+    eventidSelectOrActivateButton,
+    eventidStillOff,
+    eventidPauseOn,
+    eventidChangeCurrentAudioStream,
+    eventidChangeCurrentSubpictureStream,
+    eventidChangeCurrentAngle,
+    eventidPlayAtTimeInTitle,
+    eventidPlayAtTime,
+    eventidPlayChapterInTitle,
+    eventidPlayChapter,
+    eventidReplayChapter,
+    eventidPlayNextChapter,
+    eventidStop,
+    eventidReturnFromSubmenu,
+    eventidPlayTitle,
+    eventidPlayPrevChapter,
+    eventidChangeKaraokePresMode,
+    eventidChangeVideoPresMode,
+    eventidOverlayUnavailable,
+    eventidSinkCertificateFailure,
+    eventidSinkCertificateSuccess,
+    eventidSourceCertificateFailure,
+    eventidSourceCertificateSuccess,
+    eventidRatingsBlocked,
+    eventidRatingsUnlocked,
+    eventidRatingsChanged,
+    eventidWriteFailure,
+    eventidTimeHole,
+    eventidStaleDataRead,
+    eventidContentBecomingStale,
+    eventidStaleFileDeleted,
+    eventidEncryptionOn,
+    eventidEncryptionOff,
+    eventidRateChange,
+    eventidLicenseChange,
+    eventidCOPPBlocked,
+    eventidCOPPUnblocked,
+    dispidlicenseerrorcode,
+    eventidBroadcastEvent,
+    eventidBroadcastEventEx,
+    eventidContentPrimarilyAudio,
+    dispidAVDecAudioDualMonoEvent,
+    dispidAVAudioSampleRateEvent,
+    dispidAVAudioChannelConfigEvent,
+    dispidAVAudioChannelCountEvent,
+    dispidAVDecCommonMeanBitRateEvent,
+    dispidAVDDSurroundModeEvent,
+    dispidAVDecCommonInputFormatEvent,
+    dispidAVDecCommonOutputFormatEvent,
+    eventidWriteFailureClear,
+    LastReservedDeviceEvent	= 0x3fff
+    }
+
+.enum PositionModeList {
+    FrameMode,
+    TenthsSecondsMode
+    }
+
+.enum RecordingType {
+    CONTENT,
+    REFERENCE
+    }
+
+.enum MSVidCCService {
+    None,
+    Caption1,
+    Caption2,
+    Text1,
+    Text2,
+    XDS
+    }
+
+.enum MSVidSinkStreams {
+    MSVidSink_Video	= 1,
+    MSVidSink_Audio	= 2,
+    MSVidSink_Other	= 4
+    }
+
+ifndef __IMSVidRect_INTERFACE_DEFINED__
+define __IMSVidRect_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidRect, "7F5000A6-A440-47ca-8ACC-C0E75531A2C2")
+
+.comdef IMSVidRect : public IDispatch
+
+    get_Top		proc :ptr
+    put_Top		proc :LONG
+    get_Left		proc :ptr
+    put_Left		proc :LONG
+    get_Width		proc :ptr
+    put_Width		proc :LONG
+    get_Height		proc :ptr
+    put_Height		proc :LONG
+    get_HWnd		proc :ptr
+    put_HWnd		proc :HWND
+    put_Rect		proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidGraphSegmentContainer_INTERFACE_DEFINED__
+define __IMSVidGraphSegmentContainer_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidGraphSegmentContainer, "3DD2903D-E0AA-11d2-B63A-00C04F79498E")
+
+.comdef IMSVidGraphSegmentContainer : public IUnknown
+
+    get_Graph		proc :ptr
+    get_Input		proc :ptr
+    get_Outputs		proc :ptr
+    get_VideoRenderer	proc :ptr
+    get_AudioRenderer	proc :ptr
+    get_Features	proc :ptr
+    get_Composites	proc :ptr
+    get_ParentContainer proc :ptr
+    Decompose		proc :ptr
+    IsWindowless	proc
+    GetFocus		proc
+   .ends
+
+endif
+
+.enum MSVidSegmentType {
+    MSVidSEG_SOURCE,
+    MSVidSEG_XFORM,
+    MSVidSEG_DEST
+    }
+
+ifndef __IMSVidGraphSegment_INTERFACE_DEFINED__
+define __IMSVidGraphSegment_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidGraphSegment, "238DEC54-ADEB-4005-A349-F772B9AFEBC4")
+
+.comdef IMSVidGraphSegment : public IPersist
+
+    get_Init		proc :ptr
+    put_Init		proc :ptr
+    EnumFilters		proc :ptr
+    get_Container	proc :ptr
+    put_Container	proc :ptr
+    get_Type		proc :ptr
+    get_Category	proc :ptr
+    Build		proc
+    PostBuild		proc
+    PreRun		proc
+    PostRun		proc
+    PreStop		proc
+    PostStop		proc
+    OnEventNotify	proc :LONG, :LONG_PTR, :LONG_PTR
+    Decompose		proc
+   .ends
+
+endif
+
+.enum MSVidCtlButtonstate {
+    MSVIDCTL_LEFT_BUTTON	= 0x1,
+    MSVIDCTL_RIGHT_BUTTON	= 0x2,
+    MSVIDCTL_MIDDLE_BUTTON	= 0x4,
+    MSVIDCTL_X_BUTTON1		= 0x8,
+    MSVIDCTL_X_BUTTON2		= 0x10,
+    MSVIDCTL_SHIFT		= 0x1,
+    MSVIDCTL_CTRL		= 0x2,
+    MSVIDCTL_ALT		= 0x4
+    }
+
+
+ifndef __IMSVidGraphSegmentUserInput_INTERFACE_DEFINED__
+define __IMSVidGraphSegmentUserInput_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidGraphSegmentUserInput, "301C060E-20D9-4587-9B03-F82ED9A9943C")
+
+.comdef IMSVidGraphSegmentUserInput : public IUnknown
+
+    Click		proc
+    DblClick		proc
+    KeyDown		proc :ptr, :sword
+    KeyPress		proc :ptr
+    KeyUp		proc :ptr, :sword
+    MouseDown		proc :sword, :sword, :OLE_XPOS_PIXELS, :OLE_YPOS_PIXELS
+    MouseMove		proc :sword, :sword, :OLE_XPOS_PIXELS, :OLE_YPOS_PIXELS
+    MouseUp		proc :sword, :sword, :OLE_XPOS_PIXELS, :OLE_YPOS_PIXELS
+   .ends
+
+endif
+
+ifndef __IMSVidCompositionSegment_INTERFACE_DEFINED__
+define __IMSVidCompositionSegment_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidCompositionSegment, "1C15D483-911D-11d2-B632-00C04F79498E")
+
+.comdef IMSVidCompositionSegment : public IMSVidGraphSegment
+
+    Compose		proc :ptr, :ptr
+    get_Up		proc :ptr
+    get_Down		proc :ptr
+   .ends
+
+endif
+
+ifndef __IEnumMSVidGraphSegment_INTERFACE_DEFINED__
+define __IEnumMSVidGraphSegment_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IEnumMSVidGraphSegment, "3DD2903E-E0AA-11d2-B63A-00C04F79498E")
+
+.comdef IEnumMSVidGraphSegment : public IUnknown
+
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidVRGraphSegment_INTERFACE_DEFINED__
+define __IMSVidVRGraphSegment_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidVRGraphSegment, "DD47DE3F-9874-4f7b-8B22-7CB2688461E7")
+
+.comdef IMSVidVRGraphSegment : public IMSVidGraphSegment
+
+    put__VMRendererMode proc :LONG
+    put_Owner		proc :HWND
+    get_Owner		proc :ptr
+    get_UseOverlay	proc :ptr
+    put_UseOverlay	proc :VARIANT_BOOL
+    get_Visible		proc :ptr
+    put_Visible		proc :VARIANT_BOOL
+    get_ColorKey	proc :ptr
+    put_ColorKey	proc :OLE_COLOR
+    get_Source		proc :LPRECT
+    put_Source		proc :RECT
+    get_Destination	proc :LPRECT
+    put_Destination	proc :RECT
+    get_NativeSize	proc :LPSIZE, :LPSIZE
+    get_BorderColor	proc :ptr
+    put_BorderColor	proc :OLE_COLOR
+    get_MaintainAspectRatio proc :ptr
+    put_MaintainAspectRatio proc :VARIANT_BOOL
+    Refresh		proc
+    DisplayChange	proc
+    RePaint		proc :HDC
+   .ends
+
+endif
+
+ifndef __IMSVidDevice_INTERFACE_DEFINED__
+define __IMSVidDevice_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidDevice, "1C15D47C-911D-11d2-B632-00C04F79498E")
+
+.comdef IMSVidDevice : public IDispatch
+
+    get_Name		proc :ptr
+    get_Status		proc :ptr
+    put_Power		proc :VARIANT_BOOL
+    get_Power		proc :ptr
+    get_Category	proc :ptr
+    get_ClassID		proc :ptr
+    get__Category	proc :ptr
+    get__ClassID	proc :ptr
+    IsEqualDevice	proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidDevice2_INTERFACE_DEFINED__
+define __IMSVidDevice2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidDevice2, "87BD2783-EBC0-478C-B4A0-E8E7F43AB78E")
+
+.comdef IMSVidDevice2 : public IUnknown
+
+    get_DevicePath	proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidInputDevice_INTERFACE_DEFINED__
+define __IMSVidInputDevice_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidInputDevice, "37B0353D-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidInputDevice : public IMSVidDevice
+
+    IsViewable		proc :ptr, :ptr
+    View		proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidDeviceEvent_INTERFACE_DEFINED__
+define __IMSVidDeviceEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidDeviceEvent, "1C15D480-911D-11d2-B632-00C04F79498E")
+
+.comdef IMSVidDeviceEvent : public IDispatch
+
+    StateChange		proc :ptr, :LONG, :LONG
+   .ends
+
+endif
+
+ifndef __IMSVidInputDeviceEvent_INTERFACE_DEFINED__
+define __IMSVidInputDeviceEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidInputDeviceEvent, "37B0353E-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidInputDeviceEvent : public IDispatch
+
+    .ends
+
+endif
+
+ifndef __IMSVidVideoInputDevice_INTERFACE_DEFINED__
+define __IMSVidVideoInputDevice_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidVideoInputDevice, "1C15D47F-911D-11d2-B632-00C04F79498E")
+
+.comdef IMSVidVideoInputDevice : public IMSVidInputDevice
+
+    .ends
+
+endif
+
+ifndef __IMSVidPlayback_INTERFACE_DEFINED__
+define __IMSVidPlayback_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidPlayback, "37B03538-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidPlayback : public IMSVidInputDevice
+
+    get_EnableResetOnStop proc :ptr
+    put_EnableResetOnStop proc :VARIANT_BOOL
+    Run			proc
+    _Pause		proc
+    Stop		proc
+    get_CanStep		proc :VARIANT_BOOL, :ptr
+    Step		proc :LONG
+    put_Rate		proc :real8
+    get_Rate		proc :ptr
+    put_CurrentPosition proc :LONG
+    get_CurrentPosition proc :ptr
+    put_PositionMode	proc :PositionModeList
+    get_PositionMode	proc :ptr
+    get_Length		proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidPlaybackEvent_INTERFACE_DEFINED__
+define __IMSVidPlaybackEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidPlaybackEvent, "37B0353B-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidPlaybackEvent : public IMSVidInputDeviceEvent
+
+    EndOfMedia		proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidTuner_INTERFACE_DEFINED__
+define __IMSVidTuner_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidTuner, "1C15D47D-911D-11d2-B632-00C04F79498E")
+
+.comdef IMSVidTuner : public IMSVidVideoInputDevice
+
+    get_Tune		proc :ptr
+    put_Tune		proc :ptr
+    get_TuningSpace	proc :ptr
+    put_TuningSpace	proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidTunerEvent_INTERFACE_DEFINED__
+define __IMSVidTunerEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidTunerEvent, "1C15D485-911D-11d2-B632-00C04F79498E")
+
+.comdef IMSVidTunerEvent : public IMSVidInputDeviceEvent
+
+    TuneChanged		proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidAnalogTuner_INTERFACE_DEFINED__
+define __IMSVidAnalogTuner_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidAnalogTuner, "1C15D47E-911D-11d2-B632-00C04F79498E")
+
+.comdef IMSVidAnalogTuner : public IMSVidTuner
+
+    get_Channel		proc :ptr
+    put_Channel		proc :LONG
+    get_VideoFrequency	proc :ptr
+    get_AudioFrequency	proc :ptr
+    get_CountryCode	proc :ptr
+    put_CountryCode	proc :LONG
+    get_SAP		proc :ptr
+    put_SAP		proc :VARIANT_BOOL
+    ChannelAvailable	proc :LONG, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidAnalogTuner2_INTERFACE_DEFINED__
+define __IMSVidAnalogTuner2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidAnalogTuner2, "37647BF7-3DDE-4cc8-A4DC-0D534D3D0037")
+
+.comdef IMSVidAnalogTuner2 : public IMSVidAnalogTuner
+
+    get_TVFormats	proc :ptr
+    get_TunerModes	proc :ptr
+    get_NumAuxInputs	proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidAnalogTunerEvent_INTERFACE_DEFINED__
+define __IMSVidAnalogTunerEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidAnalogTunerEvent, "1C15D486-911D-11d2-B632-00C04F79498E")
+
+.comdef IMSVidAnalogTunerEvent : public IMSVidTunerEvent
+
+    .ends
+
+endif
+
+ifndef __IMSVidFilePlayback_INTERFACE_DEFINED__
+define __IMSVidFilePlayback_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidFilePlayback, "37B03539-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidFilePlayback : public IMSVidPlayback
+
+    get_FileName	proc :ptr
+    put_FileName	proc :BSTR
+   .ends
+
+endif
+
+ifndef __IMSVidFilePlayback2_INTERFACE_DEFINED__
+define __IMSVidFilePlayback2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidFilePlayback2, "2F7E44AF-6E52-4660-BC08-D8D542587D72")
+
+.comdef IMSVidFilePlayback2 : public IMSVidFilePlayback
+
+    put__SourceFilter	proc :BSTR
+    put___SourceFilter	proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidFilePlaybackEvent_INTERFACE_DEFINED__
+define __IMSVidFilePlaybackEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidFilePlaybackEvent, "37B0353A-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidFilePlaybackEvent : public IMSVidPlaybackEvent
+
+    .ends
+
+endif
+
+.enum DVDMenuIDConstants {
+    dvdMenu_Title	= 2,
+    dvdMenu_Root,
+    dvdMenu_Subpicture,
+    dvdMenu_Audio,
+    dvdMenu_Angle,
+    dvdMenu_Chapter
+    }
+
+.enum DVDFilterState {
+    dvdState_Undefined	= -2,
+    dvdState_Unitialized = -1,
+    dvdState_Stopped	= 0,
+    dvdState_Paused,
+    dvdState_Running
+    }
+
+.enum DVDTextStringType {
+    dvdStruct_Volume	= 0x1,
+    dvdStruct_Title	= 0x2,
+    dvdStruct_ParentalID	= 0x3,
+    dvdStruct_PartOfTitle	= 0x4,
+    dvdStruct_Cell	= 0x5,
+    dvdStream_Audio	= 0x10,
+    dvdStream_Subpicture	= 0x11,
+    dvdStream_Angle	= 0x12,
+    dvdChannel_Audio	= 0x20,
+    dvdGeneral_Name	= 0x30,
+    dvdGeneral_Comments = 0x31,
+    dvdTitle_Series	= 0x38,
+    dvdTitle_Movie	= 0x39,
+    dvdTitle_Video	= 0x3a,
+    dvdTitle_Album	= 0x3b,
+    dvdTitle_Song	= 0x3c,
+    dvdTitle_Other	= 0x3f,
+    dvdTitle_Sub_Series = 0x40,
+    dvdTitle_Sub_Movie	= 0x41,
+    dvdTitle_Sub_Video	= 0x42,
+    dvdTitle_Sub_Album	= 0x43,
+    dvdTitle_Sub_Song	= 0x44,
+    dvdTitle_Sub_Other	= 0x47,
+    dvdTitle_Orig_Series	= 0x48,
+    dvdTitle_Orig_Movie = 0x49,
+    dvdTitle_Orig_Video = 0x4a,
+    dvdTitle_Orig_Album = 0x4b,
+    dvdTitle_Orig_Song	= 0x4c,
+    dvdTitle_Orig_Other = 0x4f,
+    dvdOther_Scene	= 0x50,
+    dvdOther_Cut	= 0x51,
+    dvdOther_Take	= 0x52
+    }
+
+.enum DVDSPExt {
+    dvdSPExt_NotSpecified	= 0,
+    dvdSPExt_Caption_Normal	= 1,
+    dvdSPExt_Caption_Big	= 2,
+    dvdSPExt_Caption_Children	= 3,
+    dvdSPExt_CC_Normal	= 5,
+    dvdSPExt_CC_Big	= 6,
+    dvdSPExt_CC_Children	= 7,
+    dvdSPExt_Forced	= 9,
+    dvdSPExt_DirectorComments_Normal	= 13,
+    dvdSPExt_DirectorComments_Big	= 14,
+    dvdSPExt_DirectorComments_Children	= 15
+    }
+
+ifndef __IMSVidWebDVD_INTERFACE_DEFINED__
+define __IMSVidWebDVD_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidWebDVD, "CF45F88B-AC56-4EE2-A73A-ED04E2885D3C")
+
+.comdef IMSVidWebDVD : public IMSVidPlayback
+
+    OnDVDEvent		proc :LONG, :LONG_PTR, :LONG_PTR
+    PlayTitle		proc :LONG
+    PlayChapterInTitle	proc :LONG, :LONG
+    PlayChapter		proc :LONG
+    PlayChaptersAutoStop proc :LONG, :LONG, :LONG
+    PlayAtTime		proc :BSTR
+    PlayAtTimeInTitle	proc :LONG, :BSTR
+    PlayPeriodInTitleAutoStop proc :LONG, :BSTR, :BSTR
+    ReplayChapter	proc
+    PlayPrevChapter	proc
+    PlayNextChapter	proc
+    StillOff		proc
+    get_AudioLanguage	proc :LONG, :VARIANT_BOOL, :ptr
+    ShowMenu		proc :DVDMenuIDConstants
+    Resume		proc
+    ReturnFromSubmenu	proc
+    get_ButtonsAvailable proc :ptr
+    get_CurrentButton	proc :ptr
+    SelectAndActivateButton proc :LONG
+    ActivateButton	proc
+    SelectRightButton	proc
+    SelectLeftButton	proc
+    SelectLowerButton	proc
+    SelectUpperButton	proc
+    ActivateAtPosition	proc :LONG, :LONG
+    SelectAtPosition	proc :LONG, :LONG
+    get_ButtonAtPosition proc :LONG, :LONG, :ptr
+    get_NumberOfChapters proc :LONG, :ptr
+    get_TotalTitleTime	proc :ptr
+    get_TitlesAvailable proc :ptr
+    get_VolumesAvailable proc :ptr
+    get_CurrentVolume	proc :ptr
+    get_CurrentDiscSide proc :ptr
+    get_CurrentDomain	proc :ptr
+    get_CurrentChapter	proc :ptr
+    get_CurrentTitle	proc :ptr
+    get_CurrentTime	proc :ptr
+    DVDTimeCode2bstr	proc :LONG, :ptr
+    get_DVDDirectory	proc :ptr
+    put_DVDDirectory	proc :BSTR
+    IsSubpictureStreamEnabled proc :LONG, :ptr
+    IsAudioStreamEnabled proc :LONG, :ptr
+    get_CurrentSubpictureStream proc :ptr
+    put_CurrentSubpictureStream proc :LONG
+    get_SubpictureLanguage proc :LONG, :ptr
+    get_CurrentAudioStream proc :ptr
+    put_CurrentAudioStream proc :LONG
+    get_AudioStreamsAvailable proc :ptr
+    get_AnglesAvailable proc :ptr
+    get_CurrentAngle	proc :ptr
+    put_CurrentAngle	proc :LONG
+    get_SubpictureStreamsAvailable proc :ptr
+    get_SubpictureOn	proc :ptr
+    put_SubpictureOn	proc :VARIANT_BOOL
+    get_DVDUniqueID	proc :ptr
+    AcceptParentalLevelChange proc :VARIANT_BOOL, :BSTR, :BSTR
+    NotifyParentalLevelChange proc :VARIANT_BOOL
+    SelectParentalCountry proc :LONG, :BSTR, :BSTR
+    SelectParentalLevel proc :LONG, :BSTR, :BSTR
+    get_TitleParentalLevels proc :LONG, :ptr
+    get_PlayerParentalCountry proc :ptr
+    get_PlayerParentalLevel proc :ptr
+    Eject		proc
+    UOPValid		proc :LONG, :ptr
+    get_SPRM		proc :LONG, :ptr
+    get_GPRM		proc :LONG, :ptr
+    put_GPRM		proc :LONG, :sword
+    get_DVDTextStringType proc :LONG, :LONG, :ptr
+    get_DVDTextString	proc :LONG, :LONG, :ptr
+    get_DVDTextNumberOfStrings proc :LONG, :ptr
+    get_DVDTextNumberOfLanguages proc :ptr
+    get_DVDTextLanguageLCID proc :ptr, :ptr
+    RegionChange	proc
+    get_DVDAdm		proc :ptr
+    DeleteBookmark	proc
+    RestoreBookmark	proc
+    SaveBookmark	proc
+    SelectDefaultAudioLanguage	proc :LONG, :LONG
+    SelectDefaultSubpictureLanguage proc :LONG, :DVDSPExt
+    get_PreferredSubpictureStream proc :ptr
+    get_DefaultMenuLanguage	proc :ptr
+    put_DefaultMenuLanguage	proc :LONG
+    get_DefaultSubpictureLanguage proc :ptr
+    get_DefaultAudioLanguage	proc :ptr
+    get_DefaultSubpictureLanguageExt proc :ptr
+    get_DefaultAudioLanguageExt proc :ptr
+    get_LanguageFromLCID	proc :LONG, :ptr
+    get_KaraokeAudioPresentationMode proc :ptr
+    put_KaraokeAudioPresentationMode proc :LONG
+    get_KaraokeChannelContent	proc :LONG, :LONG, :ptr
+    get_KaraokeChannelAssignment proc :LONG, :ptr
+    RestorePreferredSettings proc
+    get_ButtonRect	proc :LONG, :ptr
+    get_DVDScreenInMouseCoordinates proc :ptr
+    put_DVDScreenInMouseCoordinates proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidWebDVD2_INTERFACE_DEFINED__
+define __IMSVidWebDVD2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidWebDVD2, "7027212F-EE9A-4a7c-8B67-F023714CDAFF")
+
+.comdef IMSVidWebDVD2 : public IMSVidWebDVD
+
+    get_Bookmark	proc :ptr, :ptr
+    put_Bookmark	proc :ptr, :DWORD
+   .ends
+
+endif
+
+ifndef __IMSVidWebDVDEvent_INTERFACE_DEFINED__
+define __IMSVidWebDVDEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidWebDVDEvent, "B4F7A674-9B83-49cb-A357-C63B871BE958")
+
+.comdef IMSVidWebDVDEvent : public IMSVidPlaybackEvent
+
+    DVDNotify		proc :LONG, :VARIANT, :VARIANT
+    PlayForwards	proc :VARIANT_BOOL
+    PlayBackwards	proc :VARIANT_BOOL
+    ShowMenu		proc :DVDMenuIDConstants, :VARIANT_BOOL
+    Resume		proc :VARIANT_BOOL
+    SelectOrActivateButton proc :VARIANT_BOOL
+    StillOff		proc :VARIANT_BOOL
+    PauseOn		proc :VARIANT_BOOL
+    ChangeCurrentAudioStream proc :VARIANT_BOOL
+    ChangeCurrentSubpictureStream proc :VARIANT_BOOL
+    ChangeCurrentAngle	proc :VARIANT_BOOL
+    PlayAtTimeInTitle	proc :VARIANT_BOOL
+    PlayAtTime		proc :VARIANT_BOOL
+    PlayChapterInTitle	proc :VARIANT_BOOL
+    PlayChapter		proc :VARIANT_BOOL
+    ReplayChapter	proc :VARIANT_BOOL
+    PlayNextChapter	proc :VARIANT_BOOL
+    Stop		proc :VARIANT_BOOL
+    ReturnFromSubmenu	proc :VARIANT_BOOL
+    PlayTitle		proc :VARIANT_BOOL
+    PlayPrevChapter	proc :VARIANT_BOOL
+    ChangeKaraokePresMode proc :VARIANT_BOOL
+    ChangeVideoPresMode proc :VARIANT_BOOL
+   .ends
+
+endif
+
+ifndef __IMSVidWebDVDAdm_INTERFACE_DEFINED__
+define __IMSVidWebDVDAdm_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidWebDVDAdm, "B8BE681A-EB2C-47f0-B415-94D5452F0E05")
+
+.comdef IMSVidWebDVDAdm : public IDispatch
+
+    ChangePassword	proc :BSTR, :BSTR, :BSTR
+    SaveParentalLevel	proc :LONG, :BSTR, :BSTR
+    SaveParentalCountry proc :LONG, :BSTR, :BSTR
+    ConfirmPassword	proc :BSTR, :BSTR, :ptr
+    GetParentalLevel	proc :ptr
+    GetParentalCountry	proc :ptr
+    get_DefaultAudioLCID proc :ptr
+    put_DefaultAudioLCID proc :LONG
+    get_DefaultSubpictureLCID proc :ptr
+    put_DefaultSubpictureLCID proc :LONG
+    get_DefaultMenuLCID proc :ptr
+    put_DefaultMenuLCID proc :LONG
+    get_BookmarkOnStop	proc :ptr
+    put_BookmarkOnStop	proc :VARIANT_BOOL
+   .ends
+
+endif
+
+ifndef __IMSVidOutputDevice_INTERFACE_DEFINED__
+define __IMSVidOutputDevice_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidOutputDevice, "37B03546-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidOutputDevice : public IMSVidDevice
+
+    .ends
+
+endif
+
+ifndef __IMSVidOutputDeviceEvent_INTERFACE_DEFINED__
+define __IMSVidOutputDeviceEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidOutputDeviceEvent, "2E6A14E2-571C-11d3-B652-00C04F79498E")
+
+.comdef IMSVidOutputDeviceEvent : public IMSVidDeviceEvent
+
+    .ends
+
+endif
+
+ifndef __IMSVidFeature_INTERFACE_DEFINED__
+define __IMSVidFeature_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidFeature, "37B03547-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidFeature : public IMSVidDevice
+
+    .ends
+
+endif
+
+ifndef __IMSVidFeatureEvent_INTERFACE_DEFINED__
+define __IMSVidFeatureEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidFeatureEvent, "3DD2903C-E0AA-11d2-B63A-00C04F79498E")
+
+.comdef IMSVidFeatureEvent : public IMSVidDeviceEvent
+
+    .ends
+
+endif
+
+ifndef __IMSVidEncoder_INTERFACE_DEFINED__
+define __IMSVidEncoder_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidEncoder, "C0020FD4-BEE7-43d9-A495-9F213117103D")
+
+.comdef IMSVidEncoder : public IMSVidFeature
+
+    get_VideoEncoderInterface proc :ptr
+    get_AudioEncoderInterface proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidClosedCaptioning_INTERFACE_DEFINED__
+define __IMSVidClosedCaptioning_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidClosedCaptioning, "99652EA1-C1F7-414f-BB7B-1C967DE75983")
+
+.comdef IMSVidClosedCaptioning : public IMSVidFeature
+
+    get_Enable		proc :ptr
+    put_Enable		proc :VARIANT_BOOL
+   .ends
+
+endif
+
+ifndef __IMSVidClosedCaptioning2_INTERFACE_DEFINED__
+define __IMSVidClosedCaptioning2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidClosedCaptioning2, "E00CB864-A029-4310-9987-A873F5887D97")
+
+.comdef IMSVidClosedCaptioning2 : public IMSVidClosedCaptioning
+
+    get_Service		proc :ptr
+    put_Service		proc :MSVidCCService
+   .ends
+
+endif
+
+ifndef __IMSVidClosedCaptioning3_INTERFACE_DEFINED__
+define __IMSVidClosedCaptioning3_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidClosedCaptioning3, "C8638E8A-7625-4c51-9366-2F40A9831FC0")
+
+.comdef IMSVidClosedCaptioning3 : public IMSVidClosedCaptioning2
+
+    get_TeleTextFilter	proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidXDS_INTERFACE_DEFINED__
+define __IMSVidXDS_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidXDS, "11EBC158-E712-4d1f-8BB3-01ED5274C4CE")
+
+.comdef IMSVidXDS : public IMSVidFeature
+
+    get_ChannelChangeInterface proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidXDSEvent_INTERFACE_DEFINED__
+define __IMSVidXDSEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidXDSEvent, "6DB2317D-3B23-41ec-BA4B-701F407EAF3A")
+
+.comdef IMSVidXDSEvent : public IMSVidFeatureEvent
+
+    RatingChange	proc :EnTvRat_System, :EnTvRat_GenericLevel, :BfEnTvRat_GenericAttributes,
+			     :EnTvRat_System, :EnTvRat_GenericLevel, :BfEnTvRat_GenericAttributes
+    .ends
+
+endif
+
+ifndef __IMSVidDataServices_INTERFACE_DEFINED__
+define __IMSVidDataServices_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidDataServices, "334125C1-77E5-11d3-B653-00C04F79498E")
+
+.comdef IMSVidDataServices : public IMSVidFeature
+
+    .ends
+
+endif
+
+ifndef __IMSVidDataServicesEvent_INTERFACE_DEFINED__
+define __IMSVidDataServicesEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidDataServicesEvent, "334125C2-77E5-11d3-B653-00C04F79498E")
+
+.comdef IMSVidDataServicesEvent : public IMSVidDeviceEvent
+
+    .ends
+
+endif
+
+.enum SourceSizeList {
+    sslFullSize,
+    sslClipByOverScan,
+    sslClipByClipRect
+    }
+
+ifndef __IMSVidVideoRenderer_INTERFACE_DEFINED__
+define __IMSVidVideoRenderer_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidVideoRenderer, "37B03540-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidVideoRenderer : public IMSVidOutputDevice
+
+    get_CustomCompositorClass proc :ptr
+    put_CustomCompositorClass proc :BSTR
+    get__CustomCompositorClass proc :ptr
+    put__CustomCompositorClass proc :REFCLSID
+    get__CustomCompositor proc :ptr
+    put__CustomCompositor proc :ptr
+    get_MixerBitmap	proc :ptr
+    get__MixerBitmap	proc :ptr
+    put_MixerBitmap	proc :ptr
+    put__MixerBitmap	proc :ptr
+    get_MixerBitmapPositionRect proc :ptr
+    put_MixerBitmapPositionRect proc :ptr
+    get_MixerBitmapOpacity proc :ptr
+    put_MixerBitmapOpacity proc :SINT
+    SetupMixerBitmap	proc :ptr, :LONG, :ptr
+    get_SourceSize	proc :ptr
+    put_SourceSize	proc :SourceSizeList
+    get_OverScan	proc :ptr
+    put_OverScan	proc :LONG
+    get_AvailableSourceRect proc :ptr
+    get_MaxVidRect	proc :ptr
+    get_MinVidRect	proc :ptr
+    get_ClippedSourceRect proc :ptr
+    put_ClippedSourceRect proc :ptr
+    get_UsingOverlay	proc :ptr
+    put_UsingOverlay	proc :VARIANT_BOOL
+    Capture		proc :ptr
+    get_FramesPerSecond proc :ptr
+    get_DecimateInput	proc :ptr
+    put_DecimateInput	proc :VARIANT_BOOL
+   .ends
+
+endif
+
+ifndef __IMSVidVideoRendererEvent_INTERFACE_DEFINED__
+define __IMSVidVideoRendererEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidVideoRendererEvent, "37B03545-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidVideoRendererEvent : public IMSVidOutputDeviceEvent
+
+    OverlayUnavailable	proc
+   .ends
+
+endif
+
+ifndef __IMSVidGenericSink_INTERFACE_DEFINED__
+define __IMSVidGenericSink_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidGenericSink, "6C29B41D-455B-4c33-963A-0D28E5E555EA")
+
+.comdef IMSVidGenericSink : public IMSVidOutputDevice
+
+    SetSinkFilter	proc :BSTR
+    get_SinkStreams	proc :ptr
+    put_SinkStreams	proc :MSVidSinkStreams
+   .ends
+
+endif
+
+ifndef __IMSVidGenericSink2_INTERFACE_DEFINED__
+define __IMSVidGenericSink2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidGenericSink2, "6B5A28F3-47F1-4092-B168-60CABEC08F1C")
+
+.comdef IMSVidGenericSink2 : public IMSVidGenericSink
+
+    AddFilter		proc :BSTR
+    ResetFilterList	proc
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferRecordingControl_INTERFACE_DEFINED__
+define __IMSVidStreamBufferRecordingControl_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferRecordingControl, "160621AA-BBBC-4326-A824-C395AEBC6E74")
+
+.comdef IMSVidStreamBufferRecordingControl : public IDispatch
+
+    get_StartTime	proc :ptr
+    put_StartTime	proc :LONG
+    get_StopTime	proc :ptr
+    put_StopTime	proc :LONG
+    get_RecordingStopped proc :ptr
+    get_RecordingStarted proc :ptr
+    get_RecordingType	proc :ptr
+    get_RecordingAttribute proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSink_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSink_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSink, "159DBB45-CD1B-4dab-83EA-5CB1F4F21D07")
+
+.comdef IMSVidStreamBufferSink : public IMSVidOutputDevice
+
+    get_ContentRecorder proc :BSTR, :ptr
+    get_ReferenceRecorder proc :BSTR, :ptr
+    get_SinkName	proc :ptr
+    put_SinkName	proc :BSTR
+    NameSetLock		proc
+    get_SBESink		proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSink2_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSink2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSink2, "2CA9FC63-C131-4E5A-955A-544A47C67146")
+
+.comdef IMSVidStreamBufferSink2 : public IMSVidStreamBufferSink
+
+    UnlockProfile	proc
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSink3_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSink3_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSink3, "4F8721D7-7D59-4D8B-99F5-A77775586BD5")
+
+.comdef IMSVidStreamBufferSink3 : public IMSVidStreamBufferSink2
+
+    SetMinSeek		proc :ptr
+    get_AudioCounter	proc :ptr
+    get_VideoCounter	proc :ptr
+    get_CCCounter	proc :ptr
+    get_WSTCounter	proc :ptr
+    put_AudioAnalysisFilter proc :BSTR
+    get_AudioAnalysisFilter proc :ptr
+    put__AudioAnalysisFilter proc :ptr
+    get__AudioAnalysisFilter proc :ptr
+    put_VideoAnalysisFilter proc :BSTR
+    get_VideoAnalysisFilter proc :ptr
+    put__VideoAnalysisFilter proc :ptr
+    get__VideoAnalysisFilter proc :ptr
+    put_DataAnalysisFilter proc :BSTR
+    get_DataAnalysisFilter proc :ptr
+    put__DataAnalysisFilter proc :ptr
+    get__DataAnalysisFilter proc :ptr
+    get_LicenseErrorCode proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSinkEvent_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSinkEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSinkEvent, "F798A36B-B05B-4bbe-9703-EAEA7D61CD51")
+
+.comdef IMSVidStreamBufferSinkEvent : public IMSVidOutputDeviceEvent
+
+    CertificateFailure	proc
+    CertificateSuccess	proc
+    WriteFailure	proc
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSinkEvent2_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSinkEvent2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSinkEvent2, "3D7A5166-72D7-484b-A06F-286187B80CA1")
+
+.comdef IMSVidStreamBufferSinkEvent2 : public IMSVidStreamBufferSinkEvent
+
+    EncryptionOn	proc
+    EncryptionOff	proc
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSinkEvent3_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSinkEvent3_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSinkEvent3, "735AD8D5-C259-48e9-81E7-D27953665B23")
+
+.comdef IMSVidStreamBufferSinkEvent3 : public IMSVidStreamBufferSinkEvent2
+
+    LicenseChange	proc :LONG
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSinkEvent4_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSinkEvent4_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSinkEvent4, "1B01DCB0-DAF0-412c-A5D1-590C7F62E2B8")
+
+.comdef IMSVidStreamBufferSinkEvent4 : public IMSVidStreamBufferSinkEvent3
+
+    WriteFailureClear	proc
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSource_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSource_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSource, "EB0C8CF9-6950-4772-87B1-47D11CF3A02F")
+
+.comdef IMSVidStreamBufferSource : public IMSVidFilePlayback
+
+    get_Start		proc :ptr
+    get_RecordingAttribute proc :ptr
+    CurrentRatings	proc :ptr, :ptr, :ptr
+    MaxRatingsLevel	proc :EnTvRat_System, :EnTvRat_GenericLevel, :LONG
+    put_BlockUnrated	proc :VARIANT_BOOL
+    put_UnratedDelay	proc :LONG
+    get_SBESource	proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSource2_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSource2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSource2, "E4BA9059-B1CE-40D8-B9A0-D4EA4A9989D3")
+
+.comdef IMSVidStreamBufferSource2 : public IMSVidStreamBufferSource
+
+    put_RateEx		proc :real8, :DWORD
+    get_AudioCounter	proc :ptr
+    get_VideoCounter	proc :ptr
+    get_CCCounter	proc :ptr
+    get_WSTCounter	proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSourceEvent_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSourceEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSourceEvent, "50CE8A7D-9C28-4DA8-9042-CDFA7116F979")
+
+.comdef IMSVidStreamBufferSourceEvent : public IMSVidFilePlaybackEvent
+
+    CertificateFailure	proc
+    CertificateSuccess	proc
+    RatingsBlocked	proc
+    RatingsUnblocked	proc
+    RatingsChanged	proc
+    TimeHole		proc :LONG, :LONG
+    StaleDataRead	proc
+    ContentBecomingStale proc
+    StaleFileDeleted	proc
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSourceEvent2_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSourceEvent2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSourceEvent2, "7AEF50CE-8E22-4BA8-BC06-A92A458B4EF2")
+
+.comdef IMSVidStreamBufferSourceEvent2 : public IMSVidStreamBufferSourceEvent
+
+    RateChange		proc :real8, :real8
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferSourceEvent3_INTERFACE_DEFINED__
+define __IMSVidStreamBufferSourceEvent3_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferSourceEvent3, "CEABD6AB-9B90-4570-ADF1-3CE76E00A763")
+
+.comdef IMSVidStreamBufferSourceEvent3 : public IMSVidStreamBufferSourceEvent2
+
+    BroadcastEvent	proc :BSTR
+    BroadcastEventEx	proc :BSTR, :ULONG, :ULONG, :ULONG, :ULONG
+    COPPBlocked		proc
+    COPPUnblocked	proc
+    ContentPrimarilyAudio proc
+   .ends
+
+endif
+
+ifndef __IMSVidStreamBufferV2SourceEvent_INTERFACE_DEFINED__
+define __IMSVidStreamBufferV2SourceEvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidStreamBufferV2SourceEvent, "49C771F9-41B2-4CF7-9F9A-A313A8F6027E")
+
+.comdef IMSVidStreamBufferV2SourceEvent : public IMSVidFilePlaybackEvent
+
+    RatingsChanged	proc
+    TimeHole		proc :LONG, :LONG
+    StaleDataRead	proc
+    ContentBecomingStale proc
+    StaleFileDeleted	proc
+    RateChange		proc :real8, :real8
+    BroadcastEvent	proc :BSTR
+    BroadcastEventEx	proc :BSTR, :ULONG, :ULONG, :ULONG, :ULONG
+    ContentPrimarilyAudio proc
+   .ends
+
+endif
+
+ifndef __IMSVidVideoRenderer2_INTERFACE_DEFINED__
+define __IMSVidVideoRenderer2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidVideoRenderer2, "6BDD5C1E-2810-4159-94BC-05511AE8549B")
+
+.comdef IMSVidVideoRenderer2 : public IMSVidVideoRenderer
+
+    get_Allocator	proc :ptr
+    get__Allocator	proc :ptr
+    get_Allocator_ID	proc :ptr
+    SetAllocator	proc :ptr, :LONG
+    _SetAllocator	proc :ptr, :LONG
+    put_SuppressEffects proc :VARIANT_BOOL
+    get_SuppressEffects proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidVideoRendererEvent2_INTERFACE_DEFINED__
+define __IMSVidVideoRendererEvent2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidVideoRendererEvent2, "7145ED66-4730-4fdb-8A53-FDE7508D3E5E")
+
+.comdef IMSVidVideoRendererEvent2 : public IMSVidOutputDeviceEvent
+
+    OverlayUnavailable	proc
+   .ends
+
+endif
+
+ifndef __IMSVidVMR9_INTERFACE_DEFINED__
+define __IMSVidVMR9_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidVMR9, "D58B0015-EBEF-44bb-BBDD-3F3699D76EA1")
+
+.comdef IMSVidVMR9 : public IMSVidVideoRenderer
+
+    get_Allocator_ID	proc :ptr
+    SetAllocator	proc :ptr, :LONG
+    put_SuppressEffects proc :VARIANT_BOOL
+    get_SuppressEffects proc :ptr
+    get_Allocator	proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidEVR_INTERFACE_DEFINED__
+define __IMSVidEVR_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidEVR, "15E496AE-82A8-4cf9-A6B6-C561DC60398F")
+
+.comdef IMSVidEVR : public IMSVidVideoRenderer
+
+    get_Presenter	proc :ptr
+    put_Presenter	proc :ptr
+    put_SuppressEffects proc :VARIANT_BOOL
+    get_SuppressEffects proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidEVREvent_INTERFACE_DEFINED__
+define __IMSVidEVREvent_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidEVREvent, "349ABB10-883C-4F22-8714-CECAEEE45D62")
+
+.comdef IMSVidEVREvent : public IMSVidOutputDeviceEvent
+
+    OnUserEvent		proc :LONG
+   .ends
+
+endif
+
+ifndef __IMSVidAudioRenderer_INTERFACE_DEFINED__
+define __IMSVidAudioRenderer_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidAudioRenderer, "37B0353F-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidAudioRenderer : public IMSVidOutputDevice
+
+    put_Volume		proc :LONG
+    get_Volume		proc :ptr
+    put_Balance		proc :LONG
+    get_Balance		proc :ptr
+   .ends
+
+endif
+
+ifndef __IMSVidAudioRendererEvent_INTERFACE_DEFINED__
+__IMSVidAudioRendererEvent_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IMSVidAudioRendererEvent, "37B03541-A4C8-11d2-B634-00C04F79498E")
+
+.comdef IMSVidAudioRendererEvent : public IMSVidOutputDeviceEvent
+
+    .ends
+
+endif
+
+ifndef __IMSVidAudioRendererEvent2_INTERFACE_DEFINED__
+define __IMSVidAudioRendererEvent2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidAudioRendererEvent2, "E3F55729-353B-4c43-A028-50F79AA9A907")
+
+.comdef IMSVidAudioRendererEvent2 : public IMSVidAudioRendererEvent
+
+    AVDecAudioDualMono	proc
+    AVAudioSampleRate	proc
+    AVAudioChannelConfig proc
+    AVAudioChannelCount proc
+    AVDecCommonMeanBitRate proc
+    AVDDSurroundMode	proc
+    AVDecCommonInputFormat proc
+    AVDecCommonOutputFormat proc
+   .ends
+
+endif
+
+ifndef __IMSVidInputDevices_INTERFACE_DEFINED__
+define __IMSVidInputDevices_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidInputDevices, "C5702CD1-9B79-11d3-B654-00C04F79498E")
+
+.comdef IMSVidInputDevices : public IDispatch
+
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr
+    Remove		proc :VARIANT
+   .ends
+
+endif
+
+ifndef __IMSVidOutputDevices_INTERFACE_DEFINED__
+define __IMSVidOutputDevices_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidOutputDevices, "C5702CD2-9B79-11d3-B654-00C04F79498E")
+
+.comdef IMSVidOutputDevices : public IDispatch
+
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr
+    Remove		proc :VARIANT
+   .ends
+
+endif
+
+ifndef __IMSVidVideoRendererDevices_INTERFACE_DEFINED__
+define __IMSVidVideoRendererDevices_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidVideoRendererDevices, "C5702CD3-9B79-11d3-B654-00C04F79498E")
+
+.comdef IMSVidVideoRendererDevices : public IDispatch
+
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr
+    Remove		proc :VARIANT
+   .ends
+
+endif
+
+ifndef __IMSVidAudioRendererDevices_INTERFACE_DEFINED__
+define __IMSVidAudioRendererDevices_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidAudioRendererDevices, "C5702CD4-9B79-11d3-B654-00C04F79498E")
+
+.comdef IMSVidAudioRendererDevices : public IDispatch
+
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr
+    Remove		proc :VARIANT
+   .ends
+
+endif
+
+ifndef __IMSVidFeatures_INTERFACE_DEFINED__
+define __IMSVidFeatures_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IMSVidFeatures, "C5702CD5-9B79-11d3-B654-00C04F79498E")
+
+.comdef IMSVidFeatures : public IDispatch
+
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Item		proc :VARIANT, :ptr
+    _Add		proc :ptr
+    Remove		proc :VARIANT
+   .ends
+
+endif
+endif
+
+endif

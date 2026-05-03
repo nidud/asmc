@@ -1,0 +1,3264 @@
+; HLL.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
+include asmc.inc
+include hll.inc
+include memalloc.inc
+include parser.inc
+include expreval.inc
+include segment.inc
+include types.inc
+include assume.inc
+include fastpass.inc
+include proc.inc
+include tokenize.inc
+include listing.inc
+include reswords.inc
+include lqueue.inc
+
+GetExpression proto __ccall private :hllitem_t, :ptr int_t, :token_t, :int_t, :uint_t, :string_t, :ptr hll_opnd
+
+.pragma warning(disable: 6004)
+
+; c binary ops.
+; Order of items COP_EQ - COP_LE  and COP_ZERO - COP_OVERFLOW
+; must not be changed.
+
+.enum {
+    COP_NONE,
+    COP_EQ,       ; ==
+    COP_NE,       ; !=
+    COP_GT,       ; >
+    COP_LT,       ; <
+    COP_GE,       ; >=
+    COP_LE,       ; <=
+    COP_AND,      ; &&
+    COP_OR,       ; ||
+    COP_ANDB,     ; &
+    COP_NEG,      ; !
+    COP_ZERO,     ; ZERO?  not really a valid C operator
+    COP_CARRY,    ; CARRY?     not really a valid C operator
+    COP_SIGN,     ; SIGN?  not really a valid C operator
+    COP_PARITY,   ; PARITY?   not really a valid C operator
+    COP_OVERFLOW  ; OVERFLOW? not really a valid C operator
+    }
+
+.data
+
+EOLSTR          db EOLCHAR,0
+;
+; items in table below must match order COP_ZERO - COP_OVERFLOW
+;
+flaginstr       db 'zcspo'
+;
+; items in tables below must match order COP_EQ - COP_LE
+;
+unsign_cjmptype db 'zzabba'
+signed_cjmptype db 'zzgllg'
+neg_cjmptype    db 0,1,0,0,1,1
+
+;
+; get a C binary operator from the token stream.
+; there is a problem with the '<' because it is a "string delimiter"
+; which Tokenize() usually is to remove.
+; There has been a hack implemented in Tokenize() so that it won't touch the
+; '<' if .IF, .ELSEIF, .WHILE, .UNTIL, .UNTILCXZ or .BREAK/.CONTINUE has been
+; detected.
+;
+
+define CHARS_EQ    ('=' + ( '=' shl 8 ))
+define CHARS_NE    ('!' + ( '=' shl 8 ))
+define CHARS_GE    ('>' + ( '=' shl 8 ))
+define CHARS_LE    ('<' + ( '=' shl 8 ))
+define CHARS_AND   ('&' + ( '&' shl 8 ))
+define CHARS_OR    ('|' + ( '|' shl 8 ))
+
+    .code
+
+    option proc:private
+
+GetCOp proc fastcall item:token_t
+
+    mov rdx,[rcx].asm_tok.string_ptr
+    .if ( [rcx].asm_tok.token == T_STRING )
+        .if ( [rcx].asm_tok.stringlen == 2 )
+            movzx eax,word ptr [rdx]
+            .switch eax
+            .case CHARS_EQ:  .return COP_EQ
+            .case CHARS_NE:  .return COP_NE
+            .case CHARS_GE:  .return COP_GE
+            .case CHARS_LE:  .return COP_LE
+            .case CHARS_AND: .return COP_AND
+            .case CHARS_OR:  .return COP_OR
+            .endsw
+        .elseif ( [rcx].asm_tok.stringlen == 1 )
+            movzx eax,byte ptr [rdx]
+            .switch eax
+            .case '>': .return COP_GT
+            .case '<': .return COP_LT
+            .case '&': .return COP_ANDB
+            .case '!': .return COP_NEG
+            .endsw
+        .endif
+    .elseif ( [rcx].asm_tok.token != T_ID )
+        .return COP_NONE
+    .endif
+    .for ( eax = 0 : byte ptr [rdx+rax] : eax++ )
+    .endf
+    ;
+    ; a valid "flag" string must end with a question mark
+    ;
+    .if ( byte ptr [rdx+rax-1] == '?' )
+        mov ecx,[rdx]
+        and ecx,not 0x20202020
+        .switch pascal eax
+        .case 5
+            .return COP_ZERO .if ecx == "OREZ"
+            .return COP_SIGN .if ecx == "NGIS"
+        .case 6
+            mov al,[rdx+4]
+            and eax,not 0x20
+            .return COP_CARRY .if ( eax == "Y" && ecx == "RRAC" )
+        .case 7
+            mov ax,[rdx+4]
+            and eax,not 0x2020
+            .return COP_PARITY .if ( eax == "YT" && ecx == "IRAP" )
+        .case 9
+            mov eax,[rdx+4]
+            and eax,not 0x20202020
+            .return COP_OVERFLOW .if ( eax == "WOLF" && ecx == "REVO" )
+        .endsw
+    .endif
+    .return COP_NONE
+    endp
+
+;
+; render an instruction
+;
+
+    assume rbx:token_t
+
+RenderInstr proc __ccall uses rsi rdi rbx dst:string_t, inst:int_t, start1:uint_t,
+        end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:token_t
+
+   .new reg:int_t = 0
+   .new b:byte
+
+    ldr rdi,dst
+    ldr rbx,tokenarray
+
+    ; v2.30 - test if second operand starts with '&'
+
+    mov ecx,start2
+    .if ( ecx != EMPTY && MODULE.Ofssize != USE16 )
+
+        imul ecx,ecx,asm_tok
+        .if ( [rbx+rcx].token == T_STRING )
+
+            mov rax,[rbx+rcx].string_ptr
+            .if ( word ptr [rax] == '&' )
+
+                mov reg,MODULE.accumulator
+                imul edx,end2,asm_tok
+                mov rsi,[rbx+rdx].tokpos
+                mov dl,[rsi]
+                mov b,dl
+                mov byte ptr [rsi],0
+                add rdi,tsprintf(rdi, "lea %r, %s\n", eax, [rbx+rcx+asm_tok].tokpos)
+                mov al,b
+                mov [rsi],al
+            .endif
+        .endif
+    .endif
+
+    ; copy the instruction
+
+    add rdi,tsprintf(rdi, "%r ", inst)
+
+    ; copy the first operand's tokens
+
+    imul ecx,end1,asm_tok
+    imul eax,start1,asm_tok
+    mov rcx,[rbx+rcx].asm_tok.tokpos
+    mov rsi,[rbx+rax].asm_tok.tokpos
+    sub rcx,rsi
+    rep movsb
+    mov ecx,end2
+    mov eax,start2
+    .if eax != EMPTY
+        ; copy the second operand's tokens
+        .if reg
+            add rdi,tsprintf(rdi, ", %r", reg)
+        .else
+            mov word ptr [rdi],' ,'
+            add rdi,2
+            imul ecx,ecx,asm_tok
+            imul eax,eax,asm_tok
+            mov rcx,[rbx+rcx].asm_tok.tokpos
+            mov rsi,[rbx+rax].asm_tok.tokpos
+            sub rcx,rsi
+            rep movsb
+        .endif
+    .elseif ecx != EMPTY
+        add rdi,tsprintf(rdi, ", %d", ecx)
+    .endif
+    mov word ptr [rdi],EOLCHAR
+    lea rax,[rdi+1]
+    ret
+    endp
+
+
+GetLabelStr proc __ccall public l_id:int_t, buffer:string_t
+    tsprintf( buffer, "@C%04X", l_id )
+    .return( buffer )
+    endp
+
+;
+; render a Jcc instruction
+;
+RenderJcc proc __ccall uses rdi dst:string_t, cc:int_t, _neg:int_t, _label:int_t
+    ;
+    ; create the jump opcode: j[n]cc
+    ;
+    ldr rdi,dst
+    mov eax,'j'
+    stosb
+    mov ecx,_neg
+    .if ecx
+        mov eax,'n'
+        stosb
+    .endif
+    mov eax,cc
+    stosb
+    mov eax,' '
+    .if !ecx
+        stosb       ; make sure there's room for the inverse jmp
+    .endif
+    stosb
+    tsprintf( rdi, "@C%04X", _label )
+    lea rax,[rdi+rax+1]
+    mov word ptr [rax-1],EOLCHAR
+    ret
+    endp
+
+
+;
+; a "token" in a C expression actually is an assembly expression
+;
+LGetToken proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:token_t, opnd:ptr expr
+    ;
+    ; scan for the next C operator in the token array.
+    ; because the ASM evaluator may report an error if such a thing
+    ; is found ( CARRY?, ZERO? and alikes will be regarded as - not yet defined - labels )
+    ;
+    ldr rsi,i
+    mov edi,[rsi]
+    imul ebx,edi,asm_tok
+    add rbx,tokenarray
+    .for ( : edi < TokenCount, GetCOp( rbx ) == COP_NONE : edi++ )
+        add rbx,asm_tok
+    .endf
+    .if ( edi == [rsi] )
+        mov rax,opnd
+        mov [rax].expr.kind,EXPR_EMPTY
+        mov eax,NOT_ERROR
+    .elseifd ( EvalOperand( rsi, tokenarray, edi, opnd, 0 ) != ERROR )
+        ;
+        ; v2.11: emit error 'syntax error in control flow directive'.
+        ; May happen for expressions like ".if 1 + CARRY?"
+        ;
+        mov eax,NOT_ERROR
+        .if ( [rsi] > edi )
+            asmerr(2154)
+        .endif
+    .endif
+    ret
+    endp
+
+
+GetLabel proto watcall hll:ptr hll_item, index:int_t {
+    mov eax,[rax].hll_item.labels[rdx*4]
+    }
+
+; a "simple" expression is
+; 1. two tokens, coupled with a <cmp> operator: == != >= <= > <
+; 2. two tokens, coupled with a "&" operator
+; 3. unary operator "!" + one token
+; 4. one token (short form for "<token> != 0")
+;
+
+GetSimpleExpression proc __ccall private uses rsi rdi rbx \
+        hll:        ptr hll_item,
+        i:          ptr int_t,
+        tokenarray: token_t,
+        ilabel:     int_t,
+        is_true:    uint_t,
+        buffer:     string_t,
+        hllop:      ptr hll_opnd
+
+    ldr  rsi,i
+    mov  edi,[rsi]
+    imul ebx,edi,asm_tok
+    add  rbx,tokenarray
+    .for ( rax = [rbx].string_ptr : word ptr [rax] == '!' : rax = [rbx].string_ptr )
+        inc edi
+        add rbx,asm_tok
+        mov eax,1
+        sub eax,is_true
+        mov is_true,eax
+    .endf
+    mov [rsi],edi
+    ;
+    ; the problem with '()' is that is might enclose just a standard Masm
+    ; expression or a "hll" expression. The first case is to be handled
+    ; entirely by the expression evaluator, while the latter case is to be
+    ; handled HERE!
+    ;
+    .if ( [rbx].token == T_OP_BRACKET )
+        .for ( edi = 1, rbx += asm_tok,
+            al = [rbx].token : al != T_FINAL : rbx += asm_tok, al = [rbx].token )
+            .if ( al == T_OP_BRACKET )
+                inc edi
+            .elseif ( al == T_CL_BRACKET )
+                dec edi
+                .break .ifz ; a standard Masm expression?
+            .else
+                .break .if ( GetCOp(rbx) != COP_NONE )
+            .endif
+        .endf
+        .if ( edi )
+            inc dword ptr [rsi]
+            .ifd GetExpression(hll, rsi, tokenarray, ilabel, is_true, buffer, hllop) == ERROR
+                .return
+            .endif
+            imul ebx,[rsi],asm_tok
+            add  rbx,tokenarray
+            .if ( [rbx].token != T_CL_BRACKET )
+                .return asmerr(2154)
+            .endif
+            inc dword ptr [rsi]
+           .return NOT_ERROR
+        .endif
+    .endif
+    mov edi,[rsi]
+    mov rbx,tokenarray
+    ;
+    ; get (first) operand
+    ;
+   .new is_float:byte = 0
+   .new inst_cmp:int_t = T_CMP
+   .new op1_pos:int_t = edi
+   .new op1:expr
+    .ifd LGetToken(hll, rsi, rbx, &op1) == ERROR
+        .return
+    .endif
+    .if ( op1.kind == EXPR_REG && !( op1.indirect ) )
+        mov rax,op1.base_reg
+        .if ( rax )
+            .if ( GetValueSp( [rax].asm_tok.tokval ) & ( OP_XMM or OP_YMM or OP_ZMM ) )
+                mov eax,T_COMISD
+                .if ( MODULE.flt_size == 4 )
+                    mov eax,T_COMISS
+                .endif
+                mov inst_cmp,eax
+                inc is_float
+            .endif
+        .endif
+    .endif
+    mov edi,[rsi]
+   .new op1_end:int_t = edi
+    imul eax,edi,asm_tok ; get operator
+    add rax,rbx
+    ;
+    ; lower precedence operator ( && or || ) detected?
+    ;
+    .if ( GetCOp(rax) == COP_AND || eax == COP_OR )
+        mov eax,COP_NONE
+    .elseif ( eax != COP_NONE )
+        inc edi
+        mov [rsi],edi
+    .endif
+    .new op:int_t = eax
+    .new jcclabel:int_t = GetLabel(hll, ilabel)
+    ;
+    ; check for special operators with implicite operand:
+    ; COP_ZERO, COP_CARRY, COP_SIGN, COP_PARITY, COP_OVERFLOW
+    ;
+    mov edx,op
+    .if ( edx >= COP_ZERO )
+        .return asmerr(2154) .if ( op1.kind != EXPR_EMPTY )
+        mov rcx,hllop
+        mov [rcx].hll_opnd.lastjmp,buffer
+        lea rcx,flaginstr
+        movzx ecx,byte ptr [rcx+rdx-COP_ZERO]
+        mov edx,is_true
+        xor edx,1
+       .new flag:int_t = ecx
+       .new istrue:int_t = edx
+        ; v2.27.30: ZERO? || CARRY? --> LE
+        lea eax,[rdi+1]
+        .if ( eax < TokenCount && ( op == COP_ZERO || op == COP_CARRY ) )
+            imul eax,eax,asm_tok
+            add rax,rbx
+            GetCOp(rax)
+            mov ecx,flag
+            mov edx,istrue
+            .if ( eax == COP_ZERO || eax == COP_CARRY )
+                mov ecx,'a'
+                xor edx,1
+                add edi,2
+                mov [rsi],edi
+            .endif
+        .endif
+        RenderJcc( buffer, ecx, edx, jcclabel )
+       .return NOT_ERROR
+    .endif
+    mov eax,op1.kind
+    .switch eax
+      .case EXPR_EMPTY
+        .return asmerr(2154)  ; v2.09: changed from NOT_ERROR to ERROR
+      .case EXPR_FLOAT
+        .return asmerr(2050)  ; v2.10: added
+    .endsw
+    .if ( op == COP_NONE )
+        .switch eax
+        .case EXPR_REG
+            .if ( !( op1.indirect ) && is_float == 0 )
+                mov edx,T_TEST
+                .if ( MODULE.masm_compat_gencode )
+                    mov edx,T_OR
+                .endif
+                RenderInstr( buffer, edx, op1_pos, op1_end,
+                    op1_pos, op1_end, rbx )
+                mov rdx,hllop
+                mov [rdx].hll_opnd.lastjmp,rax
+                RenderJcc( rax, 'z', is_true, jcclabel )
+               .endc
+            .endif
+            ;
+            ; no break
+            ;
+        .case EXPR_ADDR
+            RenderInstr( buffer, inst_cmp, op1_pos, op1_end, EMPTY, 0, rbx )
+            mov rdx,hllop
+            mov [rdx].hll_opnd.lastjmp,rax
+            RenderJcc( rax, 'z', is_true, jcclabel )
+           .endc
+        .case EXPR_CONST
+            .if ( op1.hvalue != 0 && op1.hvalue != -1 )
+                .return EmitConstError()
+            .endif
+            mov rcx,hllop
+            mov [rcx].hll_opnd.lastjmp,buffer
+            mov edx,is_true
+            xor edx,1
+            .if ( ( is_true && op1.value ) || ( edx && op1.value == 0 ) )
+                tsprintf( buffer, "jmp @C%04X%s", jcclabel, &EOLSTR )
+            .else
+                mov byte ptr [rax],NULLC
+            .endif
+            .endc
+        .endsw
+        .return NOT_ERROR
+    .endif
+    ;
+    ; get second operand for binary operator
+    ;
+    mov edi,[rsi]
+   .new op2_pos:int_t = edi
+
+    ; v2.30 - test if second operand starts with '&'
+
+    imul eax,edi,asm_tok
+    .if ( [rbx+rax].token == T_STRING )
+        mov rax,[rbx+rax].string_ptr
+        .if ( word ptr [rax] == '&' )
+            inc dword ptr [rsi]
+        .endif
+    .endif
+    .new op2:expr
+    .return .ifd LGetToken(hll, rsi, rbx, &op2) == ERROR
+    mov eax,op2.kind
+    .if ( eax != EXPR_CONST && eax != EXPR_ADDR && eax != EXPR_REG )
+        .if ( eax == EXPR_FLOAT )
+            .if ( is_float )
+                mov op2.kind,EXPR_ADDR
+            .elseif ( op1.kind == EXPR_ADDR )
+                .if ( op1.mem_type == MT_REAL4 )
+                    mov inst_cmp,T_COMISS
+                .elseif ( op1.mem_type == MT_REAL8 )
+                    mov inst_cmp,T_COMISD
+                .endif
+            .endif
+        .else
+            .return asmerr(2154)
+        .endif
+    .elseif ( eax == EXPR_ADDR && is_float )
+
+        ; ( xmm0 > float/double )
+
+        .if ( op2.mem_type == MT_REAL4 )
+            mov inst_cmp,T_COMISS
+        .elseif ( op2.mem_type == MT_REAL8 )
+            mov inst_cmp,T_COMISD
+        .endif
+    .endif
+
+    mov edi,[rsi]
+   .new op2_end:int_t = edi
+    assume rbx: NOTHING
+    ;
+    ; now generate ASM code for expression
+    ;
+    mov ecx,op
+    .if ( ecx == COP_ANDB )
+        ;
+        ; v2.22 - switch /Zg to OR
+        ;
+        mov edx,T_TEST
+        .if MODULE.masm_compat_gencode
+            mov edx,T_OR
+        .endif
+        RenderInstr( buffer, edx, op1_pos, op1_end, op2_pos, op2_end, rbx )
+        mov rcx,hllop
+        mov [rcx].hll_opnd.lastjmp,rax
+        RenderJcc( rax, 'e', is_true, jcclabel )
+
+    .elseif ( ecx <= COP_LE )
+        ;
+        ; ==, !=, >, <, >= or <= operator
+        ;
+        ; optimisation: generate 'or EAX,EAX' instead of 'cmp EAX,0'.
+        ; v2.11: use op2.value64 instead of op2.value
+        ;
+        .if ( !op2.l64_l && !op2.l64_h && ( ecx == COP_EQ || ecx == COP_NE ) &&
+              op1.kind == EXPR_REG && !( op1.indirect ) &&
+              op2.kind == EXPR_CONST && !is_float )
+            ;
+            ; v2.22 - switch /Zg to OR
+            ;
+            mov edx,T_TEST
+            .if ( MODULE.masm_compat_gencode )
+                mov edx,T_OR
+            .endif
+            RenderInstr( buffer, edx, op1_pos, op1_end, op1_pos, op1_end, rbx )
+
+        .else
+
+            ; cmp bitfield,0 --> test mem,bit -- jnz - ok
+            ; cmp bitfield,1 --> test mem,bit -- jnz - fail
+
+            .if ( op1.mem_type == MT_BITS )
+                mov rcx,op1.mbr
+                .if ( rcx && [rcx].asym.crecord && [rcx].asym.bitf_bits == 1 )
+                    .if ( op2.value == 1 )
+                        xor is_true,1
+                        mov [rcx].asym.bitexpr,1
+                    .endif
+                .endif
+            .endif
+            RenderInstr( buffer, inst_cmp,  op1_pos, op1_end, op2_pos, op2_end, rbx )
+        .endif
+        mov rbx,hllop
+        mov [rbx].hll_opnd.lastjmp,rax
+
+        ;
+        ; v2.22 - signed compare S, SB, SW, SD
+        ;
+        mov     rdx,hll
+        mov     edi,[rdx].hll_item.Signed
+        mov     ecx,op
+        movzx   edx,op1.mem_type
+        movzx   eax,op2.mem_type
+        and     edx,MT_SPECIAL_MASK
+        and     eax,MT_SPECIAL_MASK
+
+        .if ( edi || edx == MT_SIGNED || eax == MT_SIGNED )
+            lea rdi,signed_cjmptype
+            movzx edx,byte ptr [rdi+rcx-COP_EQ]
+        .else
+            lea rdi,unsign_cjmptype
+            movzx edx,byte ptr [rdi+rcx-COP_EQ]
+        .endif
+
+        mov eax,is_true
+        lea rdi,neg_cjmptype
+        .if ( !byte ptr [rdi+rcx-COP_EQ] )
+            xor eax,1
+        .endif
+        RenderJcc( [rbx].hll_opnd.lastjmp, edx, eax, jcclabel )
+    .else
+        .return asmerr(2154)
+    .endif
+    .return NOT_ERROR
+    endp
+
+
+; invert a Jump:
+; - Jx   -> JNx (x = e|z|c|s|p|o )
+; - JNx -> Jx   (x = e|z|c|s|p|o )
+; - Ja   -> Jbe, Jae -> Jb
+; - Jb   -> Jae, Jbe -> Ja
+; - Jg   -> Jle, Jge -> Jl
+; - Jl   -> Jge, Jle -> Jg
+; added in v2.11:
+; - jmp -> 0
+; - 0    -> jmp
+;
+
+InvertJump proc fastcall private p:string_t
+
+    .if ( byte ptr [rcx] == NULLC ) ; v2.11: convert 0 to "jmp"
+        .return tstrcpy( rcx, "jmp " )
+    .endif
+    inc rcx
+    mov eax,[rcx]
+    .switch al
+    .case 'e'
+    .case 'z'
+    .case 'c'
+    .case 's'
+    .case 'p'
+    .case 'o'
+        mov byte ptr [rcx+1],al
+        mov byte ptr [rcx],'n'
+       .return
+    .case 'n'
+        mov byte ptr [rcx],ah
+        mov byte ptr [rcx+1],' '
+       .return
+    .case 'a'
+        mov byte ptr [rcx],'b'
+       .endc
+    .case 'b'
+        mov byte ptr [rcx],'a'
+       .endc
+    .case 'g'
+        mov byte ptr [rcx],'l'
+       .endc
+    .case 'l'
+        mov byte ptr [rcx],'g'
+       .endc
+    .default
+        ;
+        ; v2.11: convert "jmp" to 0
+        ;
+        .if al == 'm'
+            dec rcx
+            mov byte ptr [rcx],NULLC
+        .endif
+        .return
+    .endsw
+    .if ah == 'e'
+        mov byte ptr [rcx+1],' '
+    .else
+        mov byte ptr [rcx+1],'e'
+    .endif
+    ret
+    endp
+
+
+; Replace a label in the source lines generated so far.
+; todo: if more than 0xFFFF labels are needed,
+; it may happen that length of nlabel > length of olabel!
+; then the simple memcpy() below won't work!
+;
+ReplaceLabel proc __ccall private uses rsi rdi rbx p:ptr, olabel:dword, nlabel:dword
+
+  local oldlbl[16]:char_t, newlbl[16]:char_t
+
+    ldr rbx,p
+    lea rsi,oldlbl
+    lea rdi,newlbl
+    GetLabelStr(olabel, rsi)
+    GetLabelStr(nlabel, rdi)
+    mov ebx,tstrlen(rdi)
+    mov rax,p
+    .while tstrstr(rax, rsi)
+        tmemcpy(rax, rdi, ebx)
+        add rax,rbx
+    .endw
+    ret
+    endp
+
+
+; operator &&, which has the second lowest precedence, is handled here
+
+GetAndExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:token_t,
+    ilabel:uint_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
+
+  local truelabel:int_t, nlabel:int_t, olabel:int_t, buff[16]:char_t
+
+    mov rdi,hllop
+    mov rsi,buffer
+    mov truelabel,0
+
+    .while 1
+
+        .return .ifd GetSimpleExpression(hll, i, tokenarray, ilabel, is_true, rsi, rdi ) == ERROR
+
+        mov rbx,i
+        mov eax,[rbx]
+        imul eax,eax,asm_tok
+        add rax,tokenarray
+
+        .break .if GetCOp(rax) != COP_AND
+
+        inc dword ptr [rbx]
+        mov rbx,[rdi].hll_opnd.lastjmp
+        .if rbx && is_true
+
+            InvertJump(rbx)
+            .if truelabel == 0
+                mov truelabel,GetHllLabel()
+            .endif
+
+            ; v2.11: there might be a 0 at lastjmp
+
+            .if ( byte ptr [rbx] )
+                tstrcat(GetLabelStr(truelabel, &[rbx+4]), &EOLSTR)
+            .endif
+
+                ; v2.22 .while  (eax || edx) && ecx -- failed
+                ;   .while !(eax || edx) && ecx -- failed
+
+            mov rbx,rsi
+            .if [rdi].hll_opnd.lasttruelabel
+                ReplaceLabel(rbx, [rdi].hll_opnd.lasttruelabel, truelabel)
+            .endif
+            mov nlabel,GetHllLabel()
+            mov olabel,GetLabel(hll, ilabel)
+            tstrlen(rbx)
+            add rbx,rax
+            mov rcx,GetLabelStr(olabel, &buff)
+            tsprintf(rbx, "%s%s%s", rcx, LABELQUAL, &EOLSTR)
+            ReplaceLabel(buffer, olabel, nlabel)
+            mov [rdi].hll_opnd.lastjmp,0
+        .endif
+        tstrlen(rsi)
+        add rsi,rax
+        mov [rdi].hll_opnd.lasttruelabel,0
+    .endw
+    .if truelabel
+        tstrlen(rsi)
+        add rsi,rax
+        tstrcat(tstrcat(GetLabelStr(truelabel, rsi), LABELQUAL), &EOLSTR)
+        mov [rdi].hll_opnd.lastjmp,0
+    .endif
+    mov eax,NOT_ERROR
+    ret
+    endp
+
+
+; operator ||, which has the lowest precedence, is handled here
+
+GetExpression proc __ccall private uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:token_t,
+    ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
+
+  local truelabel:int_t, nlabel:int_t, olabel:int_t, buff[16]:char_t
+
+    mov rsi,buffer
+    mov rdi,hllop
+    mov truelabel,0
+
+    .while 1
+
+        .return .ifd GetAndExpression(hll, i, tokenarray, ilabel, is_true, rsi, rdi) == ERROR
+
+        mov rbx,i
+        imul eax,[rbx],asm_tok
+        add rax,tokenarray
+        .break .if GetCOp(rax) != COP_OR
+        ;
+        ; the generated code of last simple expression has to be modified
+        ; 1. the last jump must be inverted
+        ; 2. a "is_true" label must be created (it's used to jump "behind" the expr)
+        ; 3. create a new label
+        ; 4. the current "false" label must be generated
+        ;
+        ; if it is a .REPEAT, step 4 is slightly more difficult, since the "false"
+        ; label is already "gone":
+        ; 4a. create a new label
+        ; 4b. replace the "false" label in the generated code by the new label
+        ;
+        inc dword ptr [rbx]
+        mov rbx,[rdi].hll_opnd.lastjmp
+
+        .if ( rbx && !is_true )
+
+            InvertJump(rbx)
+
+            .if ( truelabel == 0 )
+
+                mov truelabel,GetHllLabel()
+            .endif
+
+            .if ( byte ptr [rbx] )
+
+                tstrcat( GetLabelStr( truelabel, &[rbx+4] ), &EOLSTR )
+            .endif
+
+            mov rbx,rsi
+            .if ( [rdi].hll_opnd.lasttruelabel )
+
+                ReplaceLabel( rbx, [rdi].hll_opnd.lasttruelabel, truelabel )
+            .endif
+
+            mov [rdi].hll_opnd.lastjmp,0
+            mov nlabel,GetHllLabel()
+            mov olabel,GetLabel(hll, ilabel)
+            tstrlen(rbx)
+            add rbx,rax
+            mov rax,hll
+            .if ( [rax].hll_item.cmd == HLL_REPEAT )
+
+                ReplaceLabel(buffer, olabel, nlabel)
+                mov rcx,GetLabelStr(nlabel, &buff)
+                tsprintf(rbx, "%s%s%s", rcx, LABELQUAL, &EOLSTR)
+            .else
+                mov rcx,GetLabelStr(olabel, &buff)
+                tsprintf(rbx, "%s%s%s", rcx, LABELQUAL, &EOLSTR)
+                ReplaceLabel(buffer, olabel, nlabel)
+            .endif
+        .endif
+        tstrlen(rsi)
+        add rsi,rax
+        mov [rdi].hll_opnd.lasttruelabel,0
+    .endw
+
+    .if ( truelabel )
+
+        mov rbx,[rdi].hll_opnd.lastjmp
+        .if ( rbx && [rdi].hll_opnd.lasttruelabel )
+
+            ReplaceLabel(rsi, [rdi].hll_opnd.lasttruelabel, truelabel)
+            tstrchr(rbx, EOLCHAR)
+            mov byte ptr [rax+1],0
+        .endif
+
+        tstrlen(rsi)
+        add rsi,rax
+        tstrcat( tstrcat(GetLabelStr( truelabel, rsi), LABELQUAL), &EOLSTR)
+        mov eax,truelabel
+        mov [rdi].hll_opnd.lasttruelabel,eax
+    .endif
+    mov eax,NOT_ERROR
+    ret
+    endp
+
+
+;
+; evaluate the C like boolean expression found in HLL structs
+; like .IF, .ELSEIF, .WHILE, .UNTIL and .UNTILCXZ
+; might return multiple lines (strings separated by EOLCHAR)
+; - i = index for tokenarray[] where expression starts. Is restricted
+;    to one source line (till T_FINAL)
+; - label: label to jump to if expression is <is_true>!
+; is_true:
+;   .IF:    FALSE
+;   .ELSEIF:    FALSE
+;   .WHILE: TRUE
+;   .UNTIL: FALSE
+;   .UNTILCXZ: FALSE
+;   .BREAK .IF:TRUE
+;   .CONT .IF: TRUE
+;
+
+    assume rbx:token_t
+
+ExpandCStrings proc __ccall public uses rdi rbx tokenarray:token_t
+
+    ldr rcx,tokenarray
+
+    xor eax,eax
+    .return .if ( [rcx].asm_tok.Expand == 0 )
+    .return .if ( Options.strict_masm_compat == 1 )
+
+    .for ( edi = 0, rbx = rcx : [rbx].token != T_FINAL : rbx+=asm_tok, edi++ )
+
+        .if ( [rbx].IsProc )
+
+            .for ( edx = 0, ecx = 0, al = [rbx].token : al != T_FINAL: rbx+=asm_tok, edi++, al = [rbx].token )
+
+                .switch pascal al
+                .case T_OP_BRACKET
+                    .break .if ( edx == 0 )
+                    inc ecx
+                .case T_CL_BRACKET
+                    dec ecx
+                .case T_OP_SQ_BRACKET
+                    inc edx
+                .case T_CL_SQ_BRACKET
+                    dec edx
+                .endsw
+            .endf
+            .if ( al != T_OP_BRACKET )
+
+                asmerr( 3018, [rbx-asm_tok].string_ptr, [rbx].string_ptr )
+               .break
+            .endif
+            .return .ifd GenerateCString( edi, tokenarray )
+
+            .for ( ecx = 1, rbx+=asm_tok : [rbx].token != T_FINAL : rbx+=asm_tok )
+
+                mov rdx,[rbx].string_ptr
+                movzx eax,byte ptr [rdx]
+                .switch pascal eax
+                .case '"'
+                    .return( asmerr( 2004, [rbx].string_ptr ) )
+                .case ')'
+                    dec ecx
+                   .break .ifz
+                .case '('
+                    inc ecx
+                .endsw
+            .endf
+            .return( 0 )
+        .endif
+    .endf
+    ret
+    endp
+
+
+GetProcVtbl proc fastcall private sym:asym_t, name:ptr sbyte
+
+    xor eax,eax
+    .if ( [rcx].asym.mem_type == MT_TYPE && [rcx].asym.type )
+        mov rcx,[rcx].asym.type
+    .endif
+    .if ( [rcx].asym.target_type &&
+          ( [rcx].asym.mem_type == MT_PTR || [rcx].asym.ptr_memtype == MT_TYPE ) )
+        mov rcx,[rcx].asym.target_type
+    .endif
+    .if ( [rcx].asym.hasvtable )
+        SearchNameInStruct( [rcx].asym.vtable, rdx, 0, 0 )
+    .endif
+    ret
+    endp
+
+
+GetProc proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, opnd:ptr expr
+
+    ldr ecx,i
+    imul ebx,ecx,asm_tok
+    add rbx,ldr(tokenarray)
+
+    .if ( [rbx].token == T_OP_SQ_BRACKET )
+
+        .for ( : [rbx].token != T_FINAL : rbx+=asm_tok, ecx++ )
+            .break .if ( [rbx].token == T_CL_SQ_BRACKET )
+        .endf
+        add ecx,3
+        add rbx,asm_tok*2
+        .return 0 .if ( [rbx+asm_tok].token !=  T_DOT )
+        .return 0 .ifd EvalOperand(&i, tokenarray, ecx, opnd, 0) == ERROR
+        mov rcx,opnd
+        mov rax,[rcx].expr.type
+
+    .elseif [rbx].token == T_REG
+        GetStdAssume(GetRegNo([rbx].tokval))
+    .else
+        SymFindID(rbx)
+    .endif
+    .return .if !rax
+    .return .if [rax].asym.isproc
+
+    .if ( [rbx].token == T_ID && [rbx+asm_tok].token == T_DOT &&
+          [rbx+asm_tok*2].token == T_ID )
+        .return GetProcVtbl(rax, [rbx+asm_tok*2].string_ptr)
+    .endif
+
+    mov rcx,[rax].asym.target_type
+    mov dl,[rax].asym.mem_type
+    .if ( dl == MT_PTR && rcx && [rcx].asym.isproc )
+        .return rcx
+    .endif
+    .if dl == MT_PTR && rcx && [rcx].asym.mem_type == MT_PROC
+        mov rax,[rax].asym.target_type
+        jmp isfnproto
+    .endif
+
+    mov rcx,[rax].asym.type
+    .if ( dl == MT_TYPE && ( [rcx].asym.mem_type == MT_PTR || [rcx].asym.mem_type == MT_PROC ) )
+
+        ; second case: symbol is a (function?) pointer
+
+        mov rax,rcx
+        .if [rax].asym.mem_type != MT_PROC
+            jmp isfnptr
+        .endif
+    .endif
+
+isfnproto:
+
+    ; pointer target must be a PROTO typedef
+
+    .return 0 .if [rax].asym.mem_type != MT_PROC
+
+isfnptr:
+
+    ; get the pointer target
+
+    mov rax,[rax].asym.target_type
+    ret
+
+GetProc endp
+
+
+GetParamId proc fastcall private uses rsi rdi rbx id:int_t, sym:asym_t
+    mov rsi,[rdx].asym.procinfo
+    mov rax,[rsi].proc_info.paralist
+    .if ( rax == NULL )
+        .return
+    .endif
+    xor edi,edi
+    .while ( [rax].asym.nextparam )
+        mov rax,[rax].asym.nextparam
+        inc edi
+    .endw
+    .if ( edi < ecx )
+        .return NULL
+    .endif
+    mov bl,[rdx].asym.langtype
+    .if ( bl == LANG_STDCALL || bl == LANG_C || bl == LANG_SYSCALL || bl == LANG_VECTORCALL ||
+          ( bl == LANG_FASTCALL && MODULE.Ofssize != USE16 ) )
+        mov rbx,rax
+        .while ecx
+            .for ( rax = [rsi].proc_info.paralist : rbx != [rax].asym.nextparam : rax = [rax].asym.nextparam )
+            .endf
+            mov rbx,rax
+            dec ecx
+        .endw
+    .else
+        .for ( rax = [rsi].proc_info.paralist : ecx : rax = [rax].asym.nextparam )
+            dec ecx
+        .endf
+    .endif
+    .if ( rax && [rax].asym.mem_type == MT_TYPE )
+        mov rax,[rax].asym.type
+    .endif
+    ret
+    endp
+
+
+GetMacroReturn proc __ccall private uses rsi rbx i:int_t, tokenarray:token_t
+
+  local opnd:expr
+  local mac_name[512]:char_t
+    ;
+    ; v2.32.43 - test return value from inline function
+    ;
+    ; if the last line is retm<..> use this as return value
+    ;
+    .return .if !GetProc( ldr(i), ldr(tokenarray), &opnd )
+    .if ( [rax].asym.state == SYM_STRUCT_FIELD )
+        mov rsi,rax
+        imul ebx,i,asm_tok
+        add rbx,tokenarray
+        .if ( [rbx].token == T_OP_SQ_BRACKET )
+            mov rcx,opnd.type
+        .else
+           .return .if !SymFindID( rbx )
+            xor ecx,ecx
+            .if ( [rax].asym.mem_type == MT_TYPE )
+                mov rcx,[rax].asym.type
+            .elseif ( [rax].asym.mem_type == MT_PTR )
+                mov rcx,[rax].asym.target_type
+            .endif
+        .endif
+        .return 0 .if ( !rcx || [rcx].asym.typekind != TYPE_STRUCT )
+        tstrcpy( &mac_name, [rcx].asym.name )
+        tstrcat( rax, "_" )
+        tstrcat( rax, [rsi].asym.name )
+        .return .if !SymFind( rax )
+        .if ( [rax].asym.state == SYM_TMACRO )
+            .return .if !SymFind( [rax].asym.string_ptr )
+        .endif
+        mov [rsi].asym.isvmacro,1
+        mov [rsi].asym.vmacro,rax ; vtable method is inline - sym->vmacro set
+        mov rcx,rax
+        xor eax,eax
+    .else
+        mov rcx,[rax].asym.target_type
+        mov rdx,rax
+        xor eax,eax
+        .return .if !( [rdx].asym.state == SYM_EXTERNAL || [rdx].asym.state == SYM_STACK )
+        .return .if !rcx
+    .endif
+    .return .if ( [rcx].asym.state != SYM_MACRO )
+    mov rcx,[rcx].asym.macroinfo
+    mov rcx,[rcx].macro_info.lines
+    .return .if !rcx
+    .while [rcx].srcline.next
+        mov rcx,[rcx].srcline.next
+    .endw
+    lea rcx,[rcx].srcline.line
+    mov edx,[rcx]
+    .return .if ( edx != 'mter' )
+    add rcx,4
+    mov dl,[rcx]
+    .while 1
+       .break .if ( !dl || dl == '<' )
+        inc rcx
+        mov dl,[rcx]
+    .endw
+    .return .if ( dl != '<' )
+    .repeat
+        inc rcx
+        mov dl,[rcx]
+       .continue(0) .if ( dl == ' ' )
+       .continue(0) .if ( dl == 9 )
+    .until 1
+    .return .if ( !dl )
+    .return .if ( dl == '>' )
+    .return( rcx )
+    endp
+
+
+; v2.37.74: The return value from RETM may include params
+
+fill_paramid proc __ccall private uses rsi rdi rbx dst:string_t, id:int_t, tokenarray:token_t
+
+    .for ( rdi = ldr(dst), rbx = ldr(tokenarray), ecx = 0, edx = ldr(id),
+           rsi = [rbx].tokpos : edx : rbx += asm_tok )
+        movzx eax,[rbx].token
+        .switch eax
+        .case T_FINAL
+            .break
+        .case T_OP_BRACKET
+            inc ecx
+           .endc
+        .case T_CL_BRACKET
+            .if ecx
+                dec ecx
+               .endc
+            .endif
+            mov rax,[rbx].tokpos
+            sub rax,rsi
+            mov ecx,eax
+            rep movsb
+           .return
+        .case T_COMMA
+            dec edx
+            .ifz
+                mov rax,[rbx].tokpos
+                sub rax,rsi
+                mov ecx,eax
+                rep movsb
+               .return
+            .endif
+            mov rsi,[rbx+asm_tok].tokpos
+        .endsw
+    .endf
+    xor eax,eax
+    ret
+    endp
+
+
+StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:token_t
+
+   .new mac:string_t = NULL
+   .new curr:asym_t
+   .new proc_id:token_t = NULL ; foo( 1, bar(...), ...)
+   .new parg_id:int_t = 0 ; foo.paralist[1] = return type[al|ax|eax|[rdx::eax|rax|xmm0]]
+   .new opnd:expr
+   .new bracket:int_t = 0
+   .new reg2:int_t = 0
+   .new size:int_t
+   .new b[MAX_LINE_LEN]:char_t
+
+    .for ( rdi = &b, rbx = ldr(tokenarray), edx = 0 : edx < i : edx++, rbx += asm_tok )
+        .if ( edx )
+            .if ( [rbx].IsProc )
+                mov proc_id,rbx
+                mov parg_id,0
+            .endif
+            .switch [rbx].token
+            .case T_CL_BRACKET
+                dec bracket
+                .endc
+            .case T_OP_BRACKET
+                inc bracket
+                .endc
+            .case T_COMMA
+                .if proc_id
+                    inc parg_id
+                .endif
+                .endc
+            .endsw
+        .endif
+        mov rsi,[rbx].tokpos
+        mov rcx,[rbx+asm_tok].tokpos
+        sub rcx,rsi
+        rep movsb
+    .endf
+    mov byte ptr [rdi],0
+    mov rdi,tokenarray
+    xor esi,esi
+    .if ( bracket == 0 )
+        mov proc_id,rsi
+    .endif
+    .if GetMacroReturn(i, rdi)
+        mov mac,rax
+        jmp macro_args
+    .endif
+    mov rax,proc_id
+    .if ( rax > tokenarray && [rax-asm_tok].asm_tok.token == T_OP_SQ_BRACKET )
+        xor eax,eax
+    .endif
+    .if ( rax )
+        sub rax,tokenarray
+        mov ecx,asm_tok
+        xor edx,edx
+        div ecx
+        mov ecx,eax
+        .if GetProc( ecx, tokenarray, &opnd )
+            .if ( [rax].asym.mem_type == MT_TYPE )
+                mov rax,[rax].asym.type
+            .endif
+            mov rcx,GetParamId( parg_id, rax )
+            .if rcx
+                mov eax,[rcx].asym.total_size
+                .switch eax
+                  .case 1: mov esi,T_AL : .endc
+                  .case 2: mov esi,T_AX : .endc
+                  .case 4
+                    mov esi,T_EAX
+                    .if ( MODULE.Ofssize == USE64 )
+                        .if ( [rcx].asym.mem_type & MT_FLOAT )
+                            mov esi,T_XMM0
+                        .endif
+                    .elseif ( MODULE.Ofssize == USE16 )
+                        mov eax,MODULE.curr_cpu ; v2.37.07: added
+                        and eax,P_CPU_MASK
+                        .if ( eax < P_386 )
+                            .if ( [rbx-asm_tok].token == T_DBL_COLON )
+                                ; reg::func()
+                                mov esi,T_AX
+                            .else
+                                mov esi,T_DX
+                                mov reg2,T_AX
+                            .endif
+                        .endif
+                    .endif
+                    .endc
+                  .case 8
+                    .if ( MODULE.Ofssize == USE64 )
+                        .if ( [rcx].asym.mem_type & MT_FLOAT )
+                            mov esi,T_XMM0
+                        .else
+                            mov esi,T_RAX
+                        .endif
+                    .else
+                        .if ( [rbx-asm_tok].token == T_DBL_COLON )
+                            ; reg::func()
+                            mov esi,T_EAX
+                        .else
+                            mov esi,T_EDX
+                            mov reg2,T_EAX
+                        .endif
+                    .endif
+                    .endc
+                  .case 16
+                    .if ( [rcx].asym.mem_type & MT_FLOAT )
+                        mov esi,T_XMM0
+                    .elseif ( MODULE.Ofssize == USE64 )
+                        mov esi,T_RDX
+                        mov reg2,T_RAX
+                    .endif
+                    .endc
+                  .case 32
+                    .if ( [rcx].asym.mem_type == MT_YWORD )
+                        mov esi,T_YMM0
+                    .endif
+                    .endc
+                  .case 64
+                    .if [rcx].asym.mem_type == MT_ZWORD
+                        mov esi,T_ZMM0
+                    .endif
+                    .endc
+                .endsw
+            .endif
+        .endif
+    .endif
+    .if !esi
+ifndef ASMC64
+        mov esi,MODULE.accumulator
+else
+        mov esi,T_RAX
+endif
+        mov eax,i
+        .if ( !proc_id && eax > 1 )
+            imul eax,eax,asm_tok
+            lea rbx,[rdi+rax-(asm_tok*2)]
+            .if ( [rbx+asm_tok].token == T_COMMA && [rbx].token != T_CL_SQ_BRACKET )
+                ;
+                ; <op> <reg|id> <,> <proc>
+                ;
+                xor eax,eax
+                .if ( [rbx].token == T_REG )
+                    SizeFromRegister( [rbx].tokval )
+                .elseif SymFind( [rbx].string_ptr )
+                    ; movsd id,cos(..)
+                    .if ( MODULE.Ofssize == USE64 &&
+                          ( [rax].asym.mem_type == MT_REAL4 || [rax].asym.mem_type == MT_REAL8 ) )
+                        mov eax,16
+                    .else
+                        SizeFromMemtype( [rax].asym.mem_type, USE_EMPTY, [rax].asym.type )
+                    .endif
+                .elseif ( [rbx-asm_tok].token == T_DOT )
+                    ; <op> <struct>.id, rax
+size_from_ptr:
+                    .fors ( eax = i, eax -= 2, edx = 0 : eax > 0 : eax--, rbx-=asm_tok )
+                        mov cl,[rbx].token
+                        mov ch,[rbx-asm_tok].token
+                        .switch pascal cl
+                        .case T_ID
+                           .break .if ( ch != T_DOT && !edx )
+                        .case T_CL_SQ_BRACKET
+                            inc edx
+                        .case T_OP_SQ_BRACKET
+                            dec edx
+                           .break .if ( ch != T_DOT && ch != T_ID && !edx )
+                        .endsw
+                    .endf
+                    .if ( ch == T_BINARY_OPERATOR && eax > 1 && [rbx-asm_tok].tokval == T_PTR )
+                        sub eax,2
+                    .endif
+                    mov edx,i
+                    sub edx,2
+                    mov i,eax
+                    .ifd EvalOperand( &i, tokenarray, edx, &opnd, EXPF_NOERRMSG ) != ERROR
+                        xor eax,eax
+                        .if ( opnd.kind == EXPR_ADDR || ( opnd.indirect ) )
+if 0
+                            xor edx,edx
+                            mov ecx,MODULE.curr_cpu ; ??
+                            and ecx,P_CPU_MASK
+                            .if ( ecx > P_686 || ( ecx == P_686 && MODULE.curr_cpu & P_SSEALL ) )
+                                inc edx
+                            .endif
+                            .if ( edx && ( opnd.mem_type == MT_REAL4 || opnd.mem_type == MT_REAL8 ) )
+else
+                            .if ( MODULE.Ofssize == USE64 && ( opnd.mem_type == MT_REAL4 || opnd.mem_type == MT_REAL8 ) )
+endif
+                                mov eax,16
+                            .else
+                                SizeFromMemtype( opnd.mem_type, USE_EMPTY, opnd.type )
+                            .endif
+                            .if ( eax == 10 )
+                                mov eax,16
+                            .endif
+                        .endif
+                    .else
+                        xor eax,eax
+                    .endif
+                .endif
+                mov size,eax
+                .switch eax
+                .case 1: mov esi,T_AL  : .endc
+                .case 2: mov esi,T_AX  : .endc
+                .case 4
+                    mov esi,T_EAX
+                    .if ( MODULE.Ofssize == USE16 )
+                        mov esi,T_DX
+                        mov reg2,T_AX
+                    .endif
+                    .endc
+                .case 8
+                    .if ( MODULE.Ofssize == USE64 )
+                        mov esi,T_RAX
+                    .elseif ( MODULE.Ofssize == USE32 )
+                        mov esi,T_EDX
+                        mov reg2,T_EAX
+                    .endif
+                    .endc
+                .case 16
+                    mov esi,T_XMM0
+                    .if ( [rdi].asm_tok.tokval == T_MOV )
+                        mov esi,T_RDX
+                        mov reg2,T_RAX
+                    .endif
+                    .endc
+                .case 32 : mov esi,T_YMM0 : .endc
+                .case 64 : mov esi,T_ZMM0 : .endc
+                .endsw
+            .elseif ( [rbx+asm_tok].token == T_COMMA && [rbx].token == T_CL_SQ_BRACKET )
+                jmp size_from_ptr
+            .endif
+        .endif
+    .endif
+    mov rbx,GetResWName(esi, 0)
+macro_args:
+    lea rsi,b
+    tstrcat(rsi, " ")
+    .if mac
+        lea rdi,[rsi+tstrlen(rsi)]
+        mov rsi,mac
+        .while 1
+            lodsb
+            mov ah,[rsi]
+            .break .if !al
+            .continue .if ax == '<!'
+            .continue .if ax == '>!'
+            .if ( al == 10 ) ; set by replace_parm()
+                movzx edx,ah
+                inc rsi
+                add rdi,fill_paramid(rdi, edx, &[rbx+asm_tok*2])
+            .else
+                stosb
+            .endif
+        .endw
+        mov [rdi-1],al
+        lea rsi,b
+        mov rdi,tokenarray
+    .else
+        tstrcat(rsi, rbx)
+    .endif
+    .if reg2
+        imul ebx,e,asm_tok
+        .if ( [rbx+rdi].token == T_FINAL && [rdi].asm_tok.tokval == T_MOV )
+            ; mov mem,func()
+            .fors ( ebx = asm_tok*2 : [rbx+rdi].token != T_FINAL : ebx += asm_tok )
+                .break .if ( [rbx+rdi].token == T_COMMA )
+            .endf
+            .if ( [rbx+rdi].token != T_COMMA )
+                .return( asmerr( 2008, rsi ) )
+            .endif
+            mov rbx,[rbx+rdi].tokpos
+            mov byte ptr [rbx],0
+            mov edx,size
+            shr edx,1
+            mov ecx,T_WORD
+            mov eax,T_DX
+            .if ( reg2 == T_EAX )
+                mov ecx,T_DWORD
+                mov eax,T_EDX
+            .elseif ( reg2 == T_RAX )
+                mov ecx,T_QWORD
+                mov eax,T_RDX
+            .endif
+            tsprintf( rsi,
+                "mov %r ptr %s,%r\n"
+                "mov %r ptr %s+%d,%r",
+                ecx, [rdi+asm_tok].asm_tok.tokpos, reg2,
+                ecx, [rdi+asm_tok].asm_tok.tokpos, edx, eax )
+            mov byte ptr [rbx],','
+        .else
+            tstrcat(rsi, "::")
+            tstrcat(rsi, GetResWName(reg2, 0))
+        .endif
+    .endif
+    imul ebx,e,asm_tok
+    .if [rbx+rdi].token != T_FINAL
+        tstrcat( rsi, " " )
+        tstrcat( rsi, [rbx+rdi].tokpos )
+    .endif
+    Tokenize(tstrcpy(LclAlloc( &[tstrlen(rsi)+1] ), rsi), 0, rdi, TOK_DEFAULT)
+    mov TokenCount,eax
+   .return( STRING_EXPANDED )
+    endp
+
+
+LKRenderHllProc proc __ccall private uses rsi rdi rbx dst:string_t, i:uint_t, tokenarray:token_t
+
+   .new name:string_t
+   .new id:token_t
+   .new args:token_t
+   .new sym1:asym_t
+   .new static_struct:int_t
+   .new sym:asym_t
+   .new type:string_t
+   .new method:asym_t
+   .new comptr:string_t
+   .new constructor:int_t       ; Class(..)
+   .new defconstructor:int_t    ; Class(..) not defined
+   .new vtable:int_t
+   .new brcount:int_t
+   .new sqcount:int_t
+   .new dotcount:int_t
+   .new sqbrend:token_t
+   .new vparray:asym_t
+   .new vparray_sqbr:char_t
+   .new j:int_t
+   .new opnd:expr
+   .new dots[10]:token_t
+   .new ClassVtbl[256]:char_t
+   .new b[MAX_LINE_LEN]:char_t
+
+    ldr edx,i
+    ldr rbx,tokenarray
+
+    lea rdi,vparray_sqbr
+    lea rcx,sym1
+    xor eax,eax
+    sub rcx,rdi
+    rep stosb
+    mov j,edx
+    imul eax,edx,asm_tok
+    add rbx,rax
+    mov id,rbx
+
+    .for ( : [rbx].token != T_FINAL : rbx+=asm_tok, j++ )
+
+        .if ( [rbx].token == T_OP_SQ_BRACKET )
+
+            .for ( sqcount++, rbx+=asm_tok, j++ : sqcount && [rbx].token != T_FINAL : rbx+=asm_tok, j++ )
+
+                .if ( [rbx].IsProc )
+                    .return .ifd LKRenderHllProc( dst, j, tokenarray ) == ERROR
+                .elseif ( [rbx].token == T_OP_BRACKET )
+                    inc brcount
+                .elseif ( [rbx].token == T_CL_BRACKET )
+                    dec brcount
+                .elseif ( !brcount && [rbx].token == T_OP_SQ_BRACKET )
+                    inc sqcount
+                .elseif ( !brcount && [rbx].token == T_CL_SQ_BRACKET )
+                    dec sqcount
+                    .ifz
+                        .if ( !sqbrend )
+                            mov sqbrend,rbx
+                        .endif
+                        .break
+                    .endif
+                .endif
+            .endf
+        .elseif ( [rbx].token == T_DOT )
+            mov eax,dotcount
+            mov dots[rax*size_t],rbx
+            inc dotcount
+        .elseif ( [rbx].token == T_OP_BRACKET )
+            .break
+        .endif
+    .endf
+    .if [rbx].token != T_OP_BRACKET
+        .return asmerr( 2008, [rbx].string_ptr )
+    .endif
+
+    mov args,rbx
+    mov name,[rbx-asm_tok].string_ptr
+    mov rbx,id
+
+    .if ( [rbx].token == T_OP_SQ_BRACKET )
+        ;
+        ; v2.27 - [reg].Class.Method()
+        ;       - [reg+foo([rax])].Class.Method()
+        ;       - [reg].Method()
+        ;
+        xor eax,eax
+        .if ( dotcount )
+
+            mov rdx,dots
+            .if ( dotcount > 1 )
+
+                ; [reg].Class.Method()
+                ; [reg].p[..].Method()
+
+                mov rdi,name
+                .if SymFindID( &[rdx+asm_tok] )
+
+                    .if ( dotcount > 2 && [rax].asym.state == SYM_TYPE && [rax].asym.typekind == TYPE_STRUCT )
+
+                        mov sym1,rax
+                        inc vparray_sqbr
+                        mov edi,dotcount
+                        sub edi,2
+                        mov esi,1
+                        jmp indirect
+                    .endif
+
+                .elseif GetStdAssume( GetRegNo( [rbx+asm_tok].tokval ) )
+
+                    mov sym1,rax
+                    mov vparray_sqbr,2
+                    mov edi,dotcount
+                    inc dotcount
+                    dec edi
+                    xor esi,esi
+                    jmp indirect
+                .endif
+
+            .elseif ( [rdx+asm_tok*2].asm_tok.token == T_OP_BRACKET )
+
+                ; [reg].Method() -- assume reg:ptr Class
+
+                mov rdi,[rdx+asm_tok].asm_tok.string_ptr
+                mov eax,i
+                mov brcount,eax
+                mov rax,dots
+                sub rax,tokenarray
+                mov ecx,asm_tok
+                xor edx,edx
+                div ecx
+                mov ecx,eax
+                .ifd EvalOperand( &brcount, tokenarray, ecx, &opnd, 0 ) != ERROR
+                    mov rax,opnd.type
+                .else
+                    xor eax,eax
+                .endif
+            .endif
+
+            .if ( rax )
+                .if ( [rax].asym.state == SYM_TYPE && [rax].asym.typekind == TYPE_STRUCT )
+                    ;
+                    ; If Class.Method do not exist assume ClassVtbl.Method do.
+                    ;
+                    jmp type_struct
+                .else
+                    xor eax,eax
+                .endif
+            .endif
+        .endif
+        mov rcx,rax
+
+    .else
+
+        mov sym1,SymFindID( rbx )
+        mov edi,dotcount
+        .if edi
+            dec edi
+        .endif
+
+        .for ( esi = 0 : rax && edi : esi++, edi-- )
+
+indirect:
+            mov rcx,rax
+            .if ( [rcx].asym.mem_type == MT_TYPE )
+                mov rcx,[rcx].asym.type
+            .endif
+            .if ( [rcx].asym.mem_type == MT_PTR )
+                mov rcx,[rcx].asym.target_type
+            .endif
+            .break .if !rcx
+            mov rbx,dots[rsi*size_t]
+            add rbx,asm_tok
+            mov vparray,SearchNameInStruct( rcx, [rbx].string_ptr, 0, 0 )
+        .endf
+
+        mov sym,rax
+        xor ecx,ecx
+        .if ( vparray )
+            mov rdx,sym1
+            .if ( rdx != rax && [rdx].asym.mem_type == MT_TYPE )
+                mov rdx,[rdx].asym.type ; added v2.36.21
+            .endif
+            .if ( rdx != rax && [rdx].asym.mem_type != MT_PTR )
+                .if ( dotcount == 2 )
+                    mov vparray,NULL  ; static class.ptr.proc()
+                .else
+                    inc static_struct ; static class.ptr.ptr...proc()
+                .endif
+            .endif
+        .endif
+
+        .if ( dotcount )
+
+            mov rdi,name
+
+        .elseif ( rax && [rax].asym.state == SYM_TYPE && [rbx+asm_tok].token == T_OP_BRACKET )
+
+            mov rdi,[rbx].string_ptr
+            mov rcx,rax
+            mov type,rdi
+        .else
+            xor eax,eax
+        .endif
+
+        mov rbx,id
+        .if rax
+
+            .if ( [rax].asym.mem_type == MT_TYPE && [rax].asym.type )
+
+                mov rax,[rax].asym.type
+
+                .if ( [rax].asym.typekind == TYPE_TYPEDEF )
+
+                    mov rcx,[rax].asym.target_type
+
+                .elseif ( [rax].asym.typekind == TYPE_STRUCT )
+
+                    inc static_struct
+type_struct:
+                    mov sym,rax
+                    mov rcx,rax
+                    xor eax,eax
+                    .if ( [rcx].asym.hasvtable )
+                        SearchNameInStruct([rcx].asym.vtable, rdi, 0, 0)
+                    .endif
+                    .if ( rax == NULL )
+                        .if SearchNameInStruct(sym, rdi, 0, 0)
+                            mov method,rax
+                            mov sym,0
+                        .endif
+                    .endif
+                    mov rcx,sym
+                .endif
+
+            .elseif ( [rax].asym.mem_type == MT_PTR &&
+                    ( [rax].asym.state == SYM_STACK || [rax].asym.state == SYM_EXTERNAL ) )
+
+                mov rcx,[rax].asym.target_type
+            .endif
+        .endif
+    .endif
+
+    mov name,rdi
+    mov rdx,rcx
+    lea rdi,b
+    mov eax,'ovni'
+    stosd
+    mov eax,' ek'
+    stosd
+    dec rdi
+
+    .if ( rdx && [rdx].asym.state == SYM_TYPE && [rdx].asym.typekind == TYPE_STRUCT )
+
+        mov rsi,rdx
+        mov comptr,[rsi].asym.name
+        .if SearchNameInStruct( rsi, name, 0, 0 )
+            mov method,rax
+        .endif
+        .if ( [rsi].asym.hasvtable )
+
+            .if SearchNameInStruct( [rsi].asym.vtable, name, 0, 0 )
+                inc vtable
+                mov method,rax
+                mov rsi,[rsi].asym.vtable
+                mov comptr,[rsi].asym.name
+            .endif
+        .endif
+        .if ( method == NULL )
+            .if ( tstrcmp( [rsi].asym.name, name ) == 0 )
+                inc vtable
+                inc constructor
+                .if ( type )
+                    .if ( !SymFind( tstrcat( tstrcat( tstrcpy( &ClassVtbl, name ), "_" ), name ) ) )
+                        inc defconstructor
+                        mov sym,rsi
+                    .endif
+                .endif
+            .endif
+        .elseif ( vparray )
+            mov rax,method
+            mov [rax].asym.vparray,1
+        .endif
+    .endif
+
+    .if ( comptr )
+
+        .if ( MODULE.Ofssize == USE64 && !constructor )
+
+            mov rax,method
+            .if rax ; v2.28: Added for undefined symbol error..
+
+                .if ( [rax].asym.mem_type == MT_TYPE && [rax].asym.type )
+                    mov rax,[rax].asym.type
+                    .if ( [rax].asym.typekind == TYPE_TYPEDEF )
+                        mov rax,[rax].asym.target_type
+                    .endif
+                .endif
+                .if ( [rax].asym.langtype == LANG_SYSCALL )
+                    mov eax,"01r[" ; v2.28: Added for :vararg
+                .else
+                    mov eax,"xar["
+                .endif
+            .else
+                mov eax,"xar["
+            .endif
+        .else
+            mov eax,"xae["
+        .endif
+
+        .if ( !constructor )
+
+            stosd
+            mov eax,".]"
+            stosw
+        .endif
+
+        mov rsi,comptr
+        .while ( byte ptr [rsi] )
+            movsb
+        .endw
+
+        .if ( type )
+            mov al,'.'
+            .if ( constructor )
+                mov al,'_'
+            .endif
+            stosb
+            mov rsi,type
+            .while ( byte ptr [rsi] )
+                movsb
+            .endw
+        .endif
+
+        .if ( [rbx].token == T_OP_SQ_BRACKET && !vparray_sqbr )
+
+            .if ( [rbx+asm_tok*2].token == T_CL_SQ_BRACKET )
+
+                mov rax,[rbx+asm_tok].string_ptr
+            .else
+                tstrcpy( &ClassVtbl, "addr [" )
+                .for ( rsi = &[rbx+asm_tok] : rsi < sqbrend : rsi += asm_tok )
+                    tstrcat( rax, [rsi].asm_tok.string_ptr )
+                .endf
+            .endif
+
+        .elseif ( dotcount )
+
+            lea rax,ClassVtbl
+            mov rsi,[rbx].tokpos
+            mov rdx,args
+            sub rdx,2*asm_tok
+            mov rcx,[rdx].asm_tok.tokpos
+            sub rcx,rsi
+            mov rdx,rdi
+            mov rdi,rax
+            rep movsb
+            mov byte ptr [rdi],0
+            mov rdi,rdx
+        .else
+            mov rax,[rbx].string_ptr
+        .endif
+        mov comptr,rax
+        mov rax,method
+        .if rax
+            mov [rax].asym.method,1
+            .if ( !vtable )
+                mov [rax].asym.vparray,1
+            .endif
+        .endif
+    .endif
+
+    inc j
+    .if ( comptr )
+        mov rbx,args
+        sub rbx,asm_tok*2
+        .if rbx <= id
+            add rbx,asm_tok*2
+        .endif
+    .endif
+    mov rsi,[rbx].tokpos
+    mov rcx,args
+    lea rbx,[rcx+asm_tok]
+    mov rcx,[rcx].asm_tok.tokpos
+    sub rcx,rsi
+    rep movsb
+    mov byte ptr [rdi],0
+
+    .if ( type )
+
+        mov eax,"0 ,"
+        stosd
+        dec rdi
+
+    .elseif ( comptr && vtable )
+
+        mov eax,' ,'
+        stosw
+
+        mov rsi,comptr
+
+        .if ( vparray_sqbr )
+
+            mov vtable,0
+            .for ( rsi++ : byte ptr [rsi] : rsi++ )
+
+                mov al,[rsi]
+                .break .if ( al == ']' )
+                stosb
+            .endf
+            .if ( vparray_sqbr == 2 )
+
+                mov rdx,rdi
+                lea rdi,ClassVtbl
+                mov rax,id
+                mov rsi,[rax].asm_tok.tokpos
+                mov rax,dots
+                mov rcx,[rax+asm_tok].asm_tok.tokpos
+                sub rcx,rsi
+                rep movsb
+                mov rax,sym1
+                mov rsi,[rax].asym.name
+                mov ecx,[rax].asym.name_size
+                rep movsb
+                mov rax,dots
+                mov rsi,[rax].asm_tok.tokpos
+                mov rax,args
+                sub rax,2*asm_tok
+                mov rcx,[rax].asm_tok.tokpos
+                sub rcx,rsi
+                rep movsb
+                mov byte ptr [rdi],0
+                mov rdi,rdx
+            .endif
+
+        .else
+
+            .if ( static_struct )
+
+                mov eax,'rdda'
+                stosd
+                mov eax,' '
+                stosb
+            .endif
+            .while ( byte ptr [rsi] )
+                lodsb
+                .if ( al == '.' && vparray )
+                    mov vtable,0
+                   .break
+                .endif
+                stosb
+            .endw
+        .endif
+    .endif
+    mov byte ptr [rdi],0
+
+    .if ( [rbx].token == T_CL_BRACKET )
+
+        inc j
+        lea rsi,b
+        jmp done
+    .endif
+
+    mov eax,' ,'
+    stosw
+
+    .for ( brcount = 1 : [rbx].token != T_FINAL : )
+
+        .if ( [rbx].IsProc )
+            .return .ifd LKRenderHllProc(dst, j, tokenarray) == ERROR
+        .endif
+
+        mov al,[rbx].token
+        .if ( al == T_CL_BRACKET )
+            dec brcount
+           .break .ifz
+        .elseif ( al == T_OP_BRACKET )
+            inc brcount
+        .endif
+        .if ( al == '&' )
+            lea rsi,@CStr("addr ")
+            mov ecx,5
+        .elseif ( al == T_COMMA && [rbx+asm_tok].token == T_CL_BRACKET && brcount == 1 )
+            inc j
+            add rbx,asm_tok
+           .break
+        .else
+            mov rsi,[rbx].tokpos
+            mov rcx,[rbx+asm_tok].tokpos
+            sub rcx,rsi
+        .endif
+        rep movsb
+        inc j
+        add rbx,asm_tok
+    .endf
+    inc j
+    mov byte ptr [rdi],0
+
+done:
+
+    .if ( comptr && !vtable )
+
+        mov eax,' ,'
+        stosw
+        mov rsi,comptr
+        .while byte ptr [rsi]
+            movsb
+        .endw
+        mov byte ptr [rdi],0
+    .endif
+
+    ; v2.21 -pe dllimport:<dll> external proto <no args> error
+    ;
+    ; externals need invoke for the [_]_imp_ prefix
+    ;
+    mov eax,i
+    lea ecx,[rax+3]
+    inc eax
+
+    .if ( !comptr && ( ( j == eax && eax > 1 ) || j == ecx ) )
+
+        xor eax,eax
+        mov rcx,sym
+        .if ( rcx && ( [rcx].asym.isimport || [rcx].asym.state == SYM_EXTERNAL ) )
+            .if ( [rcx].asym.dll )
+                mov rax,rcx
+            .elseif ( [rcx].asym.isinline )
+                mov rcx,[rcx].asym.target_type
+                .if ( rcx && [rcx].asym.state == SYM_MACRO )
+                    mov rax,rcx
+                .endif
+            .endif
+        .endif
+
+        .if ( rax == NULL ) ; convert INVOKE to CALL
+            .if ( rcx && ( [rcx].asym.langtype == LANG_FASTCALL ||
+                  [rcx].asym.langtype == LANG_VECTORCALL ) &&
+                  MODULE.Ofssize == USE64 && ( MODULE.win64_flags & W64F_AUTOSTACKSP ) )
+                mov rdx,CurrProc
+                .if ( rdx )
+                    mov [rdx].asym.stkused,1
+                .endif
+            .endif
+            lea rdx,b
+            mov eax,'llac'
+            mov [rdx],eax
+            mov rcx,rdi
+            lea rdi,[rdx+4]
+            lea rsi,[rdx+6]
+            sub rcx,rsi
+            inc ecx
+            rep movsb
+        .endif
+    .endif
+
+    mov rax,dst
+    .if ( byte ptr [rax] != 0 )
+        tstrcat(rax, &EOLSTR)
+    .endif
+    .if ( defconstructor )
+        mov eax,j
+        sub eax,i
+        .if ( eax == 3 ) ; ( 0 )
+            mov b,0
+            DefaultConstructor(sym, 0)
+        .endif
+    .endif
+    tstrcat(dst, &b)
+    StripSource(i, j, tokenarray)
+    ret
+    endp
+
+
+RenderHllProc proc __ccall uses rbx dst:string_t, i:uint_t, tokenarray:token_t
+    mov bl,MODULE.line_flags
+    LKRenderHllProc( ldr(dst), ldr(i), ldr(tokenarray) )
+    mov MODULE.line_flags,bl
+    ret
+    endp
+
+
+    option proc:public
+
+
+ExpandHllProc proc __ccall uses rsi rdi rbx dst:string_t, i:int_t, tokenarray:token_t
+
+    ldr rbx,tokenarray
+    ldr rdi,dst
+    xor eax,eax
+    mov [rdi],al
+    .if ( Options.strict_masm_compat == 0 )
+        .for ( esi = ldr(i) : esi < TokenCount : esi++ )
+            imul ecx,esi,asm_tok
+            .if ( [rbx+rcx].IsProc )
+                ExpandCStrings( rbx )
+                RenderHllProc( rdi, esi, rbx )
+            .endif
+        .endf
+    .endif
+    ret
+    endp
+
+
+ExpandHllProcEx proc __ccall uses rsi rdi rbx buffer:string_t, i:int_t, tokenarray:token_t
+
+    ldr rsi,buffer
+    ldr edx,i
+    ldr rbx,tokenarray
+    mov edi,ExpandHllProc(rsi, edx, rbx)
+    .if ( eax != ERROR && byte ptr [rsi] != 0 )
+        AddLineQueueX( "%s\n%s", rsi, [rbx].tokpos )
+        mov edi,STRING_EXPANDED
+    .endif
+    .if ( MODULE.list )
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+    .endif
+    .if ( MODULE.line_queue.head )
+        RunLineQueue()
+    .endif
+    .return( edi )
+    endp
+
+
+    assume rsi:hllitem_t
+
+EvaluateHllExpression proc __ccall uses rsi rdi rbx hll:hllitem_t,
+        i:pint_t, tokenarray:token_t, ilabel:int_t, is_true:int_t, buffer:string_t
+
+   .new hllop:hll_opnd
+   .new b[MAX_LINE_LEN]:char_t
+
+    ldr rdi,i
+    ldr rbx,tokenarray
+    ldr rsi,hll
+
+    mov hllop.lastjmp,NULL
+    mov hllop.lasttruelabel,0
+
+    .if ( !Options.strict_masm_compat && ![rsi].Expression && [rbx].HllCode )
+
+        xor edx,edx
+        .if ( MODULE.class_reg )
+            inc edx
+        .else
+            .for ( ecx = [rdi] : ecx < TokenCount : ecx++ )
+                imul eax,ecx,asm_tok
+                .if ( [rbx+rax].asm_tok.IsFunc )
+                    inc edx
+                   .break
+                .endif
+            .endf
+        .endif
+        .if ( edx )
+            mov [rsi].Expression,1
+            .if ( [rbx].Delayed )
+                mov [rsi].ExpDelayed,1
+            .endif
+            tstrcpy( buffer, [rbx].tokpos )
+           .return NOT_ERROR
+        .endif
+    .endif
+
+    .ifd ( ExpandHllProc( &b, [rdi], rbx ) != ERROR )
+
+        mov rcx,buffer
+        mov byte ptr [rcx],0
+
+        .ifd ( GetExpression( rsi, rdi, rbx, ilabel, is_true, rcx, &hllop ) != ERROR )
+
+            imul eax,[rdi],asm_tok
+            add rbx,rax
+
+            .if ( [rbx].token != T_FINAL )
+                .return asmerr( 2154 )
+            .endif
+
+            .if ( b && ( [rsi].SizeDB || [rsi].SizeDW || [rsi].SizeDD ) )
+                ;
+                ; Parse a "cmp ax" or "test ax,ax" and resize
+                ; to B/W/D ([r|e]ax).
+                ;
+                mov rdx,buffer
+                mov ecx,[rdx]
+                .while ( byte ptr [rdx] > ' ' )
+                    add rdx,1
+                .endw
+                .while ( byte ptr [rdx] == ' ' )
+                    add rdx,1
+                .endw
+
+                mov ebx,[rdx]
+                .if ( bl == 'e' || bl == 'r' )
+                    shr ebx,8
+                .endif
+
+                .if ( bh == 'x' )
+                    .if ( ecx == 'tset' )
+                        xor ecx,ecx
+                    .endif
+                    ;
+                    ; ax , ax   -< eax,eax>
+                    ; rax , rax -<  al ,  al>
+                    ;
+                    lea rbx,[rdx+4]
+                    .while ( byte ptr [rbx] == ' ' || byte ptr [rbx] == ',' )
+                        inc rbx
+                    .endw
+
+                    .if ( [rsi].SizeDD )
+
+                        mov ax,[rdx]
+ifndef ASMC64
+                        .if ( MODULE.Ofssize == USE64 )
+endif
+                            mov byte ptr [rdx],'e'
+                            .if ( !ecx && ax == [rbx] ) ; v2.27 - .ifd foo() & imm --> test eax,emm
+                                mov byte ptr [rbx],'e'
+                            .endif
+
+ifndef ASMC64
+                        .elseif ( MODULE.Ofssize == USE16 )
+
+                            .if ( byte ptr [rdx+2] != ' ' )
+
+                                .if ecx
+                                    mov dword ptr [rdx-4],'ro '
+                                .else
+                                    mov dword ptr [rdx-5],' dna'
+                                .endif
+                                dec rdx
+                            .endif
+                            mov [rdx+1],ax
+                            mov byte ptr [rdx],'e'
+                            .if ( !ecx )
+                                mov byte ptr [rbx-1],'e'
+                            .endif
+                        .endif
+endif
+
+                    .elseif ( [rsi].SizeDW )
+ifndef ASMC64
+                        .if ( MODULE.Ofssize != USE16 )
+endif
+                            mov ax,[rdx]
+                            mov byte ptr [rdx],' '
+                            .if ( !ecx && ax == [rbx] )
+                                mov byte ptr [rbx],' '
+                            .endif
+ifndef ASMC64
+                        .endif
+endif
+                    .elseif ( [rsi].SizeDB )
+
+                        mov ax,[rdx]
+ifndef ASMC64
+                        .if ( MODULE.Ofssize == USE16 )
+                            mov byte ptr [rdx+1],'l'
+                            .if ( !ecx && ax == [rbx] )
+                                mov byte ptr [rbx+1],'l'
+                            .endif
+                        .else
+endif
+                            mov byte ptr [rdx],' '
+                            mov byte ptr [rdx+2],'l'
+
+                            .if ( !ecx && ax == [rbx] )
+                                mov byte ptr [rbx],' '
+                                mov byte ptr [rbx+2],'l'
+                            .endif
+ifndef ASMC64
+                        .endif
+endif
+                    .endif
+                .endif
+            .endif
+
+            .if ( b )
+
+                lea rdi,b
+                tstrlen(rdi)
+                mov word ptr [rdi+rax],EOLCHAR
+                tstrcat(rdi, buffer)
+                tstrcpy(buffer, rdi)
+            .endif
+            mov eax,NOT_ERROR
+        .endif
+    .endif
+    ret
+    endp
+
+
+ExpandHllExpression proc __ccall public uses rsi rdi rbx hll:hllitem_t, p:pint_t, tokenarray:token_t,
+        ilabel:int_t, is_true:int_t, buffer:string_t
+
+   .new rc:int_t
+   .new delayed:int_t = 0
+
+    ldr rsi,hll
+    ldr rbx,tokenarray
+
+    .if ( [rsi].ExpDelayed || ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_DOT_ELSEIF ) )
+        inc delayed
+    .endif
+    xor ecx,ecx
+    .if ( [rsi].WhileMode )
+        mov rcx,[rsi].condlines
+        inc delayed
+    .elseif ( StoreState == 0 )
+        mov rcx,[rbx].tokpos
+    .endif
+    .if ( rcx )
+        mov TokenCount,Tokenize( tstrcpy( CurrSource, rcx ), 0, rbx, TOK_DEFAULT )
+    .endif
+
+    .if ( Parse_Pass == PASS_1 )
+
+        .if ( MODULE.line_queue.head )
+            RunLineQueue()
+        .endif
+        mov rc,NOT_ERROR
+        .if ( delayed )
+            mov NoLineStore,1
+            mov rc,ExpandLine( CurrSource, rbx )
+            mov NoLineStore,0
+        .endif
+    .else
+        .if ( MODULE.list )
+            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+        .endif
+        RunLineQueue()
+        mov rc,ExpandLine( CurrSource, rbx )
+    .endif
+    .if ( rc == NOT_ERROR )
+        mov [rsi].hll_item.WhileMode,0
+        mov rc,EvaluateHllExpression( rsi, p, rbx, ilabel, is_true, buffer )
+        QueueTestLines( buffer )
+    .endif
+    mov [rsi].Expression,0
+   .return( rc )
+
+ExpandHllExpression endp
+
+    assume rbx:nothing, rsi:nothing
+
+
+CheckCXZLines proc fastcall private uses rsi rdi rbx p:string_t
+    ;
+    ; for .UNTILCXZ: check if expression is simple enough. what's acceptable
+    ; is ONE condition, and just operators == and != Constants (0 or != 0)
+    ; are also accepted
+    ;
+    mov rsi,p
+    mov edi,1
+    xor ebx,ebx
+    ;
+    ; syntax ".untilcxz 1" has a problem: there's no "jmp" generated at all
+    ; if this syntax is to be supported, activate the #if below.
+    ;
+    mov eax,[rsi]
+    .while al
+        .if al == EOLCHAR
+            mov edi,1
+            add ebx,edi
+        .elseif edi
+            xor edi,edi
+            .if al == 'j'
+                shr eax,8
+                .if al == 'm' && !ebx
+                    ;
+                    ; 2 chars, to replace "jmp" by "loope"
+                    ;
+                    mov edi,2
+                .elseif ebx == 1 && (al == 'z' || ax == 'zn')
+                    ;
+                    ; 3 chars, to replace "jz"/"jnz" by
+                    ; "loopz"/"loopnz"
+                    ;
+                    mov edi,3
+                .else
+                    ; anything else is "too complex"
+                    mov ebx,3
+                    .break
+                .endif
+                tstrlen( rsi )
+                .whiles eax >= 0
+                    add rsi,rax
+                    mov cl,[rsi]
+                    mov [rsi+rdi],cl
+                    sub rsi,rax
+                    dec eax
+                .endw
+                xor edi,edi
+                mov eax,"pool"
+                mov [rsi],eax
+                .if edx == 2
+                    mov byte ptr [rsi+4],'e'
+                .endif
+            .endif
+        .endif
+        inc rsi
+        mov eax,[rsi]
+    .endw
+    mov eax,NOT_ERROR
+    .if ( ebx > 2 )
+        mov eax,ERROR
+    .endif
+    ret
+    endp
+
+
+RenderUntilXX proc __ccall private uses rdi hll:ptr hll_item, cmd:uint_t
+
+  local buffer[32]:char_t
+
+    ldr eax,cmd
+    mov ecx,T_CX - T_AX
+ifndef ASMC64
+    add ecx,MODULE.accumulator
+else
+    add ecx,T_RAX
+endif
+    AddLineQueueX( " %r %r", T_DEC, ecx )
+    mov rdx,hll
+    mov ecx,[rdx].hll_item.labels[LSTART*4]
+    AddLineQueueX( " jnz %s", GetLabelStr( ecx, &buffer ) )
+    ret
+
+RenderUntilXX endp
+
+
+GetJumpString proc __ccall private cmd:uint_t
+
+  local buffer[32]:char_t
+
+    option switch:table
+    ldr eax,cmd
+    xor ecx,ecx
+    .switch eax
+      .case T_DOT_IFA
+      .case T_DOT_UNTILA
+      .case T_DOT_WHILEA
+        mov ecx,T_JBE
+        .endc
+      .case T_DOT_IFB
+      .case T_DOT_IFC
+      .case T_DOT_UNTILB
+      .case T_DOT_WHILEB
+        mov ecx,T_JAE
+        .endc
+      .case T_DOT_IFG
+      .case T_DOT_UNTILG
+      .case T_DOT_WHILEG
+        mov ecx,T_JLE
+        .endc
+      .case T_DOT_IFL
+      .case T_DOT_UNTILL
+      .case T_DOT_WHILEL
+        mov ecx,T_JGE
+        .endc
+      .case T_DOT_IFO
+      .case T_DOT_UNTILO
+      .case T_DOT_WHILEO
+        mov ecx,T_JNO
+        .endc
+      .case T_DOT_IFP
+      .case T_DOT_UNTILP
+      .case T_DOT_WHILEP
+        mov ecx,T_JNP
+        .endc
+      .case T_DOT_IFS
+      .case T_DOT_UNTILS
+      .case T_DOT_WHILES
+        mov ecx,T_JNS
+        .endc
+      .case T_DOT_IFZ
+      .case T_DOT_WHILEZ
+      .case T_DOT_UNTILZ
+        mov ecx,T_JNE
+        .endc
+      .case T_DOT_IFNA
+      .case T_DOT_UNTILNA
+      .case T_DOT_WHILENA
+        mov ecx,T_JA
+        .endc
+      .case T_DOT_IFNB
+      .case T_DOT_IFNC
+      .case T_DOT_UNTILNB
+      .case T_DOT_WHILENB
+        mov ecx,T_JB
+        .endc
+      .case T_DOT_IFNG
+      .case T_DOT_UNTILNG
+      .case T_DOT_WHILENG
+        mov ecx,T_JG
+        .endc
+      .case T_DOT_IFNL
+      .case T_DOT_UNTILNL
+      .case T_DOT_WHILENL
+        mov ecx,T_JL
+        .endc
+      .case T_DOT_IFNO
+      .case T_DOT_UNTILNO
+      .case T_DOT_WHILENO
+        mov ecx,T_JO
+        .endc
+      .case T_DOT_IFNP
+      .case T_DOT_UNTILNP
+      .case T_DOT_WHILENP
+        mov ecx,T_JP
+        .endc
+      .case T_DOT_IFNS
+      .case T_DOT_UNTILNS
+      .case T_DOT_WHILENS
+        mov ecx,T_JS
+        .endc
+      .case T_DOT_IFNZ
+      .case T_DOT_WHILENZ
+      .case T_DOT_UNTILNZ
+        mov ecx,T_JZ
+        .endc
+      .default
+        asmerr( 1011 )
+    .endsw
+    GetResWName( ecx, &buffer )
+    .if ( byte ptr [rax+2] == 0 )
+        mov word ptr [rax+2],' '
+    .endif
+    ret
+    endp
+
+
+    assume rbx: token_t, rsi: ptr hll_item
+
+; .IF, .WHILE, .SWITCH or .REPEAT directive
+
+HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
+
+  .new rc:int_t = NOT_ERROR
+  .new cmd:uint_t
+  .new token:uint_t
+  .new buff[16]:char_t
+  .new buffer[MAX_LINE_LEN]:char_t
+
+    ldr rbx,tokenarray
+    lea rdi,buffer
+
+    imul eax,i,asm_tok
+
+    ; added v2.22 to seperate:
+    ;
+    ; .IFS from .IFS <expression>
+    ; .IFB from .IFB <expression>
+
+    movzx ecx,[rbx+rax+asm_tok].token
+    mov token,ecx
+    mov eax,[rbx+rax].tokval
+    mov cmd,eax
+    inc i ; skip directive
+
+    ; v2.06: is there an item on the free stack?
+
+    mov rsi,MODULE.HllFree
+    .if !rsi
+        mov rsi,LclAlloc( hll_item )
+    .endif
+
+    ExpandCStrings( tokenarray )
+
+    ; structure for .IF .ELSE .ENDIF
+    ;   cond jump to LTEST-label
+    ;   ...
+    ;   jmp LEXIT
+    ; LTEST:
+    ;   ...
+    ; LEXIT:
+
+    ; structure for .IF .ELSEIF
+    ;   cond jump to LTEST
+    ;   ...
+    ;   jmp LEXIT
+    ; LTEST:
+    ;   cond jump to (new) LTEST
+    ;   ...
+    ;   jmp LEXIT
+    ; LTEST:
+    ;   ...
+
+    ; structure for .WHILE, .SWITCH and .REPEAT:
+    ;  jmp LTEST (for .WHILE and .SWITCH only)
+    ; LSTART:
+    ; ...
+    ; LTEST: (jumped to by .continue)
+    ;    a) test end condition, cond jump to LSTART label
+    ;    b) unconditional jump to LSTART label
+    ; LEXIT: (jumped to by .BREAK)
+
+    xor eax,eax
+    mov [rsi].labels[LEXIT*4],eax
+    mov [rsi].flags,eax
+    mov eax,cmd
+    mov ecx,token
+
+    .switch eax
+
+    .case T_DOT_IF
+
+        mov [rsi].cmd,HLL_IF
+        mov [rsi].labels[LSTART*4],0 ; not used by .IF
+        mov [rsi].labels[LTEST*4],GetHllLabel()
+
+        ; get the C-style expression, convert to ASM code lines
+
+        mov rc,EvaluateHllExpression(rsi, &i, rbx, LTEST, 0, rdi)
+        .if ( eax == NOT_ERROR )
+
+            QueueTestLines( rdi )
+
+            ; if no lines have been created, the LTEST label isn't needed
+
+            .if ( byte ptr [rdi] == NULLC )
+                mov [rsi].labels[LTEST*4],0
+            .endif
+        .endif
+        .endc
+
+    .case T_DOT_WHILE
+        mov [rsi].WhileMode,1
+    .case T_DOT_REPEAT
+
+        ; create the label to start of loop
+
+        mov [rsi].labels[LSTART*4],GetHllLabel()
+
+        ; v2.11: test label is created only if needed
+
+        mov [rsi].labels[LTEST*4],0
+
+        .if ( cmd != T_DOT_REPEAT )
+
+            mov [rsi].cmd,HLL_WHILE
+            mov [rsi].condlines,0
+            imul eax,i,asm_tok
+
+            .if ( [rbx+rax].asm_tok.token != T_FINAL )
+
+                mov eax,cmd
+                .switch eax
+                .case T_DOT_WHILESB
+                    mov [rsi].Signed,1
+                .case T_DOT_WHILEB
+                    mov [rsi].SizeDB,1
+                   .endc
+                .case T_DOT_WHILESW
+                    mov [rsi].Signed,1
+                .case T_DOT_WHILEW
+                    mov [rsi].SizeDW,1
+                   .endc
+                .case T_DOT_WHILESD
+                    mov [rsi].Signed,1
+                .case T_DOT_WHILED
+                    mov [rsi].SizeDD,1
+                   .endc
+                .case T_DOT_WHILES
+                    mov [rsi].Signed,1
+                .endsw
+                mov rc,EvaluateHllExpression( rsi, &i, rbx, LSTART, 1, rdi )
+
+            .elseif ( cmd != T_DOT_WHILE )
+
+                GetLabelStr([rsi].labels[LSTART*4], &[rdi+20])
+                tstrcpy(rdi, GetJumpString(cmd))
+                tstrcat(rdi, " ")
+                tstrcat(rdi, &[rdi+20])
+                InvertJump(rdi)
+                mov eax,NOT_ERROR
+            .else
+
+                ; just ".while" without expression is accepted
+
+                mov byte ptr [rdi],NULLC
+                mov eax,ERROR
+            .endif
+
+            .if ( eax == NOT_ERROR )
+
+                mov [rsi].condlines,LclDup(rdi)
+            .endif
+
+            ; create a jump to test label
+            ; optimisation: if line at 'test' label is just a jump,
+            ; dont create label and don't jump!
+
+            .ifd tmemicmp( rdi, "jmp", 3 )
+
+                mov [rsi].labels[LTEST],GetHllLabel()
+                AddLineQueueX("jmp %s", GetLabelStr([rsi].labels[LTEST*4], &buff))
+            .endif
+        .else
+            mov [rsi].cmd,HLL_REPEAT
+        .endif
+
+        mov cl,MODULE.loopalign
+        .if cl
+            mov edx,1
+            shl edx,cl
+            AddLineQueueX( "ALIGN %d", edx )
+        .endif
+        AddLineQueueX("%s%s", GetLabelStr([rsi].labels[LSTART*4], &buff), LABELQUAL)
+       .endc
+
+    .case T_DOT_IFS
+        .if ecx != T_FINAL
+
+            mov [rsi].Signed,1
+            .gotosw(T_DOT_IF)
+        .endif
+    .case T_DOT_IFB
+    .case T_DOT_IFC
+        .if ecx != T_FINAL
+
+            mov [rsi].SizeDB,1
+            .gotosw(T_DOT_IF)
+        .endif
+    .case T_DOT_IFA .. T_DOT_IFNZ
+        mov [rsi].cmd,HLL_IF
+        mov [rsi].labels[LSTART*4],0
+        mov [rsi].labels[LTEST*4],GetHllLabel()
+        GetLabelStr([rsi].labels[LTEST*4], &buff)
+        .if GetJumpString(cmd)
+
+            tstrcat(tstrcpy(&buffer, rax), " ")
+            lea rcx,buff
+            AddLineQueue(tstrcat(rax, rcx))
+        .endif
+        .endc
+
+    .case T_DOT_IFSD
+        mov [rsi].Signed,1
+    .case T_DOT_IFD
+        mov [rsi].SizeDD,1
+       .gotosw(T_DOT_IF)
+    .case T_DOT_IFSW
+        mov [rsi].Signed,1
+    .case T_DOT_IFW
+        mov [rsi].SizeDW,1
+       .gotosw(T_DOT_IF)
+    .case T_DOT_IFSB
+        mov [rsi].Signed,1
+        mov [rsi].SizeDB,1
+       .gotosw(T_DOT_IF)
+    .case T_DOT_WHILEA .. T_DOT_WHILESD
+        .gotosw(T_DOT_WHILE)
+    .endsw
+
+    imul eax,i,asm_tok
+    .if ( ![rsi].flags && ( [rbx+rax].asm_tok.token != T_FINAL && rc == NOT_ERROR ) )
+        mov rc,asmerr( 2008, [rbx+rax].asm_tok.tokpos )
+    .endif
+    ;
+    ; v2.06: remove the item from the free stack
+    ;
+    .if ( rsi == MODULE.HllFree )
+        mov rax,[rsi].next
+        mov MODULE.HllFree,rax
+    .endif
+    mov rax,MODULE.HllStack
+    mov [rsi].next,rax
+    mov MODULE.HllStack,rsi
+
+    .if ( MODULE.list )
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+    .endif
+    .if ( MODULE.line_queue.head ) ; might be NULL! (".if 1")
+        RunLineQueue()
+    .endif
+    .return rc
+
+HllStartDir endp
+
+;
+; .ENDIF, .ENDW, .UNTIL and .UNTILCXZ directives.
+; These directives end a .IF, .WHILE or .REPEAT block.
+;
+HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
+
+   .new rc:int_t = NOT_ERROR
+   .new cmd:int_t
+   .new buffer[MAX_LINE_LEN]:char_t
+
+    mov rsi,MODULE.HllStack
+    .if ( rsi == NULL )
+        .return asmerr( 1011 )
+    .endif
+
+    mov rax,[rsi].next
+    mov rcx,MODULE.HllFree
+    mov MODULE.HllStack,rax
+    mov [rsi].next,rcx
+    mov MODULE.HllFree,rsi
+
+    lea rdi,buffer
+    mov rbx,tokenarray
+    mov ecx,[rsi].cmd
+    imul edx,i,asm_tok
+    mov eax,[rbx+rdx].tokval
+    mov cmd,eax
+
+    .switch eax
+
+      .case T_DOT_ENDIF
+
+        .if ( ecx != HLL_IF )
+            .return asmerr( 1011 )
+        .endif
+        inc i
+
+        ; if a test label isn't created yet, create it
+
+        mov eax,[rsi].labels[LTEST*4]
+        .if eax
+            AddLineQueueX( "%s%s", GetLabelStr( eax, rdi ), LABELQUAL )
+        .endif
+        .endc
+
+      .case T_DOT_ENDW
+
+        .if ( ecx != HLL_WHILE )
+            .return asmerr( 1011 )
+        .endif
+
+        ; create test label
+
+        mov eax,[rsi].labels[LTEST*4]
+        .if eax
+            AddLineQueueX( "%s%s", GetLabelStr( eax, rdi ), LABELQUAL )
+        .endif
+
+        inc i
+        .if ( [rsi].Expression )
+            ExpandHllExpression( rsi, &i, tokenarray, LSTART, 1, rdi )
+        .elseif ( [rsi].condlines )
+            QueueTestLines( [rsi].condlines )
+        .endif
+        .endc
+
+      .case T_DOT_UNTILCXZ
+
+        .if ( ecx != HLL_REPEAT )
+            .return asmerr( 1010, [rbx+rdx].string_ptr )
+        .endif
+
+        inc i
+        lea rbx,[rbx+rdx+asm_tok]
+
+        mov eax,[rsi].labels[LTEST*4]
+        .if eax
+
+            ; v2.11: LTEST only needed if .CONTINUE has occured
+
+            AddLineQueueX( "%s%s", GetLabelStr(eax, rdi), LABELQUAL )
+        .endif
+
+        ; read in optional (simple) expression
+
+        .if ( [rbx].token != T_FINAL )
+
+            mov ecx,LSTART
+            .if ( Options.strict_masm_compat == 0 )
+
+                ; <expression> ? .BREAK
+
+                .if ( ![rsi].labels[LEXIT*4] )
+
+                    mov [rsi].labels[LEXIT*4],GetHllLabel()
+                .endif
+                mov ecx,LEXIT
+            .endif
+            mov rc,EvaluateHllExpression(rsi, &i, tokenarray, ecx, 0, rdi)
+
+            .if ( eax == NOT_ERROR )
+
+                .if ( MODULE.masm_compat_gencode == 1 && cmd == T_DOT_UNTILCXZ )
+
+                    mov rc,CheckCXZLines( rdi )
+                .endif
+
+                .if ( eax == NOT_ERROR )
+
+                    ; write condition lines
+
+                    QueueTestLines( rdi )
+                    .if ( MODULE.masm_compat_gencode == 0 )
+                        RenderUntilXX( rsi, cmd )
+                    .endif
+                .else
+                    asmerr( 2062 )
+                .endif
+            .endif
+        .else
+            .if ( MODULE.masm_compat_gencode == 1 )
+
+                AddLineQueueX( "loop %s", GetLabelStr( [rsi].labels[LSTART*4], rdi ) )
+            .else
+                RenderUntilXX( rsi, cmd )
+            .endif
+        .endif
+        .endc
+
+      .case T_DOT_UNTILA .. T_DOT_UNTILSD
+      .case T_DOT_UNTIL
+
+        .if ( ecx != HLL_REPEAT )
+            .return asmerr( 1010, [rbx+rdx].string_ptr )
+        .endif
+
+        inc i
+        lea rbx,[rbx+rdx+asm_tok]
+        mov eax,[rsi].labels[LTEST*4]
+
+        .if ( eax ) ; v2.11: LTEST only needed if .CONTINUE has occured
+            AddLineQueueX( "%s%s", GetLabelStr(eax, rdi), LABELQUAL )
+        .endif
+        ;
+        ; read in (optional) expression
+        ; if expression is missing, just generate nothing
+        ;
+        .if ( [rbx].token != T_FINAL )
+
+            mov eax,cmd
+            .switch eax
+            .case T_DOT_UNTILSB
+                mov [rsi].Signed,1
+            .case T_DOT_UNTILB
+                mov [rsi].SizeDB,1
+               .endc
+            .case T_DOT_UNTILSW
+                mov [rsi].Signed,1
+            .case T_DOT_UNTILW
+                mov [rsi].SizeDW,1
+               .endc
+            .case T_DOT_UNTILSD
+                mov [rsi].Signed,1
+            .case T_DOT_UNTILD
+                mov [rsi].SizeDD,1
+               .endc
+            .case T_DOT_UNTILS
+                mov [rsi].Signed,1
+            .endsw
+
+            EvaluateHllExpression(rsi, &i, tokenarray, LSTART, 0, rdi)
+            mov rc,eax
+            .if ( eax == NOT_ERROR )
+                QueueTestLines( rdi ) ; write condition lines
+            .endif
+
+        .elseif ( cmd != T_DOT_UNTIL )
+
+            GetLabelStr([rsi].labels[LSTART*4], &[rdi+20])
+            tstrcpy(rdi, GetJumpString(cmd))
+            tstrcat(rdi, " ")
+            tstrcat(rdi, &[rdi+20])
+            AddLineQueue(rdi)
+        .endif
+        .endc
+    .endsw
+
+    ;
+    ; create the exit label if it has been referenced
+    ;
+    mov eax,[rsi].labels[LEXIT*4]
+    .if eax
+        AddLineQueueX( "%s%s", GetLabelStr( eax, rdi ), LABELQUAL )
+    .endif
+
+    imul ebx,i,asm_tok
+    add rbx,tokenarray
+    .if ( [rbx].token != T_FINAL && rc == NOT_ERROR )
+
+        asmerr( 2008, [rbx].tokpos )
+        mov rc,ERROR
+    .endif
+
+    .if ( MODULE.list )
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+    .endif
+    ;
+    ; v2.11: always run line-queue if it's not empty.
+    ;
+    .if ( MODULE.line_queue.head )
+        RunLineQueue()
+    .endif
+    .return( rc )
+
+HllEndDir endp
+
+
+HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:token_t,
+    labelid:int_t, hll1:ptr hll_item, is_true:int_t
+
+   .new flags:uint_t
+   .new cmd:uint_t
+   .new condlines:ptr
+   .new rc:int_t = NOT_ERROR
+   .new buff[16]:char_t
+   .new buffer[256]:char_t
+
+    lea  rdi,buffer
+    mov  ecx,labelid
+    mov  rsi,hll
+    mov  rax,i
+    imul ebx,[rax],asm_tok
+    add  rbx,tokenarray
+
+    .if ( [rbx].token != T_FINAL )
+
+        .if ( [rbx].token == T_DIRECTIVE )
+
+            mov flags,[rsi].flags
+            mov [rsi].flags,0
+            mov eax,[rbx].tokval
+
+            .switch eax
+            .case T_DOT_IFSD
+                mov [rsi].Signed,1
+            .case T_DOT_IFD
+                mov [rsi].SizeDD,1
+            .case T_DOT_IF
+                mov cmd,[rsi].cmd
+                mov condlines,[rsi].condlines
+                mov [rsi].cmd,HLL_BREAK
+                mov rdx,i
+                inc dword ptr [rdx]
+                EvaluateHllExpression(rsi, rdx, tokenarray, labelid, is_true, rdi)
+                mov rc,eax
+                .if eax == NOT_ERROR
+                    QueueTestLines(rdi)
+                .endif
+                mov [rsi].cmd,cmd
+                mov [rsi].condlines,condlines
+               .endc
+            .case T_DOT_IFSB
+                mov [rsi].Signed,1
+                mov [rsi].SizeDB,1
+               .gotosw(T_DOT_IF)
+            .case T_DOT_IFSW
+                mov [rsi].Signed,1
+            .case T_DOT_IFW
+                mov [rsi].SizeDW,1
+               .gotosw(T_DOT_IF)
+            .case T_DOT_IFS
+                .if ( [rbx+asm_tok].token != T_FINAL )
+                    mov [rsi].Signed,1
+                   .gotosw(T_DOT_IF)
+                .endif
+            .case T_DOT_IFB
+            .case T_DOT_IFC
+                .if ( [rbx+asm_tok].token != T_FINAL )
+                    mov [rsi].SizeDB,1
+                   .gotosw(T_DOT_IF)
+                .endif
+            .case T_DOT_IFA .. T_DOT_IFNZ
+                mov rax,i
+                inc dword ptr [rax]
+                GetLabelStr([rsi].labels[rcx*4], &buff)
+                tstrcpy(rdi, GetJumpString( [rbx].tokval))
+                tstrcat(rdi, " ")
+                tstrcat(rdi, &buff)
+                .if is_true
+                    InvertJump(rdi)
+                .endif
+                AddLineQueue(rdi)
+            .endsw
+            mov [rsi].flags,flags
+        .endif
+
+    .else
+
+        AddLineQueueX( " jmp %s", GetLabelStr( [rsi].labels[rcx*4], rdi ) )
+
+        mov rdx,hll1
+        .if ( [rdx].hll_item.cmd == HLL_SWITCH )
+            ;
+            ; unconditional jump from .case
+            ; - set flag to skip exit-jumps
+            ;
+            mov rsi,rdx
+            mov rax,rsi
+
+            .while [rsi].caselist
+                mov rsi,[rsi].caselist
+            .endw
+            .if ( rax != rsi )
+                mov [rsi].EndOccured,1
+            .endif
+        .endif
+    .endif
+    .return rc
+
+HllContinueIf endp
+
+
+;
+; .ELSE, .ELSEIF, .CONTINUE and .BREAK directives.
+; .ELSE, .ELSEIF:
+;    - create a jump to exit label
+;    - render test label if it was referenced
+;    - for .ELSEIF, create new test label and evaluate expression
+; .CONTINUE, .BREAK:
+;    - jump to test / exit label of innermost .WHILE/.REPEAT block
+;
+
+HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
+
+   .new rc:int_t = NOT_ERROR
+   .new breal_level:int_t = 0 ; 0,1,2,3
+   .new cmd:int_t
+   .new buff[16]:char_t
+   .new hll:ptr hll_item = MODULE.HllStack
+   .new buffer[MAX_LINE_LEN]:char_t
+
+    mov rsi,rax
+    .if ( rsi == NULL )
+        .return asmerr( 1011 )
+    .endif
+    ExpandCStrings( tokenarray )
+
+    lea  rdi,buffer
+    imul ebx,i,asm_tok
+    add  rbx,tokenarray
+    mov  cmd,[rbx].tokval
+    xor  ecx,ecx
+
+    .switch eax
+    .case T_DOT_ELSEIFSD
+        mov [rsi].SizeDD,1
+    .case T_DOT_ELSEIFS
+        mov [rsi].Signed,1
+    .case T_DOT_ELSEIF
+    .case T_DOT_ELSE
+        .if ( [rsi].cmd != HLL_IF )
+            .return asmerr( 1010, [rbx].string_ptr )
+        .endif
+        .if ( [rsi].ElseOccured ) ; v2.08: check for multiple ELSE clauses
+            .return asmerr( 2142 )
+        .endif
+
+        ; the exit label is only needed if an .ELSE branch exists.
+        ; That's why it is created delayed.
+
+        .if ( [rsi].labels[LEXIT*4] == 0 )
+            mov [rsi].labels[LEXIT*4],GetHllLabel()
+        .endif
+
+        AddLineQueueX( "jmp %s", GetLabelStr( [rsi].labels[LEXIT*4], rdi ) )
+
+        .if ( [rsi].labels[LTEST*4] > 0 )
+
+            AddLineQueueX( "%s%s", GetLabelStr( [rsi].labels[LTEST*4], rdi ), LABELQUAL )
+            mov [rsi].labels[LTEST*4],0
+        .endif
+
+        inc i
+        .if ( cmd == T_DOT_ELSE )
+
+            mov [rsi].ElseOccured,1
+        .else
+
+            ; create new labels[LTEST] label
+
+            mov [rsi].labels[LTEST*4],GetHllLabel()
+
+            mov rc,EvaluateHllExpression( rsi, &i, tokenarray, LTEST, 0, rdi )
+            .if ( eax == NOT_ERROR )
+
+                .if ( [rsi].Expression )
+
+                    ExpandHllExpression( rsi, &i, tokenarray, LTEST, 0, rdi )
+                    mov i,TokenCount
+                .else
+                    QueueTestLines( rdi )
+                .endif
+            .endif
+        .endif
+        .endc
+
+    .case T_DOT_ELSEIFD
+        mov [rsi].SizeDD,1
+       .gotosw(T_DOT_ELSEIF)
+
+    .case T_DOT_BREAK
+    .case T_DOT_CONTINUE
+
+        .if ( [rbx+asm_tok].token == T_OP_BRACKET && [rbx+asm_tok*3].token == T_CL_BRACKET )
+
+            mov rcx,[rbx+asm_tok*2].string_ptr
+            mov eax,[rcx]
+            .if ( cmd == T_DOT_CONTINUE && al == '0' )
+                mov breal_level,1
+            .endif
+            xor ecx,ecx
+            .while al
+                imul    ecx,ecx,10
+                sub     al,'0'
+                movzx   edx,al
+                add     ecx,edx
+                shr     eax,8
+            .endw
+            add i,3
+            add rbx,asm_tok*3
+            mov eax,cmd
+        .endif
+
+        .for ( : rsi && ( [rsi].cmd == HLL_IF || [rsi].cmd == HLL_SWITCH ) : rsi = [rsi].next )
+
+        .endf
+
+        .while ( rsi && ecx )
+            .for ( rsi = [rsi].next : rsi && ( [rsi].cmd == HLL_IF || [rsi].cmd == HLL_SWITCH ),
+                 : rsi = [rsi].next )
+            .endf
+            dec ecx
+        .endw
+
+        .if ( rsi == 0 )
+            .return asmerr( 1011 )
+        .endif
+
+        ; v2.11: create 'exit' and 'test' labels delayed.
+
+        .if ( eax == T_DOT_BREAK )
+
+            .if ( [rsi].labels[LEXIT*4] == 0 )
+                mov [rsi].labels[LEXIT*4],GetHllLabel()
+            .endif
+            mov ecx,LEXIT
+        .else
+
+            ; 'test' is not created for .WHILE loops here; because
+            ; if it doesn't exist, there's no condition to test.
+
+            .if ( [rsi].cmd == HLL_REPEAT && [rsi].labels[LTEST*4] == 0 )
+                mov [rsi].labels[LTEST*4],GetHllLabel()
+            .endif
+
+            mov ecx,LTEST
+            .if ( breal_level == 1 || [rsi].labels[LTEST*4] == 0 )
+                mov ecx,LSTART
+            .endif
+        .endif
+
+        ; .BREAK .IF ... or .CONTINUE .IF ?
+
+        inc i
+        add rbx,asm_tok
+        mov rc,HllContinueIf(rsi, &i, tokenarray, ecx, hll, 1)
+       .endc
+    .endsw
+
+    imul ebx,i,asm_tok
+    add rbx,tokenarray
+    .if ( [rbx].token != T_FINAL && rc == NOT_ERROR )
+
+        asmerr( 2008, [rbx].tokpos )
+        mov rc,ERROR
+    .endif
+    .if ( MODULE.list )
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+    .endif
+
+    ; v2.11: always run line-queue if it's not empty.
+
+    .if ( MODULE.line_queue.head )
+        RunLineQueue()
+    .endif
+    .return( rc )
+
+HllExitDir endp
+
+
+; check if an hll block has been left open. called after pass 1
+
+HllCheckOpen proc __ccall
+    .if ( MODULE.HllStack )
+        asmerr( 1010, ".if-.repeat-.while" )
+    .endif
+    .if ( MODULE.NspStack )
+        asmerr( 1010, ".namespace" )
+    .endif
+    ret
+    endp
+
+
+; HllInit() is called for each pass
+
+HllInit proc __ccall pass:int_t
+    mov MODULE.hll_label,0      ; init hll label counter
+    ret
+    endp
+
+    END

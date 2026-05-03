@@ -1,0 +1,40 @@
+; ERRNO.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
+include errno.inc
+
+    .data
+if not defined(_WIN64) and not defined(__UNIX__)
+     errno label errno_t
+endif
+     ErrorNoMem errno_t ENOMEM
+
+    .code
+
+ifdef __UNIX__
+ifdef _WIN64
+__get_errno_ptr::
+else
+__errno_location::
+endif
+else
+__get_errno_ptr::
+__errno_location::
+endif
+
+_errno proc
+    lea rax,ErrorNoMem
+    ret
+    endp
+
+_set_errno proc value:int_t
+    ldr ecx,value
+    mov ErrorNoMem,ecx
+    mov rax,-1
+    ret
+    endp
+
+    end

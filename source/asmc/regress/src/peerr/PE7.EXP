@@ -1,0 +1,3 @@
+PE7.ASM : Error A2278: ADDR32 fixup to 'main' at location _TEXT.1
+PE7.ASM : Error A2278: ADDR32 fixup to 'main' at location _TEXT.11
+PE7.ASM : Error A2278: ADDR32 fixup to 'var1' at location _TEXT.16

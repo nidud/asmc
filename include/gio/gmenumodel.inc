@@ -1,0 +1,128 @@
+ifndef __G_MENU_MODEL_H__
+define __G_MENU_MODEL_H__
+
+include glib-object.inc
+
+include gio/giotypes.inc
+
+define G_MENU_ATTRIBUTE_ACTION <"action">
+define G_MENU_ATTRIBUTE_ACTION_NAMESPACE <"action-namespace">
+define G_MENU_ATTRIBUTE_TARGET <"target">
+define G_MENU_ATTRIBUTE_LABEL <"label">
+define G_MENU_ATTRIBUTE_ICON <"icon">
+define G_MENU_LINK_SUBMENU <"submenu">
+define G_MENU_LINK_SECTION <"section">
+
+define G_TYPE_MENU_MODEL <g_menu_model_get_type ()>
+G_MENU_MODEL macro inst
+	exitm<G_TYPE_CHECK_INSTANCE_CAST (inst, G_TYPE_MENU_MODEL, GMenuModel)>
+	endm
+G_MENU_MODEL_CLASS macro class
+	exitm<G_TYPE_CHECK_CLASS_CAST (class, G_TYPE_MENU_MODEL, GMenuModelClass)>
+	endm
+G_IS_MENU_MODEL macro inst
+	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_MENU_MODEL))>
+	endm
+G_IS_MENU_MODEL_CLASS macro class
+	exitm<(G_TYPE_CHECK_CLASS_TYPE ((class), G_TYPE_MENU_MODEL))>
+	endm
+G_MENU_MODEL_GET_CLASS macro inst
+	exitm<G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_MENU_MODEL, GMenuModelClass)>
+	endm
+
+GMenuModel		STRUC
+parent_instance		GObject <>
+priv			ptr GMenuModelPrivate ?
+GMenuModel		ENDS
+
+GMenuModelClass		STRUC
+parent_class		GObjectClass <>
+is_mutable		proc :ptr
+get_n_items		proc :ptr
+get_item_attributes	proc :ptr, :gint, :ptr
+iterate_item_attributes proc :ptr, :gint
+get_item_attribute_value proc :ptr, :gint, :ptr, :ptr
+get_item_links		proc :ptr, :gint, :ptr
+iterate_item_links	proc :ptr, :gint
+get_item_link		proc :ptr, :gint, :ptr
+GMenuModelClass		ENDS
+
+g_menu_model_get_type proto __cdecl
+g_menu_model_is_mutable proto __cdecl :ptr
+g_menu_model_get_n_items proto __cdecl :ptr
+g_menu_model_iterate_item_attributes proto __cdecl :ptr, :gint
+g_menu_model_get_item_attribute_value proto __cdecl :ptr, :gint, :ptr, :ptr
+g_menu_model_get_item_attribute proto __Cdecl :ptr, :gint, :ptr, :ptr, :vararg
+g_menu_model_iterate_item_links proto __cdecl :ptr, :gint
+g_menu_model_get_item_link proto __cdecl :ptr, :gint, :ptr
+g_menu_model_items_changed proto __cdecl :ptr, :gint, :gint, :gint
+
+define G_TYPE_MENU_ATTRIBUTE_ITER <g_menu_attribute_iter_get_type ()>
+G_MENU_ATTRIBUTE_ITER macro inst
+	exitm<G_TYPE_CHECK_INSTANCE_CAST (inst, G_TYPE_MENU_ATTRIBUTE_ITER, GMenuAttributeIter)>
+	endm
+G_MENU_ATTRIBUTE_ITER_CLASS macro class
+	exitm<G_TYPE_CHECK_CLASS_CAST (class, G_TYPE_MENU_ATTRIBUTE_ITER, GMenuAttributeIterClass)>
+	endm
+G_IS_MENU_ATTRIBUTE_ITER macro inst
+	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_MENU_ATTRIBUTE_ITER))>
+	endm
+G_IS_MENU_ATTRIBUTE_ITER_CLASS macro class
+	exitm<G_TYPE_CHECK_CLASS_TYPE (class, G_TYPE_MENU_ATTRIBUTE_ITER)>
+	endm
+G_MENU_ATTRIBUTE_ITER_GET_CLASS macro inst
+	exitm<G_TYPE_INSTANCE_GET_CLASS (inst, G_TYPE_MENU_ATTRIBUTE_ITER, GMenuAttributeIterClass)>
+	endm
+
+
+GMenuAttributeIter	STRUC
+parent_instance		GObject <>
+priv			ptr GMenuAttributeIterPrivate ?
+GMenuAttributeIter	ENDS
+
+GMenuAttributeIterClass STRUC
+parent_class		GObjectClass <>
+get_next		proc :ptr, :ptr, :ptr
+GMenuAttributeIterClass ENDS
+
+g_menu_attribute_iter_get_type proto __cdecl
+g_menu_attribute_iter_get_next proto __cdecl :ptr, :ptr, :ptr
+g_menu_attribute_iter_next proto __cdecl :ptr
+g_menu_attribute_iter_get_name proto __cdecl :ptr
+g_menu_attribute_iter_get_value proto __cdecl :ptr
+
+define G_TYPE_MENU_LINK_ITER <g_menu_link_iter_get_type ()>
+G_MENU_LINK_ITER macro inst
+	exitm<G_TYPE_CHECK_INSTANCE_CAST (inst, G_TYPE_MENU_LINK_ITER, GMenuLinkIter)>
+	endm
+G_MENU_LINK_ITER_CLASS macro class
+	exitm<G_TYPE_CHECK_CLASS_CAST (class, G_TYPE_MENU_LINK_ITER, GMenuLinkIterClass)>
+	endm
+G_IS_MENU_LINK_ITER macro inst
+	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_MENU_LINK_ITER))>
+	endm
+G_IS_MENU_LINK_ITER_CLASS macro class
+	exitm<(G_TYPE_CHECK_CLASS_TYPE ((class), G_TYPE_MENU_LINK_ITER))>
+	endm
+G_MENU_LINK_ITER_GET_CLASS macro inst
+	exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_MENU_LINK_ITER, GMenuLinkIterClass))>
+	endm
+
+
+GMenuLinkIter		STRUC
+parent_instance		GObject <>
+priv			ptr_t ?
+GMenuLinkIter		ENDS
+
+GMenuLinkIterClass	STRUC
+parent_class		GObjectClass <>
+get_next		proc :ptr, :ptr, :ptr
+GMenuLinkIterClass	ENDS
+
+g_menu_link_iter_get_type proto __cdecl
+g_menu_link_iter_get_next proto __cdecl :ptr, :ptr, :ptr
+g_menu_link_iter_next proto __cdecl :ptr
+g_menu_link_iter_get_name proto __cdecl :ptr
+g_menu_link_iter_get_value proto __cdecl :ptr
+
+endif

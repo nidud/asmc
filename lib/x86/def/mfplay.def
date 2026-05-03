@@ -1,0 +1,3 @@
+LIBRARY mfplay.dll
+EXPORTS
+MFPCreateMediaPlayer@24

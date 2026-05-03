@@ -1,0 +1,29 @@
+; TUPDATE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
+include conio.inc
+
+.data
+ tupdate DPROC 0
+
+.code
+
+_initupdate proc update:DPROC
+    ldr rcx,update
+    mov rax,tupdate
+    mov tupdate,rcx
+    ret
+    endp
+
+_tupdate proc
+    mov rax,tupdate
+    .if ( rax )
+        rax()
+    .endif
+    ret
+    endp
+
+    end

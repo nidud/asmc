@@ -1,0 +1,4 @@
+#include <WinResrc.h>
+
+IddeIcon ICON res\idde.ico
+

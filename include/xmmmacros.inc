@@ -1,0 +1,3 @@
+ifndef __XMMMACROS_INC
+define __XMMMACROS_INC
+endif

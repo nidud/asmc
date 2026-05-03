@@ -1,0 +1,16 @@
+ifndef WINDOWS_FOUNDATION_COLLECTIONS_H
+define WINDOWS_FOUNDATION_COLLECTIONS_H
+ifndef __inspectable_h__
+include inspectable.inc
+endif
+ifndef __RPCNDR_H__
+include rpcndr.inc
+endif
+ifndef __eventtoken_h__
+include eventtoken.inc
+endif
+include winstring.inc
+ifndef __ivectorchangedeventargs_h__
+include IVectorChangedEventArgs.inc
+endif
+endif

@@ -19,7 +19,7 @@ ifdef ASMC64
  char_t " (x64)"
 endif
  char_t " Version %d.%02d"
-if ASMC_SUBVER
+if _ASMC_BUILD
  char_t ".%02d"
 endif
  char_t 0
@@ -112,14 +112,14 @@ endif
 .code
 ifdef __UNIX__
 get_logo proc __ccall buffer:string_t
-    tsprintf( ldr(buffer), &cp_logo, ASMC_MAJOR, ASMC_MINOR, ASMC_SUBVER )
+    tsprintf( ldr(buffer), &cp_logo, _ASMC_MAJOR, _ASMC_MINOR, ASMC_BUILD )
     ret
     endp
 endif
 write_logo proc __ccall
     .if ( !banner_printed )
         mov banner_printed,1
-        tprintf( &cp_logo, ASMC_MAJOR, ASMC_MINOR, ASMC_SUBVER )
+        tprintf( &cp_logo, _ASMC_MAJOR, _ASMC_MINOR, _ASMC_BUILD )
         tprintf( "\n%s\n", &cp_copyright )
     .endif
     ret

@@ -14,9 +14,11 @@ endif
         $@
         asmc64 -q -bin -ws -D__TEST__ -Fo 2 ../../../libc/string/_tcslen.asm
         asmc64 -q -bin -ws -D__TEST__ -arch:AVX -Fo 3 ../../../libc/string/_tcslen.asm
+        asmc64 -q -bin -ws -D__TEST__ -arch:AVX512 -Fo 4 ../../../libc/string/_tcslen.asm
 ifdef OBJDUMP
         objdump -M intel -b binary -D -m i386:x86-64 2.bin > 2_64.asm
         objdump -M intel -b binary -D -m i386:x86-64 3.bin > 3_64.asm
+        objdump -M intel -b binary -D -m i386:x86-64 4.bin > 4_64.asm
 endif
         asmc64 -q -pe $@.asm
         $@

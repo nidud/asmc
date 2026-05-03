@@ -2513,8 +2513,8 @@ endif
         mov [rdi].COMPILESYM3.verFEMinor,  0
         mov [rdi].COMPILESYM3.verFEBuild,  0
         mov [rdi].COMPILESYM3.verFEQFE,    0
-        mov [rdi].COMPILESYM3.verMajor,    ASMC_MAJOR
-        mov [rdi].COMPILESYM3.verMinor,    ASMC_MINOR
+        mov [rdi].COMPILESYM3.verMajor,    _ASMC_MAJOR
+        mov [rdi].COMPILESYM3.verMinor,    _ASMC_MINOR
         mov [rdi].COMPILESYM3.verBuild,    0
         mov [rdi].COMPILESYM3.verQFE,      0
 

@@ -5,15 +5,11 @@
 ;
 .pragma list(push, 0)
 
-ifndef ASMC_VERSION
-define ASMC_VERSION 238
-ifdef SUBVERSION
-define ASMC_SUBVER SUBVERSION
-else
-define ASMC_SUBVER 0
-endif
-define ASMC_MAJOR (ASMC_VERSION / 100)
-define ASMC_MINOR (ASMC_VERSION MOD 100)
+ifndef _ASMC_VER
+define _ASMC_VER    238
+define _ASMC_BUILD  4
+define _ASMC_MAJOR  (_ASMC_VER / 100)
+define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
 option dotname
 

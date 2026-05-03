@@ -3,9 +3,39 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; size_t strlen(char *);
+; size_t wcslen(wchar_t *);
+;
 include tchar.inc
 include isa_availability.inc
+
+ifdef __AVX__
+if defined(__AVX512BW__) and defined(_WIN64)
+define __AVX512__
+define U 64
+else
+define U 32
+endif
+else
+define U 16
+endif
+
+ifdef _UNICODE
+define xcmpeq pcmpeqw
+ifdef __AVX__
+define tcmpeq vpcmpeqw
+else
+define tcmpeq pcmpeqw
+endif
+else
+define xcmpeq pcmpeqb
+ifdef __AVX__
+define tcmpeq vpcmpeqb
+else
+define tcmpeq pcmpeqb
+endif
+endif
+
 
 .code
 
@@ -24,7 +54,7 @@ endif
 
 if defined(_UNICODE) and defined(__SSE__)
     test    cl,1            ; Unicode strings needs to be aligned..
-    jnz     unicode_unaligned
+    jnz     nocando
 endif
 
 ifdef __SSE__
@@ -33,93 +63,92 @@ ifdef __AVX__
 ifdef __TEST__
     mov     edx,0
     inc     edx
+elseifdef __AVX512__
+    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX512
 else
     test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
 endif
-    jz      strlen_sse
-    and     al,-32
-    and     rcx,32-1
-    mov     edx,-1          ; mask string part
+    jnz     align_to_boundary
+    jmp     nocando
+endif
+
+    align   main_loop size_t
+
+align_to_boundary:
+
+    and     al,-U
+    and     cl,U-1
+ifdef __AVX512__
+    vxorps  zmm0,zmm0,zmm0
+    or      rdx,-1          ; mask string part
+ifdef _UNICODE
+    shr     ecx,1           ; 32-bit mask
+endif
+    shl     rdx,cl          ; bits to keep
+    kmovq   k1,rdx
+    tcmpeq  k0{k1},zmm0,[rax]
+    add     rax,64
+    kmovq   rdx,k0
+    test    rdx,rdx
+elseifdef __AVX__
+    or      edx,-1
     shl     edx,cl
     vxorps  ymm0,ymm0,ymm0
-ifdef _UNICODE
-    vpcmpeqw ymm1,ymm0,[rax]
-else
-    vpcmpeqb ymm1,ymm0,[rax]
-endif
+    tcmpeq  ymm1,ymm0,[rax]
     add     rax,32
     vpmovmskb ecx,ymm1
-    and     ecx,edx
-    jnz     end_avx
-
-    align   size_t
-loop_avx:
-ifdef _UNICODE
-    vpcmpeqw ymm1,ymm0,[rax]
+    and     edx,ecx
 else
-    vpcmpeqb ymm1,ymm0,[rax]
-endif
-    vpmovmskb ecx,ymm1
-    add     rax,32
-    test    ecx,ecx
-    jz      loop_avx
-end_avx:
-    bsf     ecx,ecx
-    lea     rax,[rax+rcx-32]
-    sub     rax,string
-ifdef _UNICODE
-    shr     eax,1
-endif
-    ret
-strlen_sse:
-endif
-
-    and     rax,-16
-    and     ecx,16-1
     or      edx,-1
     shl     edx,cl
     xorps   xmm0,xmm0
-ifdef _UNICODE
-    pcmpeqw xmm0,[rax]
-else
-    pcmpeqb xmm0,[rax]
-endif
+    xcmpeq  xmm0,[rax]
     add     rax,16
     pmovmskb ecx,xmm0
     xorps   xmm0,xmm0
-    and     ecx,edx
-    jnz     end_sse
-
-    align   8
-loop_sse:
-    movaps  xmm1,[rax]
-ifdef _UNICODE
-    pcmpeqw xmm1,xmm0
-else
-    pcmpeqb xmm1,xmm0
+    and     edx,ecx
 endif
-    pmovmskb ecx,xmm1
-    add     rax,16
-    test    ecx,ecx
-    jz      loop_sse
-end_sse:
-    bsf     ecx,ecx
-    lea     rax,[rax+rcx-16]
+    jnz     toend
+
+main_loop:
+ifdef __AVX512__
+    tcmpeq  k0,zmm0,[rax]
+    kmovq   rdx,k0
+elseifdef __AVX__
+    tcmpeq  ymm1,ymm0,[rax]
+    vpmovmskb edx,ymm1
+else
+    movaps  xmm1,[rax]
+    xcmpeq  xmm1,xmm0
+    pmovmskb edx,xmm1
+endif
+    add     rax,U
+    test    rdx,rdx
+    jz      main_loop
+
+toend:
+    bsf     rdx,rdx
+if defined(_UNICODE) and defined(__AVX512__)
+    lea     rax,[rax+rdx*2-U]
+else
+    lea     rax,[rax+rdx-U]
+endif
     sub     rax,string
 ifdef _UNICODE
-    shr     eax,1
+    shr     rax,1
 endif
     ret
 
 endif ; __SSE__
 
-if defined(_UNICODE) or not defined(__SSE__)
-unicode_unaligned:
+if defined(_UNICODE) or defined(__AVX__) or not defined(__SSE__)
+
+nocando:
 ifndef _LIN64
     mov     rdx,rdi
     mov     rdi,rcx
 endif
-    mov     rcx,-1
+    or      rcx,-1
     xor     eax,eax
     repnz   _tscasb
     mov     rax,rcx

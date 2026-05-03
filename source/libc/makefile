@@ -4,11 +4,15 @@
 
 flag = -c -Cs
 
+ifdef avx512
+flag += -arch:AVX512
+else
 ifdef avx
 flag += -arch:AVX
 else
 ifndef default_cpu
 default_cpu = -6
+endif
 endif
 endif
 

@@ -35,7 +35,9 @@ endif
 endif
 
 if defined(_MT) and not defined(_DLL)
+ifndef _CRTBLD
 define _CRTBLD
+endif
 elseifdef __PE__ ; -pe option used
 ifndef _MSVCRT	 ; msvcrt.lib
 define _MSVCRT

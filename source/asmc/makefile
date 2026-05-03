@@ -3,9 +3,7 @@
 #
 
 flags = -Cs -Iinc -I../../include
-ifdef SUBVERSION
-flags += -DSUBVERSION=$(SUBVERSION)
-endif
+
 ifdef MASM
 flags += -DMASMCOMPAT
 endif
@@ -126,8 +124,8 @@ else
 
 release:
 	del *.obj
-	make SUBVERSION=64 x86=1 asmc
-	make SUBVERSION=64 asmc64
+	make x86=1 asmc
+	make asmc64
 	del *.obj
 	copy asmc.exe ..\..\bin
 	copy asmc64.exe ..\..\bin
@@ -135,7 +133,6 @@ release:
 asmc32:
 	make x86=1 asmc
 	make x86=1 asmc64
-	make asmc64
 	del *.obj
 
 masm_compat:

@@ -443,6 +443,7 @@ endif
         xor ebx,ebx
         .switch eax
         .case '1XVA'
+            undef_name("__AVX10_VER__")
             mov eax,[rdi+8]
             .if ( eax == '1.01' )       ; -arch:AVX10.1
                 define_name( "__AVX10_VER__", "1" )
@@ -669,7 +670,7 @@ endif
         mov Options.link,1
         .return
     .case 'ogol'            ; -logo
-        tprintf( &cp_logo, ASMC_MAJOR, ASMC_MINOR, ASMC_SUBVER )
+        tprintf( &cp_logo, _ASMC_MAJOR, _ASMC_MINOR, _ASMC_BUILD )
         tprintf( "\n" )
         exit(0)
 ifndef ASMC64

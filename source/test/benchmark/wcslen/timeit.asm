@@ -1,5 +1,5 @@
 ifdef _WIN64
-procs equ <for x,<0,2,3>> ; functions to test...
+procs equ <for x,<0,2,3,4>> ; functions to test...
 else
 procs equ <for x,<0,1,2,3>>
 endif
@@ -25,6 +25,7 @@ option dllimport:none
  info_1 db "libc(__X86__)",0
  info_2 db "libc(__SSE__)",0
  info_3 db "libc(__AVX__)",0
+ info_4 db "libc(__AVX512__)",0
 
 .code
 
@@ -88,10 +89,9 @@ main proc
             .return 1
         .endif
         endm
-    GetCycleCount(0, 15, 2, 4000)
-    GetCycleCount(16, 40, 4, 4000)
-    GetCycleCount(41, 80, 14, 5000)
-    GetCycleCount(600, 1000, 64, 500)
+    GetCycleCount(  0,   31,   3, 4000)
+    GetCycleCount( 32,  127,   8, 2000)
+    GetCycleCount(128, 2047, 128,  500)
     ret
     endp
     end start

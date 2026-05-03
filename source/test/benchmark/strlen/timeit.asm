@@ -1,7 +1,7 @@
 ifdef _WIN64
 procs equ <for x,<0,2,3,4,5,6>> ; functions to test...
 else
-procs equ <for x,<0,1,2,3,4,5>>
+procs equ <for x,<0,1,2,3,5,6>>
 endif
 args_x macro
     mov eax,step_x
@@ -25,9 +25,9 @@ option dllimport:none
  info_1 db "libc(__X86__)",0
  info_2 db "libc(__SSE__)",0
  info_3 db "libc(__AVX__)",0
- info_4 db "Intel Silvermont",0
- info_5 db "Intel Atom",0
- info_6 db "AVX512",0
+ info_4 db "libc(__AVX512__)",0
+ info_5 db "Intel Silvermont",0
+ info_6 db "Intel Atom",0
 
 .code
 

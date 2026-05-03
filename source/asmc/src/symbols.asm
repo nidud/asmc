@@ -46,7 +46,7 @@ sfunc_ptr           proc fastcall :asym_t, :ptr
 store               symptr_t ?
 eqitem              ends
 
-define _MAX_DYNEQ 20
+define _MAX_DYNEQ 64
 
 .data?
 szDate              char_t 16 dup(?)    ; value of @Date symbol
@@ -92,9 +92,9 @@ tmtab label tmitem
 ; table of predefined numeric equates
 
 eqtab LABEL eqitem
-    eqitem  < @CStr("__ASMC__"), ASMC_VERSION, 0, 0 >
+    eqitem  < @CStr("__ASMC__"), _ASMC_VER, 0, 0 >
 ifdef ASMC64
-    eqitem  < @CStr("__ASMC64__"), ASMC_VERSION, 0, 0 >
+    eqitem  < @CStr("__ASMC64__"), _ASMC_VER, 0, 0 >
 endif
     eqitem  < @CStr("__JWASM__"),  212, 0, 0 >
 

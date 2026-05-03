@@ -1384,7 +1384,7 @@ LstInit proc __ccall
         mov list_pos,0
     .endif
     .if ( Options.write_listing )
-        tsprintf( &logo, &cp_logo, ASMC_MAJOR, ASMC_MINOR, ASMC_SUBVER )
+        tsprintf( &logo, &cp_logo, _ASMC_MAJOR, _ASMC_MINOR, _ASMC_BUILD )
         mov rdx,GetFName( MODULE.srcfile )
         lea rcx,@CStr("%s  %s %s\n%s\n")
         .if ( Parse_Pass == PASS_1 && Options.first_pass_listing )

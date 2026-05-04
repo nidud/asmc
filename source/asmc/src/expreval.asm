@@ -446,14 +446,18 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .endif
         .switch eax
         .case T_LENGTH
-            .if ( [rbx].isdata )
+            .if ( [rdi].const_type )
+                mov [rsi].value,[rdi].value
+            .elseif ( [rbx].isdata )
                 mov [rsi].value,[rbx].first_length
             .else
                 mov [rsi].value,1
             .endif
             .endc
         .case T_LENGTHOF
-            .if ( [rdi].kind == EXPR_CONST )
+            .if ( [rdi].const_type )
+                mov [rsi].value,[rdi].value
+            .elseif ( [rdi].kind == EXPR_CONST )
                 mov rbx,[rdi].mbr
                 mov [rsi].value,[rbx].total_length
             .elseif ( [rbx].state == SYM_EXTERNAL && !( [rbx].iscomm ) )
@@ -634,7 +638,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
             .case ( [rdi].mem_type != MT_EMPTY || [rdi].explicit )
                 .if ( [rdi].mem_type != MT_EMPTY )
                     ; added v2.31.46
-                    .if ( [rdi].kind == EXPR_FLOAT && [rdi].mem_type == MT_REAL16 )
+                    .if ( [rdi].const_type || ( [rdi].kind == EXPR_FLOAT && [rdi].mem_type == MT_REAL16 ) )
                         xor eax,eax
                     .else
                         mov [rsi].mem_type,[rdi].mem_type
@@ -1404,7 +1408,10 @@ endif
                 .endif
 
                 .if ( [rsi].negative )
-                    mov [rdi].negative,1 ; v2.37.19: added
+                    mov [rdi].negative,1    ; v2.37.19: added
+                .endif
+                .if ( [rsi].const_type )
+                    mov [rdi].const_type,1  ; v2.38.05: added
                 .endif
 
             .elseif ( [rsi].state == SYM_EXTERNAL && [rsi].mem_type == MT_EMPTY &&
@@ -3087,6 +3094,7 @@ endif
                 .if !( ecx & AT_TYPE )
                     .return invalid_operand( rdi, [rbx].string_ptr, rdx )
                 .endif
+            .elseif ( [rdi].const_type )
             .elseif !( ecx & AT_NUM )
                 .if ( [rdi].is_opattr )
                     .return ERROR

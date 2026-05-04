@@ -149,7 +149,8 @@ IS_SIGNED proto watcall :byte {
     name_size       int_t ?
     hash            dd ?            ; v2.37.85: set by SymAlloc()
     record
-     casesensitive  db : 1 ?
+     casesensitive  db : 1 ?        ; casemap on creation: -D<id> is case sensitive
+     const_type     db : 1 ?        ; const value from type: <id> = BYTE
     ends
     state           db ?
     mem_type        db ?

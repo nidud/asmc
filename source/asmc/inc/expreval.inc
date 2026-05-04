@@ -107,6 +107,7 @@ union
   assumecheck	dd : 1 ?	; v2.07: for ASSUMEd std registers
   is_dot	dd : 1 ?	; v2.10: see regression test dotop5.asm
   curpc_used	dd : 1 ?	; v2.37.65: label - $
+  const_type	dd : 1 ?	; v2.38.05: constant was a type
  ends
 ends
 op		ptr opinfo ?

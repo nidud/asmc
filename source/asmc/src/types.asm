@@ -1054,23 +1054,20 @@ GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:token_t,
 
     .if ( type == ERROR )
         .if ( [rbx].token != T_ID )
+            mov ecx,2008
             .if ( [rbx].token == T_FINAL || [rbx].token == T_COMMA )
-                asmerr( 2175 )
-            .else
-                asmerr( 2008, [rbx].string_ptr )
-                ;add rbx,asm_tok
+                mov ecx,2175
             .endif
-            .return( ERROR )
+            .return( asmerr( ecx, [rbx].string_ptr ) )
         .endif
         mov [rsi].symtype,SymFindID( rbx )
         mov rdi,rax
         .if ( rdi == NULL || [rdi].asym.state != SYM_TYPE )
+            mov ecx,2175 ; v2.38.05: changed from 2004
             .if ( [rsi].symtype == NULL || [rdi].asym.state == SYM_UNDEFINED )
-                asmerr( 2006, [rbx].string_ptr )
-            .else
-                asmerr( 2004, [rbx].string_ptr )
+                mov ecx,2006
             .endif
-            .return( ERROR )
+            .return( asmerr( ecx, [rbx].string_ptr ) )
         .endif
         mov rdi,[rsi].symtype
         .if ( [rdi].asym.typekind == TYPE_TYPEDEF )

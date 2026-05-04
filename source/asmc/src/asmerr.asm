@@ -213,7 +213,7 @@ externdef jmpenv:byte
     A2171 equ <"cannot expand macro function">
     A2172 equ <"too few bits in RECORD : %s">
     A2173 equ <"macro function cannot redefine itself">
-    A2175 equ <"invalid qualified type">
+    A2175 equ <"invalid qualified type : %s">
     A2176 equ <"floating point initializer on an integer variable">
     A2177 equ <"nested structure improperly initialized">
     A2178 equ <"invalid use of FL    AT">

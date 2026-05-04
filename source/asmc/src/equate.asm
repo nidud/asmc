@@ -30,6 +30,9 @@ SetValue proc fastcall private uses rdi _sym:asym_t, opndx:expr_t
     mov [rcx].isdefined,1
     mov [rcx].isequate,1
     mov [rcx].isproc,0
+    .if ( [rdx].is_type )
+        mov [rcx].const_type,1 ; v2.38.05: const = BYTE --> SIZEOF const
+    .endif
 
     .if ( [rdx].kind == EXPR_CONST ||
          ( [rdx].kind == EXPR_FLOAT && [rdx].float_tok == NULL ) )

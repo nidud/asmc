@@ -1,5 +1,5 @@
 ifdef _WIN64
-procs equ <for x,<0,2,3>> ; functions to test...
+procs equ <for x,<0,2,3,4>> ; functions to test...
 else
 procs equ <for x,<0,1,2,3>>
 endif
@@ -16,6 +16,8 @@ endif
     exitm<>
     endm
 
+;define O_NOFILE
+
 include ../timeit.inc
 option  dllimport:<msvcrt>
 externdef import strcpy:ptr_t
@@ -29,6 +31,7 @@ info_0  db "msvcrt.strcpy()",0
 info_1  db "libc(__X86__)",0
 info_2  db "libc(__SSE__)",0
 info_3  db "libc(__AVX__)",0
+info_4  db "libc(__AVX512__)",0
 
 .code
 
@@ -47,7 +50,7 @@ validate_x proc uses rsi rdi rbx x:dword
     .if rsi
 
         assume rsi:ptr strcpy_t
-        .for ( ebx = 0 : ebx < 70 && nerror < 16 : ebx++ )
+        .for ( ebx = 0 : ebx < 70 && nerror < 10 : ebx++ )
 
             mov rdx,m_endp
             sub rdx,17
@@ -61,34 +64,37 @@ validate_x proc uses rsi rdi rbx x:dword
             mov rdi,rdx
             lea rdx,str_1[size_s-1]
             sub rdx,rbx
-
             .if ( rsi(rdi, rdx) != rdi )
                 printf("error: rax %06X [%06X] %d.asm\n", rax, rdi, x)
                 inc nerror
             .else
-                .for ( edx = 0, ecx = ebx : ecx : ecx-- )
+                .for ( ecx = ebx : ecx : ecx-- )
                     .if byte ptr [rax+rcx-1] != 'x'
                         movzx ecx,byte ptr [rax+rcx-1]
-                        printf("error: '%c' ('x') (%d) %d.asm: %s\n", ecx, ebx, x, rdi)
+                        lea rdx,str_1[size_s-1]
+                        sub rdx,rbx
+                        printf("error%d: '%c' ('x') (%d) %d.asm: %s\n", size_t*8, ecx, ebx, x, rdi)
                         inc nerror
                        .break
                     .endif
                 .endf
                 .if byte ptr [rdi-1]
                     movzx ecx,byte ptr [rdi-1]
-                    printf("error: [rax-1]: '%c' (0) (%d) %d.asm: %s\n", ecx, ebx, x, rdi)
+                    printf("error%d: [rax-1]: '%c' (0) (%d) %d.asm: %s\n", size_t*8, ecx, ebx, x, rdi)
                     inc nerror
                 .endif
                 lea rax,[rdi+rbx]
                 .if byte ptr [rax]
                     movzx ecx,byte ptr [rax]
-                    printf("error: [rax+rbx]: '%c' (0) (%d) %d.asm: %s\n", ecx, ebx, x, rdi)
+                    lea rdx,str_1[size_s-1]
+                    sub rdx,rbx
+                    printf("error%d: [rax+rbx]: '%c' (0) (%d) %d.asm:\n%p: %s\n%p: %s\n", size_t*8, ecx, ebx, x, rdi, rdi, rdx, rdx)
                     inc nerror
                 .endif
                 .for ( rax = &[rdi+rbx+1], ecx = 15 : ecx : ecx-- )
                     .if byte ptr [rax+rcx-1] != '?'
                         movzx ecx,byte ptr [rax+rcx-1]
-                        printf("error: '%c' ('?') (%d) %d.asm: %s\n", ecx, ebx, x, rdi)
+                        printf("error%d: '%c' ('?') (%d) %d.asm: %s\n", size_t*8, ecx, ebx, x, rdi)
                         inc nerror
                        .break
                     .endif
@@ -117,6 +123,7 @@ main proc
     GetCycleCount(  0,  32, 4, 1000)
     GetCycleCount( 32, 128, 8, 800)
     GetCycleCount(128, 512, 8, 400)
+    xor eax,eax
     ret
     endp
     end start

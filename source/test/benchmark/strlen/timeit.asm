@@ -28,6 +28,7 @@ option dllimport:none
  info_4 db "libc(__AVX512__)",0
  info_5 db "Intel Silvermont",0
  info_6 db "Intel Atom",0
+ info_7 db "ucrt",0
 
 .code
 
@@ -59,7 +60,8 @@ validate_x proc uses rsi rdi rbx x:dword
             sub rcx,rdi
             dec rcx
             .if ( rsi(rcx) != rdi )
-                printf("error: eax = %d (%d) proc_%d\n", eax, edi, x)
+                mov ecx,eax
+                printf("error%d: %2d (%d) %d.asm\n", size_t*8, ecx, edi, x)
                 inc nerror
             .endif
         .endf
@@ -95,6 +97,7 @@ main proc
     GetCycleCount(16, 127, 8, 2000)
     GetCycleCount(128, 256, 14, 500)
     GetCycleCount(1024, 2048, 218, 400)
+    xor eax,eax
     ret
     endp
     end start

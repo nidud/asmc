@@ -2,8 +2,10 @@ Asmc Macro Assembler Reference
 
 ## operator LENGTHOF
 
-See [SIZEOF](operator-sizeof.md).
+**LENGTHOF** _variable_
+
+Returns the number of data objects in _variable_.
 
 #### See Also
 
-[Operators Reference](readme.md) | [Type](type.md) | [Masm Compatible Opeators](../command/option-zne.md)
+[Operators Reference](readme.md) | [TYPE](type.md) | [SIZEOF](operator-sizeof.md) | [Masm Compatible Opeators](../command/option-zne.md)

@@ -3,70 +3,124 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-; void *memcpy(void *dst, void *src, size_t count);
-; void *memmove(void *dst, void *src, size_t count);
-;
 
 include isa_availability.inc
 
-.code
-
-memcpy::
-memmove::
+ifdef __SSE__
+ifdef __AVX__
+if defined(__AVX512BW__) ;and defined(_WIN64)
+define __AVX512__
+define U 64
+else
+define U 32
+endif
+else
+define U 16
+endif
+else
+define U size_t
+endif
 
 ifndef _WIN64
-    mov     eax,[esp+4]
-    mov     edx,[esp+8]
-    mov     ecx,[esp+12]
-    define  r9  <[esp+16]>
-    define  r10 <esi>
+define  dst <[esp+4]>
+define  src <[esp+8]>
+define  len <[esp+12]>
 elseifdef __UNIX__
-    mov     rcx,rdx
+define  dst <rdi>
+define  src <rsi>
+define  len <r8>
+else
+define  dst <r11>
+define  src <r10>
+define  len <r8>
+endif
+
+ifndef __UNIX__
+ALIAS <memmove>=<memcpy>
+endif
+
+.code
+
+ifdef __UNIX__
+memmove::
+endif
+
+memcpy proc
+
+ifndef _WIN64
+    mov     eax,dst
+    mov     edx,src
+    mov     ecx,len
+elseifdef __UNIX__
     mov     rax,rdi
+    mov     rcx,rdx
     mov     rdx,rsi
 else
+    mov     dst,rcx
     mov     rax,rcx
     mov     rcx,r8
 endif
+    cmp     rax,rdx
+    jbe     non_overlapping_buffers
+    sub     rax,rcx
+    cmp     rax,rdx
+    lea     rax,[rax+rcx]
+    jb      overlapping_buffers
+
+non_overlapping_buffers:
+
+ifdef __AVX__
+ifdef __TEST__
+    test    rcx,rcx
+elseifdef __AVX512__
+    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX512
+else
+    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
+endif
+    jz      avx_not_supported
+endif
 
 ifdef __SSE__
-
-    cmp     rcx,64
-    ja      copy_64
-    test    cl,0x60
-    jnz     copy_32to64
-    test    cl,0x30
-    jnz     copy_16to31
-    test    cl,0x08
-    jnz     copy_8to15
-    test    cl,0x04
-    jnz     copy_4to7
+    cmp     rcx,U*2
+    ja      begin_copy
+ifdef __AVX512__
+    test    cl,-64
+    jnz     copy_64_128
+endif
+ifdef __AVX__
+    test    cl,-32
+    jnz     copy_32_64
+endif
+    test    cl,-16
+    jnz     copy_16_32
+    test    cl,-8
+    jnz     copy_8_16
+    test    cl,4
+    jnz     copy_4_8
     cmp     cl,2
-    ja      copy_3
     je      copy_2
-    test    ecx,ecx
-    jz      copy_0
+    ja      copy_3
+    test    cl,cl
+    je      copy_0
 copy_1:
     mov     cl,[rdx]
     mov     [rax],cl
 copy_0:
     ret
+copy_3:
+    mov     cl,[rdx+2]
+    mov     [rax+2],cl
 copy_2:
     mov     cx,[rdx]
     mov     [rax],cx
     ret
-copy_3:
-    mov     cl,[rdx+2]
-    mov     dx,[rdx]
-    mov     [rax],dx
-    mov     [rax+2],cl
-    ret
-copy_4to7:
+
+copy_4_8:
 ifdef _WIN64
     mov     r8d,[rdx]
-    mov     r9d,[rdx+rcx-4]
+    mov     edx,[rdx+rcx-4]
     mov     [rax],r8d
-    mov     [rax+rcx-4],r9d
+    mov     [rax+rcx-4],edx
 else
     movss   xmm0,[rdx]
     movss   xmm1,[rdx+rcx-4]
@@ -74,12 +128,13 @@ else
     movss   [rax+rcx-4],xmm1
 endif
     ret
-copy_8to15:
+
+copy_8_16:
 ifdef _WIN64
     mov     r8,[rdx]
-    mov     r9,[rdx+rcx-8]
+    mov     rdx,[rdx+rcx-8]
     mov     [rax],r8
-    mov     [rax+rcx-8],r9
+    mov     [rax+rcx-8],rdx
 else
     movsd   xmm0,[rdx]
     movsd   xmm1,[rdx+rcx-8]
@@ -87,180 +142,147 @@ else
     movsd   [rax+rcx-8],xmm1
 endif
     ret
-copy_16to31:
+
+copy_16_32:
     movups  xmm0,[rdx]
     movups  xmm1,[rdx+rcx-16]
     movups  [rax],xmm0
     movups  [rax+rcx-16],xmm1
     ret
-copy_32to64:
-    movups  xmm0,[rdx]
-    movups  xmm1,[rdx+16]
-    movups  xmm2,[rdx+rcx-32]
-    movups  xmm3,[rdx+rcx-16]
-    movups  [rax],xmm0
-    movups  [rax+16],xmm1
-    movups  [rax+rcx-32],xmm2
-    movups  [rax+rcx-16],xmm3
-    ret
-
 ifdef __AVX__
-
-    align loop_avx size_t*2
-
-copy_64:
-
-ifndef __TEST__
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
-    jz      copy_gpr
-endif
-    vmovups ymm2,[rdx]              ; save 128 byte overlap
-    vmovups ymm3,[rdx+32]
-    vmovups ymm4,[rdx+rcx-64]
-    vmovups ymm5,[rdx+rcx-32]
-
-    cmp     rcx,128
-    jbe     copy_128
-
-ifdef _WIN64
-    mov     r9,rax
-    mov     r8,rcx
-else
-    push    esi
-    push    ecx
-    push    eax
-endif
-ifdef __UNIX__
-    neg     eax                     ; alignment for System-V
-else
-    neg     rax
-endif
-    and     eax,64-1                ; aligned writes
-    add     rdx,rax                 ; advance source pointer
-    sub     rcx,rax                 ; adjust count
-    add     rax,r9                  ; align dest to 64
-    mov     r10,-64                 ; chunk size
-    and     rcx,-64                 ; align count
-    cmp     rax,rdx                 ; copy direction
-    ja      loop_avx
-    lea     rax,[rax+rcx-64]        ; flip direction
-    lea     rdx,[rdx+rcx-64]
-    neg     r10                     ; +
-    neg     rcx                     ; -
-loop_avx:
-    add     rcx,r10                 ; copy aligned blocks
-    vmovups ymm0,[rdx+rcx]
-    vmovups ymm1,[rdx+rcx+32]
-    vmovaps [rax+rcx],ymm0
-    vmovaps [rax+rcx+32],ymm1
-    jnz     loop_avx
-
-ifdef _WIN64
-    mov     rax,r9                  ; dest pointer = return value
-    mov     rcx,r8                  ; reset count
-else
-    pop     eax
-    pop     ecx
-    pop     esi
-endif
-
-copy_128:
-    vmovups [rax],ymm2              ; overlapping head and tail bytes
-    vmovups [rax+32],ymm3
-    vmovups [rax+rcx-64],ymm4
-    vmovups [rax+rcx-32],ymm5
+copy_32_64:
+    vmovups ymm0,[rdx]
+    vmovups ymm1,[rdx+rcx-32]
+    vmovups [rax],ymm0
+    vmovups [rax+rcx-32],ymm1
     vzeroupper
     ret
-
-copy_gpr:
-
-else
-
-    align loop_xmm 8
-
-copy_64:
-
-    movups  xmm2,[rdx]              ; save 64 byte overlap
-    movups  xmm3,[rdx+16]
-    movups  xmm4,[rdx+rcx-32]
-    movups  xmm5,[rdx+rcx-16]
-
-ifdef _WIN64
-ifdef __UNIX__
-    mov     r8,rcx
 endif
-    mov     r9,rax
-else
-    push    esi
-    push    ecx
-    push    eax
+ifdef __AVX512__
+copy_64_128:
+    vmovups zmm0,[rdx]
+    vmovups zmm1,[rdx+rcx-64]
+    vmovups [rax],zmm0
+    vmovups [rax+rcx-64],zmm1
+    vzeroupper
+    ret
 endif
-    neg     rax
-    and     eax,32-1
-    add     rdx,rax
+
+    align   loop_u4 size_t*2
+
+begin_copy:
+ifdef __AVX512__
+    vmovups zmm0,[rdx]
+    vmovups zmm1,[rdx+rcx-U]
+    vmovups [rax],zmm0
+    vmovups [rax+rcx-U],zmm1
+elseifdef __AVX__
+    vmovups ymm0,[rdx]
+    vmovups ymm1,[rdx+rcx-U]
+    vmovups [rax],ymm0
+    vmovups [rax+rcx-U],ymm1
+else
+    movups  xmm0,[rdx]
+    movups  xmm1,[rdx+rcx-U]
+    movups  [rax],xmm0
+    movups  [rax+rcx-U],xmm1
+endif
+    mov     eax,edx
+    neg     eax
+    and     eax,U-1
     sub     rcx,rax
-    add     rax,r9
-    mov     r10,-32
-    and     rcx,r10
-    cmp     rax,rdx
-    ja      loop_xmm
-    lea     rax,[rax+rcx-32]
-    lea     rdx,[rdx+rcx-32]
-    neg     r10
-    neg     rcx
-loop_xmm:
-    add     rcx,r10
-    movups  xmm0,[rdx+rcx]
-    movups  xmm1,[rdx+rcx+16]
-    movaps  [rax+rcx],xmm0
-    movaps  [rax+rcx+16],xmm1
-    jnz     loop_xmm
-ifdef _WIN64
-    mov     rax,r9
-    mov     rcx,r8
+    add     rdx,rax
+    add     rax,dst
+
+check_blocks:
+    mov     len,rcx
+    shr     rcx,(bsf U) + 2      ; 64/128/256 byte block count
+    jz      copy_u
+
+loop_u4:
+ifdef __AVX512__
+    vmovaps zmm0,[rdx+U*0]
+    vmovaps zmm1,[rdx+U*1]
+    vmovaps zmm2,[rdx+U*2]
+    vmovaps zmm3,[rdx+U*3]
+    vmovups [rax+U*0],zmm0
+    vmovups [rax+U*1],zmm1
+    vmovups [rax+U*2],zmm2
+    vmovups [rax+U*3],zmm3
+elseifdef __AVX__
+    vmovaps ymm0,[rdx+U*0]
+    vmovaps ymm1,[rdx+U*1]
+    vmovaps ymm2,[rdx+U*2]
+    vmovaps ymm3,[rdx+U*3]
+    vmovups [rax+U*0],ymm0
+    vmovups [rax+U*1],ymm1
+    vmovups [rax+U*2],ymm2
+    vmovups [rax+U*3],ymm3
 else
-    pop     eax
-    pop     ecx
-    pop     esi
+    movaps  xmm0,[rdx+U*0]
+    movaps  xmm1,[rdx+U*1]
+    movaps  xmm2,[rdx+U*2]
+    movaps  xmm3,[rdx+U*3]
+    movups  [rax+U*0],xmm0
+    movups  [rax+U*1],xmm1
+    movups  [rax+U*2],xmm2
+    movups  [rax+U*3],xmm3
 endif
-    movups  [rax],xmm2
-    movups  [rax+16],xmm3
-    movups  [rax+rcx-32],xmm4
-    movups  [rax+rcx-16],xmm5
+    add     rax,U*4
+    add     rdx,U*4
+    dec     rcx
+    jnz     loop_u4
+
+copy_u:
+    mov     rcx,len
+    and     ecx,U*4-1
+    shr     ecx,bsf U
+    jz      end_copy
+
+loop_u:
+ifdef __AVX512__
+    vmovaps zmm0,[rdx]
+    vmovups [rax],zmm0
+elseifdef __AVX__
+    vmovaps ymm0,[rdx]
+    vmovups [rax],ymm0
+else
+    movaps  xmm0,[rdx]
+    movups  [rax],xmm0
+endif
+    add     rax,U
+    add     rdx,U
+    dec     rcx
+    jnz     loop_u
+end_copy:
+    mov     rax,dst
+ifdef __AVX__
+    vzeroupper
+endif
     ret
 
-endif
 endif ; __SSE__
 
-if defined(__AVX__) or not defined(__SSE__)
-
-ifndef _WIN64
-    push    esi
-    push    edi
-elseifndef __UNIX__
-    mov     r8,rsi
-    mov     r9,rdi
-endif
+avx_not_supported:
+    xchg    rdx,rsi
+    xchg    rax,rdi
+    rep     movsb
     mov     rsi,rdx
     mov     rdi,rax
-    cmp     rax,rdx
-    ja      L1
-    rep     movsb
-    jmp     L2
-L1:
+    mov     rax,dst
+    ret
+overlapping_buffers:
+    xchg    rdx,rsi
+    xchg    rax,rdi
     lea     rsi,[rsi+rcx-1]
     lea     rdi,[rdi+rcx-1]
     std
     rep     movsb
     cld
-L2:
-ifndef _WIN64
-    pop     edi
-    pop     esi
-elseifndef __UNIX__
-    mov     rsi,r8
-    mov     rdi,r9
-endif
+    mov     rsi,rdx
+    mov     rdi,rax
+    mov     rax,dst
     ret
-endif
+    endp
+
     end

@@ -614,8 +614,7 @@ endif
 
     .case 'marf'            ; -frame
         mov Options.frame_auto,3
-        .return
-
+       .return
 ifndef ASMC64
     .case 'cG'              ; -Gc
         mov Options.langtype,LANG_PASCAL

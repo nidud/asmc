@@ -79,8 +79,7 @@ validate_x proc uses rsi rdi rbx x:dword
     endp
 
 main proc
-    mov rax,wcslen
-    mov proc_p,rax
+    mov proc_p,wcslen
     procs
         validate_x(x)
         .if nerror
@@ -92,6 +91,7 @@ main proc
     GetCycleCount(  0,   31,   3, 4000)
     GetCycleCount( 32,  127,   8, 2000)
     GetCycleCount(128, 2047, 128,  500)
+    xor eax,eax
     ret
     endp
     end start

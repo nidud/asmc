@@ -16,7 +16,7 @@ endif
 
 .code
 
-memcmp::
+memcmp proc
 
 ifndef _WIN64
     push    esi
@@ -200,5 +200,6 @@ else
     cmp     rax,rcx
 endif
     jmp     not_equal
+    endp
 
     end

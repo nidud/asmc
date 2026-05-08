@@ -1778,10 +1778,10 @@ insv(VPBROADCASTQ, vpbroadcastq, OpCls( XMM,  R64,        NONE ), F_660F38, 1, n
 insn(VPBROADCASTQ, 1,           OpCls( XMM,   XMM_M64,    NONE ), F_660F38, 1, no_WDS, 0x59, 0x00, P_686 or P_AVX, 0,0xE0)
 insv(VPBROADCASTD, vpbroadcastd, OpCls( XMM,  R32,        NONE ), F_660F38, 1, no_WDS, 0x7C, 0x00, P_686 or P_AVX, 0,0xE0, RWF_VEX or RWF_T1S, VX_L or VX_NND or VX_HALF or VX_RW0 )
 insn(VPBROADCASTD, 1,           OpCls( XMM,   XMM_M32,    NONE ), F_660F38, 1, no_WDS, 0x58, 0x00, P_686 or P_AVX, 0,0xE0)
-insv(VPBROADCASTW, vpbroadcastw, OpCls( XMM,  R16,        NONE ), F_660F38, 1, no_WDS, 0x7B, 0x00, P_686 or P_AVX, 0,0, RWF_VEX, VX_L or VX_NND or VX_HALF )
-insn(VPBROADCASTW, 1,           OpCls( XMM,   XMM_M16,    NONE ), F_660F38, 1, no_WDS, 0x79, 0x00, P_686 or P_AVX, 0,0)
-insv(VPBROADCASTB, vpbroadcastb, OpCls( XMM,  R8,         NONE ), F_660F38, 1, no_WDS, 0x7A, 0x00, P_686 or P_AVX, 0,0, RWF_VEX, VX_L or VX_NND or VX_HALF )
-insn(VPBROADCASTB, 1,       OpCls( XMM,       XMM_M08,    NONE ), F_660F38, 1, no_WDS, 0x78, 0x00, P_686 or P_AVX, 0,0)
+insv(VPBROADCASTW, vpbroadcastw, OpCls( XMM,  R,          NONE ), F_660F38, 1, no_WDS, 0x7B, 0x00, P_686 or P_AVX, 0,0xE0, RWF_VEX or RWF_T1S, VX_L or VX_NND or VX_HALF or VX_RW0 )
+insn(VPBROADCASTW, 1,           OpCls( XMM,   XMM_M16,    NONE ), F_660F38, 1, no_WDS, 0x79, 0x00, P_686 or P_AVX, 0,0xE0)
+insv(VPBROADCASTB, vpbroadcastb, OpCls( XMM,  R,          NONE ), F_660F38, 1, no_WDS, 0x7A, 0x00, P_686 or P_AVX, 0,0xE0, RWF_VEX or RWF_T1S, VX_L or VX_NND or VX_HALF or VX_RW0 )
+insn(VPBROADCASTB, 1,       OpCls( XMM,       XMM_M08,    NONE ), F_660F38, 1, no_WDS, 0x78, 0x00, P_686 or P_AVX, 0,0xE0)
 
 ; GPR instructions v2.28
 

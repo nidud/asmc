@@ -6,6 +6,7 @@
 ; size_t strlen(char *);
 ; size_t wcslen(wchar_t *);
 ;
+
 include tchar.inc
 include isa_availability.inc
 
@@ -39,7 +40,7 @@ endif
 
 .code
 
-_tcslen::
+_tcslen proc
 
 ifndef _WIN64
     mov     ecx,[esp+4]
@@ -54,7 +55,7 @@ endif
 
 if defined(_UNICODE) and defined(__SSE__)
     test    cl,1            ; Unicode strings needs to be aligned..
-    jnz     nocando
+    jnz     byte_length
 endif
 
 ifdef __SSE__
@@ -68,11 +69,8 @@ elseifdef __AVX512__
 else
     test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
 endif
-    jnz     align_to_boundary
-    jmp     nocando
+    jz      byte_length
 endif
-
-    align   main_loop size_t
 
 align_to_boundary:
 
@@ -80,47 +78,38 @@ align_to_boundary:
     and     cl,U-1
 ifdef __AVX512__
     vxorps  zmm0,zmm0,zmm0
-    or      rdx,-1          ; mask string part
 ifdef _UNICODE
     shr     ecx,1           ; 32-bit mask
 endif
-    shl     rdx,cl          ; bits to keep
-    kmovq   k1,rdx
-    tcmpeq  k0{k1},zmm0,[rax]
-    add     rax,64
+    tcmpeq  k0,zmm0,[rax]
     kmovq   rdx,k0
-    test    rdx,rdx
 elseifdef __AVX__
-    or      edx,-1
-    shl     edx,cl
     vxorps  ymm0,ymm0,ymm0
     tcmpeq  ymm1,ymm0,[rax]
-    add     rax,32
-    vpmovmskb ecx,ymm1
-    and     edx,ecx
+    vpmovmskb edx,ymm1
 else
-    or      edx,-1
-    shl     edx,cl
     xorps   xmm0,xmm0
     xcmpeq  xmm0,[rax]
-    add     rax,16
-    pmovmskb ecx,xmm0
+    pmovmskb edx,xmm0
     xorps   xmm0,xmm0
-    and     edx,ecx
 endif
+    add     rax,U
+    shr     rdx,cl          ; shift out low bits..
+    shl     rdx,cl          ; CL may be 0 here..
+    test    rdx,rdx
     jnz     toend
 
+    align   size_t
 main_loop:
 ifdef __AVX512__
     tcmpeq  k0,zmm0,[rax]
     kmovq   rdx,k0
 elseifdef __AVX__
-    tcmpeq  ymm1,ymm0,[rax]
-    vpmovmskb edx,ymm1
+    tcmpeq  ymm0,ymm0,[rax]
+    vpmovmskb edx,ymm0
 else
-    movaps  xmm1,[rax]
-    xcmpeq  xmm1,xmm0
-    pmovmskb edx,xmm1
+    xcmpeq  xmm0,[rax]
+    pmovmskb edx,xmm0
 endif
     add     rax,U
     test    rdx,rdx
@@ -137,26 +126,71 @@ endif
 ifdef _UNICODE
     shr     rax,1
 endif
+ifdef __AVX__
+    vzeroupper
+endif
     ret
 
 endif ; __SSE__
 
 if defined(_UNICODE) or defined(__AVX__) or not defined(__SSE__)
 
-nocando:
+byte_length:
+ifdef _UNICODE
 ifndef _LIN64
     mov     rdx,rdi
     mov     rdi,rcx
 endif
     or      rcx,-1
     xor     eax,eax
-    repnz   _tscasb
+    repnz   scasw
     mov     rax,rcx
 ifndef _LIN64
     mov     rdi,rdx
 endif
     not     rax
     dec     rax
+else
+    mov     rax,rcx
+    test    al,3
+    jz      byte_loop
+byte_align:
+    mov     dl,[rax]
+    inc     rax
+    test    dl,dl
+    jz      return_byte_3
+    test    al,3
+    jnz     byte_align
+byte_loop:
+    mov     edx,[rax]
+    lea     ecx,[rdx-0x01010101]
+    add     rax,4
+    not     edx
+    and     ecx,edx
+    and     ecx,0x80808080
+    jz      byte_loop
+    not     edx
+    test    dl,dl
+    jz      return_byte_0
+    test    dh,dh
+    jz      return_byte_1
+    shr     edx,16
+    test    dl,dl
+    jz      return_byte_2
+    test    dh,dh
+    jz      return_byte_3
+    jmp     byte_loop
+return_byte_0:
+    dec     rax
+return_byte_1:
+    dec     rax
+return_byte_2:
+    dec     rax
+return_byte_3:
+    dec     rax
+    sub     rax,string
+endif
     ret
 endif
+    endp
     end

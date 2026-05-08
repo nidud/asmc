@@ -1,11 +1,11 @@
 ifdef _WIN64
-procs equ <for x,<0,2,3>> ; functions to test...
+procs equ <for x,<0,2,3,4>> ; functions to test...
 else
 procs equ <for x,<0,1,2,3>>
 endif
 args_x macro
-    mov eax,step_x
-    lea rdx,str_1[size_s]
+    imul eax,step_x,2
+    lea rdx,str_1[size_s-2]
     sub rdx,rax
 ifdef _WIN64
     mov rcx,m_4096
@@ -18,7 +18,7 @@ endif
 
 include ../timeit.inc
 option  dllimport:<msvcrt>
-externdef import wcscpy:ptr_t
+externdef import wcscpy:ptr
 
 define size_s 4096 ; maximum data size
 
@@ -30,6 +30,7 @@ info_0  db "msvcrt.wcscpy()",0
 info_1  db "libc(__X86__)",0
 info_2  db "libc(__SSE__)",0
 info_3  db "libc(__AVX__)",0
+info_4  db "libc(__AVX512__)",0
 
 .code
 
@@ -103,8 +104,7 @@ validate_x proc uses rsi rdi rbx x:dword
     endp
 
 main proc
-    mov rax,wcscpy
-    mov proc_p,rax
+    mov proc_p,wcscpy
     procs
         validate_x(x)
         .if nerror
@@ -116,6 +116,7 @@ main proc
     GetCycleCount(  0,  32, 4, 1000)
     GetCycleCount( 32, 128, 8, 800)
     GetCycleCount(128, 512, 8, 400)
+    xor eax,eax
     ret
     endp
     end start

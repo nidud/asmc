@@ -389,8 +389,15 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov [rsi].state,SYM_ALIAS
         mov [rsi].substitute,rdi
+        ;
         ; v2.10: copy language type of alias
-        mov [rsi].langtype,[rdi].langtype
+        ; v2.39: add global language
+        ;
+        mov al,[rdi].langtype
+        .if ( al == LANG_NONE )
+            mov al,MODULE.langtype
+        .endif
+        mov [rsi].langtype,al
         sym_add_table(&SymTables[TAB_ALIAS], rsi) ; add ALIAS
        .return( NOT_ERROR )
     .endif

@@ -10,7 +10,7 @@ include isa_availability.inc
 
 .code
 
-memset::
+memset proc
 
 ifdef _WIN64
 ifdef __UNIX__
@@ -126,4 +126,5 @@ else ; __SSE__
     mov     eax,[esp+4]
     ret
 endif
+    endp
     end

@@ -21,11 +21,14 @@ endif
 .pragma comment(lib, msvcrt)
 printf  proto :ptr byte, :vararg
 fprintf proto :ptr, :ptr byte, :vararg
+sprintf proto :ptr byte, :ptr byte, :vararg
 fopen   proto :ptr, :ptr
 fclose  proto :ptr
 fread   proto :ptr, :sdword, :sdword, :ptr
 exit    proto :dword
 _getch  proto
+__getmainargs proto :ptr, :ptr, :ptr, :dword, :ptr
+__iob_func proto
 
 ifndef __UNIX__
 .pragma comment(lib, kernel32)
@@ -63,6 +66,11 @@ main proto
  m_4096  ptr_t 0
  m_endp  ptr_t 0
  fp      ptr_t 0
+ __argc  dd 0
+ console dd 0
+ __argv  ptr_t 0
+ _environ ptr_t 0
+
  file_x  dd 0
  step_x  dd 0
  nerror  dd 0
@@ -80,6 +88,7 @@ main proto
 
 .data?
  align 16
+ _startup label byte
  proc_b db size_p dup(?)
 
 .code
@@ -245,6 +254,7 @@ GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
         mov [rsi+rbx*size_t],eax
     .endw
     printf("\n")
+
     fprintf(fp, "total [%i .. %i], %i++\n", l1, l2, step)
     .while 1
         xor ebx,ebx
@@ -273,10 +283,10 @@ GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
         add ebx,'0'
         fprintf(fp, "%9i cycles %c.asm(%3d): %s\n", edx, ebx, ecx, rax)
     .endw
-if 0
-    printf("hit any key to continue...\r")
-    _getch()
-endif
+    .if console
+        printf("hit any key to continue...\r")
+        _getch()
+    .endif
     printf("\n")
     ret
     endp
@@ -448,11 +458,6 @@ endif
     endp
 
 ifndef __UNIX__
-ifdef _WIN64
-define BITS <"Win64">
-else
-define BITS <"Win32">
-endif
 ExceptionHandler proc ExceptionRecord:ptr, EstablisherFrame:ptr, ContextRecord:ptr, DispatcherContext:ptr
     ldr rcx,ExceptionRecord
 ifdef _WIN64
@@ -522,22 +527,37 @@ start proc frame:ExceptionHandler
 else
 start proc
 endif
-  local lpflOldProtect:ptr_t, cpustring[80]:byte, retval:dword
+
+  local lpflOldProtect:ptr_t, cpustring[80]:byte, retval:dword, buffer[128]:byte
+
+    __getmainargs( &__argc, &__argv, &_environ, 0, &_startup )
     .ifd !( setsselevel() & SSE_SSE2 )
         printf("CPU error: Need SSE2 level\n")
         exit(1)
     .endif
-    .if ( fopen("result.txt", "a") == 0 )
-        printf("IO error: failed to open result.txt\n")
-        exit(1)
+
+    mov console,1
+    .if ( __argc == 2 )
+
+        mov rax,__argv
+        mov rcx,[rax+size_t]
+        .if ( byte ptr [rcx] == '-' || byte ptr [rcx] == '/' )
+
+            printf("Usage: timeit [<result_file>]\n")
+            exit(0)
+        .endif
+        mov fp,fopen(rcx, "a")
+        mov console,0
     .endif
-    mov fp,rax
-;    fprintf(fp, "----------------------------------------------------\n" )
-ifdef _WIN64
-    fprintf(fp, "x64: ")
-else
-    fprintf(fp, "x86: ")
-endif
+
+    .if ( fp == 0 )
+
+        mov console,1
+        __iob_func()
+        add rax,24+3*size_t
+        mov fp,rax
+    .endif
+
     .for ( rdi = &cpustring, esi = 0 : esi < 3 : esi++, rdi += 16 )
         lea rax,[rsi+0x80000002]
         cpuid
@@ -546,9 +566,8 @@ endif
         mov [rdi+0x08],ecx
         mov [rdi+0x0C],edx
     .endf
-    .for rax = &cpustring: byte ptr [rax] == ' ' : rax++
+    .for ( rbx = &cpustring: byte ptr [rbx] == ' ' : rbx++ )
     .endf
-    fprintf(fp, "%s (", rax)
     mov eax,sselev
     lea rcx,@CStr("SSE2")
     .switch
@@ -560,8 +579,13 @@ endif
     .case eax & SSE_SSSE3:   lea rcx,@CStr("SSSE3")  : .endc
     .case eax & SSE_SSE3:    lea rcx,@CStr("SSE3")   : .endc
     .endsw
-    fprintf(fp, "%s)\n", rcx)
-;    fprintf(fp, "%s)\n----------------------------------------------------\n", rcx)
+    mov ebx,sprintf(&buffer, "%d bit: %s (%s)", size_t*8, rbx, rcx)
+    .for ( eax = '-', rdx = &cpustring, ecx = 0 : ecx < ebx : ecx++ )
+        mov [rdx+rcx],al
+    .endf
+    mov [rdx+rcx],ah
+    fprintf(fp, "\n%s\n%s\n%s\n", rdx, &buffer, rdx)
+
     lea rax,proc_b
     and rax,-64
     mov proc_x,rax
@@ -582,7 +606,9 @@ ifndef _WIN64
 endif
 endif
     mov retval,main()
-    fclose(fp)
+    .if ( console == 0 )
+        fclose(fp)
+    .endif
 ifndef __UNIX__
     VirtualFree(m_4096, 0, MEM_RELEASE)
 endif

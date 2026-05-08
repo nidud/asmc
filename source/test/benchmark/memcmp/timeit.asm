@@ -25,7 +25,7 @@ arg_1 ptr_t str_1
 arg_2 ptr_t 0
 
 info_0  db "msvcrt.memcmp()",0
-info_1  db "libc(__GPR__)",0
+info_1  db "libc(__x86__)",0
 info_2  db "libc(__AVX__)",0
 
 .code

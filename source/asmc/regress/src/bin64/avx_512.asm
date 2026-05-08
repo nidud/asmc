@@ -5525,6 +5525,38 @@ endif
     vpblendmd zmm30,zmm29,dword ptr [rdx-0x200]{1to16}
     vpblendmd zmm30,zmm29,dword ptr [rdx-0x204]{1to16}
 
+    vpbroadcastb zmm30,byte ptr [rcx]
+    vpbroadcastb zmm30{k7},byte ptr [rcx]
+    vpbroadcastb zmm30{k7}{z},byte ptr [rcx]
+    vpbroadcastb zmm30,byte ptr [rax+r14*8+0x123]
+    vpbroadcastb zmm30,byte ptr [rdx+0x1fc]
+    vpbroadcastb zmm30,byte ptr [rdx+0x200]
+    vpbroadcastb zmm30,byte ptr [rdx-0x200]
+    vpbroadcastb zmm30,byte ptr [rdx-0x204]
+    vpbroadcastb zmm30{k7},xmm29
+    vpbroadcastb zmm30{k7}{z},xmm29
+    vpbroadcastb zmm30,rax
+    vpbroadcastb zmm30{k7},eax
+    vpbroadcastb zmm30{k7}{z},eax
+    vpbroadcastb zmm30,ebp
+    vpbroadcastb zmm30,r13d
+
+    vpbroadcastw zmm30,word ptr [rcx]
+    vpbroadcastw zmm30{k7},word ptr [rcx]
+    vpbroadcastw zmm30{k7}{z},word ptr [rcx]
+    vpbroadcastw zmm30,word ptr [rax+r14*8+0x123]
+    vpbroadcastw zmm30,word ptr [rdx+0x1fc]
+    vpbroadcastw zmm30,word ptr [rdx+0x200]
+    vpbroadcastw zmm30,word ptr [rdx-0x200]
+    vpbroadcastw zmm30,word ptr [rdx-0x204]
+    vpbroadcastw zmm30{k7},xmm29
+    vpbroadcastw zmm30{k7}{z},xmm29
+    vpbroadcastw zmm30,eax
+    vpbroadcastw zmm30{k7},eax
+    vpbroadcastw zmm30{k7}{z},eax
+    vpbroadcastw zmm30,ebp
+    vpbroadcastw zmm30,r13d
+
     vpbroadcastd zmm30,dword ptr [rcx]
     vpbroadcastd zmm30{k7},dword ptr [rcx]
     vpbroadcastd zmm30{k7}{z},dword ptr [rcx]

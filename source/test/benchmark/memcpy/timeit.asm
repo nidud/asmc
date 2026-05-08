@@ -1,7 +1,7 @@
 ifdef _WIN64
-procs equ <for x,<0,2,3>> ; functions to test...
+procs equ <for x,<0,2,3,4>> ; functions to test...
 else
-procs equ <for x,<0,1,2,3>>
+procs equ <for x,<0,1,2,3,4>>
 endif
 args_x macro
 ifdef _WIN64
@@ -30,6 +30,7 @@ externdef import memcpy:ptr_t
  info_1 db "libc(__X86__)",0
  info_2 db "libc(__SSE__)",0
  info_3 db "libc(__AVX__)",0
+ info_4 db "libc(__AVX512__)",0
 
 .code
 
@@ -87,7 +88,7 @@ validate_x proc uses rsi rdi rbx x:dword
             .if edx
                 mov rdi,arg_1
                 mov rdx,rax
-                printf("error: eax %06X [%06X] (%d) %d.asm: %s\n",edx,rdi,ebx,x,rdi)
+                printf("error: %06X [%06X] %06X (%d) %d.asm: %s\n",edx,rdi,arg_2,ebx,x,rdi)
                 inc nerror
             .endif
             mov rcx,arg_1
@@ -122,16 +123,17 @@ main proc
             .return( 1 )
         .endif
         endm
-    GetCycleCount(   0,   15,  1, 1000)
-    GetCycleCount(  16,  127,  5, 1000)
+if 1
+    GetCycleCount(   0,   32,  1, 1000)
     GetCycleCount( 128,  511, 10,  800)
-    GetCycleCount( 511, 1023, 20,  400)
-    GetCycleCount(4092, 4096,  1,  200)
+    GetCycleCount( 511, 1023, 20,  200)
+    GetCycleCount(4092, 4096,  1,  100)
     mov rcx,arg_1
     mov rdx,arg_2
     mov arg_1,rdx
     mov arg_2,rcx
-    GetCycleCount(4096-4, 4096, 1, 1000)
+    GetCycleCount(4096-4, 4096, 1, 100)
+endif
     xor eax,eax
     ret
     endp

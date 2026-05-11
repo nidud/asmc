@@ -886,13 +886,13 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
                     LstPrintf( "%-8s ", GetMemtypeString( rdi, NULL ) )
                     .if ( [rdi].asym.state == SYM_STACK )
                         mov rcx,[rsi].asym.procinfo
-                        movzx ebx,[rcx].proc_info.basereg
+                        mov ebx,[rcx].proc_info.basereg
                         LstPrintf( "[%r+%02X] ", ebx, [rdi].asym.offs )
                     .endif
                     LstPrintf( "%r", [rdi].asym.param_reg )
                 .else
                     mov rcx,[rsi].asym.procinfo
-                    movzx ebx,[rcx].proc_info.basereg
+                    mov ebx,[rcx].proc_info.basereg
                     mov rcx,GetMemtypeString( rdi, NULL )
                     .if ( [rdi].asym.is_vararg )
                         mov rcx,GetResWName( T_VARARG, 0 )
@@ -910,7 +910,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
                 log_dots( [rdi].asym.name_size, [rdi].asym.name, 2 )
 
                 mov rcx,[rsi].asym.procinfo
-                movzx ebx,[rcx].proc_info.basereg
+                mov ebx,[rcx].proc_info.basereg
                 mov rdx,GetMemtypeString( rdi, NULL )
                 LstPrintf( "%-8s [%r%c%02X]", rdx, ebx, '+', [rdi].asym.offs )
                 LstNL()
@@ -930,7 +930,7 @@ log_proc proc __ccall uses rsi rdi rbx sym:asym_t
                 tstrcpy( &buffer, GetMemtypeString( rdi, NULL ) )
             .endif
             mov rcx,[rsi].asym.procinfo
-            movzx ebx,[rcx].proc_info.basereg
+            mov ebx,[rcx].proc_info.basereg
             mov ecx,'+'
             mov edx,[rdi].asym.offs
             .ifs ( edx < 0 )

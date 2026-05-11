@@ -25,13 +25,13 @@ SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     add rbx,rdx
     .if ( Options.output_format != OFORMAT_COFF )
         .if ( Parse_Pass == PASS_1)
-            asmerr( 8015, "coff" )
+            asmerr( 8009, "coff" )
         .endif
         .return( NOT_ERROR )
     .endif
     .if ( Options.safeseh == FALSE )
         .if ( Parse_Pass == PASS_1)
-            asmerr( 8015, "safeseh" )
+            asmerr( 8009, "safeseh" )
         .endif
         .return( NOT_ERROR )
     .endif
@@ -48,7 +48,7 @@ SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .return( asmerr( 2006, [rbx].string_ptr ) )
         .endif
     .elseif ( !( [rsi].asym.isproc ) )
-        .return( asmerr( 3017, [rbx].string_ptr ) )
+        .return( asmerr( 2216, [rbx].string_ptr ) )
     .endif
 
     .if ( Parse_Pass == PASS_1 )

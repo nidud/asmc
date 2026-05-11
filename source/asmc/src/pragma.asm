@@ -50,6 +50,11 @@ MAXSTACK equ 16
         { 4008, 0 },
         { 4011, 0 },
         { 4012, 0 },
+        { 4013, 0 },
+        { 4014, 0 },
+        { 4015, 0 },
+        { 4018, 0 },
+        { 4020, 0 },
         { 4910, 0 },
         { 6003, 0 },
         { 6004, 0 },
@@ -70,11 +75,6 @@ MAXSTACK equ 16
         { 8013, 0 },
         { 8014, 0 },
         { 8015, 0 },
-        { 8017, 0 },
-        { 8018, 0 },
-        { 8019, 0 },
-        { 8020, 0 },
-        { 8022, 0 },
         { 7000, 0 },
         { 7001, 0 },
         { 7002, 0 },
@@ -173,8 +173,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
             mov eax,opndx.uvalue
             .if ( eax > 1 )
-
-                asmerr( 2084 )
+                asmerr( 2156 )
                .endc
             .endif
             shl wstringfl,1
@@ -660,12 +659,12 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         imul ebx,i,asm_tok
         add rbx,tokenarray
         .if opndx.kind != EXPR_CONST
-            asmerr(2026)
+            asmerr( 2026 )
            .endc
         .endif
         mov eax,opndx.uvalue
         .if eax > 1
-            asmerr(2084)
+            asmerr( 2156 )
            .endc
         .endif
         .if ( edi )

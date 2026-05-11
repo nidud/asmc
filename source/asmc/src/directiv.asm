@@ -186,7 +186,7 @@ IncludeLibDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
         ; v2.05: Masm doesn't complain if there's no name, so emit a warning only!
 
-        asmerr( 8012 )
+        asmerr( 8006 )
     .endif
 
     .if ( [rbx+rcx].token == T_STRING && [rbx+rcx].string_delim == '<' )
@@ -245,10 +245,10 @@ IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             inc ecx
             rep movsb
         .else
-            .return( asmerr( 3015 ) )
+            .return( asmerr( 2008, [rbx].string_ptr ) )
         .endif
     .else
-        .return( asmerr( 3015 ) )
+        .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
 
     xor esi,esi    ; fileoffset -- fixme: should be uint_64
@@ -393,11 +393,13 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; v2.10: copy language type of alias
         ; v2.39: add global language
         ;
+if 0    ; JWasm v2.21: moved to elf.asm, coff.asm, and omf.asm
         mov al,[rdi].langtype
         .if ( al == LANG_NONE )
             mov al,MODULE.langtype
         .endif
         mov [rsi].langtype,al
+endif
         sym_add_table(&SymTables[TAB_ALIAS], rsi) ; add ALIAS
        .return( NOT_ERROR )
     .endif
@@ -518,7 +520,7 @@ SegOrderDirective proc __ccall i:int_t, tokenarray:token_t
     .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF ||
          ( Options.output_format == OFORMAT_BIN && MODULE.sub_format == SFORMAT_PE ) )
         .if ( Parse_Pass == PASS_1 )
-            asmerr( 3006, tstrupr( [rcx].asm_tok.string_ptr ) )
+            asmerr( 4015 )
         .endif
     .else
         mov MODULE.segorder,GetSflagsSp( [rcx].asm_tok.tokval )

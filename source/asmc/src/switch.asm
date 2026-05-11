@@ -240,7 +240,7 @@ endif
     mov rax,scount
     mov [rax],ebx
     ;
-    ; error A3022 : .CASE redefinition : %s(%d) : %s(%d)
+    ; error A3006 : .CASE redefinition : %s(%d) : %s(%d)
     ;
     .if ( ebx && Parse_Pass != PASS_1 )
 
@@ -251,7 +251,7 @@ endif
             .if ( [rsi].CaseIsConst )
                 .if GetCaseVal( rsi, [rsi].labels )
                     mov rcx,rax
-                    asmerr( 3022, [rsi].condlines, [rsi].labels,
+                    asmerr( 3006, [rsi].condlines, [rsi].labels,
                         [rcx].hll_item.condlines, [rcx].hll_item.labels )
                 .endif
             .endif

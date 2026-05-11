@@ -89,10 +89,9 @@ TokenAssign proc fastcall uses rsi rdi opnd1:expr_t, opnd2:expr_t
     endp
 
 
-invalid_operand proc fastcall uses rbx opnd:expr_t, oprtr:string_t, operand:string_t
-    mov rbx,operand
+invalid_operand proc fastcall opnd:expr_t, operand:string_t
     .if ( !( [rcx].is_opattr ) )
-        fnasmerr( 3018, tstrupr( rdx ), rbx )
+        fnasmerr( 2148, rdx )
     .endif
     .return ERROR
     endp
@@ -312,7 +311,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         .endif
         mov rbx,sym
         .if ( ( rbx && [rbx].state == SYM_GRP ) || [rdi].inst == T_SEG )
-            .return invalid_operand( rdi, GetResWName( oper, NULL ), name )
+            .return invalid_operand( rdi, name )
         .endif
         .if ( [rdi].is_type )
             mov [rdi].value,0
@@ -320,7 +319,7 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         TokenAssign( rsi, rdi )
         mov [rsi].inst,oper
         .if ( [rdi].indirect )
-            .return invalid_operand( rdi, GetResWName( oper, NULL ), name )
+            .return invalid_operand( rdi, name )
         .endif
         mov [rsi].mem_type,MT_EMPTY
        .return NOT_ERROR
@@ -1442,7 +1441,7 @@ endif
                     mov [rdi].base_reg,rbx
                     mov rcx,CurrProc
                     mov rcx,[rcx].asym.procinfo
-                    movzx eax,[rcx].proc_info.basereg
+                    mov eax,[rcx].proc_info.basereg
                     mov [rbx].tokval,eax
                     mov [rbx].bytval,GetRegNo(eax)
                 .endif
@@ -1767,7 +1766,7 @@ plus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
             mov rax,[rdi].override
             mov al,[rax].asm_tok.token
             .if ( al == [rbx].asm_tok.token )
-                .return fnasmerr( 3013 )
+                .return fnasmerr( 2032 )
             .endif
         .endif
         mov [rsi].override,[rdi].override
@@ -2132,7 +2131,7 @@ colon_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
     .if ( rax )
         .if ( ( [rsi].kind == EXPR_REG && [rax].asm_tok.token == T_REG ) ||
               ( [rsi].kind == EXPR_ADDR && [rax].asm_tok.token == T_ID ) )
-            .return( fnasmerr( 3013 ) )
+            .return( fnasmerr( 2032 ) )
         .endif
     .endif
     .switch [rdi].kind
@@ -2395,7 +2394,7 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
               MODULE.Ofssize == USE64 ) )
             .if ( !( [rdi].is_opattr || ( ( [rbx].token == '+' ||
                   [rbx].token == '-' ) && [rbx].specval == 0 ) ) )
-                .return( fnasmerr( 2084 ) )
+                .return( fnasmerr( 2156 ) )
             .endif
         .endif
     .endif
@@ -3085,14 +3084,14 @@ endif
             .if ( rax && [rax].asym.state != SYM_TYPE )
                 .if ( [rax].asym.mem_type == MT_BITS )
                     .if !( ecx & AT_BF )
-                        .return( invalid_operand( rdi, [rbx].string_ptr, rdx ) )
+                        .return( invalid_operand( rdi, rdx ) )
                     .endif
                 .elseif !( ecx & AT_FIELD )
-                    .return( invalid_operand( rdi, [rbx].string_ptr, rdx ) )
+                    .return( invalid_operand( rdi, rdx ) )
                 .endif
             .elseif ( [rdi].is_type )
                 .if !( ecx & AT_TYPE )
-                    .return invalid_operand( rdi, [rbx].string_ptr, rdx )
+                    .return invalid_operand( rdi, rdx )
                 .endif
             .elseif ( [rdi].const_type )
             .elseif !( ecx & AT_NUM )
@@ -3108,7 +3107,7 @@ endif
         .case EXPR_ADDR
             .if ( [rdi].indirect && [rdi].sym == NULL )
                 .if !( ecx & AT_IND )
-                    .return invalid_operand( rdi, [rbx].string_ptr, rdx )
+                    .return invalid_operand( rdi, rdx )
                 .endif
             .elseif ( !( ecx & AT_LABEL ) )
                 .return( asmerr( 2026 ) )
@@ -3478,7 +3477,7 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
 
 
 EmitConstError proc
-    asmerr( 2084 )
+    asmerr( 2156 )
     ret
     endp
 

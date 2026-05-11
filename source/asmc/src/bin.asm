@@ -282,7 +282,7 @@ CalcOffset proc fastcall uses rsi rdi rbx curr:asym_t, cp:ptr calc_param
         ; v2.07: for 16-bit groups, ensure that it fits in 64 kB
         ;
         .if ( ecx > 0x10000 && [rdx].asym.Ofssize == USE16 )
-            asmerr( 8003, [rdx].asym.name )
+            asmerr( 8000, [rdx].asym.name )
         .endif
     .endif
     mov [rbx].first,FALSE
@@ -750,7 +750,7 @@ endif
             mov rcx,MODULE.fmtopt
             lea rdx,[rcx].format_options.formatname
             mov rcx,curr
-            asmerr( 3019, rdx, [rbx].type, [rcx].asym.name, [rbx].locofs )
+            asmerr( 3008, rdx, [rbx].type, [rcx].asym.name, [rbx].locofs )
         .endsw
     .endf
     .return( NOT_ERROR )
@@ -1581,7 +1581,7 @@ endif
                 .if eax == 'lld'
                     or [rbx].IMAGE_PE_HEADER32.FileHeader.Characteristics,IMAGE_FILE_DLL
                 .else
-                    asmerr( 8000, &[rsi-5] ) ; pe8.asm
+                    asmerr( 4018, &[rsi-5] ) ; pe8.asm
                 .endif
             .endsw
         .endif
@@ -1808,7 +1808,7 @@ if 1    ; v2.34.61 - jwasm
         ; been called just after step 1 - and worse, inside pe_emit_export_data() it cannot be done
         ; either since at that time there are no section contents available yet!
         .if ( [rsi].information ) ; v2.13: ignore 'info' sections (linker directives)
-            ;asmerr( 8017, [rdi].asym.name ) ; v2.15: emit warning
+            ;asmerr( 8010, [rdi].asym.name ) ; v2.15: emit warning
            .continue
         .endif
 endif
@@ -1892,7 +1892,7 @@ ifndef ASMC64
         .endif
 endif
     .else
-        asmerr( 8009 )
+        asmerr( 8003 )
     .endif
     mov rcx,pe
 ifndef ASMC64
@@ -2247,7 +2247,7 @@ bin_write_module proc uses rsi rdi rbx
             ; v2.11: changed sym.offset to sym.max_offset
             mov [rdi].e_sp,[rcx].asym.max_offset ; SP
         .else
-            asmerr( 8010 )
+            asmerr( 8004 )
         .endif
         mov [rdi].e_csum,0 ; checksum
         ; set entry CS:IP if defined
@@ -2285,7 +2285,7 @@ bin_write_module proc uses rsi rdi rbx
                 asmerr( 7009 )
             .endif
         .else
-            asmerr( 8009 )
+            asmerr( 8003 )
         .endif
         mov [rdi].e_lfarlc,MODULE.mz_ofs_fixups
         add rax,hdrbuf

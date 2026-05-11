@@ -452,7 +452,7 @@ endif
         .endif
     .endif
     .if ( [rbx].token != T_FINAL )
-        asmerr( 2036, [rbx].tokpos )
+        asmerr( 2167, [rbx].tokpos )
     .endif
 
     ; restore token status
@@ -594,7 +594,7 @@ next_item:
                         .return
                     .endif
                 .else
-
+                    ;
                     ; v2.09: emit a warning if a TYPEDEF member is a simple type,
                     ; but is initialized with a literal.
                     ; Note: Masm complains about such literals only if the struct
@@ -605,9 +605,12 @@ next_item:
                     ; there.
                     ; v2.10: aliases are now already skipped here ( see above ).
                     ; v2.19: added "&& orgdup == dup" to avoid warning being emitted multiple times.
-
+                    ; v2.38.08: set to Masm error
+                    ;
                     .if ( [rsi].asym.typekind == TYPE_TYPEDEF && Parse_Pass == PASS_1 && orgdup == _dup )
-                        asmerr( 8001, [rbx].tokpos )
+                        .if ( Options.write_listing )
+                            asmerr( 2167, [rbx].tokpos )
+                        .endif
                     .endif
                 .endif
 
@@ -728,7 +731,7 @@ next_item:
 
             xor ecx,ecx
             .if ( ecx != opndx.hvalue )
-                mov ecx,2084
+                mov ecx,2156
             .elseif ( opndx.value < ecx )
                 mov ecx,2092
             .endif
@@ -834,12 +837,11 @@ next_item:
             mov rcx,[rcx].asym.seginfo
             .if ( [rcx].seg_info.segtype == SEGTYPE_BSS ||
                   [rcx].seg_info.segtype == SEGTYPE_ABS )
-
-                lea rax,@CStr("AT")
+                mov eax,4013
                 .if ( [rcx].seg_info.segtype == SEGTYPE_BSS )
-                    lea rax,@CStr("BSS")
+                    inc eax
                 .endif
-                asmerr( 8006, rax )
+                asmerr( eax )
                 mov initwarn,TRUE
             .endif
         .endif

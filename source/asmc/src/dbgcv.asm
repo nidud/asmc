@@ -1392,7 +1392,7 @@ endif
             mov [rdi].PROCSYM16.pNext,0    ;; filled by CVPACK
             mov [rdi].PROCSYM16.len,[rsi].asym.total_size
             mov rcx,[rsi].asym.procinfo
-            mov [rdi].PROCSYM16.DbgStart,[rcx].proc_info.size_prolog
+            mov [rdi].PROCSYM16.DbgStart,[rcx].proc_info.prologsize
             mov [rdi].PROCSYM16.DbgEnd,[rsi].asym.total_size
             mov [rdi].PROCSYM16.off,0
             mov [rdi].PROCSYM16._seg,0
@@ -1431,7 +1431,7 @@ endif
             mov [rdi].PROCSYM32_16t.pNext,0     ; filled by CVPACK
             mov [rdi].PROCSYM32_16t.len,[rsi].asym.total_size
             mov rcx,[rsi].asym.procinfo
-            movzx eax,[rcx].proc_info.size_prolog
+            mov eax,[rcx].proc_info.prologsize
             mov [rdi].PROCSYM32_16t.DbgStart,eax
             mov [rdi].PROCSYM32_16t.DbgEnd,[rsi].asym.total_size
             .if ( [rbx].cv_type == CV_SIGNATURE_C7 )
@@ -1700,7 +1700,7 @@ endif
                     ; v2.11: use S_REGREL if 64-bit or frame reg != [E|BP
 
                     mov rcx,pproc
-                    movzx ecx,[rcx].proc_info.basereg
+                    mov ecx,[rcx].proc_info.basereg
 
                     .if ( Ofssize == USE64 || ( GetRegNo( ecx ) != 5 ))
 
@@ -1727,7 +1727,7 @@ endif
                         ; x64 register numbers are different
 
                         mov rcx,pproc
-                        movzx ecx,[rcx].proc_info.basereg
+                        mov ecx,[rcx].proc_info.basereg
                         .if ( GetCpuSp(ecx) == P_64 )
                             mov size,get_x64_regno(ecx)
                         .else

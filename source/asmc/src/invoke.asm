@@ -224,7 +224,8 @@ fast_fcstart proc __ccall private uses rsi rdi rbx pp:asym_t, numparams:int_t, s
         .if ( MODULE.win64_flags & W64F_AUTOSTACKSP )
             mov rdx,CurrProc
             .if ( eax && rdx )
-                mov [rdx].asym.stkused,1
+                mov rcx,[rdx].asym.procinfo
+                mov [rcx].proc_info.stkused,1
             .endif
             mov rdx,sym_ReservedStack
             .if ( eax > [rdx].asym.value )
@@ -2241,7 +2242,7 @@ if 1
             .if ( rcx && [rcx].asym.state == SYM_STACK && [rcx].asym.is_vararg && Parse_Pass == PASS_2 )
                 mov edx,reqParam
                 inc edx
-                asmerr( 8022, edx )
+                asmerr( 8015, edx )
                 ;asmerr( 2114, edx )
             .endif
 endif
@@ -3386,12 +3387,21 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     tstrcpy( p, " call " )
     add p,6
 
-    .if ( !pmacro && [rsi].dll && ( [rsi].isimport || [rsi].state == SYM_EXTERNAL ) )
-        mov [rsi].isimport,1
-        .if ( ![rsi].iat_used )
-            mov [rsi].iat_used,1
-            mov rax,[rsi].dll
-            inc [rax].dll_desc.cnt
+    .if ( !pmacro )
+
+        mov rax,CurrProc
+        .if ( rax )
+            mov rcx,[rax].asym.procinfo
+            mov [rcx].proc_info.invoked,1
+        .endif
+
+        .if ( [rsi].dll && ( [rsi].isimport || [rsi].state == SYM_EXTERNAL ) )
+            mov [rsi].isimport,1
+            .if ( ![rsi].iat_used )
+                mov [rsi].iat_used,1
+                mov rax,[rsi].dll
+                inc [rax].dll_desc.cnt
+            .endif
         .endif
     .endif
 

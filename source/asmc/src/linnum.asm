@@ -156,7 +156,7 @@ AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
 
         mov rcx,CurrProc
         mov rdx,[rcx].asym.procinfo
-        .if ( ecx && [rdx].proc_info.size_prolog )
+        .if ( ecx && [rdx].proc_info.prologsize )
             AddLinnumData( rdi )
             mov rdi,LclAlloc( sizeof( line_num_info ) )
             mov [rdi].line_num_info.number,GetLineNumber()

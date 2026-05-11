@@ -256,6 +256,7 @@ uint64_t	typedef qword
 uint128_t	typedef oword
 
 pbyte_t		typedef ptr byte
+pshort_t	typedef ptr sword
 pint_t		typedef ptr sdword
 pint64_t	typedef ptr sqword
 puint_t		typedef ptr dword

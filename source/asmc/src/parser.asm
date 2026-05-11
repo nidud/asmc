@@ -2128,7 +2128,7 @@ endif
                     ;   test buff[di],cl
 
                     mov rax,sym
-                    asmerr( 8007, [rax].asym.name )
+                    asmerr( 8002, [rax].asym.name )
                 .endif
             .endif
         .endif
@@ -2251,7 +2251,7 @@ if 0
             .if ( MODULE.Ofssize == USE64 )
                 .return EmitConstError()
             .endif
-            asmerr( 8008, [rdi].value64 )
+            asmerr( 8003, [rdi].value64 )
         .endif
 endif
         mov rcx,[rdi].sym
@@ -2539,7 +2539,7 @@ if 1
         .if ( Parse_Pass == PASS_2 )
             .if ( [rsi].token == T_PUSHD && [rsi].Ofssize == USE16 ||
                   [rsi].token == T_PUSHW && [rsi].Ofssize > USE16 )
-                asmerr( 8021 )
+                asmerr( 8014 )
             .endif
         .endif
 endif
@@ -3104,7 +3104,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         mov op2_size,OperandSize(op2, rsi)
         .if ( op2_size == 0 && Parse_Pass == PASS_2 )
             .if ( op1_size == 2 )
-                asmerr( 8019, "BYTE" )
+                asmerr( 8012, "BYTE" )
             .else
                 asmerr( 2023 )
             .endif
@@ -3462,7 +3462,7 @@ endif
                         mov rax,[rsi].opnd[OPND1].InsFixup
                         .if ( ( rax  == NULL && Parse_Pass == PASS_1 && !( [rsi].undef_sym ) ) ||
                             ( rax && Parse_Pass == PASS_2 ) )
-                            asmerr( 8019, rcx )
+                            asmerr( 8012, rcx )
                         .endif
                     .endif
                 .elseif ( ( op1 & OP_M_ANY ) && ( op2 & ( OP_R or OP_SR ) ) )
@@ -3481,14 +3481,14 @@ endif
                     .case 1
                         mov [rsi].mem_type,MT_BYTE
                         .if ( Parse_Pass == PASS_1 && ( op2 & OP_I ) )
-                            asmerr( 8019, "BYTE" )
+                            asmerr( 8012, "BYTE" )
                         .endif
                         .endc
                     .case 2
                         mov [rsi].mem_type,MT_WORD
                         mov [rsi].iswide,1
                         .if ( Parse_Pass == PASS_1 && ( op2 & OP_I ) )
-                            asmerr( 8019, "WORD" )
+                            asmerr( 8012, "WORD" )
                         .endif
                         .if ( [rsi].Ofssize )
                             mov [rsi].opsiz,TRUE
@@ -3498,7 +3498,7 @@ endif
                         mov [rsi].mem_type,MT_DWORD
                         mov [rsi].iswide,1
                         .if ( Parse_Pass == PASS_1 && ( op2 & OP_I ) )
-                            asmerr( 8019, "DWORD" )
+                            asmerr( 8012, "DWORD" )
                         .endif
                         .endc
                     .endsw
@@ -4702,7 +4702,7 @@ endif
         .if ( CodeInfo.Ofssize == USE64 )
 
             .if ( CodeInfo.x86hi_used && CodeInfo.rex )
-                asmerr( 3012 )
+                asmerr( 2218 )
             .endif
 
             ; for some instructions, the "wide" flag has to be removed selectively.

@@ -149,7 +149,7 @@ getfilearg proc fastcall args:array_t, p:string_t ; -Fo<file> or -Fo <file>
         inc rax
     .endif
     .if ( !rax || byte ptr [rax] == 0 )
-        asmerr( 1006, rdx )
+        asmerr( 1023, &[rdx-3] )
     .endif
     ret
     endp
@@ -243,7 +243,7 @@ set_option_n_name proc fastcall uses rsi rdi idx:int_t, name:string_t
         MemFree( [rsi] )
         mov [rsi],MemDup(rdi)
     .else
-        asmerr( 1006, rdx )
+        asmerr( 4018, rdx )
     .endif
     ret
     endp
@@ -437,7 +437,7 @@ endif
     .case 'hcra'        ; -arch:xx
         mov eax,[rdi+4]
         .if al != ':' || ah == 0
-            asmerr( 1006, rdi )
+           .return( asmerr( 4018, rdi ) )
         .endif
         mov eax,[rdi+5]
         xor ebx,ebx
@@ -450,7 +450,7 @@ endif
             .elseif ( eax == '2.01' )   ; -arch:AVX10.2
                 define_name( "__AVX10_VER__", "2" )
             .else
-                asmerr( 1006, rdi )
+                .return( asmerr( 4018, rdi ) )
             .endif
         .case '5XVA'    ; -arch:AVX512
             define_name( "__AVX512BW__", "1" )
@@ -476,7 +476,7 @@ endif
             define_name( "_M_IX86_FP",  "1" )
            .endc
         .default
-            asmerr( 1006, rdi )
+            .return( asmerr( 4018, rdi ) )
         .endsw
         mov Options.arch,bl
         .return
@@ -897,9 +897,9 @@ endif
     .if al == 'W'           ; -W<number>
         mov [rsi],GetNumber(&[rbx+1])
         .if OptValue < 0
-            asmerr(8000, rbx)
+            asmerr( 4018, rbx )
         .elseif OptValue > 3
-            asmerr(4008, rbx)
+            asmerr( 4008, rbx )
         .else
             mov Options.warning_level,OptValue
         .endif
@@ -915,14 +915,14 @@ endif
         mov Options.wstring,1
         define_name( "_UNICODE", "1" )
         .return
-    .case 'pS'          ; -Zp<number>
+    .case 'pS'          ; -Sp<number>
         xor ecx,ecx
         .repeat
             mov eax,1
             shl eax,cl
             inc ecx
             .if ( eax > MAX_SEGMENT_ALIGN )
-                asmerr(1006, rbx)
+                .return( asmerr( 4008, "-Sp" ) )
             .endif
         .until eax == OptValue
         dec ecx
@@ -935,7 +935,7 @@ endif
             shl eax,cl
             inc ecx
             .if ( eax > MAX_STRUCT_ALIGN )
-                asmerr(1006, rbx)
+                .return( asmerr( 4008, "-Zp" ) )
             .endif
         .until ( eax == OptValue )
         dec ecx
@@ -952,7 +952,7 @@ endif
             .if eax > CVEX_MAX
                 .if byte ptr [rbx+3] != 0
                     .if ( byte ptr [rbx+4] != 0 )
-                        asmerr( 1006, rbx )
+                        .return( asmerr( 4018, rbx ) )
                     .endif
                     movzx eax,word ptr [rbx+2]
                     sub eax,'00'
@@ -964,7 +964,7 @@ endif
                 .if ( eax == 5 )
                     mov Options.debug_symbols,2 ; C11 (vc5.x) 32-bit types
                 .elseif ( eax != 4 )
-                    asmerr( 1006, rbx )
+                    asmerr( 4018, rbx )
                 .endif
             .else
                 mov Options.debug_ext,al
@@ -1011,7 +1011,7 @@ endif
             .return get_fname(OPTN_ERR_FN, rdi)
         .endif
     .endif
-    asmerr( 1006, &[rbx-1] )
+    asmerr( 4018, &[rbx-1] )
     ret
     endp
 

@@ -896,8 +896,7 @@ ExpandCStrings proc __ccall public uses rdi rbx tokenarray:token_t
                 .endsw
             .endf
             .if ( al != T_OP_BRACKET )
-
-                asmerr( 3018, [rbx-asm_tok].string_ptr, [rbx].string_ptr )
+                asmerr( 2008, [rbx].string_ptr )
                .break
             .endif
             .return .ifd GenerateCString( edi, tokenarray )
@@ -2002,7 +2001,8 @@ done:
                   MODULE.Ofssize == USE64 && ( MODULE.win64_flags & W64F_AUTOSTACKSP ) )
                 mov rdx,CurrProc
                 .if ( rdx )
-                    mov [rdx].asym.stkused,1
+                    mov rcx,[rdx].asym.procinfo
+                    mov [rcx].proc_info.stkused,1
                 .endif
             .endif
             lea rdx,b

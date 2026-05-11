@@ -970,7 +970,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
            .endc
         .case INIT_ALIGN_PARAM
             .if ( Options.output_format == OFORMAT_OMF )
-                asmerr( 3006, [rbx].string_ptr )
+                asmerr( 2248, [rbx].string_ptr )
                 mov i,TokenCount ; stop further parsing of this line
                .endc
             .endif
@@ -1043,7 +1043,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endc
         .case INIT_COMBINE_COMDAT
             .if ( Options.output_format != OFORMAT_COFF && Options.output_format != OFORMAT_OMF )
-                asmerr( 3006, [rbx].string_ptr )
+                asmerr( 2248, [rbx].string_ptr )
                 mov i,TokenCount ; stop further parsing of this line
                .endc
             .endif
@@ -1063,7 +1063,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                .endc
             .endif
             .if ( opndx.value < 1 || opndx.value > 6 )
-                asmerr( 2156, "1-6" )
+                asmerr( 2156 )
             .else
 
                 ; if value is IMAGE_COMDAT_SELECT_ASSOCIATIVE,
@@ -1146,7 +1146,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             ; characteristics are restricted to COFF/ELF/BIN-PE
             .if ( Options.output_format == OFORMAT_OMF || ( Options.output_format == OFORMAT_BIN &&
                 ( MODULE.sub_format != SFORMAT_PE && MODULE.sub_format != SFORMAT_64BIT ) ) )
-                asmerr( 3006, [rbx].string_ptr )
+                asmerr( 2248, [rbx].string_ptr )
             .else
                 or newcharacteristics,[rcx].typeinfo.value
             .endif
@@ -1155,7 +1155,7 @@ SegmentDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             ; alias() is restricted to COFF/ELF/BIN-PE
             .if ( Options.output_format == OFORMAT_OMF || ( Options.output_format == OFORMAT_BIN &&
                 ( MODULE.sub_format != SFORMAT_PE && MODULE.sub_format != SFORMAT_64BIT ) ) )
-                asmerr( 3006, [rbx].string_ptr )
+                asmerr( 2248, [rbx].string_ptr )
                 mov i,TokenCount ; stop further parsing of this line
                .endc
             .endif

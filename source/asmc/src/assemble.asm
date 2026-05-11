@@ -933,13 +933,13 @@ close_files proc __ccall
     mov rcx,MODULE.curr_file[TASM]
     .if rcx
         .if fclose( rcx )
-            asmerr( 3021, MODULE.curr_fname[TASM] )
+            asmerr( 3009, MODULE.curr_fname[TASM] )
         .endif
     .endif
     mov rcx,MODULE.curr_file[TOBJ]
     .if rcx
         .if fclose( rcx )
-            asmerr( 3021, MODULE.curr_fname[TOBJ] )
+            asmerr( 3009, MODULE.curr_fname[TOBJ] )
         .endif
     .endif
     .if ( ( !Options.syntax_check_only && MODULE.error_count ) || remove_obj )

@@ -335,6 +335,11 @@ if ELFALIAS
     ; 5. aliases
 
     .for ( rsi = SymTables[TAB_ALIAS].head : rsi : rsi = [rsi].asym.next )
+        ;
+        ; v2.21: copy language from original here
+        ;
+        mov rcx,[rsi].asym.substitute
+        mov [rsi].asym.langtype,[rcx].asym.langtype
 
         lea ecx,[Mangle( rsi, &buffer ) + 1]
         mov [rdi].Elf32_Sym.st_name,strsize
@@ -543,7 +548,7 @@ if ELFALIAS
 
     .for ( rcx = SymTables[TAB_ALIAS].head : rcx : rcx = [rcx].asym.next )
 
-        mov [rcx].asym.idx,[rbx].symindex
+        mov [rcx].asym.ext_idx,[rbx].symindex
         inc [rbx].symindex
     .endf
 endif
@@ -1106,9 +1111,9 @@ endif
             mov rcx,curr
             .if ( [rsi].type < FIX_LAST )
                 mov rdx,MODULE.fmtopt
-                asmerr( 3019, [rdx].format_options.formatname, [rsi].type, [rcx].asym.name, [rsi].locofs )
+                asmerr( 3008, [rdx].format_options.formatname, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .else
-                asmerr( 3014, [rsi].type, [rcx].asym.name, [rsi].locofs )
+                asmerr( 3007, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .endif
             mov edx,R_386_NONE
         .endsw
@@ -1238,9 +1243,9 @@ endif
             mov rcx,curr
             .if ( [rsi].type < FIX_LAST )
                 mov rdx,MODULE.fmtopt
-                asmerr( 3019, &[rdx].format_options.formatname, [rsi].type, [rcx].asym.name, [rsi].locofs )
+                asmerr( 3008, &[rdx].format_options.formatname, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .else
-                asmerr( 3014, [rsi].type, [rcx].asym.name, [rsi].locofs )
+                asmerr( 3007, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .endif
             mov edx,R_X86_64_NONE
         .endsw
@@ -1314,7 +1319,7 @@ elf_write_data proc __ccall uses rsi rdi rbx em:ptr elfmod
     .endf
 if GNURELOCS
     .if ( [rbx].extused )
-        asmerr( 8013 )
+        asmerr( 8007 )
     .endif
 endif
     xor eax,eax

@@ -157,7 +157,7 @@ endif
     ret
     endp
 
-.pragma init(_ioinit, 2)
+.pragma init(_ioinit, 12)
 .pragma exit(_ioterm, 100)
 
     end

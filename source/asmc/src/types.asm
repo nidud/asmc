@@ -304,7 +304,7 @@ endif
 
                     ; currently NONUNIQUE is ignored
 
-                    asmerr( 8017, szNonUnique )
+                    asmerr( 8010, szNonUnique )
                     inc i
                     add rbx,asm_tok
                 .endif

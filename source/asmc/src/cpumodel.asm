@@ -147,6 +147,23 @@ SetModel proc __ccall private uses rsi rdi rbx
         mov cl,MODULE.fctype
         .if ( esi >= P_64 )
 
+            .if ( al == LANG_NONE )
+ifdef __UNIX__
+                mov al,LANG_SYSCALL
+else
+                mov al,LANG_FASTCALL
+endif
+            .endif
+            .if ( Options.sub_format == SFORMAT_NONE )
+                mov Options.sub_format,SFORMAT_64BIT
+            .endif
+            .if ( Options.output_format == OFORMAT_OMF )
+                .if ( al == LANG_SYSCALL )
+                    mov Options.output_format,OFORMAT_ELF
+                .else
+                    mov Options.output_format,OFORMAT_COFF
+                .endif
+            .endif
             .if ( al == LANG_FASTCALL || al == LANG_SYSCALL || al == LANG_VECTORCALL )
 
                 .if ( al == LANG_VECTORCALL )

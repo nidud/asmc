@@ -11,6 +11,11 @@ _ML compatible warnings_
 - [ML Warning A4008](A4008.md)
 - [ML Warning A4011](A4011.md)
 - [ML Warning A4012](A4012.md)
+- [ML Warning A4014](A4013.md)
+- [ML Warning A4014](A4014.md)
+- [ML Warning A4015](A4015.md)
+- [ML Warning A4018](A4018.md)
+- [ML Warning A4020](A4020.md)
 - [ML Warning A4910](A4910.md)
 
 _ML compatible level 3 warnings_
@@ -37,11 +42,6 @@ _Non ML compatible warnings_
 - [ASMC Warning A8013](A8013.md)
 - [ASMC Warning A8014](A8014.md)
 - [ASMC Warning A8015](A8015.md)
-- [ASMC Warning A8017](A8017.md)
-- [ASMC Warning A8018](A8018.md)
-- [ASMC Warning A8019](A8019.md)
-- [ASMC Warning A8020](A8020.md)
-- [ASMC Warning A8021](A8021.md)
 
 _Non ML compatible level 3 warnings_
 

@@ -30,7 +30,6 @@ externdef jmpenv:byte
     A1002 equ <"I/O error writing file : %s">
     A1003 equ <"I/O error reading file">
     A1005 equ <"assembler limit : macro parameter name table full">
-    A1006 equ <"invalid command-line option: %s">
     A1007 equ <"nesting level too deep">
     A1008 equ <"unmatched macro nesting">
     A1009 equ <"line too long">
@@ -42,6 +41,7 @@ externdef jmpenv:byte
     A1015 equ <"statement too complex">
     A1017 equ <"missing source filename">
     A1018 equ <"Not enough space">
+    A1023 equ <"command-line option requires an argument : %s">
 
 ;; Nonfatal Errors
 
@@ -238,6 +238,7 @@ externdef jmpenv:byte
     A2197 equ <"expression size must be 32-bits">
     A2198 equ <".EXIT does not work with 32-bit segments">
     A2199 equ <".STARTUP does not work with 32-bit segments">
+
     A2200 equ <"ORG directive not allowed in unions">
     A2201 equ <"scope state cannot be changed">
     A2202 equ <"illegal use of segment register">
@@ -249,8 +250,14 @@ externdef jmpenv:byte
     A2208 equ <"missing left parenthesis in expression">
     A2209 equ <"reference to forward macro redefinition">
     A2214 equ <"GROUP directive not allowed with /coff option">
+    A2216 equ <".SAFESEH argument must be a PROC in an executable segment : %s">
     A2217 equ <"must be public or external : %s">
+    A2218 equ <"AH, BH, CH, or DH may not be used with R8-R15, BPL, DIL, SIL, or SPL">
     A2219 equ <"bad alignment for offset in unwind code">
+    A2220 equ <"missing .ENDPROLOG">
+    A2221 equ <"missing Frame in proc, no unwind code will be generated">
+    A2247 equ <"size of prolog too big, must be !< 256 bytes">
+    A2248 equ <"not supported with current output format : %s">
 
 ;; Nonfatal Errors -- ASMC
 
@@ -260,23 +267,10 @@ externdef jmpenv:byte
     A3003 equ <"/bin: invalid start label">
     A3004 equ <"cannot use TR%u-TR%u with current CPU setting">
     A3005 equ <"no segment information to create fixup: %s">
-    A3006 equ <"not supported with current output format: %s">
-    A3007 equ <"missing .ENDPROLOG: %s">
-    A3008 equ <".ENDPROLOG found before EH directives">
-    A3009 equ <"missing FRAME in PROC, no unwind code will be generated">
-    A3010 equ <"size of prolog too big, must be < 256 bytes">
-    A3011 equ <"too many unwind codes in FRAME procedure">
-    A3012 equ <"registers AH-DH may not be used with SPL-DIL or R8-R15">
-    A3013 equ <"multiple overrides">
-    A3014 equ <"unknown fixup type: %u at %s.%X">
-    A3015 equ <"filename parameter must be enclosed in <> or quotes">
-    A3016 equ <"literal expected after '='">
-    A3017 equ <".SAFESEH argument must be a PROC">
-    A3018 equ <"invalid operand for %s : %s">
-    A3019 equ <"invalid fixup type for %s : %u at location %s:%X">
-    A3020 equ <"cannot open file : %s">
-    A3021 equ <"I/O error closing file : %s">
-    A3022 equ <".CASE redefinition : %s(%d) : %s(%d)">
+    A3006 equ <".CASE redefinition : %s(%d) : %s(%d)">
+    A3007 equ <"unknown fixup type: %u at %s.%X">
+    A3008 equ <"invalid fixup type for %s : %u at location %s:%X">
+    A3009 equ <"I/O error closing file : %s">
 
 
 ;; Warnings -- MASM
@@ -294,34 +288,30 @@ externdef jmpenv:byte
     A4011 equ <"multiple .MODEL directives found : .MODEL ignored">
     A4012 equ <"line number information for segment without class 'CODE' : %s">
     A4013 equ <"instructions and initialized data not supported in AT segments">
+    A4014 equ <"instructions and initialized data not supported in BSS segments">
     A4015 equ <"directive ignored with /coff switch">
+    A4018 equ <"invalid command-line option : %s">
+    A4020 equ <"directive ignored outside a procedure">
     A4910 equ <"cannot open file : %s">
 
 ;; Warnings -- ASMC
 
-    A8000 equ <"invalid command-line option: %s">
-    A8001 equ <"unexpected literal found in expression : %s">
-    A8002 equ <"invalid combination with segment alignment : %d">
-    A8003 equ <"segment exceeds 64K limit: %s">
-    A8004 equ <"symbol type conflict : %s">
-    A8005 equ <"IF[n]DEF expects a plain symbol as argument : %s">
-    A8006 equ <"instructions and initialized data not supported in %s segments">
-    A8007 equ <"16bit fixup for 32bit label : %s">
-    A8008 equ <"displacement out of range: 0x%lX">
-    A8009 equ <"no start label defined">
-    A8010 equ <"no stack defined">
-    A8011 equ <"for -coff leading underscore required for start label: %s">
-    A8012 equ <"library name is missing">
-    A8013 equ <"ELF GNU extensions (8/16-bit relocations) used">
-    A8014 equ <"LOADDS ignored in flat model">
-    A8015 equ <"directive ignored without -%s switch">
-    A8016 equ <"text macro used prior to definition: %s">
-    A8017 equ <"ignored: %s">
-    A8018 equ <"group definition too large, truncated : %s">
-    A8019 equ <"size not specified, assuming: %s">
-    A8020 equ <"constant expected">
-    A8021 equ <"opcode size suffix ignored for segment registers">
-    A8022 equ <"INVOKE argument type mismatch : %d">
+    A8000 equ <"segment exceeds 64K limit: %s">
+    A8001 equ <"symbol type conflict : %s">
+    A8002 equ <"16bit fixup for 32bit label : %s">
+    A8003 equ <"no start label defined">
+    A8004 equ <"no stack defined">
+    A8005 equ <"for -coff leading underscore required for start label: %s">
+    A8006 equ <"library name is missing">
+    A8007 equ <"ELF GNU extensions (8/16-bit relocations) used">
+    A8008 equ <"LOADDS ignored in flat model">
+    A8009 equ <"directive ignored without -%s switch">
+    A8010 equ <"ignored: %s">
+    A8011 equ <"group definition too large, truncated : %s">
+    A8012 equ <"size not specified, assuming: %s">
+    A8013 equ <"constant expected">
+    A8014 equ <"opcode size suffix ignored for segment registers">
+    A8015 equ <"INVOKE argument type mismatch : %d">
 
 ;; warning level 3 -- MASM
 
@@ -357,8 +347,9 @@ E macro string
 
     align 8
 
-E0 string_t E(A1000),E(A1001),E(A1002),E(INTER),E(INTER),E(A1005),E(A1006),E(A1007),E(A1008),E(A1009),
-            E(A1010),E(A1011),E(A1012),E(INTER),E(INTER),E(INTER),E(INTER),E(A1017),E(A1018)
+E0 string_t E(A1000),E(A1001),E(A1002),E(INTER),E(INTER),E(A1005),E(INTER),E(A1007),E(A1008),E(A1009),
+            E(A1010),E(A1011),E(A1012),E(INTER),E(INTER),E(INTER),E(INTER),E(A1017),E(A1018),E(INTER),
+            E(INTER),E(INTER),E(INTER),E(A1023)
 E1 string_t E(INTER),E(INTER),E(INTER),E(INTER),E(A2004),E(A2005),E(A2006),E(A2007),E(A2008),E(A2009),
             E(A2010),E(A2011),E(A2012),E(A2013),E(A2014),E(A2015),E(A2016),E(INTER),E(A2018),E(A2019),
             E(INTER),E(INTER),E(A2022),E(A2023),E(A2024),E(A2025),E(A2026),E(INTER),E(A2028),E(A2029),
@@ -367,7 +358,7 @@ E1 string_t E(INTER),E(INTER),E(INTER),E(INTER),E(A2004),E(A2005),E(A2006),E(A20
             E(A2050),E(A2051),E(A2052),E(A2053),E(A2054),E(A2055),E(A2056),E(A2057),E(A2058),E(A2059),
             E(A2060),E(A2061),E(A2062),E(A2063),E(A2064),E(A2065),E(A2066),E(INTER),E(A2068),E(INTER),
             E(A2070),E(A2071),E(A2072),E(INTER),E(A2074),E(A2075),E(A2076),E(A2077),E(INTER),E(A2079),
-            E(A2080),E(A2081),E(A2082),E(A2083),E(A2084),E(A2085),E(A2086),E(A2087),E(A2088),E(A2089),
+            E(A2080),E(A2081),E(A2082),E(A2083),E(INTER),E(A2085),E(A2086),E(A2087),E(A2088),E(A2089),
             E(A2090),E(A2091),E(A2092),E(A2093),E(A2094),E(A2095),E(A2096),E(A2097),E(A2098),E(INTER),
             E(A2100),E(A2101),E(INTER),E(A2103),E(A2104),E(A2105),E(INTER),E(A2107),E(A2108),E(INTER),
             E(A2110),E(A2111),E(A2112),E(A2113),E(A2114),E(INTER),E(INTER),E(INTER),E(INTER),E(A2119),
@@ -380,25 +371,21 @@ E1 string_t E(INTER),E(INTER),E(INTER),E(INTER),E(A2004),E(A2005),E(A2006),E(A20
             E(INTER),E(A2181),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(A2187),E(INTER),E(A2189),
             E(A2190),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(A2199),
             E(A2200),E(INTER),E(A2202),E(INTER),E(INTER),E(INTER),E(A2206),E(INTER),E(INTER),E(INTER),
-            E(INTER),E(INTER),E(INTER),E(INTER),E(A2214),E(INTER),E(INTER),E(A2217),E(INTER),E(INTER)
-
+            E(INTER),E(INTER),E(INTER),E(INTER),E(A2214),E(INTER),E(A2216),E(A2217),E(INTER),E(A2219),
+            E(A2220),E(A2221),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),
+            E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),
+            E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(A2247),E(A2248)
 MAX_E1 equ ($ - E1) / string_t
-E2 string_t E(A3000),E(A3001),E(A3002),E(A3003),E(A3004),E(A3005),E(A3006),E(A3007),E(A3008),E(A3009),
-            E(A3010),E(A3011),E(A3012),E(A3013),E(A3014),E(A3015),E(A3016),E(A3017),E(A3018),E(A3019),
-            E(A3020),E(A3021),E(A3022)
+E2 string_t E(A3000),E(A3001),E(A3002),E(A3003),E(A3004),E(A3005),E(A3006),E(A3007),E(A3008),E(A3009)
 W1 string_t E(INTER),E(INTER),E(INTER),E(A4003),E(INTER),E(A4005),E(A4006),E(A4007),E(A4008),E(INTER),
-            E(INTER),E(A4011),E(A4012),E(INTER),E(A4910)
+            E(INTER),E(A4011),E(A4012),E(A4013),E(A4014),E(A4015),E(INTER),E(INTER),E(A4018),E(INTER),
+            E(A4020),E(A4910)
 W2 string_t E(INTER)
 W3 string_t E(INTER),E(INTER),E(INTER),E(A6003),E(A6004),E(A6005)
 W4 string_t E(A7000),E(A7001),E(A7002),E(A7003),E(A7004),E(A7005),E(A7006),E(A7007),E(A7008),E(A7009)
 W5 string_t E(A8000),E(A8001),E(A8002),E(A8003),E(A8004),E(A8005),E(A8006),E(A8007),E(A8008),E(A8009),
-            E(A8010),E(A8011),E(A8012),E(A8013),E(A8014),E(A8015),E(INTER),E(A8017),E(A8018),E(A8019),
-            E(A8020),E(A8021),E(A8022)
+            E(A8010),E(A8011),E(A8012),E(A8013),E(A8014),E(A8015)
 
-if 0
-MS string_t E("name"),E("page"),E("title"),E("low"),E("high"),E("size"),
-            E("length"),E("this"),E("mask"),E("width"),E("type"),0
-endif
 define MAX_E0 lengthof(E0)
 define MAX_E2 lengthof(E2)
 define MAX_W1 lengthof(W1)
@@ -539,7 +526,7 @@ asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
                 sub eax,1000
             .endw
             .if ( eax == 910 )
-                mov eax,14
+                mov eax,MAX_W1-1
             .endif
             lea rdx,maxid
             .break .if eax >= [rdx+rcx*4]
@@ -551,23 +538,6 @@ asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
             .break .if ( rsi == rdx )
             lea rdi,format
             tstrcat( rdi, rsi )
-if 0
-            .new masm[64]:char_t
-            .if ( ebx == 2006 )
-                mov rbx,args
-                lea rsi,MS
-                .while 1
-                    mov rax,[rsi]
-                    add rsi,string_t
-                    .break .if !rax
-                    .ifd ( tstricmp( rax, rbx ) == 0 )
-                        tstrcpy( &masm, rbx )
-                        mov args,tstrcat( rax, " -- use option /Zne for Masm keywords" )
-                       .break
-                    .endif
-                .endw
-            .endif
-endif
             print_err( &erbuf, rdi, &args )
             lea rsi,erbuf
             mov ebx,value

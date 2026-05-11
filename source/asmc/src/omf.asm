@@ -798,7 +798,7 @@ omf_write_grpdef proc private uses rsi rdi rbx
 
             .if ( grp.curoff > OBJ_BUFFER_SIZE - 10 )
 
-                asmerr( 8018, [rsi].asym.name )
+                asmerr( 8011, [rsi].asym.name )
                 .break
             .endif
         .endf
@@ -1415,6 +1415,11 @@ omf_write_alias proc private uses rsi rdi rbx
   local buff[2*MAX_ID_LEN_OMF+2]:byte
 
     .for ( rbx = SymTables[TAB_ALIAS].head: rbx: rbx = [rbx].asym.next )
+
+        ; v2.21: copy language from original here
+
+        mov rcx,[rbx].asym.substitute
+        mov [rbx].asym.langtype,[rcx].asym.langtype
 
         ; output an alias record for this alias
 

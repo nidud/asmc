@@ -223,9 +223,6 @@ IS_SIGNED proto watcall :byte {
        weak         db : 1 ?        ; 1 if an unused "externdef"
        is_vararg    db : 1 ?        ; SYM_STACK, VARARG param
        is_vector    db : 1 ?        ; template is vector
-       stkused      db : 1 ?        ; proc: call stack used
-       argused      db : 1 ?        ; proc: stack arg used
-       localgpr     db : 1 ?        ; proc: xmm reg saved to local stack
        ClassProc    db : 1 ?        ; proc: next is class sym
       ends
      ends
@@ -436,29 +433,55 @@ MAX_SEGALIGNMENT    equ 0xFF
 ; PROC item
 
 .template proc_info
-
-    regslist        ptr word ?      ; list of registers to be saved
+    union
+     flags          dd ?
+     record
+      has_vararg    dd : 1 ?        ; last param is VARARG
+      pe_type       dd : 1 ?        ; prolog-epilog type, 1=use LEAVE
+      forceframe    dd : 1 ?        ; FORCEFRAME prologuearg?
+      loadds        dd : 1 ?        ; LOADDS prologuearg?
+      stackparam    dd : 1 ?        ; 1=stack params exists ( not just register params )
+      isframe       dd : 1 ?        ; FRAME attribute set?
+      fpo           dd : 1 ?        ;
+      usesds        dd : 1 ?        ; USESDS prologuearg?
+      ;
+      ; The following flags are set by:
+      ; - write_prologue() -- default flags
+      ; - write_default_prologue()
+      ;   set default from get_fasttype() in pass 1
+      ;   else update is_leaf, stack_used, and localsize
+      ; - stack alignment is stripped on leaf functions
+      ;   if win64:auto is used (win64 and elf64)
+      ;
+      stkused       dd : 1 ?        ; call stack used
+      argused       dd : 1 ?        ; stack arg used
+      invoked       dd : 1 ?        ; set by INVOKE
+      localgpr      dd : 1 ?        ; xmm reg saved to local stack
+      auto_stack    dd : 1 ?        ; W64F_AUTOSTACKSP
+      stack_align16 dd : 1 ?        ; W64F_STACKALIGN16 | FCT_VEC64
+      save_regparam dd : 1 ?        ; W64F_SAVEREGPARAMS
+      rsp_align     dd : 1 ?        ; isframe | auto_stack
+      is_leaf       dd : 1 ?        ; is_fastcall && auto_stack && Parse_Pass && !stkused && !locallist
+      systvstack    dd : 1 ?        ; SYSTEMV && paralist && auto_stack
+      stack_used    dd : 1 ?        ; 0=is_leaf && !argused && !localgpr && !localsize && !regslist && !invoked
+      use_resstack  dd : 1 ?        ; RESSTACK
+      is_systemv    dd : 1 ?        ; SYSTEMV
+      use_cstack    dd : 1 ?        ; CSTACK && MODULE.cstack
+      is_fastcall   dd : 1 ?        ; REGPARAM | RESSTACK | SYSTEMV
+     ends
+    ends
+    localsize       dd ?            ; total no. of bytes used by local variables
+    ReservedStack   dd ?            ; win64: additional reserved stack
+    parasize        dd ?            ; total no. of bytes used by parameters
+    prologsize      dd ?            ; v2.10: prologue size
+    basereg         dd ?            ; v2.11: stack base register
     paralist        asym_t ?        ; list of parameters
     locallist       asym_t ?        ; list of local variables
     labellist       asym_t ?        ; list of local labels
-    parasize        uint_t ?        ; total no. of bytes used by parameters
-    localsize       uint_t ?        ; total no. of bytes used by local variables
+    regslist        pshort_t ?      ; list of registers to be saved
     prologuearg     string_t ?      ; prologuearg attribute
     exc_handler     asym_t ?        ; exc handler set by FRAME
-    ReservedStack   int_t ?         ; win64: additional reserved stack
-    prolog_list_pos uint_t ?        ; prologue list pos
-    record
-     has_vararg     uchar_t : 1 ?   ; last param is VARARG
-     pe_type        uchar_t : 1 ?   ; PROC: prolog-epilog type, 1=use LEAVE
-     forceframe     uchar_t : 1 ?   ; PROC: FORCEFRAME prologuearg?
-     loadds         uchar_t : 1 ?   ; PROC: LOADDS prologuearg?
-     stackparam     uchar_t : 1 ?   ; PROC: 1=stack params exists ( not just register params )
-     isframe        uchar_t : 1 ?   ; PROC: FRAME attribute set?
-     fpo            uchar_t : 1 ?   ;
-     usesds         uchar_t : 1 ?   ; PROC: USESDS prologuearg?
-    ends
-    size_prolog     uchar_t ?       ; v2.10: prologue size
-    basereg         ushort_t ?      ; v2.11: stack base register
+    prolog_list_pos dd ?            ; prologue list pos
    .ends
 
 ; macro parameter

@@ -425,7 +425,7 @@ GetStartLabel proc __ccall uses rbx buffer:string_t, msg:dword
                 mov rdx,[rdx].asym.name
                 .if ( byte ptr [rdx] != '_' )
                     .if ( msg && ( MODULE.defOfssize != USE64 ) )
-                        asmerr( 8011, rdx )
+                        asmerr( 8005, rdx )
                     .endif
                 .else
                     inc rbx
@@ -716,6 +716,11 @@ endif
     ; aliases. A weak external entry with 1 aux entry is created.
 
     .for ( rdi = AliasTable : rdi : rdi = [rdi].asym.next )
+        ;
+        ; v2.21: copy language from original here
+        ;
+        mov rcx,[rdi].asym.substitute
+        mov [rdi].asym.langtype,[rcx].asym.langtype
 
         mov edx,Mangle( rdi, &buffer )
         lea rcx,buffer
@@ -999,7 +1004,7 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:asym_t, poffset:ptr uint
         .endif
         .if ( !ecx ) ; v2.03: skip this fixup
             mov rcx,section
-            asmerr( 3014, [rbx].type, [rcx].asym.name, [rbx].locofs )
+            asmerr( 3007, [rbx].type, [rcx].asym.name, [rbx].locofs )
             .continue
         .endif
         mov type,cx

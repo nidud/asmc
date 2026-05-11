@@ -329,7 +329,7 @@ endif
                 ; won't display an error. The other way, first externdef and
                 ; then the definition, will make Masm complain, however
 
-                asmerr( 8004, [rsi].asym.name )
+                asmerr( 8001, [rsi].asym.name )
             .elseif ( [rsi].asym.mem_type == MT_TYPE && [rsi].asym.type != ti.symtype )
                 mov rcx,rsi
 
@@ -342,7 +342,7 @@ endif
                     mov rdi,[rdi].asym.type
                 .endw
                 .if ( rcx != rdi )
-                    asmerr( 8004, [rsi].asym.name )
+                    asmerr( 8001, [rsi].asym.name )
                 .endif
             .endif
 
@@ -769,7 +769,7 @@ MakeComm proc __ccall private uses rdi name:string_t, sym:asym_t, size:dword, co
         mov eax,size
         mul count
         .if ( eax > 0x10000 )
-            asmerr( 8003, [rdi].asym.name )
+            asmerr( 8000, [rdi].asym.name )
         .endif
     .endif
     mov eax,size

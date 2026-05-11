@@ -362,7 +362,7 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:asym_t, i:int_t, tokenarray:token_t
                     ; allowed syntax is parm:=<literal>
 
                     .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
-                        asmerr( 3016 )
+                        asmerr( 2008, [rbx].string_ptr )
                        .break ; return( ERROR );
                     .endif
                     mov [rsi].deflt,LclDup( [rbx].string_ptr )

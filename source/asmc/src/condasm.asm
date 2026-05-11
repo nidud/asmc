@@ -222,7 +222,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             ; v2.07: Masm doesn't accept a relocatable item,
             ; so emit at least a warning!
 
-            asmerr( 8020 )
+            asmerr( 8013 )
         .else
             .return( asmerr( 2026 ) )
         .endif
@@ -385,7 +385,6 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             add rbx,asm_tok
         .endif
         .if ( [rbx].token != T_FINAL )
-            asmerr( 8005, [rbx-asm_tok].tokpos )
             .while ( [rbx].token != T_FINAL )
                 add rbx,asm_tok
             .endw

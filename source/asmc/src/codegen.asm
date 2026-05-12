@@ -530,6 +530,8 @@ endif
                         .if ( ah == 0x20 )
                             add rdi,instr_item
                         .endif
+                        ; v2.38.09: added
+                        .endc .if ( !( ch & VX_ZMM24 ) && evex == 0xE0 )
                     .case VX_OP3 or VX_OP3V             ;; 0, 0, 1
                         .if ( !( ah & VX_W1 ) && ( tuple == RWF_T1S || tuple == RWF_QVM ) )
                             and bl,not VX1_R1
@@ -606,7 +608,8 @@ endif
                         mov bl,0x91
                         .endc .if !( ch & VX_ZMM )
                         mov bl,0xB1
-                        .endc .if !( ch & VX_ZMM8 )
+                        ; v2.38.09: added REX_B test for r8..r15
+                        .endc .if ( !( ch & VX_ZMM8 ) && !( [rsi].rex & REX_B ) )
                         mov bl,0xD1
                         .endc
                     .case 0xC5
@@ -680,12 +683,15 @@ endif
                         and bh,not 0x02
                         or  bh,0x01
                         add rdi,instr_item              ;; 7E --> 6E
-                    .elseif ( ah == 0xE0 &&
-                        ( ch & VX_ZMM &&
-                          [rsi].opnd[OPND1].type == OP_ZMM &&
-                          [rsi].opnd[OPNI2].type == OP_ZMM ) )
-
-                        mov ah,0xB0
+                    .elseif ( ah == 0xE0 )
+                        .if ( ch & VX_ZMM &&
+                              [rsi].opnd[OPND1].type == OP_ZMM &&
+                              [rsi].opnd[OPNI2].type == OP_ZMM )
+                            mov ah,0xB0
+                        .elseif ( [rsi].opnd[OPND1].type == OP_YMM &&
+                                  [rsi].opnd[OPNI2].type == OP_YMM )
+                            mov ah,0xB0
+                        .endif
                     .endif
                     .endc
                 .case VX_OP3 or VX_OP1V                 ;; 1, 0, 0
@@ -702,7 +708,8 @@ endif
                 or  bl,al
                 .if [rsi].rex & REX_R
                     mov bl,0x61
-                    .if [rsi].opnd[OPND1].type == OP_R32 || ( ch & VX_ZMM8 )
+                    .if ( ( [rsi].opnd[OPND1].type == OP_R32 ) ||
+                          ( ch & VX_ZMM8 or VX_OP1V or VX_OP2V && !( ch & VX_ZMM24 ) ) )
                         or bl,0x10
                         .if ( ch & VX_OP1V or VX_OP2V or VX_OP3V )
                             and bl,not 0x40

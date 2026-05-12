@@ -2468,15 +2468,15 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
         .if eax == OP_ZMM
             or [rsi].vflags,VX_ZMM
         .endif
-        .if regno > 15
+        .if regno > 15 ; v2.38.09: added YMM
             mov ecx,index
             mov edx,1
             shl edx,cl
-            .if eax == OP_ZMM && regno > 23
+            .if ( regno > 23 )
                 or edx,VX_ZMM24
             .endif
             or [rsi].vflags,dl
-        .elseif eax == OP_ZMM && regno > 7
+        .elseif regno > 7
             or [rsi].vflags,VX_ZMM8
         .endif
     .endif

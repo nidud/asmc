@@ -320,8 +320,8 @@ VX_OP3V		equ 0x04
 VX_OP3		equ 0x08 ; more than 2 instruction args used
 VX_ZMM		equ 0x10 ; ZMM used
 VX_SAE		equ 0x20 ; {sae} used
-VX_ZMM8		equ 0x40 ; zmm8..15 used
-VX_ZMM24	equ 0x80 ; zmm24..31 used
+VX_ZMM8		equ 0x40 ; [y|z]mm8..15 used
+VX_ZMM24	equ 0x80 ; [y|z]mm24..31 used
 
 ; pinstr->evex
 

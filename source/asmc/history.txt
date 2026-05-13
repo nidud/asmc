@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.39 - xx xxx 2026
+- added public ALIAS symbol for ELF
 - fixed bug in EVEX - wrong encoding for some two-operand
   instructions using YMM16..24 or [r8..15]
 - fixed bug in VPBRODCASTx - wrong prefix + additional types
@@ -53,7 +54,7 @@ Changes in 2.37 - 23 Jun 2025
 - added prefix VEX, VEX2, VEX3, EXEX, XACQUIRE, and XRELEASE
 - removed switch -sysvregs
 - added switch -Gw -- Watcom calling conventions
-- added switch	-Fe<file> -- Name executable
+- added switch  -Fe<file> -- Name executable
 - fixed bug in debug info for included files
 - fixed bug in option avxencoding -- scope was global
 - added operator BCST -- Masm style "embedded broadcast"
@@ -103,12 +104,12 @@ Changes in 2.35 - 6 Jul 2024
 - fixed alignment bug in RECORD
 - removed switch -Znk, .pragma asmc
 - removed directive .name, .page, .subtitle, .subttl, .title, .low, .high,
-	.size, .length, .this, .mask, and .width
+    .size, .length, .this, .mask, and .width
 - added swtich -idd and -iddt -- Assemble source as binary data / text
 - added operator LOWBYTE, HIGHBYTE, MASKOF
 - added option AVXENCODING
 - added instructions: VPDPBUSD, VPDPBUSDS, VPDPWSSD, VPDPWSSDS, RDPKRU,
-	WRPKRU, STUI, HRESET, CLUI, SENDUIPI, TESTUI, UIRET
+    WRPKRU, STUI, HRESET, CLUI, SENDUIPI, TESTUI, UIRET
 - added .pragma aux - to customize a Register Calling Convention
 - added ASMCALL - User defined calling convention
 - added SOWORD - signed 128-bit integer
@@ -351,7 +352,7 @@ Changes in 2.25 - 21 Sep 2017
 Changes in 2.24 - 18 Jun 2017
 - fixed bug in win64/elf64 :vararg [reg] argument
 - added _LINUX and _WIN64 to switch -elf, -elf64, and -win64
-  -elf	 define _LINUX = 1
+  -elf   define _LINUX = 1
   -elf64 define _LINUX = 2 + _WIN64 = 1
   -win64 define _WIN64 = 1
 - added 64-bit version of SYSCALL (-elf64)
@@ -373,7 +374,7 @@ Changes in 2.24 - 18 Jun 2017
 
 Changes in 2.23 - 10 Apr 2017
 - added .win64[: RSP | RBP | ALIGN | NOALIGN | SAVE | NOSAVE |
-		 AUTO | NOAUTO | FRAME | NOFRAME]
+         AUTO | NOAUTO | FRAME | NOFRAME]
 - added .amd64 and .win64
 - fixed bug in quoted file names -- "test".asm
 - fixed bug in option:cstack + stackbase:esp
@@ -391,7 +392,7 @@ Changes in 2.23 - 10 Apr 2017
 - fixed error in proto fastcall :type -- fast32.asm
 - fixed switch /zlp -- renamed from /zip
 - added assign option to the .for loop inc/dec section:
-	.for eax = table: [eax].t_next: eax = [eax].t_next
+    .for eax = table: [eax].t_next: eax = [eax].t_next
 
 Changes in 2.22 - 11 Feb 2017
 - added .FOR[S] [<initialization>] : [<condition>] : [<increment/decrement>]
@@ -407,22 +408,22 @@ Changes in 2.22 - 11 Feb 2017
 - added switch /h and /? -- went missing..
 - added .BREAKxx, CONTxx, UNTILxx, and WHILExx
 - added .IFxx
-	.IFA	- if Above
-	.IFB	- if Below
-	.IFG	- if Greater (signed)
-	.IFL	- if Less (signed)
-	.IFO	- if Overflow (signed)
-	.IFP	- if Parity
-	.IFS	- if Signed (signed)
-	.IFZ	- if Zero
-	.IFNA	- if Not Above
-	.IFNB	- if Not Below
-	.IFNG	- if Not Greater (signed)
-	.IFNL	- if Not Less (signed)
-	.IFNO	- if Not Overflow (signed)
-	.IFNP	- if No Parity
-	.IFNS	- if Not Signed (signed)
-	.IFNZ	- if Not Zero
+    .IFA    - if Above
+    .IFB    - if Below
+    .IFG    - if Greater (signed)
+    .IFL    - if Less (signed)
+    .IFO    - if Overflow (signed)
+    .IFP    - if Parity
+    .IFS    - if Signed (signed)
+    .IFZ    - if Zero
+    .IFNA   - if Not Above
+    .IFNB   - if Not Below
+    .IFNG   - if Not Greater (signed)
+    .IFNL   - if Not Less (signed)
+    .IFNO   - if Not Overflow (signed)
+    .IFNP   - if No Parity
+    .IFNS   - if Not Signed (signed)
+    .IFNZ   - if Not Zero
 - added Signed compare: .IFS, .IFSB, .IFSW, .IFSB
 - extended .IFB/.IFW to 32-bit, .IFB to 16-bit
 - added use of proto typedefs in HLL
@@ -475,7 +476,7 @@ Changes in 2.20 - 15 May 2016
   C-escape characters in the string. Strings are added to a stack and reused if
   duplicated strings are found. The macro returns offset string.
   Example:
-	mov eax,@CStr( "\tCreate a \"C\" string: %s%d\n" )
+    mov eax,@CStr( "\tCreate a \"C\" string: %s%d\n" )
 - changed macro @Date to yyyy-mm-dd
 
 Changes in 2.19 - 7 Apr 2016

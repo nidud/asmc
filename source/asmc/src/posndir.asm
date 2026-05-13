@@ -293,7 +293,7 @@ AlignDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     ; v2.04: added, Skip backpatching after ALIGN occured
 
-    .if ( Parse_Pass == PASS_1 )
+    .if ( forward == 0 && Parse_Pass == PASS_1 )
         .if ( rax )
             mov rax,[rax].asym.seginfo
             mov rax,[rax].seg_info.head

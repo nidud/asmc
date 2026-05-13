@@ -26,7 +26,7 @@ endif
 ; the "EXTERN <name> (<altname>)" syntax, which also allows
 ; to define a weak external.
 
-define ELFALIAS 0
+define ELFALIAS 1
 
 ; start label is always public for COFF/ELF, no need to add it
 define ADDSTARTLABEL 0
@@ -344,22 +344,84 @@ if ELFALIAS
         lea ecx,[Mangle( rsi, &buffer ) + 1]
         mov [rdi].Elf32_Sym.st_name,strsize
         add strsize,ecx
+        ;
+        ; v2.38.10: added public symbol
+        ;
+        mov rcx,[rsi].asym.substitute
+        .if ( [rcx].asym.state == SYM_INTERNAL && [rcx].asym.ispublic )
 
-if OWELFIMPORT
-        mov eax,ELF32_ST_INFO( STB_WEAK, STT_IMPORT )
-else
-        mov eax,ELF32_ST_INFO( STB_WEAK, STT_NOTYPE )
-endif
-        xor ecx,ecx ; is always 0
-        mov edx,SHN_UNDEF
-        .if ( MODULE.defOfssize == USE64 )
-            mov [rdi].Elf64_Sym.st_info,al
-            mov size_t ptr [rdi].Elf64_Sym.st_value,rcx
-            mov [rdi].Elf64_Sym.st_shndx,dx
+            mov rdx,[rcx].asym.segm
+
+            .if ( MODULE.fPIC && ![rcx].asym.isexport )
+
+                ; v2.21: set visibility
+
+                .if ( MODULE.defOfssize == USE64 )
+                    mov [rdi].Elf64_Sym.st_other,STV_INTERNAL
+                .else
+                    mov [rdi].Elf32_Sym.st_other,STV_INTERNAL
+                .endif
+            .endif
+            .if ( rdx )
+
+                ; v2.21: set size for data publics
+
+                SizeFromMemtype( [rcx].asym.mem_type, USE_EMPTY, NULL )
+                mov rcx,[rsi].asym.substitute
+                mov rdx,[rcx].asym.segm
+                .if ( eax == 0 ) ; OWORD...
+                    mov eax,[rcx].asym.total_size
+                .endif
+                .if ( MODULE.defOfssize == USE64 )
+                    mov size_t ptr [rdi].Elf64_Sym.st_size,rax
+                .else
+                    mov [rdi].Elf32_Sym.st_size,eax
+                .endif
+                mov rcx,[rdx].asym.seginfo
+            .endif
+            mov eax,ELF32_ST_INFO( STB_GLOBAL, STT_FUNC )
+            .if ( rdx && [rcx].seg_info.segtype != SEGTYPE_CODE )
+                mov eax,ELF32_ST_INFO( STB_GLOBAL, STT_OBJECT )
+            .endif
+            mov rcx,[rsi].asym.substitute
+            mov ecx,[rcx].asym.offs
+            .if ( MODULE.defOfssize == USE64 )
+                mov [rdi].Elf64_Sym.st_info,al
+                mov size_t ptr [rdi].Elf64_Sym.st_value,rcx
+            .else
+                mov [rdi].Elf32_Sym.st_info,al
+                mov [rdi].Elf32_Sym.st_value,ecx
+            .endif
+            mov eax,SHN_UNDEF
+            mov rcx,[rsi].asym.substitute
+            .if ( [rcx].asym.state == SYM_INTERNAL )
+                mov eax,SHN_ABS
+                .if ( rdx )
+                    GetSegIdx( rdx )
+                .endif
+            .endif
+            .if ( MODULE.defOfssize == USE64 )
+                mov [rdi].Elf64_Sym.st_shndx,ax
+            .else
+                mov [rdi].Elf32_Sym.st_shndx,ax
+            .endif
         .else
-            mov [rdi].Elf32_Sym.st_info,al
-            mov [rdi].Elf32_Sym.st_value,ecx
-            mov [rdi].Elf32_Sym.st_shndx,dx
+if OWELFIMPORT
+            mov eax,ELF32_ST_INFO( STB_WEAK, STT_IMPORT )
+else
+            mov eax,ELF32_ST_INFO( STB_WEAK, STT_NOTYPE )
+endif
+            xor ecx,ecx ; is always 0
+            mov edx,SHN_UNDEF
+            .if ( MODULE.defOfssize == USE64 )
+                mov [rdi].Elf64_Sym.st_info,al
+                mov size_t ptr [rdi].Elf64_Sym.st_value,rcx
+                mov [rdi].Elf64_Sym.st_shndx,dx
+            .else
+                mov [rdi].Elf32_Sym.st_info,al
+                mov [rdi].Elf32_Sym.st_value,ecx
+                mov [rdi].Elf32_Sym.st_shndx,dx
+            .endif
         .endif
         add rdi,rbx
     .endf

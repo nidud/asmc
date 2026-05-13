@@ -4,145 +4,124 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include isa_availability.inc
+include libc.inc
 
-ifdef __SSE__
-ifdef __AVX__
-if defined(__AVX512BW__) ;and defined(_WIN64)
-define __AVX512__
+ifdef __AVX512BW__
 define U 64
-else
+elseifdef __AVX__
 define U 32
-endif
-else
+elseifdef __SSE__
 define U 16
-endif
 else
 define U size_t
 endif
 
-ifndef _WIN64
-define  dst <[esp+4]>
-define  src <[esp+8]>
-define  len <[esp+12]>
-define  tmp <[esp+8]>
-else
-define  len <r8>
-define  tmp <r9>
-ifdef __UNIX__
-define  dst <rdi>
-define  src <rsi>
-else
-define  dst <r11>
-define  src <r10>
-endif
-endif
-
-ifndef __UNIX__
 ALIAS <memmove>=<memcpy>
-endif
 
 .code
-
-ifdef __UNIX__
-memmove::
-endif
 
 memcpy proc
 
 ifndef _WIN64
-    mov     eax,dst
-    mov     edx,src
-    mov     ecx,len
+define r8   <esi>
+define dst  <[esp+4]>
+    mov     eax,[esp+4]
+    mov     edx,[esp+8]
+    mov     ecx,[esp+12]
 elseifdef __UNIX__
+define dst  <rdi>
     mov     rax,rdi
     mov     rcx,rdx
     mov     rdx,rsi
 else
-    mov     dst,rcx
+define dst  <r10>
     mov     rax,rcx
     mov     rcx,r8
 endif
-    cmp     rax,rdx
-    jbe     non_overlapping_buffers
-    sub     rax,rcx
-    cmp     rax,rdx
-    lea     rax,[rax+rcx]
-    jb      overlapping_buffers
+    cmp     rcx,8
+    ja      above_8
+    je      copy_08
+    cmp     ecx,6
+    ja      copy_07
+    je      copy_06
+    cmp     ecx,4
+    ja      copy_05
+    je      copy_04
+    cmp     ecx,2
+    ja      copy_03
+    je      copy_02
+    test    ecx,ecx
+    jz      copy_00
 
-non_overlapping_buffers:
-
-ifdef __AVX__
-ifdef __TEST__
-    test    rcx,rcx
-elseifdef __AVX512__
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX512
-else
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
-endif
-    jz      string_copy
-endif
-
-ifdef __SSE__
-
-    cmp     rcx,U*2
-    ja      begin_copy
-
-ifdef __AVX512__
-    test    cl,-64
-    jnz     copy_64_128
-endif
-
-ifdef __AVX__
-    test    cl,-32
-    jnz     copy_32_64
-endif
-
-    test    cl,-16
-    jnz     copy_16_32
-    test    cl,-8
-    jnz     copy_8_16
-    test    cl,4
-    jnz     copy_4_8
-    cmp     cl,2
-    je      copy_2
-    ja      copy_3
-    test    cl,cl
-    je      copy_0
-
-copy_1:
+copy_01:
     mov     cl,[rdx]
     mov     [rax],cl
-copy_0:
+copy_00:
     ret
 
-copy_3:
+copy_02:
+    mov     cx,[rdx]
+    mov     [rax],cx
+    ret
+
+copy_03:
     mov     cl,[rdx+2]
     mov     dx,[rdx]
     mov     [rax+2],cl
     mov     [rax],dx
     ret
 
-copy_2:
-    mov     cx,[rdx]
-    mov     [rax],cx
+copy_04:
+    mov     ecx,[rdx]
+    mov     [rax],ecx
     ret
 
-copy_4_8:
-ifdef _WIN64
-    mov     r8d,[rdx]
-    mov     edx,[rdx+rcx-4]
-    mov     [rax],r8d
-    mov     [rax+rcx-4],edx
-else
-    movss   xmm0,[rdx]
-    movss   xmm1,[rdx+rcx-4]
-    movss   [rax],xmm0
-    movss   [rax+rcx-4],xmm1
+copy_05:
+    mov     cl,[rdx+4]
+    mov     edx,[rdx]
+    mov     [rax+4],cl
+    mov     [rax],edx
+    ret
+
+copy_06:
+    mov     cx,[rdx+4]
+    mov     edx,[rdx]
+    mov     [rax+4],cx
+    mov     [rax],edx
+    ret
+
+copy_07:
+    mov     ecx,[rdx+3]
+    mov     edx,[rdx]
+    mov     [rax+3],ecx
+    mov     [rax],edx
+    ret
+
+copy_08:
+    mov     rcx,[rdx]
+ifndef _WIN64
+    mov     edx,[rdx+4]
+    mov     [rax+4],edx
 endif
+    mov     [rax],rcx
     ret
 
-copy_8_16:
+    ALIGN   4
+above_8:
+ifdef __SSE__
+    cmp     rcx,U*2
+    ja      begin_copy
+ifdef __AVX512BW__
+    cmp     ecx,64
+    jae     copy_80
+endif
+ifdef __AVX__
+    cmp     ecx,32
+    jae     copy_40
+endif
+    cmp     ecx,16
+    jae     copy_20
+copy_10:
 ifdef _WIN64
     mov     r8,[rdx]
     mov     rdx,[rdx+rcx-8]
@@ -155,140 +134,290 @@ else
     movsd   [rax+rcx-8],xmm1
 endif
     ret
-
-copy_16_32:
+    ALIGN   4
+copy_20:
     movups  xmm0,[rdx]
     movups  xmm1,[rdx+rcx-16]
     movups  [rax],xmm0
     movups  [rax+rcx-16],xmm1
     ret
-
 ifdef __AVX__
-copy_32_64:
+    ALIGN   4
+copy_40:
     vmovups ymm0,[rdx]
     vmovups ymm1,[rdx+rcx-32]
     vmovups [rax],ymm0
     vmovups [rax+rcx-32],ymm1
-    vzeroupper
     ret
 endif
-
-ifdef __AVX512__
-copy_64_128:
+ifdef __AVX512BW__
+    ALIGN   4
+copy_80:
     vmovups zmm0,[rdx]
     vmovups zmm1,[rdx+rcx-64]
     vmovups [rax],zmm0
     vmovups [rax+rcx-64],zmm1
-    vzeroupper
     ret
 endif
 
-    align   loop_u4 size_t*2    ; emit align bytes here
+    ALIGN   4
 
 begin_copy:
 
-ifdef __AVX512__
-    vmovups zmm4,[rdx]          ; read head bytes
-    vmovups zmm5,[rdx+rcx-U]    ; read tail bytes
+ifndef _WIN64
+    push    esi             ; r8 in 32-bit
+elseifndef __UNIX__
+    mov     dst,rax         ; save rcx in Win64
+endif
+    lea     r8,[rdx+rcx]    ; test overlap
+    sub     rdx,rax
+    jae     copy_up
+    cmp     r8,rax
+    ja      copy_down
+
+copy_up:
+
+ifdef __AVX512BW__
+    vmovups zmm0,[rax+rdx]
 elseifdef __AVX__
-    vmovups ymm4,[rdx]
-    vmovups ymm5,[rdx+rcx-U]
+    vmovups ymm0,[rax+rdx]
 else
-    movups  xmm4,[rdx]
-    movups  xmm5,[rdx+rcx-U]
+    movups  xmm0,[rax+rdx]
 endif
 
-    lea     rax,[rdx+U]         ; advance source
-    and     al,-U               ; and align
-    sub     rax,rdx             ; get size
-    sub     rcx,rax             ; adjust count
-    add     rdx,rax             ; adjust source
-    add     rax,dst             ; adjust target
+    mov     r8,rax
+    add     rax,U
+    test    al,U-1
+    jz      check_blocks
 
-check_blocks:
-    mov     tmp,rcx
-    shr     rcx,(bsf U) + 2     ; 64/128/256 byte block count
-    jz      copy_u
-
-loop_u4:
-ifdef __AVX512__
-    vmovaps zmm0,[rdx+U*0]
-    vmovaps zmm1,[rdx+U*1]
-    vmovaps zmm2,[rdx+U*2]
-    vmovaps zmm3,[rdx+U*3]
-    vmovups [rax+U*0],zmm0
-    vmovups [rax+U*1],zmm1
-    vmovups [rax+U*2],zmm2
-    vmovups [rax+U*3],zmm3
+    and     al,-U
+ifdef __AVX512BW__
+    vmovups zmm1,[rax+rdx]
+    vmovups [r8],zmm0
+    vmovaps zmm0,zmm1
 elseifdef __AVX__
-    vmovaps ymm0,[rdx+U*0]
-    vmovaps ymm1,[rdx+U*1]
-    vmovaps ymm2,[rdx+U*2]
-    vmovaps ymm3,[rdx+U*3]
-    vmovups [rax+U*0],ymm0
-    vmovups [rax+U*1],ymm1
-    vmovups [rax+U*2],ymm2
-    vmovups [rax+U*3],ymm3
+    vmovups ymm1,[rax+rdx]
+    vmovups [r8],ymm0
+    vmovaps ymm0,ymm1
 else
-    movaps  xmm0,[rdx+U*0]
-    movaps  xmm1,[rdx+U*1]
-    movaps  xmm2,[rdx+U*2]
-    movaps  xmm3,[rdx+U*3]
-    movups  [rax+U*0],xmm0
-    movups  [rax+U*1],xmm1
-    movups  [rax+U*2],xmm2
-    movups  [rax+U*3],xmm3
-endif
-    add     rax,U*4
-    add     rdx,U*4
-    dec     rcx
-    jnz     loop_u4
-
-copy_u:
-    mov     rcx,tmp             ; blocks left if any
-    and     ecx,U*4-1
-    shr     ecx,bsf U
-    jz      end_copy
-
-loop_u:
-ifdef __AVX512__
-    vmovaps zmm0,[rdx]
-    vmovups [rax],zmm0
-elseifdef __AVX__
-    vmovaps ymm0,[rdx]
-    vmovups [rax],ymm0
-else
-    movaps  xmm0,[rdx]
-    movups  [rax],xmm0
+    movups  xmm1,[rax+rdx]
+    movups  [r8],xmm0
+    movaps  xmm0,xmm1
 endif
     add     rax,U
-    add     rdx,U
-    dec     rcx
-    jnz     loop_u
-end_copy:
-    mov     rcx,len
-    mov     rax,dst
-ifdef __AVX512__
-    vmovups [rax],zmm4          ; write head bytes
-    vmovups [rax+rcx-U],zmm5    ; write tail bytes
-    vzeroupper
+
+check_blocks:
+    add     rcx,r8
+    sub     rcx,rax
+    mov     r8,rcx
+    shr     r8,(bsf U) + 2 ; 64/128/256 byte block count
+    jz      copy_u
+    and     ecx,U*4-1
+    jmp     loop_u4
+
+    ALIGN   size_t*2
+
+loop_u4:
+ifdef __AVX512BW__
+    vmovups zmm1,[rax+rdx+U*0]
+    vmovups zmm2,[rax+rdx+U*1]
+    vmovups zmm3,[rax+rdx+U*2]
+    vmovups zmm4,[rax+rdx+U*3]
+    vmovaps [rax-U],zmm0
+    vmovaps [rax],zmm1
+    vmovaps [rax+U],zmm2
+    vmovaps [rax+U*2],zmm3
+    vmovaps zmm0,zmm4
 elseifdef __AVX__
-    vmovups [rax],ymm4
-    vmovups [rax+rcx-U],ymm5
-    vzeroupper
+    vmovups ymm1,[rax+rdx+U*0]
+    vmovups ymm2,[rax+rdx+U*1]
+    vmovups ymm3,[rax+rdx+U*2]
+    vmovups ymm4,[rax+rdx+U*3]
+    vmovaps [rax-U],ymm0
+    vmovaps [rax],ymm1
+    vmovaps [rax+U],ymm2
+    vmovaps [rax+U*2],ymm3
+    vmovaps ymm0,ymm4
 else
-    movups  [rax],xmm4
-    movups  [rax+rcx-U],xmm5
+    movups  xmm1,[rax+rdx+U*0]
+    movups  xmm2,[rax+rdx+U*1]
+    movups  xmm3,[rax+rdx+U*2]
+    movups  xmm4,[rax+rdx+U*3]
+    movaps  [rax-U],xmm0
+    movaps  [rax],xmm1
+    movaps  [rax+U],xmm2
+    movaps  [rax+U*2],xmm3
+    movaps  xmm0,xmm4
 endif
+    add     rax,U*4
+    dec     r8
+    jnz     loop_u4
+    and     ecx,U*4-1
+
+copy_u:
+    mov     r8,rcx
+    shr     r8,bsf U
+    jz      end_copy_up
+
+    ALIGN   4
+loop_u:
+ifdef __AVX512BW__
+    vmovaps [rax-U],zmm0
+    vmovups zmm0,[rax+rdx]
+elseifdef __AVX__
+    vmovaps [rax-U],ymm0
+    vmovups ymm0,[rax+rdx]
+else
+    movaps  [rax-U],xmm0
+    movups  xmm0,[rax+rdx]
+endif
+    add     rax,U
+    dec     r8
+    jnz     loop_u
+
+end_copy_up:
+    sub     rax,U
+    and     ecx,U-1
+    jz      count_aligned
+    add     rcx,rax
+end_copy:
+ifdef __AVX512BW__
+    vmovups zmm1,[rcx+rdx]
+    vmovups [rcx],zmm1
+count_aligned:
+    vmovups [rax],zmm0
+elseifdef __AVX__
+    vmovups ymm1,[rcx+rdx]
+    vmovups [rcx],ymm1
+count_aligned:
+    vmovups [rax],ymm0
+else
+    movups  xmm1,[rcx+rdx]
+    movups  [rcx],xmm1
+count_aligned:
+    movups  [rax],xmm0
+endif
+ifndef _WIN64
+    pop     esi
+endif
+ifdef __AVX__
+    vzeroupper
+endif
+    mov     rax,dst
     ret
 
-endif ; __SSE__
+    ALIGN   4
+copy_down:
+    add     rax,rcx
+ifdef __AVX512BW__
+    vmovups zmm0,[rax+rdx-U]    ; read tail bytes
+elseifdef __AVX__
+    vmovups ymm0,[rax+rdx-U]
+else
+    movups  xmm0,[rax+rdx-U]
+endif
+    sub     rax,U
+    sub     rcx,U
+    test    al,U-1
+    jz      dest_aligned2
+    mov     r8,rax
+    and     al,-U
+ifdef __AVX512BW__
+    vmovups zmm1,[rax+rdx]
+    vmovups [r8],zmm0
+    vmovaps zmm0,zmm1
+elseifdef __AVX__
+    vmovups ymm1,[rax+rdx]
+    vmovups [r8],ymm0
+    vmovaps ymm0,ymm1
+else
+    movups  xmm1,[rax+rdx]
+    movups  [r8],xmm0
+    movaps  xmm0,xmm1
+endif
+    add     rcx,rax
+    sub     rcx,r8
+dest_aligned2:
+    mov     r8,rcx
+    shr     r8,(bsf U) + 2     ; 64/128/256 byte block count
+    jz      copy_d
+    and     ecx,U*4-1
+    jmp     loop_d4
 
-string_copy:
+    ALIGN   size_t*2
+
+loop_d4:
+ifdef __AVX512BW__
+    vmovups zmm1,[rax+rdx-U*1]
+    vmovups zmm2,[rax+rdx-U*2]
+    vmovups zmm3,[rax+rdx-U*3]
+    vmovups zmm4,[rax+rdx-U*4]
+    vmovaps [rax-U*0],zmm0
+    vmovaps [rax-U*1],zmm1
+    vmovaps [rax-U*2],zmm2
+    vmovaps [rax-U*3],zmm3
+    vmovaps zmm0,zmm4
+elseifdef __AVX__
+    vmovups ymm1,[rax+rdx-U*1]
+    vmovups ymm2,[rax+rdx-U*2]
+    vmovups ymm3,[rax+rdx-U*3]
+    vmovups ymm4,[rax+rdx-U*4]
+    vmovaps [rax-U*0],ymm0
+    vmovaps [rax-U*1],ymm1
+    vmovaps [rax-U*2],ymm2
+    vmovaps [rax-U*3],ymm3
+    vmovaps ymm0,ymm4
+else
+    movups  xmm1,[rax+rdx-U*1]
+    movups  xmm2,[rax+rdx-U*2]
+    movups  xmm3,[rax+rdx-U*3]
+    movups  xmm4,[rax+rdx-U*4]
+    movaps  [rax-U*0],xmm0
+    movaps  [rax-U*1],xmm1
+    movaps  [rax-U*2],xmm2
+    movaps  [rax-U*3],xmm3
+    movaps  xmm0,xmm4
+endif
+    sub     rax,U*4
+    dec     r8
+    jnz     loop_d4
+
+copy_d:
+    mov     r8,rcx
+    shr     r8,bsf U
+    jz      end_down
+
+    ALIGN   4
+loop_d:
+ifdef __AVX512BW__
+    vmovaps [rax],zmm0
+    vmovups zmm0,[rax+rdx-U]
+elseifdef __AVX__
+    vmovaps [rax],ymm0
+    vmovups ymm0,[rax+rdx-U]
+else
+    movaps  [rax],xmm0
+    movups  xmm0,[rax+rdx-U]
+endif
+    sub     rax,U
+    dec     r8
+    jnz     loop_d
+
+end_down:
+    and     ecx,U-1
+    jz      count_aligned
+    sub     rcx,rax
+    neg     rcx
+    jmp     end_copy
+
+else ; __SSE__
+
 ifndef _LIN64
     xchg    rdx,rsi
     xchg    rax,rdi
 endif
+    cmp     rdi,rsi
+    ja      copy_down
     rep     movsb
 ifndef _LIN64
     mov     rsi,rdx
@@ -296,12 +425,7 @@ ifndef _LIN64
     mov     rax,dst
 endif
     ret
-
-overlapping_buffers:
-ifndef _LIN64
-    xchg    rdx,rsi
-    xchg    rax,rdi
-endif
+copy_down:
     lea     rsi,[rsi+rcx-1]
     lea     rdi,[rdi+rcx-1]
     std
@@ -313,6 +437,6 @@ ifndef _LIN64
     mov     rax,dst
 endif
     ret
+endif
     endp
-
     end

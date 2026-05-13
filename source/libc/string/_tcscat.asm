@@ -10,9 +10,8 @@
 ;
 
 include tchar.inc
-include isa_availability.inc
 
-if defined(_UNICODE) or defined(__AVX__) or not defined(__SSE__)
+if defined(_UNICODE) or not defined(__SSE__)
 define USE_BYTECOPY
 endif
 
@@ -87,21 +86,6 @@ ifdef _UNICODE
     jnz     strcat_byte_copy
 endif
 
-ifdef __AVX__
-ifdef __TEST__
-    mov     eax,0
-    inc     eax
-elseifdef __AVX512__
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX512
-else
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
-endif
-    jnz     align_to_boundary
-    jmp     strcat_byte_copy
-    align   strcat_length_loop size_t
-endif
-
-align_to_boundary:
     mov     rax,rcx         ; test first block with overlap
     and     al,-U
     and     ecx,U-1         ; bytes to ignore
@@ -220,86 +204,93 @@ ifdef _UNICODE
     test    al,1  ;
     jnz     byte_copy
 endif
-ifdef __AVX__
-if defined(__TEST__) or defined(__TEST_STRCPY__)
-    mov     eax,0
-    inc     eax
-elseifdef __AVX512__
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX512
-elseifdef __AVX__
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
-endif
-    jz      byte_copy
-endif
 endif
 
 strcat_copy::
 
 ifdef __SSE__
-
-    mov     r8,rcx          ; test for zero overlapped
-    mov     cl,dl
-    and     dl,-U
-    and     cl,U-1
 ifdef __AVX512__
     vxorps  zmm0,zmm0,zmm0
+elseifdef __AVX__
+    vxorps  ymm0,ymm0,ymm0
+else
+    xorps   xmm0,xmm0
+endif
+    mov     rax,rcx
+    test    dl,U-1
+    jz      main_loop
+
+    mov     r8,rcx          ; test for zero overlapped
+    mov     ecx,edx
+    and     dl,-U           ; align source
+    and     ecx,U-1         ; shift count
+
+ifdef __AVX512__
     tcmpeq  k0,zmm0,[rdx]
     kmovq   rax,k0
 ifdef _UNICODE
     shr     ecx,1           ; 32-bit mask
 endif
 elseifdef __AVX__
-    vxorps  ymm0,ymm0,ymm0
     tcmpeq  ymm1,ymm0,[rdx]
     vpmovmskb eax,ymm1
 else
-    xorps   xmm0,xmm0
     tcmpeq  xmm0,[rdx]
     pmovmskb eax,xmm0
     xorps   xmm0,xmm0
 endif
-    shr     rax,cl
+
+    shr     rax,cl          ; reset pointers
     mov     rcx,rax
     mov     rax,r8
+    lea     r8,[rdx+U]      ; aligned offset
     mov     rdx,src
     test    rcx,rcx
     jnz     tail_bytes
 
-    test    dl,U-1          ; if aligned we already tested the first block
-    jz      main_loop
-
-    mov     ecx,edx         ; test the next block
-    neg     ecx
-    and     ecx,U-1
-ifdef __AVX512__
-    tcmpeq  k0,zmm0,[rdx+rcx]
+ifdef __AVX512__            ; need a full block
+    tcmpeq  k0,zmm0,[r8]
     kmovq   rcx,k0
 elseifdef __AVX__
-    tcmpeq  ymm1,ymm0,[rdx+rcx]
-    vpmovmskb ecx,ymm1
+    tcmpeq  ymm0,ymm0,[r8]
+    vpmovmskb ecx,ymm0
 else
-    tcmpeq  xmm0,[rdx+rcx]
+    tcmpeq  xmm0,[r8]
     pmovmskb ecx,xmm0
 endif
-    test    rcx,rcx
-    jnz     head_bytes
-
-ifdef __AVX512__
-    vmovups zmm1,[rdx]
-    vmovups [rax],zmm1
-elseifdef __AVX__
-    vmovups ymm1,[rdx]
-    vmovups [rax],ymm1
-else
-    movups  xmm1,[rdx]
-    movups  [rax],xmm1
+    test    rcx,rcx         ; one block + 1..U-1
+    jz      align_source
+    bsf     rcx,rcx
+    sub     r8,rdx
+if defined(_UNICODE) and defined(__AVX512__)
+    shr     r8,1
 endif
-    sub     rax,rdx
-    and     dl,-U
-    add     rdx,U
-    add     rax,rdx
+    add     rcx,r8
+    jmp     head_bytes
 
-    align   size_t
+    ALIGN   size_t
+
+align_source:               ; write overlap
+ifdef __AVX512__
+    vmovups zmm2,[rdx]      ; first block
+    vmovaps zmm1,[r8]       ; first aligned block
+    vmovups [rax],zmm2      ; safe to write
+elseifdef __AVX__
+    vmovups ymm2,[rdx]
+    vmovaps ymm1,[r8]
+    vmovups [rax],ymm2
+else
+    movups  xmm2,[rdx]
+    movaps  xmm1,[r8]
+    movups  [rax],xmm2
+endif
+    sub     rax,rdx         ; align pointers
+    add     rax,r8
+    mov     rdx,r8
+    jmp     loop_entry      ; write first block
+
+    ALIGN   size_t*2
+
 main_loop:
 ifdef __AVX512__
     vmovaps zmm1,[rdx]
@@ -316,6 +307,9 @@ else
 endif
     test    rcx,rcx
     jnz     tail_bytes
+
+loop_entry:
+
 ifdef __AVX512__
     vmovups [rax],zmm1
 elseifdef __AVX__
@@ -327,78 +321,104 @@ endif
     add     rdx,U
     jmp     main_loop
 
-head_bytes:
-    bsf     rcx,rcx
-    neg     edx
-    and     edx,U-1
-if defined(_UNICODE) and defined(__AVX512__)
-    shr     edx,1
-endif
-    add     ecx,edx
-    mov     rdx,src
-    jmp     tail_bytes2
-
-    align   size_t
+    ALIGN   size_t
 
 tail_bytes:
+
     bsf     rcx,rcx
-tail_bytes2:
+
+head_bytes:
+
 if defined(_UNICODE) and defined(__AVX512__)
     lea     ecx,[rcx*2+2]
 else
     add     ecx,TCHAR
 endif
-ifdef __AVX512__
-    cmp     ecx,64
-    jae     copy_128
-    test    cl,-32
-    jnz     copy_64
-    test    cl,-16
-    jnz     copy_32
-elseifdef __AVX__
-    cmp     ecx,32
-    jae     copy_64
-    test    cl,-16
-    jnz     copy_32
-else
-    cmp     ecx,16
-    jae     copy_32
-endif
-    test    cl,8
-    jnz     copy_16
-    test    cl,4
-    jnz     copy_8
-    cmp     cl,2
-    jb      copy_1
-    je      copy_2
 
-copy_3:
-    mov     cl,[rdx+2]
-    mov     [rax+2],cl
-copy_2:
+    cmp     rcx,8
+    ja      above_8
+    je      copy_08
+    cmp     ecx,6
+    ja      copy_07
+    je      copy_06
+    cmp     ecx,4
+    ja      copy_05
+    je      copy_04
+    cmp     ecx,2
+    ja      copy_03
+    je      copy_02
+    test    ecx,ecx
+    jz      copy_00
+
+copy_01:
+    mov     cl,[rdx]
+    mov     [rax],cl
+copy_00:
+    jmp     strcat_exit
+
+copy_02:
     mov     cx,[rdx]
     mov     [rax],cx
     jmp     strcat_exit
-copy_1:
-    mov     cl,[rdx]
-    mov     [rax],cl
+
+copy_03:
+    mov     cl,[rdx+2]
+    mov     dx,[rdx]
+    mov     [rax+2],cl
+    mov     [rax],dx
     jmp     strcat_exit
 
-copy_8:
-ifdef _WIN64
-    mov     r8d,[rdx]
-    mov     edx,[rdx+rcx-4]
-    mov     [rax],r8d
-    mov     [rax+rcx-4],edx
-else
-    movss   xmm0,[rdx]
-    movss   xmm1,[rdx+rcx-4]
-    movss   [rax],xmm0
-    movss   [rax+rcx-4],xmm1
+copy_04:
+    mov     ecx,[rdx]
+    mov     [rax],ecx
+    jmp     strcat_exit
+
+copy_05:
+    mov     cl,[rdx+4]
+    mov     edx,[rdx]
+    mov     [rax+4],cl
+    mov     [rax],edx
+    jmp     strcat_exit
+
+copy_06:
+    mov     cx,[rdx+4]
+    mov     edx,[rdx]
+    mov     [rax+4],cx
+    mov     [rax],edx
+    jmp     strcat_exit
+
+copy_07:
+    mov     ecx,[rdx+3]
+    mov     edx,[rdx]
+    mov     [rax+3],ecx
+    mov     [rax],edx
+    jmp     strcat_exit
+
+copy_08:
+    mov     rcx,[rdx]
+ifndef _WIN64
+    mov     edx,[rdx+4]
+    mov     [rax+4],edx
 endif
+    mov     [rax],rcx
     jmp     strcat_exit
 
-copy_16:
+    ALIGN   4
+
+above_8:
+
+ifdef __AVX512BW__
+    cmp     ecx,64
+    jae     copy_80
+endif
+ifdef __AVX__
+    cmp     ecx,32
+    jae     copy_40
+endif
+    cmp     ecx,16
+    jae     copy_20
+
+copy_10:
 ifdef _WIN64
     mov     r8,[rdx]
     mov     rdx,[rdx+rcx-8]
@@ -412,24 +432,27 @@ else
 endif
     jmp     strcat_exit
 
-copy_32:
+    ALIGN   4
+copy_20:
     movups  xmm0,[rdx]
     movups  xmm1,[rdx+rcx-16]
     movups  [rax],xmm0
     movups  [rax+rcx-16],xmm1
-    jmp     strcat_exit
 
 ifdef __AVX__
-copy_64:
+    jmp     strcat_exit
+    ALIGN   4
+copy_40:
     vmovups ymm0,[rdx]
     vmovups ymm1,[rdx+rcx-32]
     vmovups [rax],ymm0
     vmovups [rax+rcx-32],ymm1
-    jmp     strcat_exit
 endif
 
-ifdef __AVX512__
-copy_128:
+ifdef __AVX512BW__
+    jmp     strcat_exit
+    ALIGN   4
+copy_80:
     vmovups zmm0,[rdx]
     vmovups zmm1,[rdx+rcx-64]
     vmovups [rax],zmm0

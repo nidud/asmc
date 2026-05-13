@@ -6,10 +6,7 @@
 
 include string.inc
 
-ifndef __UNIX__
-undef wmemmove
 ALIAS <wmemmove>=<wmemcpy>
-endif
 
     .code
 
@@ -59,10 +56,4 @@ endif
     ret
     endp
 
-ifdef __UNIX__
-wmemmove proc dst:ptr, src:ptr, size:size_t
-    wmemcpy( ldr(dst), ldr(src), ldr(size) )
-    ret
-    endp
-endif
     end

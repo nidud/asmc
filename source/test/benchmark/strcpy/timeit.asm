@@ -5,6 +5,9 @@ procs equ <for x,<0,1,2,3>>
 endif
 args_x macro
     mov eax,step_x
+ifdef _UNICODE
+    add eax,eax
+endif
     lea rdx,str_1[size_s]
     sub rdx,rax
 ifdef _WIN64
@@ -16,28 +19,45 @@ endif
     exitm<>
     endm
 
-;define O_NOFILE
-
 include ../timeit.inc
-option  dllimport:<msvcrt>
-externdef import strcpy:ptr_t
+
+ifdef _UNICODE
+define _tcscpy <wcscpy>
+else
+define _tcscpy <strcpy>
+endif
+option dllimport:<msvcrt>
+externdef import _tcscpy:ptr
 
 define size_s 4096 ; maximum data size
 
 .data
-str_1   db size_s-1 dup('x'),0
+align   16
+str_1   TCHAR size_s/TCHAR-1 dup('x'),0
 
-info_0  db "msvcrt.strcpy()",0
-info_1  db "libc(__X86__)",0
-info_2  db "libc(__SSE__)",0
-info_3  db "libc(__AVX__)",0
-info_4  db "libc(__AVX512__)",0
+%info_0 db "msvcrt.&_tcscpy&()",0
+%info_1 db "libc.&_tcscpy&(__X86__)",0
+%info_2 db "libc.&_tcscpy&(__SSE__)",0
+%info_3 db "libc.&_tcscpy&(__AVX__)",0
+%info_4 db "libc.&_tcscpy&(__AVX512BW__)",0
+
+align 16
+IDB = '0'
+test256 label TCHAR
+while IDB lt 140+'0'
+TCHAR IDB
+IDB = IDB + 1
+endm
+tnul TCHAR 0
 
 .code
 
 strcpy_t typedef proto :ptr, :ptr
 
 validate_x proc uses rsi rdi rbx x:dword
+
+   .new a:ptr
+   .new b:ptr
 
     ldr ecx,x
     lea rax,proc_p
@@ -53,52 +73,92 @@ validate_x proc uses rsi rdi rbx x:dword
         .for ( ebx = 0 : ebx < 70 && nerror < 10 : ebx++ )
 
             mov rdx,m_endp
-            sub rdx,17
-            sub rdx,rbx
-            mov byte ptr [rdx-1],0
+            sub rdx,17*TCHAR
+            lea eax,[rbx*TCHAR]
+            sub rdx,rax
+            mov TCHAR ptr [rdx-TCHAR],0
             mov eax,'?'
             lea rcx,[rbx+16]
             mov rdi,rdx
-            rep stosb
-            mov byte ptr [rdi],0
+            rep _tstos
+            mov TCHAR ptr [rdi],0
             mov rdi,rdx
-            lea rdx,str_1[size_s-1]
-            sub rdx,rbx
+            lea rdx,str_1[size_s-TCHAR]
+            lea eax,[rbx*TCHAR]
+            sub rdx,rax
+            mov b,rdx
+
             .if ( rsi(rdi, rdx) != rdi )
-                printf("error: rax %06X [%06X] %d.asm\n", rax, rdi, x)
+
+                printf("error: %06X [%06X] %d.asm\n", rax, rdi, x)
                 inc nerror
-            .else
-                .for ( ecx = ebx : ecx : ecx-- )
-                    .if byte ptr [rax+rcx-1] != 'x'
-                        movzx ecx,byte ptr [rax+rcx-1]
-                        lea rdx,str_1[size_s-1]
-                        sub rdx,rbx
-                        printf("error%d: '%c' ('x') (%d) %d.asm: %s\n", size_t*8, ecx, ebx, x, rdi)
-                        inc nerror
-                       .break
-                    .endif
-                .endf
-                .if byte ptr [rdi-1]
-                    movzx ecx,byte ptr [rdi-1]
-                    printf("error%d: [rax-1]: '%c' (0) (%d) %d.asm: %s\n", size_t*8, ecx, ebx, x, rdi)
+               .break
+            .endif
+            .for ( ecx = ebx : ecx : ecx-- )
+                .if TCHAR ptr [rax+rcx*TCHAR-TCHAR] != 'x'
+                    movzx ecx,TCHAR ptr [rax+rcx*TCHAR-TCHAR]
+                    %printf("error%d%c: '%c' ('x') (%d) %d.asm:\n%p: %&_F&\n", size_t*8, _W, ecx, ebx, x, rdi, rdi)
+                    inc nerror
+                   .break
+                .endif
+            .endf
+            .if TCHAR ptr [rdi-TCHAR]
+                movzx ecx,TCHAR ptr [rdi-TCHAR]
+                %printf("error%d: [rax-1]: '%c' (0) (%d) %d.asm: %&_F&\n", size_t*8, ecx, ebx, x, rdi)
+                inc nerror
+            .endif
+            lea rax,[rdi+rbx*TCHAR]
+            .if TCHAR ptr [rax]
+                movzx ecx,TCHAR ptr [rax]
+                mov rdx,b
+                %printf("error%d: [rax+rbx]: '%c' (0) (%d) %d.asm:\n%p: %s\n%p: %&_F&\n", size_t*8, ecx, ebx, x, rdi, rdi, rdx, rdx)
+                inc nerror
+            .endif
+            .for ( rax = &[rdi+rbx*TCHAR+TCHAR], ecx = 15 : ecx : ecx-- )
+                .if TCHAR ptr [rax+rcx*TCHAR-TCHAR] != '?'
+                    movzx ecx,TCHAR ptr [rax+rcx*TCHAR-TCHAR]
+                    printf("error%d: '%c' ('?') (%d) %d.asm: %s\n", size_t*8, ecx, ebx, x, rdi)
+                    inc nerror
+                   .break
+                .endif
+            .endf
+            mov rdi,m_4096
+            lea eax,[rbx*TCHAR]
+            add rdi,rax
+            mov a,rdi
+            lea rdi,tnul
+            sub rdi,rax
+            rsi(a, rdi)
+            xor ecx,ecx
+            mov rdx,rsi
+            mov rsi,rax
+            mov ecx,ebx
+            repe _tcmps
+            xchg rsi,rdx
+            .ifnz
+                mov TCHAR ptr [rax+rbx*TCHAR],0
+                %printf("error%d: (%d) %d.asm:\n%s\n%&_F&\n", size_t*8, ebx, x, rdi, rdx)
+                inc nerror
+            .endif
+            .if ( ebx )
+                mov rdx,a
+                add rdx,TCHAR
+                rsi(a, rdx)
+                lea rdi,tnul+TCHAR
+                lea ecx,[rbx*TCHAR]
+                sub rdi,rcx
+                xor ecx,ecx
+                mov rdx,rsi
+                mov rsi,rax
+                lea ecx,[rbx-1]
+                repe _tcmps
+                xchg rsi,rdx
+                .ifnz
+                    mov rcx,rax
+                    mov TCHAR ptr [rax+rbx*TCHAR],0
+                    %printf("error%d: %06X, +1 (%d) %d.asm:\n%s\n%&_F&\n", size_t*8, ecx, ebx, x, rdi, rdx)
                     inc nerror
                 .endif
-                lea rax,[rdi+rbx]
-                .if byte ptr [rax]
-                    movzx ecx,byte ptr [rax]
-                    lea rdx,str_1[size_s-1]
-                    sub rdx,rbx
-                    printf("error%d: [rax+rbx]: '%c' (0) (%d) %d.asm:\n%p: %s\n%p: %s\n", size_t*8, ecx, ebx, x, rdi, rdi, rdx, rdx)
-                    inc nerror
-                .endif
-                .for ( rax = &[rdi+rbx+1], ecx = 15 : ecx : ecx-- )
-                    .if byte ptr [rax+rcx-1] != '?'
-                        movzx ecx,byte ptr [rax+rcx-1]
-                        printf("error%d: '%c' ('?') (%d) %d.asm: %s\n", size_t*8, ecx, ebx, x, rdi)
-                        inc nerror
-                       .break
-                    .endif
-                .endf
             .endif
         .endf
         assume rsi:nothing
@@ -110,8 +170,7 @@ validate_x proc uses rsi rdi rbx x:dword
     endp
 
 main proc
-    mov rax,strcpy
-    mov proc_p,rax
+    mov proc_p,_tcscpy
     procs
         validate_x(x)
         .if nerror

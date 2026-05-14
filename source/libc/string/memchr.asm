@@ -6,11 +6,7 @@
 ; void *memchr(void *dst, char c, size_t count);
 ;
 
-include isa_availability.inc
-
-if defined(__AVX__) or not defined(__SSE__)
-define USE_BYTE
-endif
+include libc.inc
 
 ifdef __AVX__
 if defined(__AVX512BW__) and defined(_WIN64)
@@ -27,57 +23,54 @@ endif
 
 memchr proc
 
-ifdef _WIN64
-    define  size <r8>
-ifdef __UNIX__
-    movzx   eax,sil
-    mov     rcx,rdi
-    mov     r8,rdx
-else
-    movzx   eax,dl
-endif
-else
-    mov     ecx,[esp+4]
-    movzx   eax,byte ptr [esp+8]
-    define  size <dword ptr [esp+12]>
-endif
-
 ifdef __SSE__
 
-ifdef _WIN64
-    test    r8,r8
+ifndef _WIN64
+    mov     eax,[esp+4]
+    movzx   edx,byte ptr [esp+8]
+    mov     ecx,[esp+12]
+elseifdef __UNIX__
+    mov     rax,rdi
+    mov     rcx,rdx
+    movzx   edx,sil
 else
-    cmp     size,0
-endif
-    jz      not_found
-
-ifdef __AVX__
-ifdef __TEST__
-    mov     edx,0
-    inc     edx
-elseifdef __AVX512__
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX512
-else
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
-endif
-    jz      use_byte
+    mov     rax,rcx
+    movzx   edx,dl
+    mov     rcx,r8
 endif
 
 ifdef __AVX512__
-    vpbroadcastb zmm0,al
+    vpbroadcastb zmm0,edx
 else
-    imul    eax,eax,0x01010101
-    movd    xmm0,eax
+    imul    edx,edx,0x01010101
+    movd    xmm0,edx
+ifdef __AVX__
+    vbroadcastss ymm0,xmm0
+else
     pshufd  xmm0,xmm0,0
 endif
-    mov     rax,rcx
+endif
+
+    test    rcx,rcx
+    jz      not_found
+
+    lea     rdx,[rcx+rax]
+    test    al,U-1
+    jz      main_loop
+
+ifdef _WIN64
+    mov     r8,rdx
+else
+    push    edx
+endif
+    mov     cl,al
     and     al,-U
     and     ecx,U-1
+
 ifdef __AVX512__
     vpcmpeqb k1,zmm0,[rax]
     kmovq   rdx,k1
 elseifdef __AVX__
-    vperm2f128 ymm0,ymm0,ymm0,0
     vpcmpeqb ymm1,ymm0,[rax]
     vpmovmskb edx,ymm1
 else
@@ -87,16 +80,23 @@ else
 endif
     shr     rdx,cl      ; shift out low bits..
     shl     rdx,cl
-    xchg    rcx,rdx
-    add     rdx,rax     ; end of buffer
-    add     rdx,size
-    test    rcx,rcx
-    jnz     found
-    align   size_t
-main_loop:
+    mov     rcx,rdx
+ifdef _WIN64
+    mov     rdx,r8
+else
+    pop     edx
+endif
     add     rax,U
+    test    rcx,rcx
+    jnz     char_found
+
+    align   size_t
+
+main_loop:
+
     cmp     rax,rdx
     jae     not_found
+
 ifdef __AVX512__
     vpcmpeqb k1,zmm0,[rax]
     kmovq   rcx,k1
@@ -108,11 +108,13 @@ else
     pcmpeqb xmm1,[rax]
     pmovmskb ecx,xmm1
 endif
+    add     rax,U
     test    rcx,rcx
     jz      main_loop
-found:
+
+char_found:
     bsf     rcx,rcx
-    add     rax,rcx
+    lea     rax,[rax+rcx-U]
     xor     ecx,ecx
     cmp     rax,rdx
     cmovae  rax,rcx
@@ -120,6 +122,7 @@ ifdef __AVX__
     vzeroupper
 endif
     ret
+
 not_found:
     xor     eax,eax
 ifdef __AVX__
@@ -129,25 +132,37 @@ ifdef USE_BYTE
     ret
 endif
 
-endif ; __SSE__
+else ; __SSE__
 
-ifdef USE_BYTE
-use_byte:
+ifndef _WIN64
+    mov     edx,[esp+4]
+    movzx   eax,byte ptr [esp+8]
+    mov     ecx,[esp+12]
+    xchg    edx,edi
+elseifdef __UNIX__
+    movzx   eax,sil
+    mov     rcx,rdx
+else
+    movzx   eax,dl
     mov     rdx,rdi
     mov     rdi,rcx
-    mov     rcx,size
+    mov     rcx,r8
+endif
     test    rdi,rdi
     repnz   scasb
     lea     rax,[rdi-1]
+ifndef _LIN64
     mov     rdi,rdx
+endif
 ifdef __SSE__
     cmovnz  rax,rcx
 else
     jz      toend
     mov     rax,rcx
-endif
 toend:
+endif
 endif
     ret
     endp
+
     end

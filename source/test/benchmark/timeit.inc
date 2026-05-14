@@ -17,6 +17,22 @@ define rbp <ebp>
 define rsp <esp>
 define WINAPI <stdcall>
 endif
+ifdef _UNICODE
+option wstring:off
+TCHAR typedef word
+define _W 'W'
+define _F <S>
+define _tal <ax>
+define _tstos <stosw>
+define _tcmps <cmpsw>
+else
+TCHAR typedef sbyte
+define _W 'A'
+define _F <s>
+define _tal <al>
+define _tstos <stosb>
+define _tcmps <cmpsb>
+endif
 
 .pragma comment(lib, msvcrt)
 printf  proto :ptr byte, :vararg
@@ -554,7 +570,11 @@ endif
 
         mov console,1
         __iob_func()
-        add rax,24+3*size_t
+ifdef _WIN64
+        add rax,48
+else
+        add rax,32
+endif
         mov fp,rax
     .endif
 

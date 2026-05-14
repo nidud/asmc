@@ -3,194 +3,243 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; char *strchr(char *, int);
+; wchar_t *wcschr(wchar_t *, int);
+;
 include tchar.inc
-include isa_availability.inc
 
-    .code
+if defined(_UNICODE) or not defined(__SSE__)
+define USE_BYTECOPY
+endif
+if defined(__AVX512BW__) and defined(_WIN64)
+define __AVX512__
+endif
 
-    option dotname
+ifdef __AVX__
+ifdef _UNICODE
+define tcmpeq vpcmpeqw
+else
+define tcmpeq vpcmpeqb
+endif
+ifdef __AVX512__
+define U 64
+else
+define U 32
+endif
+elseifdef __SSE__
+ifdef _UNICODE
+define tcmpeq pcmpeqw
+else
+define tcmpeq pcmpeqb
+endif
+define U 16
+endif
 
-_tcschr::
+.code
+
+_tcschr proc
 
 ifndef _WIN64
-    mov     eax,[esp+4]
+    mov     ecx,[esp+4]
     movzx   edx,tchar_t ptr [esp+8]
 elseifdef __UNIX__
-    mov     rax,rdi
+    mov     rcx,rdi
 ifdef _UNICODE
     movzx   edx,si
 else
     movzx   edx,sil
 endif
 else
-    mov     rax,rcx
+ifdef USE_BYTECOPY
     movzx   edx,_tdl
 endif
+endif
+    mov     rax,rcx
 
 ifdef __SSE__
 
-ifdef __AVX__
-define CHUNK 32
-else
-define CHUNK 16
+ifdef _UNICODE
+    test    al,1
+    jnz     byte_scan
 endif
 
+ifdef __AVX512__
 ifdef _UNICODE
+    vpbroadcastw zmm1,edx
+else
+    vpbroadcastb zmm1,edx
+endif
+    vxorps  zmm0,zmm0,zmm0
+else
+ifndef _UNICODE
+    mov     dh,dl
+endif
+    movd    xmm1,edx
+    pshuflw xmm1,xmm1,0;11110000b
 ifdef __AVX__
-define tcmpeq vpcmpeqw
+    vbroadcastss ymm1,xmm1
+    vxorps  ymm0,ymm0,ymm0
 else
-define tcmpeq pcmpeqw
+    pshufd  xmm1,xmm1,0
+    xorps   xmm0,xmm0
 endif
-define mval 0x00010001
-else
-ifdef __AVX__
-define tcmpeq vpcmpeqb
-else
-define tcmpeq pcmpeqb
 endif
-define mval 0x01010101
-endif
+
+    test    al,U-1
+    jz      source_aligned
+
+    and     al,-U
+    and     ecx,U-1         ; shift count
+ifdef __AVX512__
 ifdef _UNICODE
-    test        al,1
-    jnz         .byte_scan
+    shr     ecx,1           ; 32-bit mask
 endif
+    or      rdx,-1
+    shl     rdx,cl
+    kmovq   k2,rdx
+    tcmpeq  k0{k2},zmm0,[rax]
+    tcmpeq  k1{k2},zmm1,[rax]
+    kmovq   rcx,k0
+    kmovq   rdx,k1
+else
+ifndef _WIN64
+    push    ebx
+    define  r8d <ebx>
+endif
+    or      r8d,-1
+    shl     r8d,cl
 ifdef __AVX__
-ifdef __TEST__
-    mov         ecx,0
-    inc         ecx
+    tcmpeq  ymm2,ymm0,[rax]
+    tcmpeq  ymm3,ymm1,[rax]
+    vpmovmskb ecx,ymm2
+    vpmovmskb edx,ymm3
 else
-    test        __isa_enabled,1 shl __ISA_AVAILABLE_AVX
+    movaps  xmm2,xmm0
+    movaps  xmm3,xmm1
+    tcmpeq  xmm2,[rax]
+    tcmpeq  xmm3,[rax]
+    pmovmskb ecx,xmm2
+    pmovmskb edx,xmm3
 endif
-    jz          .byte_scan
+    and     ecx,r8d
+    and     edx,r8d
+ifndef _WIN64
+    pop     ebx
 endif
-    imul        edx,edx,mval
-    movd        xmm1,edx
-    pshufd      xmm1,xmm1,0
-ifdef __AVX__
-    vperm2f128  ymm1,ymm1,ymm1,0
-    vxorps      ymm0,ymm0,ymm0
+endif
+    jmp     source_unaligned
+
+main_loop:
+
+    test    rcx,rcx
+    jnz     zero_found
+
+source_aligned:
+
+ifdef __AVX512__
+    tcmpeq  k0,zmm0,[rax]
+    tcmpeq  k1,zmm1,[rax]
+    kmovq   rcx,k0
+    kmovq   rdx,k1
+elseifdef __AVX__
+    tcmpeq  ymm0,ymm0,[rax]
+    tcmpeq  ymm2,ymm1,[rax]
+    vpmovmskb ecx,ymm0
+    vpmovmskb edx,ymm2
 else
-    xorps       xmm0,xmm0
+    movaps  xmm2,[rax]
+    tcmpeq  xmm0,[rax]
+    tcmpeq  xmm2,xmm1
+    pmovmskb ecx,xmm0
+    pmovmskb edx,xmm2
 endif
-    mov         ecx,eax
-    and         al,-CHUNK
-ifdef __AVX__
-    tcmpeq      ymm2,ymm0,[rax]
-    tcmpeq      ymm3,ymm1,[rax]
+
+source_unaligned:
+
+    add     rax,U
+ifdef __AVX512__
+    test    rdx,rdx
 else
-    movaps      xmm2,[rax]
-    movaps      xmm3,[rax]
-    tcmpeq      xmm2,xmm0
-    tcmpeq      xmm3,xmm1
+    test    edx,edx
 endif
-    add         rax,CHUNK
-    and         cl,CHUNK-1
-ifdef _WIN64
-    or          r8d,-1
-    shl         r8d,cl
+    jz      main_loop
+
+char_found:
+ifdef __AVX512__
+    bsf     rdx,rdx
+    lea     rax,[rax+rdx*TCHAR-U]
 else
-    push        ebx
-    or          ebx,-1
-    shl         ebx,cl
+    bsf     edx,edx
+    lea     rax,[rax+rdx-U]
 endif
-ifdef __AVX__
-    vpmovmskb   ecx,ymm2
-    vpmovmskb   edx,ymm3
+ifdef __AVX512__
+    test    rcx,rcx
 else
-    pmovmskb    ecx,xmm2
-    pmovmskb    edx,xmm3
+    test    ecx,ecx
 endif
-ifdef _WIN64
-    and         ecx,r8d
-    and         edx,r8d
+    jz      end_loop
+ifdef __AVX512__
+    bsf     rcx,rcx
 else
-    and         ecx,ebx
-    and         edx,ebx
-    pop         ebx
+    bsf     ecx,ecx
 endif
-    jnz         .vchar
-.vloop:
-    test        ecx,ecx
-    jnz         .vnull
-ifdef __AVX__
-    tcmpeq      ymm2,ymm0,[rax]
-    tcmpeq      ymm3,ymm1,[rax]
-    vpmovmskb   ecx,ymm2
-    vpmovmskb   edx,ymm3
-else
-    movaps      xmm2,[rax]
-    movaps      xmm3,[rax]
-    tcmpeq      xmm2,xmm0
-    tcmpeq      xmm3,xmm1
-    pmovmskb    ecx,xmm2
-    pmovmskb    edx,xmm3
-endif
-    add         rax,CHUNK
-    test        edx,edx
-    jz          .vloop
-.vchar:
-    bsf         edx,edx
-    lea         rax,[rax+rdx-CHUNK]
-    test        ecx,ecx
-    jz          .vend
-    bsf         ecx,ecx
-    cmp         ecx,edx
-    ja          .vend
-.vnull:
-    xor         eax,eax
-.vend:
+    cmp     ecx,edx
+    ja      end_loop
+zero_found:
+    xor     eax,eax
+end_loop:
 ifdef __AVX__
     vzeroupper
 endif
     ret
 
-endif
+endif ; __SSE__
 
-if defined(_UNICODE) or defined(__AVX__) or not defined(__SSE__)
+ifdef USE_BYTECOPY
 
-.byte_scan:
+byte_scan:
+
 ifdef _UNICODE
     movzx   ecx,word ptr [rax]
     cmp     ecx,edx
-    je      .toend
+    je      toend
     test    ecx,ecx
-    je      .null
+    je      null
     movzx   ecx,word ptr [rax+2]
     cmp     ecx,edx
-    je      .one
+    je      one
     test    ecx,ecx
-    je      .null
+    je      null
     movzx   ecx,word ptr [rax+4]
     cmp     ecx,edx
-    je      .two
+    je      two
     add     rax,6
     test    ecx,ecx
 else
     cmp     dl,[rax]
-    je      .toend
+    je      toend
     cmp     dh,[rax]
-    je      .null
+    je      null
     cmp     dl,[rax+1]
-    je      .one
+    je      one
     cmp     dh,[rax+1]
-    je      .null
+    je      null
     cmp     dl,[rax+2]
-    je      .two
+    je      two
     add     rax,3
     cmp     dh,[rax-1]
 endif
-    jnz     .byte_scan
-.null:
+    jnz     byte_scan
+null:
     xor     eax,eax
     ret
-.two:
+two:
     add     rax,tchar_t
-.one:
+one:
     add     rax,tchar_t
-.toend:
+toend:
     ret
-
 endif
+    endp
 
     end

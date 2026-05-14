@@ -8,7 +8,6 @@
 ;
 
 include tchar.inc
-include isa_availability.inc
 
 ifdef __AVX__
 if defined(__AVX512BW__) and defined(_WIN64)
@@ -53,54 +52,58 @@ else
     mov     r8,rcx
 endif
 
-if defined(_UNICODE) and defined(__SSE__)
+ifdef __SSE__
+
+    mov     rax,rcx         ; align back to avoid reading ahead
+ifdef _UNICODE
     test    cl,1            ; Unicode strings needs to be aligned..
     jnz     byte_length
 endif
 
-ifdef __SSE__
-    mov     rax,rcx         ; align back to avoid reading ahead
-ifdef __AVX__
-ifdef __TEST__
-    mov     edx,0
-    inc     edx
-elseifdef __AVX512__
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX512
-else
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
-endif
-    jz      byte_length
-endif
-
-align_to_boundary:
-
-    and     al,-U
-    and     cl,U-1
 ifdef __AVX512__
     vxorps  zmm0,zmm0,zmm0
+elseifdef __AVX__
+    vxorps  ymm0,ymm0,ymm0
+else
+    xorps   xmm0,xmm0
+endif
+    test    al,U-1
+    jz      main_loop
+
+    and     ecx,U-1
+ifdef __AVX512__
+    or      rdx,-1
 ifdef _UNICODE
     shr     ecx,1           ; 32-bit mask
 endif
-    tcmpeq  k0,zmm0,[rax]
-    kmovq   rdx,k0
-elseifdef __AVX__
-    vxorps  ymm0,ymm0,ymm0
-    tcmpeq  ymm1,ymm0,[rax]
-    vpmovmskb edx,ymm1
+    shl     rdx,cl
 else
-    xorps   xmm0,xmm0
+    or      edx,-1
+    shl     edx,cl
+endif
+    and     al,-U
+
+ifdef __AVX512__
+    tcmpeq  k0,zmm0,[rax]
+    kmovq   rcx,k0
+elseifdef __AVX__
+    tcmpeq  ymm1,ymm0,[rax]
+    vpmovmskb ecx,ymm1
+else
     xcmpeq  xmm0,[rax]
-    pmovmskb edx,xmm0
+    pmovmskb ecx,xmm0
     xorps   xmm0,xmm0
 endif
     add     rax,U
-    shr     rdx,cl          ; shift out low bits..
-    shl     rdx,cl          ; CL may be 0 here..
-    test    rdx,rdx
+ifdef __AVX512__
+    and     rdx,rcx
+else
+    and     edx,ecx
+endif
     jnz     toend
 
-    align   size_t
 main_loop:
+
 ifdef __AVX512__
     tcmpeq  k0,zmm0,[rax]
     kmovq   rdx,k0

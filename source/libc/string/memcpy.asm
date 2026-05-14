@@ -252,7 +252,6 @@ endif
     add     rax,U*4
     dec     r8
     jnz     loop_u4
-    and     ecx,U*4-1
 
 copy_u:
     mov     r8,rcx

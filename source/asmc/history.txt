@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.39 - xx xxx 2026
+- removed ALIGN <forward_label> <value>
 - added public ALIAS symbol for ELF
 - fixed bug in EVEX - wrong encoding for some two-operand
   instructions using YMM16..24 or [r8..15]

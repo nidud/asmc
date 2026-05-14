@@ -6,7 +6,7 @@
 ; void *memcmp(void *, void *, size_t);
 ;
 
-include isa_availability.inc
+include libc.inc
 
 ifdef __AVX__
 define U 16
@@ -81,8 +81,6 @@ ifndef _WIN64
 endif
     ret
 
-    align   loop_u4 size_t*2
-
 align_to_boundary:
 
     test    cl,U-1
@@ -111,16 +109,6 @@ check_blocks:
     mov     r9,r8
     shr     r9,(bsf U) + 2      ; 16/32/64 byte block count
     jz      compare_u
-
-ifdef __AVX__
-ifdef __TEST__
-    mov     eax,0
-    inc     eax
-else
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
-endif
-    jz      compare_u
-endif
 
 loop_u4:
 ifdef __AVX__

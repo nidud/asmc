@@ -176,44 +176,16 @@ AlignDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
    .new sym:asym_t = NULL
    .new opndx:expr
    .new CurrAddr:uint_t
-   .new forward:int_t = 0
 
     ldr rbx,tokenarray
     imul ecx,ldr(i),asm_tok
 
-    .switch( [rbx+rcx].tokval )
-    .case T_ALIGN
-        inc i
-        EvalOperand( &i, rbx, TokenCount, &opndx, EXPF_NOUNDEF or EXPF_NOERRMSG )
-        imul ecx,i,asm_tok
+    .if ( [rbx+rcx].tokval == T_ALIGN )
 
-        .if ( [rbx+rcx].token != T_FINAL )
-            ;
-            ; v2.38.01: ALIGN <forward_label> <value>
-            ;
-            .endc .if ( eax != ERROR )
-            .if ( Parse_Pass == PASS_1 )
-                .if ( [rbx+rcx+asm_tok].token == T_FINAL )
-                    .return asmerr( 2006, [rbx+rcx].string_ptr )
-                .endif
-                inc i
-                xor eax,eax
-            .elseif ( opndx.kind == EXPR_ADDR )
-                mov rcx,opndx.sym
-                .if ( rcx && [rcx].asym.state == SYM_INTERNAL )
-                    xor eax,eax
-                    mov sym,rcx
-                .endif
-            .endif
-            .endc .if ( eax )
-            inc forward
-            .ifd ( EvalOperand( &i, rbx, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
-                .return
-            .endif
-        .elseif ( eax == ERROR )
+        inc i
+        .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF ) == ERROR )
             .return
         .endif
-
         .if ( opndx.kind == EXPR_CONST )
 
             ; check that the parm is a power of 2
@@ -237,12 +209,10 @@ AlignDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
         .else
             .return( asmerr( 2026 ) )
         .endif
-        .endc
-    .case T_EVEN
+    .elseif ( [rbx+rcx].tokval == T_EVEN )
         mov align_value,2
         inc i
-       .endc
-    .endsw
+    .endif
 
     imul ecx,i,asm_tok
     add rbx,rcx
@@ -272,28 +242,13 @@ AlignDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
     ; store temp. value
 
     mov CurrAddr,GetCurrOffset()
-    mov rcx,sym
-    .if ( forward )
-        xor edx,edx
-        .if ( rcx )
-            .if ( Parse_Pass == PASS_2 )
-                mov MODULE.PhaseError,TRUE ; force a second pass
-                mov eax,[rcx].asym.offs    ; align symbol
-                cdq
-                div align_value
-            .else
-                movzx edx,[rcx].asym.align_fill
-            .endif
-        .endif
-    .else
-        cdq
-        div align_value
-    .endif
+    cdq
+    div align_value
     mov rax,CurrSeg
 
     ; v2.04: added, Skip backpatching after ALIGN occured
 
-    .if ( forward == 0 && Parse_Pass == PASS_1 )
+    .if ( Parse_Pass == PASS_1 )
         .if ( rax )
             mov rax,[rax].asym.seginfo
             mov rax,[rax].seg_info.head
@@ -304,9 +259,6 @@ AlignDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
     .endif
     .if ( edx )
         sub align_value,edx
-        .if ( rcx && Parse_Pass == PASS_2 )
-            mov [rcx].asym.align_fill,dl
-        .endif
         fill_in_objfile_space( align_value )
     .endif
     .if ( CurrFile[TLST] )

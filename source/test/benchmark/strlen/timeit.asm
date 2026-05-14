@@ -1,12 +1,25 @@
 ifdef _WIN64
-procs equ <for x,<0,2,3,4,5,6>> ; functions to test...
+ifdef _UNICODE
+procs equ <for x,<0,2,3,4>>
+else
+procs equ <for x,<0,2,3,4,5,6>>
+endif
+else
+ifdef _UNICODE
+procs equ <for x,<0,1,2,3>>
 else
 procs equ <for x,<0,1,2,3,5,6>>
 endif
+endif
 args_x macro
-    mov eax,step_x
     mov rcx,m_endp
+ifdef _UNICODE
+    imul eax,step_x,2
+    add  eax,2
+else
+    mov eax,step_x
     inc eax
+endif
     sub rcx,rax
 ifndef _WIN64
     push ecx
@@ -16,19 +29,22 @@ endif
 
 include ../timeit.inc
 
+ifdef _UNICODE
+define _tcslen <wcslen>
+else
+define _tcslen <strlen>
+endif
 option dllimport:<msvcrt>
-externdef import strlen:ptr_t
-option dllimport:none
+externdef import _tcslen:ptr_t
 
 .data
- info_0 db "msvcrt.strlen()",0
- info_1 db "libc(__X86__)",0
- info_2 db "libc(__SSE__)",0
- info_3 db "libc(__AVX__)",0
- info_4 db "libc(__AVX512__)",0
+%info_0 db "msvcrt.&_tcslen&()",0
+%info_1 db "libc.&_tcslen&(__X86__)",0
+%info_2 db "libc.&_tcslen&(__SSE__)",0
+%info_3 db "libc.&_tcslen&(__AVX__)",0
+%info_4 db "libc.&_tcslen&(__AVX512__)",0
  info_5 db "Intel Silvermont",0
  info_6 db "Intel Atom",0
- info_7 db "ucrt",0
 
 .code
 
@@ -36,10 +52,10 @@ strlen_t typedef proto :ptr
 
 ClearBuffer proto watcall :dword {
     mov rdi,m_4096
-    mov ecx,4095
-    rep stosb
+    mov ecx,4095/TCHAR
+    rep _tstos
     xor eax,eax
-    stosb
+    _tstos
     }
 
 validate_x proc uses rsi rdi rbx x:dword
@@ -55,24 +71,24 @@ validate_x proc uses rsi rdi rbx x:dword
     .if rsi
         ClearBuffer('x')
         assume rsi:ptr strlen_t
-        .for ( edi = 0 : edi < 200 && nerror < 10 : edi++ )
+        .for ( edi = 0, ebx = 0 : edi < 200 && nerror < 10 : edi+=TCHAR, ebx++ )
             mov rcx,m_endp
             sub rcx,rdi
-            dec rcx
-            .if ( rsi(rcx) != rdi )
+            sub rcx,TCHAR
+            .if ( rsi(rcx) != rbx )
                 mov ecx,eax
-                printf("error%d: %2d (%d) %d.asm\n", size_t*8, ecx, edi, x)
+                printf("error%d: %2d (%d) %d.asm\n", size_t*8, ecx, ebx, x)
                 inc nerror
             .endif
         .endf
         mov rbx,m_4096
-        mov edi,4096-15
-        add rbx,15
+        mov edi,4096-15*TCHAR
+        add rbx,15*TCHAR
         .repeat
-            dec edi
-            mov byte ptr [rbx+rdi],0
+            sub edi,TCHAR
+            mov TCHAR ptr [rbx+rdi],0
             rsi(rbx)
-        .until edi == 4096 - 33 - 15
+        .until edi == 4096 - 33*TCHAR - 15*TCHAR
         assume rsi:nothing
         ClearBuffer('x')
     .else
@@ -83,8 +99,7 @@ validate_x proc uses rsi rdi rbx x:dword
     endp
 
 main proc
-    mov rax,strlen
-    mov proc_p,rax
+    mov proc_p,_tcslen
     procs
         validate_x(x)
         .if nerror

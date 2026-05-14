@@ -6,113 +6,193 @@
 ; char *memset(char *dst, char value, size_t count);
 ;
 
-include isa_availability.inc
+include libc.inc
 
 .code
 
 memset proc
 
-ifdef _WIN64
-ifdef __UNIX__
-    mov     rcx,rdx
-    movzx   edx,sil
-    mov     rax,rdi
+ifdef __SSE__
+
+ifdef __AVX__
+if defined(__AVX512BW__) and defined(_WIN64)
+define __AVX512__
+define U 64
 else
-    mov     rax,rcx
-    movzx   edx,dl
-    mov     rcx,r8
+define U 32
 endif
-elseifdef __SSE__
+else
+define U 16
+endif
+
+ifndef _WIN64
     mov     eax,[esp+4]
     movzx   edx,byte ptr [esp+8]
     mov     ecx,[esp+12]
+elseifdef __UNIX__
+    mov     rax,rdi
+    mov     rcx,rdx
+    movzx   edx,sil
+else
+    mov     rax,rcx
+    mov     r9,rcx
+    movzx   edx,dl
+    mov     rcx,r8
 endif
-
-ifdef __SSE__
-
+ifdef _WIN64
+    mov     r10,0x0101010101010101
+    imul    rdx,r10
+else
     imul    edx,edx,0x01010101
-    cmp     rcx,32
-    ja      set_32
-    test    cl,0x30
-    jnz     set_16to32
-    test    cl,8
-    jnz     set_8to15
-    test    cl,4
-    jnz     set_4to7
-    test    cl,2
-    jnz     set_2to3
+endif
+    cmp     rcx,16
+    jae     above_16
+    cmp     ecx,8
+    jae     set_8
+    cmp     ecx,4
+    jae     set_4
+    cmp     ecx,2
+    jae     set_2
     test    ecx,ecx
-    jnz     set_1
-    ret
-set_2to3:
-    mov     [rax+rcx-2],dx
+    jz      set_0
 set_1:
     mov     [rax],dl
+set_0:
     ret
-set_16to32:
-    mov     [rax+8],edx
-    mov     [rax+12],edx
-    mov     [rax+rcx-16],edx
-    mov     [rax+rcx-12],edx
-set_8to15:
-    mov     [rax+4],edx
-    mov     [rax+rcx-8],edx
-set_4to7:
+set_2:
+    mov     [rax],dx
+    mov     [rax+rcx-2],dx
+    ret
+set_4:
     mov     [rax],edx
     mov     [rax+rcx-4],edx
     ret
-
-ifdef __AVX__
-    align   set_avx size_t*2
-else
-    align   set_xmm size_t*2
+set_8:
+    mov     [rax],rdx
+ifndef _WIN64
+    mov     [rax+4],edx
+    mov     [rax+rcx-4],edx
 endif
-set_32:
-    movd    xmm0,edx
-    pshufd  xmm0,xmm0,0
-    movups  [rax],xmm0
-    movups  [rax+16],xmm0
-    movups  [rax+rcx-32],xmm0
-    movups  [rax+rcx-16],xmm0
-    mov     edx,32
-    sub     edx,eax
-    and     edx,32-1
-    sub     rcx,rdx
-    add     rdx,rax
-    shr     rcx,5
-    jz      toend
-
-ifdef __AVX__
-ifndef __TEST__
-    test    __isa_enabled,1 shl __ISA_AVAILABLE_AVX
-    jz      set_xmm
-endif
-    vperm2f128 ymm0,ymm0,ymm0,0
-set_avx:
-    vmovaps [rdx],ymm0
-    dec     rcx
-    jz      end_avx
-    vmovaps [rdx+32],ymm0
-    dec     rcx
-    jz      end_avx
-    vmovaps [rdx+64],ymm0
-    dec     rcx
-    jz      end_avx
-    vmovaps [rdx+96],ymm0
-    add     rdx,128
-    dec     rcx
-    jnz     set_avx
-end_avx:
+    mov     [rax+rcx-8],rdx
     ret
-    align   size_t*2
+
+above_16:
+ifdef __AVX512__
+    vpbroadcastd zmm0,edx
+else
+    movd    xmm0,edx
+ifdef __AVX__
+    vbroadcastss ymm0,xmm0
+else
+    pshufd  xmm0,xmm0,0
 endif
-set_xmm:
-    movaps  [rdx],xmm0
-    movaps  [rdx+16],xmm0
-    add     rdx,32
+endif
+    cmp     rcx,U*2
+    ja      above_2U
+ifdef __AVX512__
+    cmp     ecx,64
+    jae     set_80
+endif
+ifdef __AVX__
+    cmp     ecx,32
+    jae     set_40
+endif
+    cmp     ecx,16
+    jae     set_20
+set_10:
+    mov     [rax],rdx
+    mov     [rax+rcx-8],rdx
+ifndef _WIN64
+    mov     [rax+4],edx
+    mov     [rax+rcx-4],edx
+endif
+    ret
+set_20:
+    movups  [rax],xmm0
+    movups  [rax+rcx-16],xmm0
+    ret
+ifdef __AVX__
+set_40:
+    vmovups [rax],ymm0
+    vmovups [rax+rcx-32],ymm0
+    vzeroupper
+    ret
+endif
+ifdef __AVX512__
+set_80:
+    vmovups [rax],zmm0
+    vmovups [rax+rcx-64],zmm0
+    vzeroupper
+    ret
+endif
+
+above_2U:
+
+ifdef __AVX512__
+    vmovups [rax],zmm0
+    vmovups [rax+rcx-64],zmm0
+elseifdef __AVX__
+    vmovups [rax],ymm0
+    vmovups [rax+rcx-32],ymm0
+else
+    movups  [rax],xmm0
+    movups  [rax+rcx-16],xmm0
+endif
+    add     rcx,rax
+    and     al,-U
+    add     rax,U
+    sub     rcx,rax
+    mov     rdx,rcx
+    shr     rdx,(bsf U) + 2
+    jz      set_U
+    and     ecx,U*4-1
+    ALIGN   size_t
+loop_U4:
+ifdef __AVX512__
+    vmovaps [rax+U*0],zmm0
+    vmovaps [rax+U*1],zmm0
+    vmovaps [rax+U*2],zmm0
+    vmovaps [rax+U*3],zmm0
+elseifdef __AVX__
+    vmovaps [rax+U*0],ymm0
+    vmovaps [rax+U*1],ymm0
+    vmovaps [rax+U*2],ymm0
+    vmovaps [rax+U*3],ymm0
+else
+    movaps  [rax+U*0],xmm0
+    movaps  [rax+U*1],xmm0
+    movaps  [rax+U*2],xmm0
+    movaps  [rax+U*3],xmm0
+endif
+    add     rax,U*4
+    dec     rdx
+    jnz     loop_U4
+set_U:
+    shr     rcx,bsf U
+    jz      toend
+    ALIGN   size_t
+loop_U:
+ifdef __AVX512__
+    vmovaps [rax],zmm0
+elseifdef __AVX__
+    vmovaps [rax],ymm0
+else
+    movaps  [rax],xmm0
+endif
+    add     rax,U
     dec     rcx
-    jnz     set_xmm
+    jnz     loop_U
 toend:
+ifndef _WIN64
+    mov     eax,[esp+4]
+elseifdef __UNIX__
+    mov     rax,rdi
+else
+    mov     rax,r9
+endif
+ifdef __AVX__
+    vzeroupper
+endif
     ret
 
 else ; __SSE__

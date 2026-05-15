@@ -263,26 +263,26 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     add rbx,tokenarray
     .for ( : i < TokenCount : i++, rbx += asm_tok )
         .if ( [rbx].token == T_ID )
-            .ifd !tstricmp( [rbx].string_ptr, &szNothing )
+            mov eax,[rbx].hash1
+            .switch eax
+            .case HASH(NOTHING)
                 AssumeInit(-1)
                 inc i
                .break
-            .endif
-            .ifd !tstricmp( [rbx].string_ptr, "CLASS" )
+            .case HASH(CLASS)
                 .if ( [rbx+asm_tok].token == T_COLON )
                     .if ( [rbx+asm_tok*2].token == T_REG )
                         add i,3
                         mov MODULE.class_reg,[rbx+asm_tok*2].tokval
                     .elseif ( [rbx+asm_tok*2].token == T_ID )
-                        .ifd !tstricmp( [rbx+asm_tok*2].string_ptr, &szNothing )
+                        .if ( [rbx+asm_tok*2].hash1 == HASH(NOTHING) )
                             add i,3
                             mov MODULE.class_reg,0
                         .endif
                     .endif
                 .endif
                 jmp comma_expected
-            .endif
-            .ifd !tstricmp( [rbx].string_ptr, "USES" )
+            .case HASH(USES)
                 .if ( [rbx+asm_tok].token == T_COLON )
                     inc i
                     add rbx,asm_tok
@@ -297,7 +297,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                         mov eax,[rbx].tokval
                         mov [rcx],eax
                         inc MODULE.proc_usescnt
-                    .elseifd !tstricmp( [rbx].string_ptr, &szNothing )
+                    .elseif ( [rbx].hash1 == HASH(NOTHING) )
                         mov MODULE.proc_usescnt,0
                     .else
                         .break( 1 )
@@ -305,13 +305,13 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .endw
                 inc i
                 jmp comma_expected
-            .endif
+            .endsw
         .endif
         .if ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_PROC && [rbx+asm_tok].token == T_COLON )
             add i,2
             add rbx,asm_tok*2
             .if ( [rbx].token == T_ID )
-                .ifd !tstricmp( [rbx].string_ptr, "PRIVATE" )
+                .if ( [rbx].hash1 == HASH(PRIVATE) )
                     mov MODULE.procs_private,TRUE
                     mov MODULE.procs_export,FALSE
                     inc i
@@ -364,7 +364,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         ; check for ERROR and NOTHING */
 
-        .ifd !tstricmp( [rbx].string_ptr, &szError )
+        .if ( [rbx].hash1 == HASH(ERROR) )
             .if ( segtable )
                 mov [rdi].is_flat,FALSE
                 mov [rdi].error,TRUE
@@ -378,7 +378,7 @@ AssumeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
             mov [rdi].symbol,NULL
             inc i
-        .elseifd ( !tstricmp( [rbx].string_ptr, &szNothing ))
+        .elseif ( [rbx].hash1 == HASH(NOTHING) )
             .if ( segtable )
                 mov [rdi].is_flat,FALSE
                 mov [rdi].error,FALSE

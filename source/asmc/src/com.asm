@@ -109,6 +109,7 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
    .new i:int_t
    .new opnd:expr
    .new vinst:uint_t = T_MOV
+   .new vstring[128]:char_t
 
     ldr rsi,sym
     ldr rbx,table
@@ -131,15 +132,29 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
         div ecx
         mov i,eax
         .return .ifd ( EvalOperand( &i, TokenArray, TokenCount, &opnd, 0 ) == ERROR )
+
         .if ( opnd.kind != EXPR_CONST )
             .if ( opnd.kind == EXPR_ADDR && opnd.mem_type == MT_TYPE )
                 mov vinst,T_LEA
             .endif
-            imul ecx,i,asm_tok
-            add rcx,TokenArray
-            .if ( [rcx].asm_tok.token == T_COMMA )
-                .if ( [rcx+asm_tok].asm_tok.token == T_REG )
-                    AddLineQueueX( "%s(addr [%r+%d])", alloc, [rcx+asm_tok].asm_tok.tokval,  [rsi].asym.total_size )
+
+            ; v2.38.12: use expression
+
+            imul    edx,i,asm_tok
+            add     rdx,TokenArray
+            lea     rdi,vstring
+            mov     rcx,[rdx].asm_tok.tokpos
+            mov     rax,[rbx].asm_tok.tokpos
+            sub     rcx,rax
+            xchg    rax,rsi
+            rep     movsb
+            mov     byte ptr [rdi],0
+            mov     rsi,rax
+            mov     edi,MODULE.accumulator
+
+            .if ( [rdx].asm_tok.token == T_COMMA )
+                .if ( [rdx+asm_tok].asm_tok.token == T_REG )
+                    AddLineQueueX( "%s(addr [%r+%d])", alloc, [rdx+asm_tok].asm_tok.tokval,  [rsi].asym.total_size )
                    .endc
                 .endif
                 inc i
@@ -182,7 +197,7 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
                 AddLineQueueX( " xchg %r, %r", r_di, edx )
             .endif
     .elseif ( rbx )
-        AddLineQueueX( " %r %r, %s", vinst, &[rdi+T_EDX-T_EAX], [rbx].string_ptr )
+        AddLineQueueX( " %r %r, %s", vinst, &[rdi+T_EDX-T_EAX], &vstring )
     .else
         AddLineQueueX( " lea %r, [%r+%d]", &[rdi+T_EDX-T_EAX], edi, size )
     .endif
@@ -194,21 +209,25 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
     ret
     endp
 
-
 ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
 
     ldr rbx,tokenarray
-    mov edi,tstricmp( [rbx].string_ptr, "@ComAlloc" )
-    .if edi
+
+    xor eax,eax
+    mov ecx,HASH(@ComAlloc)
+    sub ecx,[rbx].hash1
+    .if ( ecx )
         .while [rbx].token != T_FINAL
             .if [rbx].token == T_ID
-                mov edi,tstricmp( [rbx].string_ptr, "@ComAlloc" )
-                .break .if !eax
+                mov ecx,HASH(@ComAlloc)
+                sub ecx,[rbx].hash1
+               .break .ifz
             .endif
             add rbx,asm_tok
         .endw
     .endif
-    .return 0 .if ( edi )
+    .return .if ( ecx )
+
     add rbx,asm_tok*2
     .if ( [rbx-asm_tok].token != T_OP_BRACKET )
         .return 0

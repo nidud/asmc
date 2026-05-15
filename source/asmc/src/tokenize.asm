@@ -567,13 +567,9 @@ get_special_symbol proc __ccall uses rsi rdi rbx buf:token_t, p:ptr line_status
                 .case ( edx == SYM_MACRO )
                     .if ( [rax].asym.isfunc )
                         and [rsi].flags2,not DF_CEXPR
-                        .if ( [rax].asym.predefined )
-                            mov rdx,[rax].asym.name
-                            mov edx,[rdx]
-                            .if ( edx == "tSC@" )
-                                inc [rsi].cstring
-                               .endc
-                            .endif
+                        .if ( [rax].asym.predefined && [rax].asym.hash == HASH(@CStr) )
+                            inc [rsi].cstring
+                           .endc
                         .endif
                         mov [rdi].asm_tok.IsFunc,1
                        .endc

@@ -2359,7 +2359,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                         .until !al
                         mov byte ptr [rdi-1],'_'
 
-                        .if !tstrcmp( [rbx].string_ptr, [rbx+asm_tok*2].string_ptr )
+                        .if ( [rbx].hash2 == [rbx+asm_tok*2].hash2 )
 
                             mov rsi,class
                             .repeat

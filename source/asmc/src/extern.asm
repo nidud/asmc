@@ -185,11 +185,11 @@ ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; v2.37.77: allow IMPORT
 
         .if ( [rbx].token == T_ID )
-            .ifd ( tstricmp([rbx].string_ptr, "EXPORT") == 0 )
+            .if ( [rbx].hash1 == HASH(EXPORT) )
                 mov isexport,1
                 inc i
                 add rbx,asm_tok
-            .elseifd ( tstricmp([rbx].string_ptr, "IMPORT") == 0 )
+            .elseif ( [rbx].hash1 == HASH(IMPORT) )
                 mov isimport,1
                 inc i
                 add rbx,asm_tok
@@ -977,7 +977,7 @@ PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; v2.19: syntax extension: scan for optional EXPORT attribute
 
         .if ( Options.strict_masm_compat == FALSE )
-            .ifd ( tstricmp( [rbx].string_ptr, "EXPORT" ) == 0 )
+            .if ( [rbx].hash1 == HASH(EXPORT) )
                 mov isexport,TRUE
                 inc i
                 add rbx,asm_tok

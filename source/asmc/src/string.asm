@@ -631,11 +631,12 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
 
     ; find first instance of macro in line
 
-    mov edi,tstricmp( [rbx].string_ptr, "@CStr" )
-    .if edi
+    xor edi,edi
+    .if ( [rbx].hash1 != HASH(@CStr) )
+        inc edi
         .while ( [rbx].token != T_FINAL )
             .if ( [rbx].token == T_ID )
-                .break .ifd !tstricmp( [rbx].string_ptr, "@CStr" )
+                .break .if ( [rbx].hash1 == HASH(@CStr) )
             .endif
             add rbx,asm_tok
         .endw

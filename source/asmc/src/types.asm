@@ -300,7 +300,7 @@ endif
             inc i
             add rbx,asm_tok
             .if ( [rbx].token == T_ID )
-                .ifd ( tstricmp( [rbx].string_ptr, szNonUnique ) == 0 )
+                .if ( [rbx].hash1 == HASH(NONUNIQUE) )
 
                     ; currently NONUNIQUE is ignored
 

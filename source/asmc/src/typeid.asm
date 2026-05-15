@@ -198,7 +198,7 @@ GetTypeId proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
 
     .while ( [rbx].token != T_FINAL )
         .if ( [rbx].token == T_ID )
-            .ifd ( tstricmp( [rbx].string_ptr, "typeid" ) == 0 )
+            .if ( [rbx].hash1 == HASH(typeid) )
                 mov rax,[rbx].string_ptr
                 mov byte ptr [rax],'?'
                .break

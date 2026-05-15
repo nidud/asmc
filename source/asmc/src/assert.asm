@@ -54,29 +54,31 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov al,[rbx+rdx].asm_tok.token
         .if ( al == T_COLON )
             add i,2
-            mov rdi,[rbx+rdx+asm_tok].asm_tok.string_ptr
+            lea rdi,[rbx+rdx+asm_tok]
             mov al,[rbx+rdx+asm_tok].asm_tok.token
             .if ( al == T_ID )
-                .if SymFind(rdi)
+                .if SymFindID(rdi)
                     MemFree( MODULE.assert_proc )
-                    mov MODULE.assert_proc,MemDup( rdi )
+                    mov MODULE.assert_proc,MemDup( [rdi].asm_tok.string_ptr )
                    .endc
                 .endif
             .endif
-            .ifd !tstricmp( rdi, "CODE" )
+            mov eax,[rdi].asm_tok.hash1
+            mov rdi,[rdi].asm_tok.string_ptr
+            .if ( eax == HASH(CODE) )
                 .if !( MODULE.assert )
                     CondPrepare( T_IF )
                     mov CurrIfState,BLOCK_DONE
                 .endif
                 .endc
             .endif
-            .ifd !tstricmp( rdi, "ENDS" )
+            .if ( eax == HASH(ENDS) )
                 ;
                 ; Converted to ENDIF in Tokenize()
                 ;
                 .endc
             .endif
-            .ifd !tstricmp( rdi, "PUSH" )
+            .if ( eax == HASH(PUSH) )
                 mov eax,MODULE.assert
                 mov ecx,MODULE.assert_pushf
                 shl ecx,1
@@ -89,7 +91,7 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .endif
                 .endc
             .endif
-            .ifd !tstricmp( rdi, "POP" )
+            .if ( eax == HASH(POP) )
                 mov ecx,assert_stid
                 lea rdx,assert_stack
                 mov al,[rdx+rcx]
@@ -104,19 +106,19 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .endif
                 .endc
             .endif
-            .ifd !tstricmp( rdi, "ON" )
+            .if ( eax == HASH(ON) )
                 mov MODULE.assert,1
                .endc
             .endif
-            .ifd !tstricmp( rdi, "OFF" )
+            .if ( eax == HASH(OFF) )
                 mov MODULE.assert,0
                .endc
             .endif
-            .ifd !tstricmp( rdi, "PUSHF" )
+            .if ( eax == HASH(PUSHF) )
                 mov MODULE.assert_pushf,1
                .endc
             .endif
-            .ifd !tstricmp( rdi, "POPF" )
+            .if ( eax == HASH(POPF) )
                 mov MODULE.assert_pushf,0
                .endc
             .endif

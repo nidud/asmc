@@ -349,15 +349,6 @@ size_resw_strings equ $ - resw_strings
 ; v2.11: RWF_SPECIAL flag removed:
 ; { 0, sizeof(#string)-1, RWF_SPECIAL or flags, NULL },
 
-HASH macro string
-  FNVHASH = FNVBASE
-  forc x,<string>
-   FNVHASH = (FNVHASH * FNVPRIME) and 0xFFFFFFFF
-   FNVHASH = FNVHASH xor '&x&'
-  endm
-exitm<FNVHASH>
-endm
-
 .data
 align size_t*2
 

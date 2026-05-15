@@ -368,7 +368,7 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:asym_t, i:int_t, tokenarray:token_t
                     mov [rsi].deflt,LclDup( [rbx].string_ptr )
                     add rbx,asm_tok
 
-                .elseifd !tstricmp( [rbx].string_ptr, "REQ" )
+                .elseif ( [rbx].hash1 == HASH(REQ) )
 
                     ; required parameter
 
@@ -400,7 +400,7 @@ StoreMacro proc __ccall uses rsi rdi rbx mac:asym_t, i:int_t, tokenarray:token_t
                     mov [rdx].asym.IsLabel,1
                     add rbx,asm_tok
 
-                .elseifd !tstricmp( [rbx].string_ptr, "VARARGML" )
+                .elseif ( [rbx].hash1 == HASH(VARARGML) )
 
                     ; more parameters can follow, multi lines possible
 

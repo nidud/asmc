@@ -1160,7 +1160,7 @@ endif
     tokptr(i)
     .if ( [rbx].token == T_ID || [rbx].token == T_DIRECTIVE )
         mov token,[rbx].string_ptr
-        .ifd ( tstricmp( rax, "PRIVATE") == 0 )
+        .if ( [rbx].hash1 == HASH(PRIVATE) )
             .if ( IsPROC )  ; v2.11: ignore PRIVATE for PROTO
                 mov [rdi].asym.ispublic,0
                 ; error if there was a PUBLIC directive!
@@ -1171,7 +1171,7 @@ endif
                 mov [rdi].asym.isexport,0
             .endif
             inc i
-        .elseifd ( tstricmp( token, "PUBLIC" ) == 0 )
+        .elseif ( [rbx].hash1 == HASH(PUBLIC) )
             .if ( IsPROC )
                 mov [rdi].asym.ispublic,1
 if 0 ; allow PROTO export
@@ -1179,7 +1179,7 @@ if 0 ; allow PROTO export
 endif
             .endif
             inc i
-        .elseifd ( tstricmp(token, "EXPORT") == 0 )
+        .elseif ( [rbx].hash1 == HASH(EXPORT) )
             mov [rdi].asym.isexport,1 ; v2.37.56: allow PROTO export
             .if ( IsPROC )  ; v2.11: ignore EXPORT for PROTO
                 mov [rdi].asym.ispublic,1
@@ -1189,7 +1189,7 @@ endif
                 .endif
             .endif
             inc i
-        .elseifd ( tstricmp(token, "IMPORT") == 0 )
+        .elseif ( [rbx].hash1 == HASH(IMPORT) )
             mov [rdi].asym.isimport,1 ; v2.37.77: allow PROTO import
             .if ( Parse_Pass == PASS_1 )
                 mov [rdi].asym.dll,MODULE.CurrDll
@@ -1221,13 +1221,13 @@ endif
             .for ( : edi < max: edi++ )
                 tokptr(edi)
                 .if ( [rbx].token == T_ID )
-                    .ifd ( tstricmp( [rbx].string_ptr, "FORCEFRAME") == 0 )
+                    .if ( [rbx].hash1 == HASH(FORCEFRAME) )
                         mov [rsi].forceframe,1
                     .else
                         .if ( MODULE.Ofssize != USE64 )
-                            .ifd ( tstricmp( [rbx].string_ptr, "LOADDS") == 0 )
+                            .if ( [rbx].hash1 == HASH(LOADDS) )
                                 mov eax,1
-                            .elseifd ( tstricmp( [rbx].string_ptr, "uSESDS") == 0 )
+                            .elseif ( [rbx].hash1 == HASH(USESDS) )
                                 mov eax,2
                             .else
                                 xor eax,eax

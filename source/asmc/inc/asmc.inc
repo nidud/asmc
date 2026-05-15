@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    238
-define _ASMC_BUILD  11
+define _ASMC_BUILD  12
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -124,6 +124,16 @@ define OPT_PUSHF        0x80 ; Push/Pop flags
 define FNVPRIME         0x01000193
 define FNVBASE          0x811c9dc5
 define HASH_TABITEMS    0x4000
+
+HASH macro string
+ local FNVHASH
+  FNVHASH = FNVBASE
+  forc x,<string>
+   FNVHASH = (FNVHASH * FNVPRIME) and 0xFFFFFFFF
+   FNVHASH = FNVHASH xor ('&x&' or 0x20)
+   endm
+  exitm<FNVHASH>
+  endm
 
 ; enumerations
 

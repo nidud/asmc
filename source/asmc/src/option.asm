@@ -186,13 +186,13 @@ OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov MODULE.NoSignExtend,TRUE
         .case OP_CASEMAP
             .break .if ( [rbx].token != T_ID )
-            .ifd ( !tstricmp( rsi, "NONE" ) )
+            .if ( [rbx].hash1 == HASH(NONE) )
                 mov MODULE.case_sensitive,TRUE                 ;; -Cx
                 mov MODULE.convert_uppercase,FALSE
-            .elseifd ( !tstricmp( rsi, "NOTPUBLIC" ) )
+            .elseif ( [rbx].hash1 == HASH(NOTPUBLIC) )
                 mov MODULE.case_sensitive,FALSE                ;; -Cp
                 mov MODULE.convert_uppercase,FALSE
-            .elseifd ( !tstricmp( rsi, "ALL" ) )
+            .elseif ( [rbx].hash1 == HASH(ALL) )
                 mov MODULE.case_sensitive,FALSE                ;; -Cu
                 mov MODULE.convert_uppercase,TRUE
             .else
@@ -205,11 +205,11 @@ OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                 .switch ( [rbx].token )
                 .case T_ID
-                    .ifd ( !tstricmp( [rbx].string_ptr, "PRIVATE" ) )
+                    .if ( [rbx].hash1 == HASH(PRIVATE) )
                         mov MODULE.procs_private,TRUE
                         mov MODULE.procs_export,FALSE
                         inc i
-                    .elseifd ( !tstricmp( [rbx].string_ptr, "EXPORT" ) )
+                    .elseif ( [rbx].hash1 == HASH(EXPORT) )
                         mov MODULE.procs_private,FALSE
                         mov MODULE.procs_export,TRUE
                         inc i
@@ -249,9 +249,9 @@ OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .if ( MODULE.proc_prologue )
                 mov MODULE.proc_prologue,NULL
             .endif
-            .ifd ( !tstricmp( rsi, "NONE" ) )
+            .if ( [rbx].hash1 == HASH(NONE) )
                 mov MODULE.prologuemode,PEM_NONE
-            .elseifd ( !tstricmp( rsi, "PROLOGUEDEF" ) )
+            .elseif ( [rbx].hash1 == HASH(PROLOGUEDEF) )
                 mov MODULE.prologuemode,PEM_DEFAULT
             .else
                 mov MODULE.prologuemode,PEM_MACRO
@@ -263,9 +263,9 @@ OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .return( asmerr( 2008, [rbx].tokpos ) )
             .endif
             mov MODULE.proc_epilogue,NULL
-            .ifd ( !tstricmp( rsi, "NONE" ) )
+            .if ( [rbx].hash1 == HASH(NONE) )
                 mov MODULE.epiloguemode,PEM_NONE
-            .elseifd ( !tstricmp( rsi, "EPILOGUEDEF" ) )
+            .elseif ( [rbx].hash1 == HASH(EPILOGUEDEF) )
                 mov MODULE.epiloguemode,PEM_DEFAULT
             .else
                 mov MODULE.epiloguemode,PEM_MACRO
@@ -340,10 +340,10 @@ endif
             .endf
             inc i
         .case OP_SETIF2
-            .ifd ( !tstricmp( rsi, "TRUE" ) )
+            .if ( [rbx].hash1 == HASH(TRUE) )
                 mov MODULE.setif2,TRUE
                 inc i
-            .elseifd ( !tstricmp( rsi, "FALSE" ) )
+            .elseif ( [rbx].hash1 == HASH(FALSE) )
                 mov MODULE.setif2,FALSE
                 inc i
             .endif
@@ -352,11 +352,11 @@ endif
             ; default is GROUP.
             ; determines result of OFFSET operator fixups if .model isn't set.
             ;
-            .ifd ( !tstricmp( rsi, "GROUP" ) )
+            .if ( [rbx].hash1 == HASH(GROUP) )
                 mov MODULE.offsettype,OT_GROUP
-            .elseifd ( !tstricmp( rsi, "FLAT" ) )
+            .elseif ( [rbx].hash1 == HASH(FLAT) )
                 mov MODULE.offsettype,OT_FLAT
-            .elseifd ( !tstricmp( rsi, "SEGMENT" ) )
+            .elseif ( [rbx].hash1 == HASH(SEGMENT) )
                 mov MODULE.offsettype,OT_SEGMENT
             .else
                 .break
@@ -376,11 +376,11 @@ endif
                     mov MODULE.defOfssize,USE32
                 .endif
             .elseif ( [rbx].token == T_ID )
-                .ifd ( tstricmp( rsi, "USE16" ) == 0 )
+                .if ( [rbx].hash1 == HASH(USE16) )
                     mov MODULE.defOfssize,USE16
-                .elseifd ( tstricmp( rsi, "USE32" ) == 0 )
+                .elseif ( [rbx].hash1 == HASH(USE32) )
                     mov MODULE.defOfssize,USE32
-                .elseifd ( tstricmp( rsi, "USE64" ) == 0 )
+                .elseif ( [rbx].hash1 == HASH(USE64) )
                     mov MODULE.defOfssize,USE64
                 .else
                     .break
@@ -390,15 +390,15 @@ endif
             .endif
             inc i
         .case OP_AVXENCODING ; : PREFER_FIRST, PREFER_VEX, PREFER_VEX3, PREFER_EVEX, NO_EVEX
-            .ifd ( !tstricmp( rsi, "PREFER_FIRST" ) )
+            .if ( [rbx].hash1 == HASH(PREFER_FIRST) )
                 mov MODULE.avxencoding,PREFER_FIRST
-            .elseif ( !tstricmp( rsi, "PREFER_VEX" ) )
+            .elseif ( [rbx].hash1 == HASH(PREFER_VEX) )
                 mov MODULE.avxencoding,PREFER_VEX
-            .elseif ( !tstricmp( rsi, "PREFER_VEX3" ) )
+            .elseif ( [rbx].hash1 == HASH(PREFER_VEX3) )
                 mov MODULE.avxencoding,PREFER_VEX3
-            .elseif ( !tstricmp( rsi, "PREFER_EVEX" ) )
+            .elseif ( [rbx].hash1 == HASH(PREFER_EVEX) )
                 mov MODULE.avxencoding,PREFER_EVEX
-            .elseif ( !tstricmp( rsi, "NO_EVEX" ) )
+            .elseif ( [rbx].hash1 == HASH(NO_EVEX) )
                 mov MODULE.avxencoding,NO_EVEX
             .else
                 .break
@@ -459,11 +459,11 @@ endif
                 .endif
             .endif
         .case OP_FRAME ;; AUTO | NOAUTO | ADD -- default is NOAUTO
-            .ifd ( !tstricmp( rsi, "AUTO" ) )
+            .if ( [rbx].hash1 == HASH(AUTO) )
                 or MODULE.frame_auto,1
             .elseif ( [rbx].tokval == T_ADD )
                 mov MODULE.frame_auto,3
-            .elseif ( !tstricmp( rsi, "NOAUTO" ) )
+            .elseif ( [rbx].hash1 == HASH(NOAUTO) )
                 mov MODULE.frame_auto,0
             .else
                 .break
@@ -536,19 +536,19 @@ endif
                                 or MODULE.win64_flags,W64F_AUTOSTACKSP
                             .endif
                             or  MODULE.win64_flags,W64F_STACKALIGN16
-                        .elseifd ( !tstricmp( rsi, "NOALIGN" ) )
+                        .elseif ( [rbx].hash1 == HASH(NOALIGN) )
                             and MODULE.win64_flags,not W64F_STACKALIGN16
-                        .elseifd ( !tstricmp( rsi, "SAVE" ) )
+                        .elseif ( [rbx].hash1 == HASH(SAVE) )
                             or  MODULE.win64_flags,W64F_SAVEREGPARAMS
-                        .elseifd ( !tstricmp( rsi, "NOSAVE" ) )
+                        .elseif ( [rbx].hash1 == HASH(NOSAVE) )
                             and MODULE.win64_flags,not W64F_SAVEREGPARAMS
-                        .elseifd ( !tstricmp( rsi, "AUTO" ) )
+                        .elseif ( [rbx].hash1 == HASH(AUTO) )
                             or  MODULE.win64_flags,W64F_AUTOSTACKSP
-                        .elseifd ( !tstricmp( rsi, "NOAUTO" ) )
+                        .elseif ( [rbx].hash1 == HASH(NOAUTO) )
                             and MODULE.win64_flags,not W64F_AUTOSTACKSP
                         .elseif ( edi == T_FRAME )
                             mov MODULE.frame_auto,3
-                        .elseifd ( !tstricmp( rsi, "NOFRAME" ) )
+                        .elseif ( [rbx].hash1 == HASH(NOFRAME) )
                             mov MODULE.frame_auto,0
                         .else
                             .return( asmerr( 2026 ) )
@@ -560,7 +560,7 @@ endif
             .endif
         .case OP_DLLIMPORT
             .if ( [rbx].token == T_ID )
-                .ifd ( tstricmp( rsi, "NONE" ) == 0 )
+                .if ( [rbx].hash1 == HASH(NONE) )
                     mov MODULE.CurrDll,NULL
                 .endif
             .elseif ( [rbx].token == T_STRING && [rbx].string_delim == '<' )
@@ -612,37 +612,26 @@ endif
             InitStackBase( [rbx].tokval )
             inc i
         .case OP_CSTACK ;; ON | OFF
-            .ifd ( !tstricmp( rsi, "ON" ) )
+            .if ( [rbx].hash1 == HASH(ON) )
                 mov MODULE.cstack,1
-            .elseifd ( !tstricmp( rsi, "OFF" ) )
+            .elseif ( [rbx].hash1 == HASH(OFF) )
                 mov MODULE.cstack,0
             .else
                 .break
             .endif
             inc i
-if 0
-        .case OP_DOTNAMEX ;; ON | OFF
-            .ifd ( !tstricmp( rsi, "ON" ) )
-                mov MODULE.dotnamex,1
-            .elseifd ( !tstricmp( rsi, "OFF" ) )
-                mov MODULE.dotnamex,0
-            .else
-                .break
-            .endif
-            inc i
-endif
         .case OP_SWITCH ;; C | PASCAL | TABLE | NOTABLE | REGAX | NOREGS
-            .ifd ( !tstricmp( rsi, "C" ) )
+            .if ( [rbx].hash1 == HASH(C) )
                 mov MODULE.switch_structured,0
-            .elseifd ( !tstricmp( rsi, "PASCAL" ) )
+            .elseif ( [rbx].hash1 == HASH(PASCAL) )
                 mov MODULE.switch_structured,1
-            .elseifd ( !tstricmp( rsi, "TABLE" ) )
+            .elseif ( [rbx].hash1 == HASH(TABLE) )
                 mov MODULE.switch_notable,0
-            .elseifd ( !tstricmp( rsi, "NOTABLE" ) )
+            .elseif ( [rbx].hash1 == HASH(NOTABLE) )
                 mov  MODULE.switch_notable,1
-            .elseifd ( !tstricmp( rsi, "REGAX" ) )
+            .elseif ( [rbx].hash1 == HASH(REGAX) )
                 mov MODULE.switch_regax,1
-            .elseifd ( !tstricmp( rsi, "NOREGS" ) )
+            .elseif ( [rbx].hash1 == HASH(NOREGS) )
                 mov MODULE.switch_regax,0
             .else
                 .break
@@ -653,18 +642,18 @@ endif
         .case OP_CASEALIGN ;; 0|1|2|4|8|16
             .return .ifd SetAlignment( &i, tokenarray, MAX_CASE_ALIGN, &MODULE.casealign ) == ERROR
         .case OP_WSTRING ;; ON | OFF
-            .ifd ( !tstricmp( rsi, "ON" ) )
+            .if ( [rbx].hash1 == HASH(ON) )
                 mov MODULE.wstring,1
-            .elseifd ( !tstricmp( rsi, "OFF" ) )
+            .elseif ( [rbx].hash1 == HASH(OFF) )
                 mov MODULE.wstring,0
             .else
                 .break
             .endif
             inc i
         .case OP_MASM ;; ON | OFF
-            .ifd ( !tstricmp( rsi, "ON" ) )
+            .if ( [rbx].hash1 == HASH(ON) )
                 SetMasmKeywords( 1 )
-            .elseifd ( !tstricmp( rsi, "OFF" ) )
+            .elseif ( [rbx].hash1 == HASH(OFF) )
                 SetMasmKeywords( 0 )
             .else
                 .break
@@ -681,13 +670,13 @@ endif
                 .return( asmerr( 2026 ) )
             .endif
         .case OP_FLOATFORMAT ; : <e|f|g>
-            .ifd ( !tstricmp( rsi, "E" ) )
+            .if ( [rbx].hash1 == HASH(E) )
                 mov MODULE.floatformat,'e'
-            .elseifd ( !tstricmp( rsi, "F" ) )
+            .elseif ( [rbx].hash1 == HASH(F) )
                 mov MODULE.floatformat,0
-            .elseifd ( !tstricmp( rsi, "G" ) )
+            .elseif ( [rbx].hash1 == HASH(G) )
                 mov MODULE.floatformat,'g'
-            .elseifd ( !tstricmp( rsi, "X" ) )
+            .elseif ( [rbx].hash1 == HASH(X) )
                 mov MODULE.floatformat,'x'
             .else
                 .break

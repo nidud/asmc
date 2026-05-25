@@ -28,6 +28,11 @@ Assignment of values for _initialization_ and _increment/decrements_:
     a = &b      - lea a,b
     a = ~b      - [mov a,b] not a
 ```
+Special case based on current CPU.
+```
+    r <> [r]    - [test r,r] [cmovnz | jz + mov] r,[r]
+```
+
 
 #### See Also
 

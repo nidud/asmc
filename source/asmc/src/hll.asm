@@ -922,23 +922,6 @@ ExpandCStrings proc __ccall public uses rdi rbx tokenarray:token_t
     endp
 
 
-GetProcVtbl proc fastcall private sym:asym_t, name:ptr sbyte
-
-    xor eax,eax
-    .if ( [rcx].asym.mem_type == MT_TYPE && [rcx].asym.type )
-        mov rcx,[rcx].asym.type
-    .endif
-    .if ( [rcx].asym.target_type &&
-          ( [rcx].asym.mem_type == MT_PTR || [rcx].asym.ptr_memtype == MT_TYPE ) )
-        mov rcx,[rcx].asym.target_type
-    .endif
-    .if ( [rcx].asym.hasvtable )
-        SearchNameInStruct( [rcx].asym.vtable, rdx, 0, 0 )
-    .endif
-    ret
-    endp
-
-
 GetProc proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, opnd:ptr expr
 
     ldr ecx,i
@@ -965,9 +948,21 @@ GetProc proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, opnd:
     .return .if !rax
     .return .if [rax].asym.isproc
 
-    .if ( [rbx].token == T_ID && [rbx+asm_tok].token == T_DOT &&
-          [rbx+asm_tok*2].token == T_ID )
-        .return GetProcVtbl(rax, [rbx+asm_tok*2].string_ptr)
+    .if ( [rbx].token == T_ID && [rbx+asm_tok].token == T_DOT && [rbx+asm_tok*2].token == T_ID )
+
+        mov rcx,rax
+        xor eax,eax
+        .if ( [rcx].asym.mem_type == MT_TYPE && [rcx].asym.type )
+            mov rcx,[rcx].asym.type
+        .endif
+        .if ( [rcx].asym.target_type &&
+              ( [rcx].asym.mem_type == MT_PTR || [rcx].asym.ptr_memtype == MT_TYPE ) )
+            mov rcx,[rcx].asym.target_type
+        .endif
+        .if ( [rcx].asym.hasvtable )
+            SearchNameInStruct( [rcx].asym.vtable, [rbx+asm_tok*2].string_ptr, 0, 0 )
+        .endif
+        .return
     .endif
 
     mov rcx,[rax].asym.target_type
@@ -986,9 +981,8 @@ GetProc proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, opnd:
         ; second case: symbol is a (function?) pointer
 
         mov rax,rcx
-        .if [rax].asym.mem_type != MT_PROC
-            jmp isfnptr
-        .endif
+        cmp [rax].asym.mem_type,MT_PROC
+        jne isfnptr
     .endif
 
 isfnproto:
@@ -1003,8 +997,7 @@ isfnptr:
 
     mov rax,[rax].asym.target_type
     ret
-
-GetProc endp
+    endp
 
 
 GetParamId proc fastcall private uses rsi rdi rbx id:int_t, sym:asym_t
@@ -1216,7 +1209,14 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:t
         mov ecx,eax
         .if GetProc( ecx, tokenarray, &opnd )
             .if ( [rax].asym.mem_type == MT_TYPE )
-                mov rax,[rax].asym.type
+                .if ( [rax].asym.isvmacro )
+                    mov rax,[rax].asym.vmacro
+                .else
+                    mov rax,[rax].asym.type
+                .endif
+                .if ( [rax].asym.mem_type == MT_PTR && [rax].asym.is_ptr )
+                    mov rax,[rax].asym.target_type
+                .endif
             .endif
             mov rcx,GetParamId( parg_id, rax )
             .if rcx

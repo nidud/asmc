@@ -47,7 +47,7 @@ ifndef TRUE
 define TRUE 1
 endif
 
-BOOL	typedef sdword
+BOOL	typedef SDWORD
 FLOAT	typedef real4
 PFLOAT	typedef ptr FLOAT
 PBOOL	typedef ptr BOOL

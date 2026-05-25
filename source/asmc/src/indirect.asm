@@ -209,10 +209,17 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:asym_t, tokenarray:token_t, 
   local inst:uint_t
   local dest:uint_t
   local buffer[128]:sbyte
+  local bracket:byte
 
     ldr rbx,tokenarray
     .if ( pos )
-        mov inst,[rbx-asm_tok].tokval    ; cmp p.p.p, expr
+        mov bracket,0
+        mov eax,[rbx-asm_tok].tokval    ; cmp p.p.p, expr
+        .if ( [rbx-asm_tok].token == T_OP_BRACKET )
+            mov eax,[rbx-asm_tok*2].tokval
+            inc bracket                 ; cmp (p.p.p), expr -- .if (...)
+        .endif
+        mov inst,eax
     .else
         mov inst,[rbx-3*asm_tok].tokval  ; cmp reg, p.p.p
         mov dest,[rbx-2*asm_tok].tokval
@@ -263,7 +270,11 @@ HandleIndirection proc __ccall uses rsi rdi rbx sym:asym_t, tokenarray:token_t, 
         mov rsi,[rsi].asym.target_type
     .endif
     .if ( pos )
-        AddLineQueueX( " %r [%r].%s%s", inst, reg, [rsi].asym.name, [rbx].tokpos )
+        lea rcx,@CStr(" %r [%r].%s%s")
+        .if ( bracket )
+            lea rcx,@CStr(" %r ( [%r].%s%s")
+        .endif
+        AddLineQueueX( rcx, inst, reg, [rsi].asym.name, [rbx].tokpos )
     .else
         AddLineQueueX( " %r %r, [%r].%s.%s", inst, dest, reg, [rsi].asym.name, [rbx+asm_tok].tokpos )
     .endif

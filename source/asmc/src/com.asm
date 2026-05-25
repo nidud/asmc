@@ -10,8 +10,11 @@ include lqueue.inc
 include hll.inc
 include input.inc
 include expreval.inc
+include types.inc
 
 ifdef USE_COMALLOC
+
+CreateExternalFromType proto __ccall :string_t, :asym_t
 
 ; v2.36.16 - link to nearest public class
 ;
@@ -30,7 +33,7 @@ ifdef USE_COMALLOC
 ;
 .template node
     sym  asym_t ?
-    next ptr_t ?
+    next ptr node ?
    .ends
 
     .code
@@ -43,6 +46,9 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, re
    .new t[256]:char_t
    .new n:node
    .new m:int_t
+   .new externSym:byte ; v2.39: allow external member functions
+   .new symFound:byte  ; the class the function was first defined
+   .new typeSym:asym_t
 
     ldr rsi,sym
 
@@ -57,7 +63,10 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, re
                     mov i,AssignVTable(name, rdx, reg, i, &n)
                 .else
                     mov m,0
+                    mov symFound,0
+                    mov externSym,1
                     .if ( SymFind( tstrcat( tstrcat( tstrcpy( &q, name ), "_" ), [rdi].name ) ) )
+                        mov externSym,0
                         .if ( [rax].asym.state == SYM_MACRO || [rax].asym.state == SYM_TMACRO )
                             mov m,1
                         .endif
@@ -65,13 +74,24 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, re
                         .for ( rbx = &n : rbx : rbx = [rbx].node.next )
                             mov rcx,[rbx].node.sym
                             .if ( [rcx].asym.name_size > 4 )
-                                tstrcpy( &t, [rcx].asym.name )
-                                mov rcx,[rbx].node.sym
-                                mov edx,[rcx].asym.name_size
-                                mov t[rdx-4],'_'
-                                mov t[rdx-3],0
-                                .if ( SymFind( tstrcat( rax, [rdi].name ) ) )
-                                    .if ( [rax].asym.state != SYM_MACRO && [rax].asym.state != SYM_TMACRO )
+                                .if SearchInStruct(rcx, [rdi].name_size, [rdi].hash, NULL, 0)
+                                    .if ( !symFound )
+                                        mov typeSym,[rax].asym.type
+                                    .endif
+                                    mov rcx,[rbx].node.sym
+                                    tstrcpy( &t, [rcx].asym.name )
+                                    mov rcx,[rbx].node.sym
+                                    mov edx,[rcx].asym.name_size
+                                    mov t[rdx-4],'_'
+                                    mov t[rdx-3],0
+                                    .if ( SymFind( tstrcat( rax, [rdi].name ) ) )
+                                        inc symFound
+                                        mov externSym,0
+                                        .if ( [rax].asym.state != SYM_MACRO && [rax].asym.state != SYM_TMACRO )
+                                            tstrcpy( &q, &t )
+                                        .endif
+                                    .elseif ( !symFound )
+                                        inc symFound
                                         tstrcpy( &q, &t )
                                     .endif
                                 .endif
@@ -79,6 +99,9 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, re
                         .endf
                     .endif
                     .if ( m == 0 )
+                        .if ( externSym && symFound )
+                            CreateExternalFromType(&q, typeSym)
+                        .endif
                         mov ebx,reg
                         dec ebx
                         AddLineQueueX( "lea %r, %s", ebx, &q )
@@ -154,7 +177,8 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
 
             .if ( [rdx].asm_tok.token == T_COMMA )
                 .if ( [rdx+asm_tok].asm_tok.token == T_REG )
-                    AddLineQueueX( "%s(addr [%r+%d])", alloc, [rdx+asm_tok].asm_tok.tokval,  [rsi].asym.total_size )
+                    AddLineQueueX( "%s(addr [%r+%d])\n%r %r,%r\njz @F",
+                        alloc, [rdx+asm_tok].asm_tok.tokval,  [rsi].asym.total_size, T_TEST, edi, edi )
                    .endc
                 .endif
                 inc i
@@ -167,14 +191,15 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
             .else
                 mov ecx,[rsi].asym.total_size
             .endif
-            AddLineQueueX( "%s(%d)", alloc, ecx )
+            AddLineQueueX( "%s(%d)\n%r %r,%r\njz @F", alloc, ecx, T_TEST, edi, edi )
            .endc
         .endif
-        AddLineQueueX( "%s(%d+%d+%sVtbl)", alloc, opnd.value, size, [rsi].asym.name )
+        AddLineQueueX( "%s(%d+%d+%sVtbl)\n%r %r,%r\njz @F",
+            alloc, opnd.value, size, [rsi].asym.name, T_TEST, edi, edi )
         xor ebx,ebx
        .endc
     .default
-        AddLineQueueX( "%s(%d+%sVtbl)", alloc, size, [rsi].asym.name )
+        AddLineQueueX( "%s(%d+%sVtbl)\n%r %r,%r\njz @F", alloc, size, [rsi].asym.name, T_TEST, edi, edi )
     .endsw
     .if ( size > wsize )
         mov ecx,eax
@@ -192,7 +217,7 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
             .if ( rbx )
                 AddLineQueueX(
                     " mov %r, %r\n"
-                    " %r %r, %s", r_di, edx, vinst, edx, [rbx].string_ptr )
+                    " %r %r, %s", r_di, edx, vinst, edx, &vstring )
             .else
                 AddLineQueueX( " xchg %r, %r", r_di, edx )
             .endif
@@ -205,6 +230,7 @@ DefaultConstructor proc __ccall uses rsi rdi rbx sym:asym_t, table:token_t
     .if ( !rbx )
         AssignVTable( [rsi].asym.name, [rsi].asym.vtable, &[rdi+T_EDX-T_EAX], 0, 0 )
     .endif
+    AddLineQueue( "@@:" )
     mov eax,edi
     ret
     endp

@@ -16,7 +16,6 @@ endif
 ifndef _INC_WINDOWS
 ifndef _WINDOWS_
 BOOL			typedef SDWORD
-;BYTE			typedef BYTE
 UINT			typedef DWORD
 USHORT			typedef WORD
 ULONG			typedef DWORD

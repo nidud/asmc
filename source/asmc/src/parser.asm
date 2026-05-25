@@ -4570,20 +4570,16 @@ ifdef USE_INDIRECTION
         .if ( rbx && rax && rdx && [rdi].is_dot )
 
             mov rdx,[rax].asym.target_type
-
-            .if ( rdx &&
-                  [rax].asym.mem_type == MT_PTR &&
-                  [rax].asym.is_ptr &&
-                  [rdx].asym.state == SYM_TYPE &&
-                  [rbx].token == T_ID &&
+            .if ( rdx && [rax].asym.mem_type == MT_PTR && [rax].asym.is_ptr &&
+                  [rdx].asym.state == SYM_TYPE && [rbx].token == T_ID &&
                   ( [rbx+asm_tok].token == T_DOT || [rbx+asm_tok].token == T_OP_SQ_BRACKET ) )
 
-                .if ( ( !ecx &&
-                        [rbx-3*asm_tok].token == T_INSTRUCTION &&
-                        [rbx-2*asm_tok].token == T_REG &&
-                        [rbx-asm_tok].token == T_COMMA
-                      ) || ( ecx && [rbx-asm_tok].token == T_INSTRUCTION )
-                    )
+                ; v2.39: expression: inst (p.p.p),op2 - .if (...)
+
+                mov dl,[rbx-asm_tok].token
+                mov dh,[rbx-asm_tok*2].token
+                .if ( ( !ecx && [rbx-3*asm_tok].token == T_INSTRUCTION && dh == T_REG && dl == T_COMMA ) ||
+                      ( ecx && ( dh == T_INSTRUCTION || dl == T_INSTRUCTION ) ) )
                     .return HandleIndirection( rax, rbx, ecx )
                 .endif
             .endif

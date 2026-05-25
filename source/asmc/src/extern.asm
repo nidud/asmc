@@ -94,6 +94,34 @@ CreateComm proc fastcall private uses rsi sym:asym_t, name:string_t
 ; create a prototype.
 ; used by PROTO, EXTERNDEF and EXT[E]RN directives.
 
+CreateExternalFromType proc __ccall uses rsi rdi name:string_t, sym:asym_t
+
+    ldr rdi,sym
+    mov rsi,SymFind(ldr(name))
+
+    .if ( rsi == NULL || [rsi].asym.state == SYM_UNDEFINED ||
+          ( [rsi].asym.state == SYM_EXTERNAL && ( [rsi].asym.weak ) &&
+            !( [rsi].asym.isproc ) ) )
+        .if ( CreateProc( rsi, name, SYM_EXTERNAL ) == NULL )
+            .return ; name was probably invalid
+        .endif
+        mov rsi,rax
+    .elseif ( !( [rsi].asym.isproc ) )
+        asmerr( 2005, [rsi].asym.name )
+        .return( NULL )
+    .endif
+
+    ; a PROTO typedef may be used
+
+    .if ( rdi && [rdi].asym.state == SYM_TYPE && [rdi].asym.mem_type == MT_PTR )
+        CopyPrototype( rsi, [rdi].asym.target_type )
+    .else
+        asmerr( 2004, [rsi].asym.name )
+    .endif
+    .return( rsi )
+    endp
+
+
     assume rbx:token_t
 
 CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_t, name:string_t, langtype:byte

@@ -705,9 +705,15 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
         .if ( [rbx].token == T_ID && [rbx-asm_tok].token == T_OP_BRACKET )
             .if SymFindID( rbx )
                 mov rax,[rax].asym.string_ptr
-                .if ( B[rax] == '"' || W[rax] == '"L' )
-                    mov rsi,rax
+            .endif
+            .if ( rax == NULL ) ; v2.39: added
+                .if ( Parse_Pass > PASS_1 )
+                    asmerr( 2006, [rbx].string_ptr )
                 .endif
+                .return( 0 )
+            .endif
+            .if ( B[rax] == '"' || W[rax] == '"L' )
+                mov rsi,rax
             .endif
         .endif
         .if ( B[rsi] == '"' || W[rsi] == '"L' )

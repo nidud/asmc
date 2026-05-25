@@ -231,24 +231,24 @@ del %~n1.ERR
 goto end
 
 :cv8
-%ASMX% -c -q -win64 -Zi %1
-fcmp -coff %~n1.obj exp64\%~n1.obj
+%ASMX% -c -q -win64 -Zi -Fo CV%~n1 %1
+fcmp -coff CV%~n1.obj exp\CV%~n1.obj
 if errorlevel 1 goto end
-del %~n1.obj
+del CV%~n1.obj
 goto end
 
 :cv8bin
-%ASMX% -c -q -win64 -D__ASMC64__ -Zi %1
-fcmp -coff %~n1.obj exp64\%~n1.obj
+%ASMX% -c -q -win64 -D__ASMC64__ -Zi -Fo CV%~n1 %1
+fcmp -coff CV%~n1.obj exp\CV%~n1.obj
 if errorlevel 1 goto end
-del %~n1.obj
+del CV%~n1.obj
 goto end
 
 :cv8Gv
-%ASMX% -c -q -win64 -Zi -Gv %1
-fcmp -coff %~n1.obj exp64\%~n1.obj
+%ASMX% -c -q -win64 -Zi -Gv -Fo CV%~n1 %1
+fcmp -coff CV%~n1.obj exp\CV%~n1.obj
 if errorlevel 1 goto end
-del %~n1.obj
+del CV%~n1.obj
 goto end
 
 :dwarf

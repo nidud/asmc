@@ -21,7 +21,7 @@ include lqueue.inc
             db T_ESI,   T_EDI,   T_ECX,   T_ECX
             db T_RSI,   T_RDI,   T_RCX,   T_ECX
             db T_AX,    T_EAX,   T_RAX,   0
-            db T_WORD,  T_DWORD, T_QWORD, 0
+            dd T_WORD,  T_DWORD, T_QWORD, 0
 
     .code
 
@@ -59,7 +59,7 @@ InlineMove proc __ccall private uses rsi rdi rbx dst:ptr, src:ptr, count:uint_t
     movzx   ecx,MODULE.Ofssize
     lea     rbx,ofss
     movzx   esi,byte ptr [rbx+rcx+12]
-    movzx   eax,byte ptr [rbx+rcx+16]
+    mov     eax,[rbx+rcx*4+16]
     mov     type,eax
     mov     edi,2
     shl     edi,cl
@@ -452,10 +452,16 @@ endif
 ; Handle C-type RECORD fields
 
 Const64Field proc __ccall private uses rsi rdi rbx inst:uint_t, type:uint_t, name:string_t, offs:uint_t, value:qword
+
    .new notinst:int_t = 0
+
     ldr ebx,inst
     ldr rsi,name
     ldr edi,offs
+
+    .if ( type == T_QWORD )
+        mov type,T_DWORD
+    .endif
     .if ( ebx == T_AND )
         mov notinst,T_NOT
     .endif
@@ -470,6 +476,7 @@ Const64Field proc __ccall private uses rsi rdi rbx inst:uint_t, type:uint_t, nam
     .endif
     ret
     endp
+
 
 CRecordField proc __ccall uses rsi rdi rbx token:int_t, opnd:ptr expr, opn2:ptr expr
 
@@ -669,10 +676,23 @@ endif
                 .endif
             .endsw
 
+        .elseif ( edx == T_AND )
+ifdef _WIN64
+            not mask
+            or  mask,rdi
+            not mask
+else
+            not dword ptr mask
+            not dword ptr mask[4]
+            or  dword ptr mask,edi
+            or  dword ptr mask[4],esi
+            not dword ptr mask
+            not dword ptr mask[4]
+endif
+            Const64Field( T_AND, type, &name, offs, mask )
+
         .elseif ( bits == 1 || ebx == 0 )
-
             .if ( edx == T_CMP )
-
                 mov edi,dword ptr mask
                 mov edx,T_TEST
                 .if ( !bitexpr && ebx )

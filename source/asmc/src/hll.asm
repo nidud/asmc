@@ -358,7 +358,7 @@ GetSimpleExpression proc __ccall private uses rsi rdi rbx \
     .if ( op1.kind == EXPR_REG && !( op1.indirect ) )
         mov rax,op1.base_reg
         .if ( rax )
-            .if ( GetValueSp( [rax].asm_tok.tokval ) & ( OP_XMM or OP_YMM or OP_ZMM ) )
+            .if ( GetValueSp( [rax].asm_tok.tokval ) & OP_V )
                 mov eax,T_COMISD
                 .if ( MODULE.flt_size == 4 )
                     mov eax,T_COMISS

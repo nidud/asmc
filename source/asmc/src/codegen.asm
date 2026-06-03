@@ -57,32 +57,27 @@ PREFIX_GS       equ 0x65
 
 output_opc proc __ccall uses rdi rbx
 
-  local vex     :byte
-  local evex    :byte
-  local fpfix   :byte
-  local rflags  :byte
-  local tuple   :byte
-  local rmbyte  :byte
+   .new temp    :dword
+   .new vex     :byte
+   .new evex    :byte = 0
+   .new fpfix   :byte = FALSE
+   .new rflags  :byte
+   .new tuple   :byte
+   .new rmbyte  :byte
 
-    mov     evex,0
-    mov     fpfix,FALSE
-    movzx   ecx,[rsi].token
-ifdef _WIN64
-    lea     rax,ResWordTable
-    mov     rflags,[rax+rcx*8].ReservedWord.flags
-else
-    mov     rflags,ResWordTable[ecx*8].flags
-endif
-    and     al,RWF_MASK
-    mov     tuple,al
+    mov ecx,[rsi].token
+    lea rax,ResWordTable
+    mov rflags,[rax+rcx*8].ReservedWord.flags
+    and al,RWF_MASK
+    mov tuple,al
 
-    .if ( [rsi].prefix == 0 )
+    .if ( [rsi].Prefix.Evex == 0 )
         .if ( rflags & RWF_EVEX )
             .if !( MODULE.avxencoding & PREFER_VEX or PREFER_VEX3 or NO_EVEX )
-                or [rsi].prefix,PREFIX_EVEX
+                mov [rsi].Prefix.Evex,1
             .endif
         .elseif ( ( rflags & RWF_VEX ) && MODULE.avxencoding == PREFER_EVEX )
-            or [rsi].prefix,PREFIX_EVEX
+            mov [rsi].Prefix.Evex,1
         .endif
     .endif
 
@@ -103,9 +98,9 @@ endif
 
         ;; there are 2 exceptions. how to avoid this ugly hack?
 
-        movzx eax,[rsi].token
+        mov eax,[rsi].token
         .if eax != T_CRC32 && eax != T_POPCNT
-            mov [rsi].opsiz,0
+            mov [rsi].Prefix.Osize,0
         .endif
     .endif
 
@@ -165,7 +160,7 @@ endif
 
     ; Output instruction prefix
 
-    .if ( [rsi].prefix & PREFIX_EVEX )
+    .if ( [rsi].Prefix.Evex )
 
         mov evex,[rdi].evex
         OutputByte(0x62)
@@ -236,12 +231,12 @@ endif
     .switch al
     .case F_16
         .if [rsi].Ofssize >= USE32
-            mov [rsi].opsiz,1
+            mov [rsi].Prefix.Osize,1
         .endif
         .endc
     .case F_32
         .if [rsi].Ofssize == USE16
-            mov [rsi].opsiz,1
+            mov [rsi].Prefix.Osize,1
         .endif
         .endc
     .case F_16A ;; 16-bit JCXZ and LOOPcc
@@ -249,7 +244,7 @@ endif
         ;; doesnt exist for IA32+
 
         .if [rsi].Ofssize == USE32
-            mov [rsi].adrsiz,1
+            mov [rsi].Prefix.Asize,1
         .endif
         .endc
     .case F_32A ;; 32-bit JECXZ and LOOPcc
@@ -257,16 +252,16 @@ endif
         ;; in IA32+, the 32bit version gets an 0x67 prefix
 
         .if [rsi].Ofssize != USE32
-            mov [rsi].adrsiz,1
+            mov [rsi].Prefix.Asize,1
         .endif
         .endc
     .case F_0FNO66
-        mov [rsi].opsiz,0
-        .endc
+        mov [rsi].Prefix.Osize,0
+       .endc
     .case F_48
     .case F_480F
-        or [rsi].rex,REX_W
-        .endc
+        mov [rsi].Rex.W,1
+       .endc
     .endsw
 
     .if !( rflags & RWF_VEX )
@@ -274,16 +269,16 @@ endif
         .case F_660F
         .case F_660F38
         .case F_660F3A
-            mov [rsi].opsiz,1
-            .endc
+            mov [rsi].Prefix.Osize,1
+           .endc
         .case F_F20F
         .case F_F20F38
             OutputByte(0xF2)
-            .endc
-        .case F_F3      ;; PAUSE instruction
+           .endc
+        .case F_F3      ; PAUSE instruction
         .case F_F30F
         .case F_F30F38
-        .case F_F30F3A
+        .case F_F30F3A  ; HRESET instruction
             OutputByte(0xF3)
         .endsw
     .endif
@@ -294,11 +289,10 @@ endif
     ;; by either a segment prefix or the opcode byte.
     ;; Neither Masm nor JWasm emit a warning, though.
 
-    .if ( [rsi].adrsiz && !( [rsi].base_rip ) && !( [rdi].evex & VX_XMMI ) )
+    .if ( [rsi].Prefix.Asize && ![rsi].Flags.B_RIP && ![rdi].evex & V_SIB )
         OutputByte(ADRSIZ)
     .endif
-    .if ( [rsi].opsiz )
-
+    .if ( [rsi].Prefix.Osize )
         mov eax,MODULE.curr_cpu
         and eax,P_CPU_MASK
         .if ( eax < P_386 )
@@ -316,9 +310,10 @@ endif
         OutputByte( [rcx+rax] )
     .endif
 
+
     .if ( [rdi].flags & II_OPND_DIR )
 
-        mov al,[rsi].rex
+        mov al,[rsi].Rex
         mov ah,al
         mov dl,al
         and ah,0xFA
@@ -328,7 +323,7 @@ endif
         shl al,2
         or  al,dl
         or  al,ah
-        mov [rsi].rex,al
+        mov [rsi].Rex,al
 
         ;; The reg and r/m fields are backwards
 
@@ -348,75 +343,73 @@ endif
 
     .if ( rflags & RWF_VEX )
 
-        movzx edx,[rsi].token
+        mov edx,[rsi].token
         lea rcx,vex_flags
         mov vex,[rcx+rdx-VEX_START]
-        xor ebx,ebx         ; P1: R.X.B.R1.0.0.m1.m2
-                            ; P2: W.v3.v2.v1.v0.1.p1.p0
-        mov cl,[rsi].evexP3 ; P3: z.L1.L0.b.V1.a2.a1.a0
-        mov ch,[rsi].vflags
-        and al,VX_RW1
+        xor ebx,ebx
+        and al,VEX_P1_W
         .if ( evex == 0 )
             .if ( edx == T_VCVTSI2SD || edx == T_VMOVQ )
                 xor eax,eax
             .endif
         .endif
-        mov bh,al ; P2 (vex & VX_RW1)
-
+        or  bh,al
         mov al,[rdi].byte1_info
         .switch al
         .case F_0F38
-            mov bl,VX1_R
-            .endc
-        .case F_C5L
-        .case F_C4M0L
-            or bh,VX2_1
-            .endc
-        .case F_C5LP0
-        .case F_C4M0P0L
-            or bh,VX2_1
-        .case F_C4M0P0
+            or bl,VEX_P0_R
+           .endc
+        .case E_0F
+        .case E_OF38
+            or bh,EVEX_P1_FIXED
+           .endc
+        .case E_660F
+        .case E_660F38
+            or bh,EVEX_P1_FIXED
         .case F_660F
         .case F_660F38
         .case F_660F3A
-            or bh,VX2_P0
-            .endc
+        .case E_660F3A
+            or bh,VEX_P1_P0
+           .endc
         .case F_F30F
         .case F_F30F38
-            or bh,VX2_P1
-            .endc
+            or bh,VEX_P1_P1
+           .endc
         .case F_F20F
         .case F_F20F38
-            or bh,VX2_P0 or VX2_P1
-            .endc
+            or bh,VEX_P1_PP
         .endsw
 
-        .if ( ch & VX_OP1V )
-            or bh,VX2_1
+        mov cl,[rsi].EvexP2
+        mov ch,[rsi].Vector
+        .if ( ch & V_OP1_H )
+            or bh,EVEX_P1_FIXED
         .endif
 
-        .if ( cl & VX3_B || ( ( cl & VX3_A2 ) && !( ch & VX_ZMM ) && !( ch & VX_OP3 ) ) ||
-              ( ( cl & VX3_A2 ) && ( ch == VX_OP3 ) ) )
-
-            or cl,VX3_V
+        .if ( cl & EVEX_P2_B ||
+              ( cl & EVEX_P2_A2 && !ch & V_ZMM_USED && !ch & V_OP3_USED ) ||
+              ( cl & EVEX_P2_A2 && ch == V_OP3_USED ) )
+            or cl,EVEX_P2_V
         .endif
 
-        .if ( ( [rsi].opnd[OPND1].type & ( OP_YMM or OP_ZMM ) ) ||
-             ( [rsi].opnd[OPNI2].type & ( OP_YMM or OP_ZMM or OP_M256 or OP_M512 ) ) ||
-             ( [rsi].opnd[OPND1].type == OP_NONE && vex & VX_L ) )
+        mov eax,[rsi].opnd[OPND1].type
+        mov edx,[rsi].opnd[OPNI2].type
 
-            ;; no operands? use VX_L flag from vex_flags[]
+        .if ( eax & OP_YMM or OP_ZMM ||
+            ( edx & OP_YMM or OP_ZMM or OP_M256 or OP_M512 ) ||
+            ( eax == OP_NONE && vex & VX_L ) )
 
-            or bh,VX2_1
+            ; no operands? use VX_L flag from vex_flags[]
 
-            .if ( ch & VX_ZMM || [rsi].opnd[OPNI2].type & OP_M512 || cl & VX3_B )
-
-                or  cl,VX3_L1 or VX3_V ;; ZMM
+            or bh,EVEX_P1_FIXED
+            .if ( ch & V_ZMM_USED || edx & OP_M512 || cl & EVEX_P2_B )
+                or  cl,EVEX_P2_L1 or EVEX_P2_V ; ZMM
                 mov al,evex
-                and al,VX1_R1
+                and al,V_R1
                 or  bl,al
             .else
-                or cl,VX3_L0 ;; YMM
+                or cl,EVEX_P2_L0 ; YMM
             .endif
         .endif
 
@@ -426,50 +419,47 @@ endif
             mov al,16
             and dl,0x3F
             sub al,dl
-            shl al,3
+            shl al,3  ; ??
             or  bh,al
+
             mov al,[rsi].vexregop
             shr al,1
             and al,0x60
             or  cl,al
 
-            .if ( cl & VX3_L1 ) ;; ZMM
-                or cl,VX3_V
+            .if ( cl & EVEX_P2_L1 ) ; ZMM
+                or cl,EVEX_P2_V
             .endif
-            .if ( cl & VX3_B )
-                .if ( ch & VX_OP2V )
-                    and cl,not VX3_V
+            .if ( cl & EVEX_P2_B )
+                .if ( ch & V_OP2_H )
+                    and cl,not EVEX_P2_V
                 .else
-                    or cl,VX3_V
+                    or cl,EVEX_P2_V
                 .endif
             .endif
 
         .else
 
-            or bh,VX2_V2 or VX2_V3
-            .if !( [rdi].evex & VX_XMMI )
-                or bh,VX2_V1
+            or cl,EVEX_P2_V
+            or bh,EVEX_P1_V2 or EVEX_P1_V3
+            .if !( [rdi].evex & V_SIB )
+                or bh,EVEX_P1_V1
             .endif
-
-            or cl,VX3_V
-            .if ( !( ( ch & VX_OP3 ) && ( evex & 0x04 ) &&
+            .if ( !( ch & V_OP3_USED && ( evex & V_NDS ) &&
                  ( [rsi].opnd[OPNI2].type & ( OP_M128 or OP_M256 or OP_M512 ) ) ) )
-
-                or bh,VX2_V0
+                or bh,EVEX_P1_V0
             .endif
         .endif
 
         ;; emit 2 (0xC4) or 3 (0xC5) byte VEX prefix
 
-        .if ( [rdi].byte1_info >= F_0F38 || ( [rsi].rex & ( REX_B or REX_X or REX_W ) ) )
+        .if ( [rdi].byte1_info >= F_0F38 || ( [rsi].Rex & ( REX_B or REX_X or REX_W ) ) )
 
+            shl ecx,16
+            or  ebx,ecx
             .if ( evex == 0 )
-
-               .new _rcx:ptr = rcx
                 OutputByte( 0xC4 )
-                mov rcx,_rcx
             .endif
-
             mov al,[rdi].byte1_info
             .switch al
             .case F_F20F3A
@@ -481,164 +471,164 @@ endif
             .case F_660F38
             .case F_F20F38
             .case F_F30F38
-                or bl,VX1_M1
-                .endc
+                or bl,EVEX_P0_M1
+               .endc
             .case F_0F3A
             .case F_660F3A
-                or bl,VX1_M1 or VX1_M2
-                .endc
+                or bl,EVEX_P0_MM
+               .endc
             .default
-                .if ( [rdi].byte1_info >= F_0F )
-                    or bl,VX1_M2
+                .if ( al >= F_0F )
+                    or bl,EVEX_P0_M0
                 .endif
             .endsw
 
-            mov al,[rsi].rex
-            .if !( al & REX_B )
-                or bl,VX1_B
+            mov al,[rsi].Rex
+            .if ( !al & REX_B )
+                or bl,VEX_P0_B
             .endif
-            .if !( al & REX_X )
-                or bl,VX1_X
+            .if ( !al & REX_X )
+                or bl,VEX_P0_X
             .endif
-            .if !( al & REX_R )
-                or bl,VX1_R
+            .if ( !al & REX_R )
+                or bl,VEX_P0_R
             .endif
-            .if al & REX_W
-                or bh,VX2_W
+            .if ( al & REX_W )
+                or bh,VEX_P1_W
             .endif
 
+            mov ecx,ebx
+            shr ecx,16
             mov ah,evex
             .if ah
 
-                .if ( ch & VX_OP1V or VX_OP2V or VX_OP3V )
-
-                    ;; ?mm16..31
+                .if ( ch & ( V_OP1_H or V_OP2_H or V_OP3_H ) )
 
                     mov al,ch
-                    and al,VX_OP1V or VX_OP2V or VX_OP3V or VX_OP3
-
+                    and al,V_OP1_H or V_OP2_H or V_OP3_H or V_OP3_USED
                     .switch al
-                    .case VX_OP3 or VX_OP2V or VX_OP3V  ;; 0, 1, 1
-                        and cl,not VX3_V
-                    .case VX_OP2V                       ;; 0, 1
+                    .case V_OP3_USED or V_OP2_H or V_OP3_H ;; 0, 1, 1
+                        and cl,not EVEX_P2_V
+                    .case V_OP2_H ;; 0, 1
                         mov al,bl
                         and al,0x6F
-                        .if ( ax == 0x0862 )
-                            or evex,0xE0
+                        .if ( ax == 0x62 or ( V_SIB shl 8 ) )
+                            or evex,V_RXB
                            .endc
                         .endif
-                        .if ( ah == 0x20 )
+                        .if ( ah == 0x20 && [rsi].token == T_VMOVQ )
                             add rdi,instr_item
                         .endif
                         ; v2.38.09: added
-                        .endc .if ( !( ch & VX_ZMM24 ) && evex == 0xE0 )
-                    .case VX_OP3 or VX_OP3V             ;; 0, 0, 1
-                        .if ( !( ah & VX_W1 ) && ( tuple == RWF_T1S || tuple == RWF_QVM ) )
-                            and bl,not VX1_R1
-                        .else
-                            and bl,not VX1_X
-                            .if ( ( ch & VX_ZMM24 && ( [rsi].opnd[OPND1].type == OP_ZMM ) ) ||
-                                  ( !( ch & VX_ZMM ) && !( [rsi].sib & 0xC0 ) ) )
+                        .endc .if ( !ch & V_Z24_USED && evex == V_RXB )
 
-                                or bl,VX1_R1
+                    .case V_OP3_USED or V_OP3_H ;; 0, 0, 1
+                        .if ( !( ah & V_W1 ) && ( tuple == RWF_T1S || tuple == RWF_QVM ) )
+                            and bl,not EVEX_P0_R1
+                        .else
+                            and bl,not EVEX_P0_X
+                            .if ( ( ch & V_Z24_USED && [rsi].opnd[OPND1].type & OP_ZMM ) ||
+                                  ( !ch & V_ZMM_USED && !( [rsi].sib & 0xC0 ) ) )
+                                or bl,EVEX_P0_R1
                             .endif
                         .endif
                         .endc
-                    .case VX_OP3 or VX_OP1V or VX_OP2V  ;; 1, 1, 0
 
-                        .if ( !( ah & VX1_X ) &&
+                    .case V_OP3_USED or V_OP1_H or V_OP2_H ;; 1, 1, 0
+                        .if ( !( ah & V_X ) &&
                               ( [rsi].opnd[OPNI2].type & OP_I || [rsi].opnd[OPNI3].type & OP_I ) )
-
-                            and bl,not VX1_X
-                            .if [rsi].opnd[OPNI2].type & OP_I
-                                or bl,VX1_R1
-                                and cl,not VX3_V
+                            and bl,not EVEX_P0_X
+                            .if ( [rsi].opnd[OPNI2].type & OP_I )
+                                or  bl,EVEX_P0_R1
+                                and cl,not EVEX_P2_V
                             .endif
                         .else
-                            and cl,not VX3_V
-                            and bl,not VX1_R1
+                            and cl,not EVEX_P2_V
+                            and bl,not EVEX_P0_R1
                         .endif
                         .endc
-                    .case VX_OP3 or VX_OP1V             ;; 1, 0, 0
-                        .if ( ah == 0x10 )
-                            or  bl,0x80
+
+                    .case V_OP3_USED or V_OP1_H ;; 1, 0, 0
+                        .if ( ah == V_R1 )
+                            or  bl,EVEX_P0_R
                             and bh,not 0x70
-                            and cl,not 0x08
-                            .endc
+                            and cl,not EVEX_P2_V
+                           .endc
                         .endif
-                    .case VX_OP1V                       ;; 1, 0
-                        .if ( ah == 0x20 ) ;; VMOVQ
-                            and bh,not 0x02
-                            or  bh,0x01
+                    .case V_OP1_H ;; 1, 0
+                        .if ( ah == 0x20 && [rsi].token == T_VMOVQ )
+                            and bh,not EVEX_P1_P1
+                            or  bh,EVEX_P1_P0
                             add rdi,instr_item
                             .if ( [rdi].opcode != 0x6E )
                                 add rdi,instr_item
                             .endif
                         .endif
-                        and bl,not VX1_R1
-                        .if ( !( ch & VX_ZMM ) && !( tuple == RWF_T1S && cl ) )
-                            or cl,VX3_V
+                        and bl,not EVEX_P0_R1
+                        .if ( !ch & V_ZMM_USED && !( tuple == RWF_T1S && cl ) )
+                            or cl,EVEX_P2_V
                         .endif
                         .endc
-                    .case VX_OP3 or VX_OP1V or VX_OP2V or VX_OP3V ;; 1, 1, 1
-                        and cl,not VX3_V
-                    .case VX_OP3 or VX_OP1V or VX_OP3V   ;; 1, 0, 1
-                    .case VX_OP1V or VX_OP2V             ;; 1, 1
-                        and bl,not ( VX1_R1 or VX1_X )
-                        .endc
-                    .case VX_OP3 or VX_OP2V              ;; 0, 1, 0
+
+                    .case V_OP3_USED or V_OP1_H or V_OP2_H or V_OP3_H ;; 1, 1, 1
+                        and cl,not EVEX_P2_V
+                    .case V_OP3_USED or V_OP1_H or V_OP3_H ;; 1, 0, 1
+                    .case V_OP1_H or V_OP2_H ;; 1, 1
+                        and bl,not ( EVEX_P0_R1 or EVEX_P0_X )
+                       .endc
+
+                    .case V_OP3_USED or V_OP2_H ;; 0, 1, 0
                         mov al,ah
                         and al,0xFD
-                        .if ( al != 0x80 &&
-                              ( ( ch & VX_ZMM || [rsi].sib & 0xC0 ) &&
+                        .if ( al != V_R &&
+                              ( ( ch & V_ZMM_USED || [rsi].sib & 0xC0 ) &&
                                 !( !( vex & VX_RW1 ) && tuple == RWF_T1S ) ) )
-
-                            and cl,not VX3_V
-                            or  bl,VX1_R1
+                            and cl,not EVEX_P2_V
+                            or  bl,EVEX_P0_R1
                         .else
-                            and bl,not VX1_R1
+                            and bl,not EVEX_P0_R1
                         .endif
                         .endc
                     .endsw
 
                 .else
 
-                    .switch bl
+                    mov al,bl
+                    .switch al
                     .case 0xC1
                         mov bl,0x91
-                        .endc .if !( ch & VX_ZMM )
+                        .endc .if !( ch & V_ZMM_USED )
                         mov bl,0xB1
                         ; v2.38.09: added REX_B test for r8..r15
-                        .endc .if ( !( ch & VX_ZMM8 ) && !( [rsi].rex & REX_B ) )
+                        .endc .if ( !ch & V_Z08_USED && ![rsi].Rex.B )
                         mov bl,0xD1
-                        .endc
+                       .endc
                     .case 0xC5
                         mov bl,0xB1
-                        .endc
+                       .endc
                     .case 0xE2
                     .case 0xE3
-                        .if ( !( cl & VX3_B ) || ( evex & 0x04 ) )
-                            or bl,VX1_R1
+                        .if ( ![rsi].EvexP2.b || ( evex & V_NDS ) )
+                            or bl,EVEX_P0_R1
                         .endif
-                        or  cl,VX3_V
+                        or  cl,EVEX_P2_V
                         mov al,bl
                         and al,0x6F
-                        .if evex == 0x08 && al == 0x62
+                        .if ( evex == V_SIB && al == 0x62 )
                             mov al,bl
                             and al,0xF0
                             or evex,al
                         .endif
                         .endc
                     .default
-                        mov al,bl
                         and al,0x0F
                         .if ( al == 1 )
-                            or bl,VX1_R1
-                        .elseif ( evex == 0x08 && al == 0x02 )
+                            or bl,EVEX_P0_R1
+                        .elseif ( evex == V_SIB && al == 0x02 )
                             mov al,bl
                             and al,0xF0
-                            or al,0x90
-                            or evex,al
+                            or  al,0x90
+                            or  evex,al
                         .endif
                         .endc
                     .endsw
@@ -647,57 +637,53 @@ endif
 
         .else
 
-            .if !( [rsi].rex & REX_R )
-                or bh,0x80
+            .if ( ![rsi].Rex.R )
+                or bh,EVEX_P1_W
             .endif
-
             .if ( evex == 0 )
-
                 mov bl,0xC5
-
             .else
-
                 mov ah,evex
                 mov al,ch
-                and al,VX_OP1V or VX_OP2V or VX_OP3V or VX_OP3
+                and al,V_OP1_H or V_OP2_H or V_OP3_H or V_OP3_USED
                 .switch al
-                .case VX_OP3 or VX_OP2V or VX_OP3V       ;; 0, 1, 1
-                    and cl,not VX3_V
-                    .endc
-                .case VX_OP3 or VX_OP1V or VX_OP2V       ;; 1, 1, 0
-                    .if ( ah & VX1_X || [rsi].opnd[OPNI3].type == OP_I8 )
-                        and cl,not VX3_V
+                .case V_OP3_USED or V_OP2_H or V_OP3_H ;; 0, 1, 1
+                    and cl,not EVEX_P2_V
+                   .endc
+                .case V_OP3_USED or V_OP1_H or V_OP2_H ;; 1, 1, 0
+                    .if ( ah & V_X || [rsi].opnd[OPNI3].type == OP_I8 )
+                        and cl,not EVEX_P2_V
                     .endif
                     .endc
-                .case VX_OP3 or VX_OP1V or VX_OP2V or VX_OP3V ;; 1, 1, 1
-                    and cl,not VX3_V
-                    .endc
-                .case VX_OP3 or VX_OP2V                 ;; 0, 1, 0
-                    .if ch & VX_ZMM
-                        and cl,not VX3_V
+                .case V_OP3_USED or V_OP1_H or V_OP2_H or V_OP3_H ;; 1, 1, 1
+                    and cl,not EVEX_P2_V
+                   .endc
+                .case V_OP3_USED or V_OP2_H ;; 0, 1, 0
+                    .if ( ch & V_ZMM_USED )
+                        and cl,not EVEX_P2_V
                     .endif
                     .endc
-                .case VX_OP2V                           ;; 0, 1
-                .case VX_OP1V                           ;; 1, 0
-                    .if ( ah == 0x20 )                  ;; VMOVQ
-                        and bh,not 0x02
-                        or  bh,0x01
-                        add rdi,instr_item              ;; 7E --> 6E
-                    .elseif ( ah == 0xE0 )
-                        .if ( ch & VX_ZMM &&
-                              [rsi].opnd[OPND1].type == OP_ZMM &&
-                              [rsi].opnd[OPNI2].type == OP_ZMM )
-                            mov ah,0xB0
-                        .elseif ( [rsi].opnd[OPND1].type == OP_YMM &&
-                                  [rsi].opnd[OPNI2].type == OP_YMM )
-                            mov ah,0xB0
+                .case V_OP2_H ;; 0, 1
+                .case V_OP1_H ;; 1, 0
+                    .if ( ah == V_B ) ;; VMOVQ
+                        and bh,not EVEX_P1_P1
+                        or  bh,EVEX_P1_P0
+                        add rdi,instr_item ;; 7E --> 6E
+                    .elseif ( ah == V_RXB )
+                        .if ( ch & V_ZMM_USED &&
+                              [rsi].opnd[OPND1].type & OP_ZMM &&
+                              [rsi].opnd[OPNI2].type & OP_ZMM )
+                            mov ah,V_R or V_B or V_R1
+                        .elseif ( [rsi].opnd[OPND1].type & OP_YMM &&
+                                  [rsi].opnd[OPNI2].type & OP_YMM )
+                            mov ah,V_R or V_B or V_R1
                         .endif
                     .endif
                     .endc
-                .case VX_OP3 or VX_OP1V                 ;; 1, 0, 0
-                    .if ( ah == 0x10 )
+                .case V_OP3_USED or V_OP1_H ;; 1, 0, 0
+                    .if ( ah == V_R1 )
                         and bh,not 0x70
-                        and cl,not 0x08
+                        and cl,not EVEX_P2_V
                     .endif
                     .endc
                 .endsw
@@ -706,86 +692,87 @@ endif
                 and al,0xF0
                 or  al,0x01
                 or  bl,al
-                .if [rsi].rex & REX_R
+                .if ( [rsi].Rex.R )
                     mov bl,0x61
-                    .if ( ( [rsi].opnd[OPND1].type == OP_R32 ) ||
-                          ( ch & VX_ZMM8 or VX_OP1V or VX_OP2V && !( ch & VX_ZMM24 ) ) )
-                        or bl,0x10
-                        .if ( ch & VX_OP1V or VX_OP2V or VX_OP3V )
-                            and bl,not 0x40
+                    .if ( ( [rsi].opnd[OPND1].type & OP_R32 ) ||
+                          ( ch & V_Z08_USED or V_OP1_H or V_OP2_H && !( ch & V_Z24_USED ) ) )
+                        or bl,EVEX_P0_R1
+                        .if ( ch & V_OP1_H or V_OP2_H or V_OP3_H )
+                            and bl,not EVEX_P0_X
                         .endif
                     .elseif evex == 0x10
                         or bl,0xF0
-                    .elseif ( ch & VX_ZMM24 )
+                    .elseif ( ch & V_Z24_USED )
                         mov al,ch
-                        and al,VX_OP1V or VX_OP2V or VX_OP3V
-                        .if al == VX_OP1V or VX_OP2V && !( ch & VX_OP3 )
+                        and al,V_OP1_H or V_OP2_H or V_OP3_H
+                        .if al == V_OP1_H or V_OP2_H && !( ch & V_OP3_USED )
                             mov bl,0x21
                         .endif
                     .endif
-                .elseif ch & VX_OP1V
+                .elseif ch & V_OP1_H
                     mov bl,0xE1
-                    .if ch & VX_OP2V
-                        .if !( ch & VX_OP3 ) || ( ch & VX_OP3 && ch & VX_OP3V )
+                    .if ch & V_OP2_H
+                        .if !( ch & V_OP3_USED ) || ( ch & V_OP3_USED && ch & V_OP3_H )
                             mov bl,0xA1
                         .endif
                     .elseif vex & VX_HALF && [rsi].opnd[OPNI2].type & OP_I8
                         mov bl,0xF1
                     .else
-                        or cl,VX3_V
+                        or cl,EVEX_P2_V
                     .endif
-                .elseif !( ch & VX_OP2V )
+                .elseif !( ch & V_OP2_H )
                     mov bl,0xF1
-                    or  cl,VX3_V
+                    or  cl,EVEX_P2_V
                     .if evex == 0x10
-                        and bh,not 0x08
+                        and bh,not EVEX_P1_V0
                     .endif
-                .elseif ch & VX_OP3
+                .elseif ch & V_OP3_USED
                     mov bl,0xF1
-                .elseif ch & VX_OP2V && evex == 0x20
+                .elseif ch & V_OP2_H && evex == 0x20
                     mov bl,0xE1
                 .endif
             .endif
         .endif
 
+        movzx ebx,bx
         shl ecx,16
         or  ebx,ecx
 
-        .if evex
+        .if ( evex )
 
             xor eax,eax
             xor edx,edx
 
-            .if evex & VX_W1
+            .if ( evex & V_W1 )
                 and vex,not VX_RW0
             .endif
 
             ;; Get index of memory address if any
 
-            .if [rsi].opnd[OPNI2].type & OP_M_ANY
+            .if ( [rsi].opnd[OPNI2].type & OP_M_ANY )
                 mov edx,OPNI2
             .endif
-            .if [rsi].opnd[rdx].type & OP_M_ANY
+            .if ( [rsi].opnd[rdx].type & OP_M_ANY )
 
                 ;; EVEX-encoded instructions use a compressed displacement
 
-                .if tuple == RWF_T1S
+                .if ( tuple == RWF_T1S )
 
                     mov eax,MT_DWORD + 1
-                    .if [rsi].mem_type == MT_BYTE
+                    .if ( [rsi].mem_type == MT_BYTE )
                         mov eax,MT_BYTE + 1
-                    .elseif [rsi].mem_type == MT_WORD
+                    .elseif ( [rsi].mem_type == MT_WORD )
                         mov eax,MT_WORD + 1
-                    .elseif evex & VX_W1 || vex & VX_RW1
+                    .elseif ( evex & V_W1 || vex & VX_RW1 )
                         mov eax,MT_QWORD + 1
                     .endif
 
-                .elseif [rsi].evexP3 & VX3_B
+                .elseif [rsi].EvexP2.b
 
                     ;; Embedded Broadcast {1tox} - EVEX.B=1
 
                     mov eax,MT_DWORD + 1 ;; Full Vector (FV) || Half Vector (HV) && EVEX.W0
-                    .if ( evex & VX_W1 || ( vex & VX_RW1 && !( vex & VX_RW0 ) ) )
+                    .if ( evex & V_W1 || ( vex & VX_RW1 && !( vex & VX_RW0 ) ) )
                         mov eax,MT_QWORD + 1;; FV && EVEX.W1
                     .endif
                 .else
@@ -820,7 +807,7 @@ endif
                     .case MT_QWORD
                         mov al,[rsi].mem_type
                         inc al
-                        .endc
+                       .endc
                     .default
                         .if ( [rsi].opnd[rdx].type & OP_M512 )
                             mov eax,MT_ZWORD + 1
@@ -836,34 +823,34 @@ endif
                         .if edx
                             xor ecx,ecx
                         .endif
-                        .if ( [rsi].opnd[rcx].type == OP_ZMM )
+                        .if ( [rsi].opnd[rcx].type & OP_ZMM )
                             mov eax,MT_ZWORD + 1
-                        .elseif ( [rsi].opnd[rcx].type == OP_YMM )
+                        .elseif ( [rsi].opnd[rcx].type & OP_YMM )
                             mov eax,MT_YWORD + 1
                         .endif
                         .switch tuple
                         .case RWF_QVM
-                            .if eax == MT_ZWORD + 1
+                            .if ( eax == MT_ZWORD + 1 )
                                 mov eax,MT_OWORD + 1
-                            .elseif eax == MT_YWORD + 1
+                            .elseif ( eax == MT_YWORD + 1 )
                                 mov eax,MT_QWORD + 1
                             .else
                                 mov eax,MT_DWORD + 1
                             .endif
                             .endc
                         .case RWF_OVM
-                            .if eax == MT_ZWORD + 1
+                            .if ( eax == MT_ZWORD + 1 )
                                 mov eax,MT_QWORD + 1
-                            .elseif eax == MT_YWORD + 1
+                            .elseif ( eax == MT_YWORD + 1 )
                                 mov eax,MT_DWORD + 1
                             .else
                                 mov eax,MT_WORD + 1
                             .endif
                             .endc
                         .case RWF_HVM
-                            .if eax == MT_ZWORD + 1
+                            .if ( eax == MT_ZWORD + 1 )
                                 mov eax,MT_YWORD + 1
-                            .elseif eax == MT_YWORD + 1
+                            .elseif ( eax == MT_YWORD + 1 )
                                 mov eax,MT_OWORD + 1
                             .else
                                 mov eax,MT_QWORD + 1
@@ -871,17 +858,16 @@ endif
                             .endc
                         .case RWF_T2
                             mov eax,MT_OWORD + 1
-                            .endc .if vex & VX_RW1
+                            .endc .if ( vex & VX_RW1 )
                             mov eax,MT_QWORD + 1
-                            .endc
+                           .endc
                         .case RWF_T4
                             mov eax,MT_YWORD + 1
-                            .endc .if vex & VX_RW1
+                           .endc .if ( vex & VX_RW1 )
                         .case RWF_M128
                             mov eax,MT_OWORD + 1
-                            .endc
+                           .endc
                         .endsw
-                        .endc
                     .endsw
                 .endif
             .endif
@@ -896,15 +882,13 @@ endif
 
                 .if ( !ecx )
 
-                    push rdx
+                    mov  temp,edx
                     lea  ecx,[rax+1]
                     mov  eax,[rsi].opnd[rdx].data32l
                     cdq
                     idiv ecx
-                    pop  rdx
-
+                    mov  edx,temp
                     .ifs ( eax >= SCHAR_MIN && eax <= SCHAR_MAX )
-
                         mov [rsi].opnd[rdx].data32l,eax
                         and [rsi].rm_byte,not MOD_10
                         or  [rsi].rm_byte,MOD_01
@@ -912,9 +896,9 @@ endif
                 .endif
             .endif
 
-            .if ( evex & VX_XMMI )
+            .if ( evex & V_SIB )
 
-                or  bh,0x10
+                or  bh,EVEX_P1_V1
                 mov cl,[rsi].opc_or
                 mov al,cl
                 and ecx,0x1F
@@ -926,12 +910,10 @@ endif
                 and edx,0x08
                 or  eax,edx
 
-                .if ( al & 0x40 && [rsi].opnd[OPNI2].type == OP_YMM )
-
+                .if ( al & 0x40 && [rsi].opnd[OPNI2].type & OP_YMM )
                     and al,not 0x40
                     or  al,0x20
                 .endif
-
                 shl eax,16
                 and ebx,0xFF00FFFF
                 or  ebx,eax
@@ -939,14 +921,13 @@ endif
                 not ecx
                 and ecx,0x40
                 mov al,evex
-                and eax,0xF0
-                or  eax,0x02
+                and eax,V_RXB or V_R1
+                or  eax,V_W1
                 or  eax,ecx
                 mov cl,[rsi].sib
                 and ecx,0xC0
-
                 .if ( cl == 0x80 )
-                    or al,0x20
+                    or al,V_B
                 .endif
                 mov bl,al
                 mov [rsi].opc_or,0
@@ -957,20 +938,21 @@ endif
         shr ebx,8
 
         .if evex
-            or bl,VX2_W or VX2_1
+            or bl,EVEX_P1_W or EVEX_P1_FIXED
             .if ( vex & VX_RW0 ) ;;  W0 and W1 may be set for VEX/EVEX encoding
-                and bl,not VX2_W
+                and bl,not EVEX_P1_W
             .endif
             OutputByte(bl)
             shr ebx,8
-            .if ( bh & VX_SAE && !( [rsi].evexP3 & VX3_L1 ) )
-                and bl,not VX3_L1
+            mov al,[rsi].EvexP2
+            .if ( bh & V_SAE_USED && !al & EVEX_P2_L1 )
+                and bl,not EVEX_P2_L1
             .endif
             OutputByte(bl)
         .else
             mov rdx,rdi
             mov rdi,[rsi].pinstr
-            .if ( [rdi].evex & VX_XMMI )
+            .if ( [rdi].evex & V_SIB )
                 .if ( [rdi].evex == 0x09 ) ;; VEX-Encoded GPR Instructions
 
                     mov al,rmbyte
@@ -979,7 +961,7 @@ endif
                     and al,0x38
                     and bl,0xC7
                     or  bl,al
-                    .if ( [rsi].rex & 0x04 )
+                    .if ( [rsi].Rex.R )
                         and bl,0xBF
                     .endif
                     .if ( [rsi].token == T_BLSMSK )
@@ -1009,14 +991,62 @@ endif
         .endif
     .else
 
+        ; REX2 must be the last prefix
+        ;
+        ; Prefix before REX2:
+        ;
+        ; 0x2E CS      Legal
+        ; 0x36 SS      Legal
+        ; 0x3E DS      Legal
+        ; 0x26 ES      Legal
+        ; 0x4* REX     Illegal
+        ; 0x62 EVEX    Impossible
+        ; 0x64 FS      Legal
+        ; 0x65 GS      Legal
+        ; 0x66 OSIZE   Legal
+        ; 0x67 ASIZE   Legal
+        ; 0xC4 VEX3    Impossible
+        ; 0xC5 VEX2    Impossible
+        ; 0xD5 REX2    Impossible
+        ; 0xF0 LOCK    Legal
+        ; 0xF2 REPNE   Legal
+        ; 0xF3 REPE    Legal
+
+        .if ( [rsi].Prefix.Rex2 )
+
+            OutputByte(0xD5)
+
+            mov cl,[rsi].Rex
+            mov dl,[rsi].Apx
+            mov al,cl
+            and al,REX_B or REX_X or REX_R
+            and dl,APX_B_H or APX_X_H or APX_R_H
+            shl dl,4
+            or  al,dl
+            .if ( al == REX_X )
+                or  cl,REX_B4
+                and cl,not ( REX_R4 or REX_X )
+            .elseif ( al == 0 || al == REX_B or REX_R4 )
+                or  cl,REX_B4
+                and cl,not REX_R4
+            .else
+                and cl,not ( REX_B or REX_X or REX_R or REX_R4 )
+                and al,REX_B4 or REX_X4 or REX_R4
+                or  cl,al
+            .endif
+            mov [rsi].Rex,cl
+        .endif
+
         ;; the REX prefix must be located after the other prefixes
 
-        .if ( [rsi].rex != 0 && [rsi].token != T_RDPID && [rsi].token != T_SENDUIPI )
+        .if ( [rsi].Rex && [rsi].token != T_RDPID && [rsi].token != T_SENDUIPI )
             .if ( [rsi].Ofssize != USE64 )
                 asmerr(2024)
             .endif
-            movzx eax,[rsi].rex
-            or eax,0x40
+            movzx eax,[rsi].Rex
+            .if ( ![rsi].Prefix.Rex2 )
+                or eax,REX_R4
+            .endif
             OutputByte(eax)
         .endif
 
@@ -1042,7 +1072,7 @@ endif
     .endif
 
     xor ecx,ecx
-    .if ( [rsi].iswide )
+    .if ( [rsi].Flags.IsWide )
         inc ecx
     .endif
 
@@ -1056,12 +1086,12 @@ endif
         and al,NOT_BIT_67
         or  al,[rdi].opcode
         OutputByte(eax)
-        .endc
+       .endc
     .case no_RM
         mov al,[rdi].opcode
         or  al,cl
         OutputByte(eax)
-        .endc
+       .endc
     .case no_WDS
         xor ecx,ecx
         ;; no break
@@ -1082,12 +1112,12 @@ endif
 
         mov bl,[rdi].rm_byte
         or  bl,[rsi].rm_byte
-        .if ( [rsi].base_rip ) ;; @RIP
+        .if ( [rsi].Flags.B_RIP ) ;; @RIP
 
             and bl,not MOD_10
         .endif
 
-        movzx eax,[rsi].token
+        mov eax,[rsi].token
         .switch eax
         .case T_RDPID
             mov bl,NOT_BIT_012
@@ -1101,8 +1131,8 @@ endif
 
         ;; no SIB for 16bit
 
-        .return .if ( ( [rsi].Ofssize == USE16 && ![rsi].adrsiz ) ||
-                      ( [rsi].Ofssize == USE32 && [rsi].adrsiz ) )
+        .return .if ( ( [rsi].Ofssize == USE16 && ![rsi].Prefix.Asize ) ||
+                      ( [rsi].Ofssize == USE32 && [rsi].Prefix.Asize ) )
 
         and bl,NOT_BIT_345
         .switch bl
@@ -1113,13 +1143,10 @@ endif
             ;; emit SIB byte; bits 7-6 = Scale, bits 5-3 = Index, bits 2-0 = Base
 
             OutputByte([rsi].sib)
-            .endc
         .endsw
-        .endc
     .endsw
     ret
-
-output_opc endp
+    endp
 
 
 output_data proc __ccall uses rdi rbx determinant:int_t, index:int_t
@@ -1128,7 +1155,7 @@ output_data proc __ccall uses rdi rbx determinant:int_t, index:int_t
 
     xor ebx,ebx
     mov rdi,[rsi].pinstr
-    movzx eax,[rsi].token
+    mov eax,[rsi].token
     .switch eax
     .case T_ANDN
     .case T_MULX
@@ -1186,8 +1213,8 @@ output_data proc __ccall uses rdi rbx determinant:int_t, index:int_t
             mov ebx,1
             .endc
         .case MOD_00 ;; direct; base and/or index with no disp
-            .if ( ( [rsi].Ofssize == USE16 && ![rsi].adrsiz ) ||
-                  ( [rsi].Ofssize == USE32 && [rsi].adrsiz ) )
+            .if ( ( [rsi].Ofssize == USE16 && ![rsi].Prefix.Asize ) ||
+                  ( [rsi].Ofssize == USE32 && [rsi].Prefix.Asize ) )
 
                 mov al,[rsi].rm_byte
                 and al,BIT_012
@@ -1237,8 +1264,8 @@ output_data proc __ccall uses rdi rbx determinant:int_t, index:int_t
             .endc
         .case MOD_10  ;; 16- or 32-bit displacement
             mov ebx,4
-            .if ( ( [rsi].Ofssize == USE16 && ![rsi].adrsiz ) ||
-                  ( [rsi].Ofssize == USE32 && [rsi].adrsiz ) )
+            .if ( ( [rsi].Ofssize == USE16 && ![rsi].Prefix.Asize ) ||
+                  ( [rsi].Ofssize == USE32 && [rsi].Prefix.Asize ) )
 
                 mov ebx,2
             .endif
@@ -1341,9 +1368,9 @@ check_3rd_operand proc __ccall uses rdi rbx
 
         .if ( [rsi].token >= VEX_START )
 
-            .return( NOT_ERROR ) .if ( [rsi].opnd[OPNI3].type & ( OP_XMM or OP_YMM or OP_ZMM or OP_K ) )
+            .return( NOT_ERROR ) .if ( [rsi].opnd[OPNI3].type & ( OP_V or OP_K ) )
 
-            movzx eax,[rsi].token
+            mov eax,[rsi].token
             .switch eax
             .case T_ANDN
             .case T_MULX
@@ -1385,7 +1412,7 @@ output_3rd_operand proc __ccall uses rdi rbx
 
     .elseif ( [rbx].opnd_class.opnd_type_3rd == OP3_HID )
 
-        movzx eax,[rsi].token
+        mov eax,[rsi].token
         sub eax,T_CMPEQPD
         mov ecx,8
         xor edx,edx
@@ -1426,7 +1453,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
 
     mov determinant,[rbx+rcx].opnd_class.opnd_type[OPND1]
     mov ebx,[rsi].opnd[OPNI2].type
-    movzx eax,[rsi].token
+    mov eax,[rsi].token
     sub eax,VEX_START
     lea rcx,vex_flags
 
@@ -1493,7 +1520,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
 
                     ;; 8-bit register, so output 8-bit data
 
-                    mov [rsi].opsiz,0
+                    mov [rsi].Prefix.Osize,0
                     mov ebx,OP_I8
                     mov rax,[rsi].opnd[OPNI2].InsFixup
                     .if rax != NULL
@@ -1516,9 +1543,9 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
 
                     ;; 32- or 64-bit register, so output 32-bit data
 
-                    mov [rsi].opsiz,1
+                    mov [rsi].Prefix.Osize,1
                     .if [rsi].Ofssize
-                        mov [rsi].opsiz,0
+                        mov [rsi].Prefix.Osize,0
                     .endif
                     mov ebx,OP_I32
 
@@ -1529,13 +1556,13 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
                     .switch OperandSize(opnd1, rsi)
                     .case 1
                         mov ebx,OP_I8
-                        mov [rsi].opsiz,0
-                        .endc
+                        mov [rsi].Prefix.Osize,0
+                       .endc
                     .case 2
                         mov ebx,OP_I16
-                        mov [rsi].opsiz,0
+                        mov [rsi].Prefix.Osize,0
                         .if [rsi].Ofssize
-                            mov [rsi].opsiz,1
+                            mov [rsi].Prefix.Osize,1
                         .endif
                         .endc
 
@@ -1545,9 +1572,9 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
                     .case 8
                     .case 4
                         mov ebx,OP_I32
-                        mov [rsi].opsiz,1
+                        mov [rsi].Prefix.Osize,1
                         .if [rsi].Ofssize
-                            mov [rsi].opsiz,0
+                            mov [rsi].Prefix.Osize,0
                         .endif
                         .endc
                     .default
@@ -1565,7 +1592,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
 
             .if ( ebx & eax )
 
-                .endc .if ( [rsi].constsizefixed ) && ebx != OP_I8
+                .endc .if ( [rsi].Flags.ConstSizeFixed ) && ebx != OP_I8
 
                 ;; v2.03: lower bound wasn't checked
                 ;; range of unsigned 8-bit is -128 - +255
@@ -1595,7 +1622,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
         .case OP_I8 ;; arith, IMUL
 
             mov edx,eax
-            movzx eax,[rsi].token
+            mov eax,[rsi].token
             .endc .if MODULE.NoSignExtend && ( eax == T_AND || eax == T_OR || eax == T_XOR )
 
             mov rax,[rsi].opnd[OPNI2].InsFixup
@@ -1604,7 +1631,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
                .endc .if ( rcx && [rcx].asym.state != SYM_UNDEFINED ) ;; external? then skip
             .endif
 
-            .if !( [rsi].constsizefixed )
+            .if !( [rsi].Flags.ConstSizeFixed )
 
                 movsx eax,byte ptr [rsi].opnd[OPNI2].data32l
                 movsx ecx,word ptr [rsi].opnd[OPNI2].data32l
@@ -1668,12 +1695,12 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
                 movzx eax,[rdi].opclsidx
                 imul eax,eax,opnd_class
                 lea rcx,opnd_clstab
-                .if [rcx+rax].opnd_class.opnd_type_3rd != OP3_NONE && !( [rdi].evex & VX_XMMI )
+                .if ( [rcx+rax].opnd_class.opnd_type_3rd != OP3_NONE && ![rdi].evex & V_SIB )
                     output_3rd_operand()
                 .endif
                 .if [rdi].byte1_info == F_0F0F ;; output 3dNow opcode?
                     movzx eax,[rdi].opcode
-                    .if [rsi].iswide
+                    .if [rsi].Flags.IsWide
                         or eax,1
                     .endif
                     OutputByte(eax)
@@ -1766,7 +1793,7 @@ check_operand_2 proc __ccall uses rdi rbx opnd1:int_t
                     .endif
                 .endif
 
-                .if ( !( [rsi].undef_sym ) && ( !eax || !rdx || ecx != SYM_UNDEFINED ) )
+                .if ( !( [rsi].Flags.SymUndefined ) && ( !eax || !rdx || ecx != SYM_UNDEFINED ) )
 
                     asmerr(2023)
                 .endif
@@ -1807,10 +1834,8 @@ check_operand_2 endp
 
 codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint_t
 
-  local evex:byte
-
     ldr rsi,CodeInfo
-    mov evex,[rsi].prefix
+
     mov rdi,[rsi].pinstr
     ;;
     ;; privileged instructions ok?
@@ -1836,16 +1861,12 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
         .endif
     .endif
 
-    movzx eax,[rsi].token
-    sub   eax,VEX_START
-    lea   rcx,vex_flags
-
+    mov eax,[rsi].token
+    sub eax,VEX_START
+    lea rcx,vex_flags
     .if ( [rsi].token >= VEX_START && ( byte ptr [rcx+rax] & VX_L ) )
-
         .if ( ebx & ( OP_YMM or OP_M256 or OP_ZMM or OP_M512 ) )
-
             .if [rsi].opnd[OPNI2].type & OP_XMM && !( byte ptr [rcx+rax] & VX_HALF )
-
                 .return( asmerr( 2070 ) )
             .endif
             .if ( ebx & OP_ZMM )
@@ -1866,14 +1887,13 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
     .repeat
 
         movzx eax,[rdi].opclsidx
-        imul  eax,eax,opnd_class
-        lea   rcx,opnd_clstab
-        mov   ecx,[rcx+rax].opnd_class.opnd_type[OPND1]
+        imul eax,eax,opnd_class
+        lea rcx,opnd_clstab
+        mov ecx,[rcx+rax].opnd_class.opnd_type[OPND1]
 
         ;; v2.06: simplified
 
         .if ( ecx == OP_NONE && ebx == OP_NONE )
-
             output_opc()
             .if ( MODULE.curr_file[TLST] )
                 LstWrite(LSTTYPE_CODE, oldofs, NULL)
@@ -1896,17 +1916,16 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
             .case OP_I8_U ;; INT xx; OUT xx, AL
                 .if ( [rsi].opnd[OPND1].data32l <= UCHAR_MAX &&
                       [rsi].opnd[OPND1].data32l >= SCHAR_MIN )
-
                     check_operand_2( OP_I8 )
                 .endif
                 .endc
             .case OP_I_3 ;; INT 3
-                .if [rsi].opnd[OPND1].data32l == 3
+                .if ( [rsi].opnd[OPND1].data32l == 3 )
                     check_operand_2( OP_NONE )
                 .endif
                 .endc
             .default
-                .endc .if ( evex & PREFIX_EVEX && [rdi].evex == 0 )
+                .endc .if ( [rsi].Prefix.Evex && [rdi].evex == 0 )
                 check_operand_2( [rsi].opnd[OPND1].type )
             .endsw
             .if ( eax == NOT_ERROR )
@@ -1916,13 +1935,10 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
                 .return NOT_ERROR
             .endif
         .endif
-
-        add [rsi].pinstr,instr_item
-        mov rdi,[rsi].pinstr
-
+        add rdi,instr_item
+        mov [rsi].pinstr,rdi
     .until ( [rdi].flags & II_FIRST )
     .return asmerr( 2070 )
-
-codegen endp
+    endp
 
     end

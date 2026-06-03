@@ -247,11 +247,10 @@ endif
 
         .if ( Options.output_format == OFORMAT_OMF )
 
-           .new CodeInfo:code_info
+           .new CodeInfo:code_info = {0}
             mov CodeInfo.opnd[0].InsFixup,NULL
             mov CodeInfo.token,T_NOP
             mov CodeInfo.pinstr,GetInstrTable(T_NOP)
-            mov CodeInfo.flags,0
             mov CodeInfo.mem_type,MT_EMPTY
             idata_fixup( &CodeInfo, 0, &opndx )
             .if ( MODULE.start_fixup )

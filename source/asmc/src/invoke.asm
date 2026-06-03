@@ -542,11 +542,11 @@ fast_param proc __ccall private uses rsi rdi rbx \
         .if ( [rdi].kind == EXPR_REG && !( [rdi].indirect ) )
             mov param_reg,eax
         .endif
-        .if ( edx & ( OP_XMM or OP_YMM or OP_ZMM ) )
+        .if ( edx & OP_V )
             inc isfloat
             add ecx,16
         .endif
-        .if ( edx & OP_R || ( ecx < 32 && edx & ( OP_XMM or OP_YMM or OP_ZMM ) ) )
+        .if ( edx & OP_R || ( ecx < 32 && edx & OP_V ) )
 
             mov reg,eax
             mov eax,1
@@ -723,7 +723,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
 
             ; - it may however be sign extended..
 
-            .if ( [rax].special_item.value & ( OP_XMM or OP_YMM or OP_ZMM ) )
+            .if ( [rax].special_item.value & OP_V )
                 add ecx,16
             .endif
             xor edx,edx
@@ -932,7 +932,7 @@ push_const_128:
             .if ( stack == FALSE )
 
                 mov eax,GetValueSp( ebx )
-                .if !( eax & ( OP_XMM or OP_YMM or OP_ZMM ) )
+                .if !( eax & OP_V )
                     jmp arg_error
                 .endif
                 mov edx,T_VMOVAPS
@@ -2612,7 +2612,7 @@ endif
             ; v2.06: check if register is valid to be pushed.
             ; ST(n), MMn, XMMn, YMMn and special registers are NOT valid!
             ;
-            .if ( optype & ( OP_STI or OP_MMX or OP_XMM or OP_YMM or OP_ZMM or OP_RSPEC ) )
+            .if ( optype & ( OP_STI or OP_MMX or OP_V or OP_RSPEC ) )
                 .return( asmerr( 2114, ParamId ) )
             .endif
             mov rcx,r0flags
@@ -2742,21 +2742,21 @@ endif
                             add ecx,(T_RAX - T_AL)
                         .elseif ( ecx >= T_SPL && ecx <= T_DIL )
                             add ecx,(T_RSP - T_SPL)
-                        .elseif ( ecx >= T_R8B && ecx <= T_R15B )
+                        .elseif ( ecx >= T_R8B && ecx < T_R8W )
                             add ecx,(T_R8 - T_R8B)
                         .endif
                         .endc
                     .case 2
                         .if ( ecx >= T_AX && ecx <= T_DI )
                             add ecx,(T_RAX - T_AX)
-                        .elseif ( ecx >= T_R8W && ecx <= T_R15W )
+                        .elseif ( ecx >= T_R8W && ecx < T_R8D )
                             add ecx,(T_R8 - T_R8W)
                         .endif
                         .endc
                     .case 4
                         .if ( ecx >= T_EAX && ecx <= T_EDI )
                             add ecx,(T_RAX - T_EAX)
-                        .elseif ( ecx >= T_R8D && ecx <= T_R15D )
+                        .elseif ( ecx >= T_R8D && ecx < T_R8 )
                             add ecx,(T_R8 - T_R8D)
                         .endif
                         .endc

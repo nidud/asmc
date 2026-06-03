@@ -74,6 +74,7 @@ Memory operands are optimized for expression evaluation.
 <tr><td>MOV mem, mem</td><td>Valid</td><td>Valid</td><td>Move m.field to m.field</td></tr>
 <tr><td>CMP mem, imm</td><td>Valid</td><td>Valid</td><td>Compare imm to m.field</td></tr>
 <tr><td>TEST mem, imm</td><td>Valid</td><td>Valid</td><td>Logical Compare m.field</td></tr>
+<tr><td>AND mem, imm</td><td>Valid</td><td>Valid</td><td>Logical AND on m.field</td></tr>
 <tr><td>OR mem, imm</td><td>Valid</td><td>Valid</td><td>Logical Inclusive OR on m.field</td></tr>
 <tr><td>XOR mem, imm</td><td>Valid</td><td>Valid</td><td>Logical Exclusive OR on m.field</td></tr>
 </table>

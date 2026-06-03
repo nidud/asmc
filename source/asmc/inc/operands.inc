@@ -50,6 +50,7 @@ OP_SR386	equ 0x08000000 ; FS, GS registers
 OP_ST		equ 0x10000000 ; ST0 register
 OP_ST_REG	equ 0x20000000 ; ST1-ST7 registers
 OP_I48		equ 0x40000000 ; used for immediate FAR call/jmp
+OP_H		equ 0x80000000 ; high-number registers 16-31
 
 ; OP_I_1, OP_I_3 and OP_I8_U aren't flags. They are
 ; used as values in SWITCH statements only. It's possible to
@@ -71,6 +72,15 @@ OP_RGT16	equ OP_R32 or OP_R64
 OP_R		equ OP_R8 or OP_R16 or OP_R32 or OP_R64
 OP_SR		equ OP_SR86 or OP_SR386
 OP_STI		equ OP_ST or OP_ST_REG
+
+OP_HR8		equ OP_H or OP_R8
+OP_HR16		equ OP_H or OP_R16
+OP_HR32		equ OP_H or OP_R32
+OP_HR64		equ OP_H or OP_R64
+OP_HXMM		equ OP_H or OP_XMM
+OP_HYMM		equ OP_H or OP_YMM
+OP_HZMM		equ OP_H or OP_ZMM
+OP_V		equ OP_XMM or OP_YMM or OP_ZMM
 
 OP_I		equ OP_I8 or OP_I16 or OP_I32
 OP_IGE8		equ OP_I8 or OP_I16 or OP_I32

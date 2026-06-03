@@ -168,76 +168,41 @@ OpCls macro op1, op2, op3
     exitm<OPC_&op1&&op2&&op3&>
     endm
 InstFlags macro prefix, first, rm_info, op_dir
-    exitm<prefix or (first shl 3) or (rm_info shl 4) or (op_dir shl 7)>
+    exitm<prefix or ((first and 1) shl 3) or (rm_info shl 4) or (op_dir shl 7)>
     endm
 avxins macro alias, tok, string, cpu, flgs
     exitm<>
     endm
-insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    exitm<instr_item { opcls, byte1_info, InstFlags(prefix, 1, rm_info, op_dir), evex, cpu, opcode, rm_byte }>
-    endm
-insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs
-    exitm<instr_item { opcls, byte1_info, InstFlags(prefix, 1, rm_info, op_dir), evex, cpu, opcode, rm_byte }>
-    endm
-insv macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs, vex
-    exitm<instr_item { opcls, byte1_info, InstFlags(prefix, 1, rm_info, op_dir), evex, cpu, opcode, rm_byte }>
-    endm
-insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    exitm<instr_item { opcls, byte1_info, InstFlags(prefix, 0, rm_info, op_dir), evex, cpu, opcode, rm_byte }>
-    endm
-insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    exitm<instr_item { opcls, byte1_info, InstFlags(prefix, 1, rm_info, op_dir), evex, cpu, opcode, rm_byte }>
+insa macro tok, string, first, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, flags, vex, evex
+    exitm<instr_item { opcls, byte1_info, InstFlags(prefix, first, rm_info, op_dir), evex, cpu, opcode, rm_byte }>
     endm
 InstrTable label instr_item
 include instruct.inc
 include instr64.inc
-insa(NULL,0,OpCls(NONE,NONE,NONE),0,0,0,0,0,0,0,0) ; last entry - needed for its ".first" (=1) field
-undef avxins
-undef insm
-undef insn
-undef insx
-undef insv
+insa(NULL,0,1,OpCls(NONE,NONE,NONE),0,0,0,0,0,0,0,0,0,0) ; last entry - needed for its ".first" (=1) field
 undef insa
 
 ; define symbolic indices for InstrTable[]
 
 .enum res_idx {
-avxins macro alias, tok, string, cpu, flgs
-    endm
-insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+insa macro tok, string, first, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, flags, vex, evex
+if first eq 1
     exitm<T_&tok&_I,>
-    endm
-insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs
-    exitm<T_&tok&_I,>
-    endm
-insv macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs, vex
-    exitm<T_&tok&_I,>
-    endm
-insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    exitm<T_&tok&_&suffix&,>
-    endm
-insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    exitm<T_&tok&_&suffix&,>
+else
+    exitm<T_&tok&_&string&,>
+endif
     endm
 include instruct.inc
-undef insm
-undef insn
 undef insa
 undef avxins
-insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+insa macro tok, string, first, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, flags, vex, evex
+if first eq 1
     exitm<T_&tok&_I64,>
-    endm
-insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    exitm<T_&tok&_&suffix&_I64,>
-    endm
-insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    exitm<T_&tok&_&suffix&_I64,>
+else
+    exitm<T_&tok&_&string&_I64,>
+endif
     endm
 include instr64.inc
-undef insm
-undef insn
-undef insx
-undef insv
 undef insa
 }
 
@@ -245,27 +210,15 @@ undef insa
 ; This is needed because instructions often need more than one entry in InstrTable.
 
 optable_idx label word
-insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+insa macro tok, string, first, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, flags, vex, evex
+if first eq 1
     dw T_&tok&_I
-    endm
-insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs
-    dw T_&tok&_I
-    endm
-insv macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs, vex
-    dw T_&tok&_I
-    endm
-insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    endm
-insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+endif
     endm
 avxins macro alias, tok, string, cpu, flgs
     dw T_&alias&_I
     endm
 include instruct.inc
-undef insm
-undef insn
-undef insx
-undef insv
 undef insa
 undef avxins
 undef OpCls
@@ -306,27 +259,14 @@ endif
     endm
 include directve.inc
 undef res
-insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+
+insa macro tok, string, first, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, flags, vex, evex
+if first eq 1
 if @SizeStr(string) gt MAX_RESW_LEN
     MAX_RESW_LEN = @SizeStr(string)
 endif
     exitm<db "&string&">
-    endm
-insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs
-if @SizeStr(string) gt MAX_RESW_LEN
-    MAX_RESW_LEN = @SizeStr(string)
 endif
-    exitm<db "&string&">
-    endm
-insv macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs, vex
-if @SizeStr(string) gt MAX_RESW_LEN
-    MAX_RESW_LEN = @SizeStr(string)
-endif
-    exitm<db "&string&">
-    endm
-insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    endm
-insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
     endm
 avxins macro alias, tok, string, cpu, flgs
 if @SizeStr(string) gt MAX_RESW_LEN
@@ -335,10 +275,6 @@ endif
     exitm<db "&string&">
     endm
 include instruct.inc
-undef insx
-undef insv
-undef insm
-undef insn
 undef insa
 undef avxins
 
@@ -363,27 +299,16 @@ res macro tok, string, value, bytval, flags, cpu, sflags
     endm
 include directve.inc
 undef res
-insa macro tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex
-    ReservedWord { 0, @SizeStr(string), 0, HASH(string) }
-    endm
-insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    endm
-insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    endm
-insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flags
+
+insa macro tok, string, first, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, flags, vex, evex
+if first eq 1
     ReservedWord { 0, @SizeStr(string), flags, HASH(string) }
-    endm
-insv macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flags, vex
-    ReservedWord { 0, @SizeStr(string), flags, HASH(string) }
+endif
     endm
 avxins macro alias, tok, string, rwf, flgs
     ReservedWord { 0, @SizeStr(string), rwf or RWF_VEX, HASH(string) }
     endm
 include instruct.inc
-undef insx
-undef insv
-undef insm
-undef insn
 undef insa
 undef avxins
 ResWordCount equ ($ - ResWordTable) / ReservedWord
@@ -406,25 +331,17 @@ vex_flags label byte
     ; be equal to the one in instruct.h! ( this is to be improved.)
     ; For a description of the VX_ flags see codegen.inc
 
-insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    endm
-insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    endm
-insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    endm
-insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flags
-    endm
-insv macro tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flags,vex
+insa macro tok, string, first, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, flags, vex, evex
+if first eq 1
+if flags and RWF_VEX
     db vex
+endif
+endif
     endm
 avxins macro alias, tok, string, cpu, flgs
     db flgs
     endm
 include instruct.inc
-undef insx
-undef insv
-undef insm
-undef insn
 undef insa
 undef avxins
 

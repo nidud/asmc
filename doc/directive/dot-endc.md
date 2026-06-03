@@ -2,12 +2,11 @@ Asmc Macro Assembler Reference
 
 ## .ENDC
 
-.ENDC closes a [.CASE](dot-case.md) statement.
+**.ENDC [[ ( _level_ ) ]] [[ .IF ( _expression_ ) ]]**
 
-The name was separated from [.BREAK](dot-break.md) to have more flexibility with regards to control flow of loops. However, .ENDC have the same qualities as [.BREAK](dot-break.md) and thus can be used in combination with [.IF](dot-if.md):
+.ENDC is a directive that marks the end of a [.CASE](dot-case.md) statement. It is used to indicate that the current case block has ended and control should be transferred to the end of the [.SWITCH](dot-switch.md) statement.
 
-- .ENDC [.IF](dot-if.md) ( al == 2 )
-
+_level_ is an optional parameter that specifies the level of nesting for the switch statement. If not specified, it defaults to 0, indicating that it ends the current case block.
 
 #### See Also
 

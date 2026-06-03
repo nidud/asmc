@@ -1496,12 +1496,31 @@ SwitchExit proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .return asmerr( 1011 )
     .endif
     ExpandCStrings( tokenarray )
+
     imul ebx,i,asm_tok
-    add  rbx,tokenarray
+    add rbx,tokenarray
     lea rdi,buffer
     mov eax,[rbx].tokval
     mov cmd,eax
-    xor ecx,ecx     ; exit level 0,1,2,3
+
+    xor ecx,ecx ; exit level 0,1,2,3
+
+    ; v2.39: .endc( level )
+
+    .if ( eax == T_DOT_ENDC )
+        .if ( [rbx+asm_tok].token == T_OP_BRACKET && [rbx+asm_tok*3].token == T_CL_BRACKET )
+
+            mov rdx,[rbx+2*asm_tok].string_ptr
+            mov dl,[rdx]
+            .if ( dl >= '0' && dl <= '9' )
+                sub dl,'0'
+                mov cl,dl
+                add i,3
+                add rbx,asm_tok*3
+            .endif
+        .endif
+    .endif
+
     .switch eax
     .case T_DOT_DEFAULT
         .if ( [rsi].ElseOccured )
@@ -1511,6 +1530,7 @@ SwitchExit proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .return asmerr( 2008, [rbx].tokpos )
         .endif
         mov [rsi].ElseOccured,1
+
     .case T_DOT_CASE
         .while ( rsi && [rsi].cmd != HLL_SWITCH )
             mov rsi,[rsi].next
@@ -1714,10 +1734,11 @@ endif
         mov eax,TokenCount
         mov i,eax
        .endc
-      .case T_DOT_ENDC
-        .for ( : rsi, [rsi].cmd != HLL_SWITCH : rsi = [rsi].next )
+
+    .case T_DOT_ENDC
+        .for ( : rsi && [rsi].cmd != HLL_SWITCH : rsi = [rsi].next )
         .endf
-        .for ( : rsi, ecx : ecx-- )
+        .for ( : rsi && ecx : ecx-- )
             .for ( rsi = [rsi].next: rsi, [rsi].cmd != HLL_SWITCH: rsi = [rsi].next )
             .endf
         .endf
@@ -1809,7 +1830,7 @@ endif
         .endif
         .endc
 
-      .case T_DOT_GOTOSW
+    .case T_DOT_GOTOSW
         .if ( [rbx+asm_tok].token == T_OP_BRACKET && [rbx+3*asm_tok].token == T_COLON )
 
             ; .gotosw(n:

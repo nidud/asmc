@@ -7,48 +7,48 @@ endif
     .pragma warning(disable:7007)
     .code
     .switch jmp eax
-      .case 1
+    .case 1
         .gotosw
         .gotosw(2)
         .gotosw .if cl
         .endc
-      .case 2
+    .case 2
         .gotosw(1) .if cl
         .switch al
-          .case 1
+        .case 1
             .gotosw
             .gotosw .if cl
-          .case 2
+        .case 2
             .gotosw(1:)
             .gotosw(1:) .if cl
             .endc
-          .case 3
+        .case 3
             .switch al
-              .case 1
+            .case 1
                 .gotosw
                 .gotosw .if cl
-              .case 2
+            .case 2
                 .gotosw(1:)
                 .gotosw(1:) .if cl
-              .case 3
+            .case 3
                 .gotosw(2:)
                 .gotosw(2:) .if cl
                 .endc
-              .case 4
+            .case 4
                 .switch al
-                  .case 1
+                .case 1
                     .gotosw
                     .gotosw .if cl
-                  .case 2
+                .case 2
                     .gotosw(1:)
                     .gotosw(1:) .if cl
-                  .case 3
+                .case 3
                     .gotosw(2:)
                     .gotosw(2:) .if cl
-                  .case 4
+                .case 4
                     .gotosw(3:)
                     .gotosw(3:) .if cl
-                  .case 5
+                .case 5
                     .gotosw(3:1) .if cl
                     .gotosw(3:2)
                     .endc

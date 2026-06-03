@@ -2738,8 +2738,7 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         RunLineQueue()
     .endif
     .return rc
-
-HllStartDir endp
+    endp
 
 ;
 ; .ENDIF, .ENDW, .UNTIL and .UNTILCXZ directives.
@@ -2770,9 +2769,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov cmd,eax
 
     .switch eax
-
-      .case T_DOT_ENDIF
-
+    .case T_DOT_ENDIF
         .if ( ecx != HLL_IF )
             .return asmerr( 1011 )
         .endif
@@ -2785,9 +2782,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             AddLineQueueX( "%s%s", GetLabelStr( eax, rdi ), LABELQUAL )
         .endif
         .endc
-
-      .case T_DOT_ENDW
-
+    .case T_DOT_ENDW
         .if ( ecx != HLL_WHILE )
             .return asmerr( 1011 )
         .endif
@@ -2798,7 +2793,6 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if eax
             AddLineQueueX( "%s%s", GetLabelStr( eax, rdi ), LABELQUAL )
         .endif
-
         inc i
         .if ( [rsi].Expression )
             ExpandHllExpression( rsi, &i, tokenarray, LSTART, 1, rdi )
@@ -2806,16 +2800,12 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             QueueTestLines( [rsi].condlines )
         .endif
         .endc
-
-      .case T_DOT_UNTILCXZ
-
+    .case T_DOT_UNTILCXZ
         .if ( ecx != HLL_REPEAT )
             .return asmerr( 1010, [rbx+rdx].string_ptr )
         .endif
-
         inc i
         lea rbx,[rbx+rdx+asm_tok]
-
         mov eax,[rsi].labels[LTEST*4]
         .if eax
 
@@ -2827,27 +2817,21 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; read in optional (simple) expression
 
         .if ( [rbx].token != T_FINAL )
-
             mov ecx,LSTART
             .if ( Options.strict_masm_compat == 0 )
 
                 ; <expression> ? .BREAK
 
                 .if ( ![rsi].labels[LEXIT*4] )
-
                     mov [rsi].labels[LEXIT*4],GetHllLabel()
                 .endif
                 mov ecx,LEXIT
             .endif
             mov rc,EvaluateHllExpression(rsi, &i, tokenarray, ecx, 0, rdi)
-
             .if ( eax == NOT_ERROR )
-
                 .if ( MODULE.masm_compat_gencode == 1 && cmd == T_DOT_UNTILCXZ )
-
                     mov rc,CheckCXZLines( rdi )
                 .endif
-
                 .if ( eax == NOT_ERROR )
 
                     ; write condition lines
@@ -2862,25 +2846,20 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
         .else
             .if ( MODULE.masm_compat_gencode == 1 )
-
                 AddLineQueueX( "loop %s", GetLabelStr( [rsi].labels[LSTART*4], rdi ) )
             .else
                 RenderUntilXX( rsi, cmd )
             .endif
         .endif
         .endc
-
-      .case T_DOT_UNTILA .. T_DOT_UNTILSD
-      .case T_DOT_UNTIL
-
+    .case T_DOT_UNTILA .. T_DOT_UNTILSD
+    .case T_DOT_UNTIL
         .if ( ecx != HLL_REPEAT )
             .return asmerr( 1010, [rbx+rdx].string_ptr )
         .endif
-
         inc i
         lea rbx,[rbx+rdx+asm_tok]
         mov eax,[rsi].labels[LTEST*4]
-
         .if ( eax ) ; v2.11: LTEST only needed if .CONTINUE has occured
             AddLineQueueX( "%s%s", GetLabelStr(eax, rdi), LABELQUAL )
         .endif
@@ -2954,8 +2933,7 @@ HllEndDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         RunLineQueue()
     .endif
     .return( rc )
-
-HllEndDir endp
+    endp
 
 
 HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, tokenarray:token_t,
@@ -2976,13 +2954,10 @@ HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, token
     add  rbx,tokenarray
 
     .if ( [rbx].token != T_FINAL )
-
         .if ( [rbx].token == T_DIRECTIVE )
-
             mov flags,[rsi].flags
             mov [rsi].flags,0
             mov eax,[rbx].tokval
-
             .switch eax
             .case T_DOT_IFSD
                 mov [rsi].Signed,1
@@ -3040,7 +3015,6 @@ HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, token
     .else
 
         AddLineQueueX( " jmp %s", GetLabelStr( [rsi].labels[rcx*4], rdi ) )
-
         mov rdx,hll1
         .if ( [rdx].hll_item.cmd == HLL_SWITCH )
             ;
@@ -3049,7 +3023,6 @@ HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, token
             ;
             mov rsi,rdx
             mov rax,rsi
-
             .while [rsi].caselist
                 mov rsi,[rsi].caselist
             .endw
@@ -3059,8 +3032,7 @@ HllContinueIf proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, token
         .endif
     .endif
     .return rc
-
-HllContinueIf endp
+    endp
 
 
 ;
@@ -3114,30 +3086,22 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ( [rsi].labels[LEXIT*4] == 0 )
             mov [rsi].labels[LEXIT*4],GetHllLabel()
         .endif
-
         AddLineQueueX( "jmp %s", GetLabelStr( [rsi].labels[LEXIT*4], rdi ) )
-
         .if ( [rsi].labels[LTEST*4] > 0 )
-
             AddLineQueueX( "%s%s", GetLabelStr( [rsi].labels[LTEST*4], rdi ), LABELQUAL )
             mov [rsi].labels[LTEST*4],0
         .endif
-
         inc i
         .if ( cmd == T_DOT_ELSE )
-
             mov [rsi].ElseOccured,1
         .else
 
             ; create new labels[LTEST] label
 
             mov [rsi].labels[LTEST*4],GetHllLabel()
-
             mov rc,EvaluateHllExpression( rsi, &i, tokenarray, LTEST, 0, rdi )
             .if ( eax == NOT_ERROR )
-
                 .if ( [rsi].Expression )
-
                     ExpandHllExpression( rsi, &i, tokenarray, LTEST, 0, rdi )
                     mov i,TokenCount
                 .else
@@ -3173,18 +3137,14 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             add rbx,asm_tok*3
             mov eax,cmd
         .endif
-
         .for ( : rsi && ( [rsi].cmd == HLL_IF || [rsi].cmd == HLL_SWITCH ) : rsi = [rsi].next )
-
         .endf
-
         .while ( rsi && ecx )
             .for ( rsi = [rsi].next : rsi && ( [rsi].cmd == HLL_IF || [rsi].cmd == HLL_SWITCH ),
                  : rsi = [rsi].next )
             .endf
             dec ecx
         .endw
-
         .if ( rsi == 0 )
             .return asmerr( 1011 )
         .endif
@@ -3237,8 +3197,7 @@ HllExitDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         RunLineQueue()
     .endif
     .return( rc )
-
-HllExitDir endp
+    endp
 
 
 ; check if an hll block has been left open. called after pass 1

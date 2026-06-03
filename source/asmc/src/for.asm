@@ -193,7 +193,7 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
                 movzx esi,word ptr [rsi]
                 mov eax,[rbx].tokval
                 .if ( dh == T_NUM && esi == '0' && ( ( eax >= T_AL && eax <= T_EDI ) ||
-                      ( MODULE.Ofssize == USE64 && eax >= T_R8B && eax <= T_R15 ) ) )
+                      ( MODULE.Ofssize == USE64 && eax >= T_R8B && eax <= T_R31 ) ) )
                     tsprintf( rdi, "%r %r, %r", T_XOR, eax, eax )
                 .else
                     tsprintf( rdi, "%r %s, %s", T_MOV, [rbx].tokpos, rcx )

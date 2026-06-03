@@ -19,8 +19,9 @@ IS_CONDJMP macro inst
 ; opsize byte (0x66) to be generated?
 
 OPSIZE proto fastcall s:byte, x:abs {
-    cmp cl,x
-    setne al
+    cmp     cl,x
+    setne   al
+    retm    <al>
     }
 
 segm_override proto __ccall :ptr expr, :ptr code_info
@@ -50,7 +51,7 @@ jumpExtend proc fastcall private uses rsi rbx CodeInfo:ptr code_info, far_flag:i
     .endif
     mov al,[rsi].Ofssize
     .if ( ebx )
-        .if ( [rsi].opsiz )
+        .if ( [rsi].Prefix.Osize )
             ; it's 66 EA OOOO SSSS or 66 EA OOOOOOOO SSSS
             mov ebx,8
             .if al
@@ -228,7 +229,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                 mov [rsi].mem_type,MT_FAR
             .endif
         .endif
-        .if ( ( [rsi].mem_type == MT_EMPTY || [rsi].mem_type == MT_NEAR ) && !( [rsi].isfar ) )
+        .if ( ( [rsi].mem_type == MT_EMPTY || [rsi].mem_type == MT_NEAR ) && !( [rsi].Flags.IsFar ) )
 
             ; if the label is FAR - or there is a segment override
             ; which equals assumed value of CS - and there is no type cast,
@@ -287,7 +288,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                     cmp     al,ah
                     movzx   eax,al
                     setne   al
-                    mov     [rsi].opsiz,al
+                    mov     [rsi].Prefix.Osize,al
                     sub     edx,eax
                     mov     al,[rbx].Ofssize
                 .endif
@@ -297,7 +298,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                     mov ecx,OP_I16
                     dec edx     ; 16 bit displacement
                 .endif
-                movzx eax,[rsi].token
+                mov eax,[rsi].token
                 .if ( IS_CONDJMP( eax ) )
                     dec edx     ; 1 extra byte for opcode ( 0F )
                 .endif
@@ -388,7 +389,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
         .switch al
         .case MT_FAR
             .if( IS_JMPCALL( [rsi].token ) )
-                mov [rsi].isfar,1
+                mov [rsi].Flags.IsFar,1
             .endif
         .case MT_NEAR
             ; v2.04: 'if' added
@@ -404,8 +405,8 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
     ; handle far JMP + CALL?
 
     mov al,[rsi].mem_type
-    .if ( IS_JMPCALL( [rsi].token ) && ( [rsi].isfar || al == MT_FAR ) )
-        mov [rsi].isfar,1 ; flag isn't set if explicit is true
+    .if ( IS_JMPCALL( [rsi].token ) && ( [rsi].Flags.IsFar || al == MT_FAR ) )
+        mov [rsi].Flags.IsFar,1 ; flag isn't set if explicit is true
         .switch al
         .case MT_NEAR
             .if( [rbx].explicit || [rbx].inst == T_SHORT )
@@ -415,9 +416,9 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
         .case MT_FAR
         .case MT_EMPTY
             .if ( [rbx].Ofssize != USE_EMPTY )
-                mov [rsi].opsiz,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
+                mov [rsi].Prefix.Osize,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
             .else
-                mov [rsi].opsiz,OPSIZE( GetSymOfssize(rdi), [rsi].Ofssize )
+                mov [rsi].Prefix.Osize,OPSIZE( GetSymOfssize(rdi), [rsi].Ofssize )
             .endif
             ; set fixup frame variables Frame + Frame_Datum
             set_frame( rdi )
@@ -434,7 +435,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
         .return( NOT_ERROR )
     .endif
 
-    movzx eax,[rsi].token
+    mov eax,[rsi].token
     .switch eax
     .case T_CALL
         .if ( [rbx].inst == T_SHORT )
@@ -476,7 +477,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                     mov fixup_type,FIX_RELOFF32
                     mov [rsi].opnd[OPND1].type,OP_I32
                 .endif
-                mov [rsi].opsiz,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
+                mov [rsi].Prefix.Osize,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
             .else
                 .if ( [rsi].Ofssize > USE16 )
                     mov fixup_type,FIX_RELOFF32
@@ -522,7 +523,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                 mov fixup_option,OPTJ_EXPLICIT
                 ; v1.95: explicit flag to be removed!
                 .if ( [rbx].Ofssize != USE_EMPTY )
-                    mov [rsi].opsiz,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
+                    mov [rsi].Prefix.Osize,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
                     mov eax,OP_I16
                     .if ( [rbx].Ofssize >= USE32 )
                         mov eax,OP_I32
@@ -539,13 +540,13 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
             .case MT_FAR
                 .if ( MODULE.ljmp ) ; OPTION LJMP set?
                     .if ( [rbx].Ofssize != USE_EMPTY )
-                        mov [rsi].opsiz,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
+                        mov [rsi].Prefix.Osize,OPSIZE( [rsi].Ofssize, [rbx].Ofssize )
                     .else
-                        mov [rsi].opsiz,OPSIZE( GetSymOfssize(rdi), [rsi].Ofssize )
+                        mov [rsi].Prefix.Osize,OPSIZE( GetSymOfssize(rdi), [rsi].Ofssize )
                     .endif
                     ; destination is FAR (externdef <dest>:far
                     jumpExtend( rsi, TRUE )
-                    mov [rsi].isfar,1
+                    mov [rsi].Flags.IsFar,1
                     .if( IS_OPER_32( rsi ) )
                         mov fixup_type,FIX_PTR32
                         mov [rsi].opnd[OPND1].type,OP_I48
@@ -581,7 +582,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
                     .if ( al == MT_FAR )
                         jumpExtend( rsi, TRUE )
                         mov fixup_type,FIX_PTR16
-                        mov [rsi].isfar,1
+                        mov [rsi].Flags.IsFar,1
                         mov [rsi].opnd[OPND1].type,OP_I32
                     .else
                         jumpExtend( rsi, FALSE )

@@ -70,7 +70,7 @@ IS_MEMTYPE_SIZ macro op, siz
 
 ;
 ; values for <byte1_info>
-; 000   : the first byte is opcode, follow by rm_byte
+; 000  : the first byte is opcode, follow by rm_byte
 ; F_16 : the first byte is OPSIZ prefix if in use32 segment
 ; F_32 : the first byte is OPSIZ prefix if in use16 segment
 ; F_0F : the first byte is 0x0F, follow by opcode and rm_byte
@@ -80,33 +80,35 @@ IS_MEMTYPE_SIZ macro op, siz
 ; the entries with 38/3A must be last in the 0F group!
 ;
 .enum byte1_info {
-    F_16            = 1,   ; 16bit variant, 66h switches
-    F_32            = 2,   ; 32bit variant, 66h switches
-    F_16A           = 3,   ; 16bit variant, 67h switches
-    F_32A           = 4,   ; 32bit variant, 67h switches
-    F_F3            = 5,   ; F3 prefix (pause: F3 90)
-    F_48            = 6,   ; REX.W prefix
-    F_0F            = 16,  ; 0F escape
-    F_C5L           = 17,  ; VEX.L1.0F.C4.L
-    F_0F0F          = 18,  ; AMD 3DNow "prefix"
-    F_660F          = 19,  ; SSEx prefix 1
-    F_C5LP0         = 20,  ; VEX.L1.66.0F.C4.L.P0
-    F_F20F          = 21,  ; SSEx prefix 2
-    F_F30F          = 22,  ; SSEx prefix 3
-    F_0FNO66        = 23,  ; 0F escape, no size prefix
-    F_480F          = 24,  ; REX.W + 0F prefix ( cmpxchg16b )
-    F_0F38          = 25,  ; must be first of 38/3A variants
-    F_0F3A          = 26,
-    F_660F38        = 27,
-    F_660F3A        = 28,
-    F_F20F38        = 29,
-    F_F30F38        = 30,
-    F_F20F3A        = 31,
-    F_C4M0          = 32,  ; VEX.L1.0F.C5.M0
-    F_C4M0P0        = 33,  ; VEX.L1.66.0F.C5.M0.P0
-    F_C4M0L         = 34,  ; VEX.L1.0F.C5.M0.L
-    F_C4M0P0L       = 35,  ; VEX.L1.66.0F.C5.M0.L.P0
-    F_F30F3A        = 36,
+    F_NULL,
+    F_16,           ; 16bit variant, 66h switches
+    F_32,           ; 32bit variant, 66h switches
+    F_16A,          ; 16bit variant, 67h switches
+    F_32A,          ; 32bit variant, 67h switches
+    F_F3,           ; F3 prefix (pause: F3 90)
+    F_48,           ; REX.W prefix
+    F_0F = 16,      ; 0F escape
+    E_0F,           ; Extension
+    F_0F0F,         ; AMD 3DNow "prefix"
+    F_660F,         ; SSEx prefix 1
+    E_660F,
+    F_F20F,         ; SSEx prefix 2
+    F_F30F,         ; SSEx prefix 3
+    F_0FNO66,       ; 0F escape, no size prefix
+    F_480F,         ; REX.W + 0F prefix ( cmpxchg16b )
+    F_0F38,         ; must be first of 38/3A variants
+    E_OF38,
+    F_0F3A,
+    E_0F3A,
+    F_660F38,
+    E_660F38,
+    F_660F3A,
+    E_660F3A,
+    F_F2660F,
+    F_F20F38,
+    F_F30F38,
+    F_F20F3A,
+    F_F30F3A,
     }
 
 

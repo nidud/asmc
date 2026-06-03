@@ -35,48 +35,32 @@ externdef vex_flags:byte
 externdef Frame_Type:byte  ; Frame of current fixup
 externdef Frame_Datum:word ; Frame datum of current fixup
 
-ADDRSIZE macro s, x
-  ifdif <x>,<eax>
-    if sizeof(x) eq 4
-      mov eax,x
-    else
-      mov al,x
-    endif
-  endif
-    cmp s,al
-    setne al
-    exitm<al>
-    endm
-
-ADDRSIZE16 proto watcall :byte, :byte {
-    test    _1,_1
-    setnz   _1
-    test    _2,_2
-    setnz   _2
-    cmp     _1,_2
-    setne   _1
+ADDRSIZE proto watcall :byte, :byte {
+    test    al,al
+    setnz   al
+    test    dl,dl
+    setnz   dl
+    xor     al,dl
     }
 
 IS_ADDR32 macro s
-    xor eax,eax
-    cmp [s].Ofssize,al
-    setz al
-    exitm<[s].adrsiz == al>
+    cmp     [s].Ofssize,0
+    setnz   al
+    cmp     [s].Prefix.Asize,0
+    setne   ah
+    xor     al,ah
+    exitm   <al>
     endm
 
-OPSIZE32 macro s
-    xor eax,eax
-    cmp [s].Ofssize,al
-    setz al
-    exitm<al>
-    endm
+OPSIZE32 proto watcall :byte {
+    test    eax,eax
+    setz    al
+    }
 
-OPSIZE16 macro s
-    xor eax,eax
-    cmp [s].Ofssize,al
-    setnz al
-    exitm<al>
-    endm
+OPSIZE16 proto watcall :byte {
+    test    eax,eax
+    setnz   al
+    }
 
 InWordRange macro val
     exitm<!!(val !> 65535 || val !< -65535)>
@@ -539,19 +523,20 @@ seg_override proc __ccall uses rbx CodeInfo:ptr code_info, seg_reg:int_t, sym:as
                 ; caused error 'magnitude of offset exceeds 16 bit' to be displayed if
                 ; module contained USE32 & USE64 segments. Todo: Most likely to be adjusted
                 ; in the other ADDRSIZE() locations as well!
-                mov [rbx].adrsiz,ADDRSIZE16( [rbx].Ofssize, GetSymOfssize( rax ) )
+                mov [rbx].Prefix.Asize,ADDRSIZE( [rbx].Ofssize, GetSymOfssize( rax ) )
             .else
 
                 ; v2.01: if -Zm, then use current CS offset size.
                 ; This isn't how Masm v6 does it, but it matches Masm v5.
 
                 .if MODULE.m510
-                    mov [rbx].adrsiz,ADDRSIZE( [rbx].Ofssize, ModuleInfo.Ofssize )
+
+                    mov [rbx].Prefix.Asize,ADDRSIZE( [rbx].Ofssize, ModuleInfo.Ofssize )
                 .else
 
                     ; v2.15: value of ModuleInfo.defOfssize shouldn't matter; see offset14.asm
 
-                    mov [rbx].adrsiz,ADDRSIZE16( [rbx].Ofssize, ModuleInfo.defOfssize )
+                    mov [rbx].Prefix.Asize,ADDRSIZE( [rbx].Ofssize, ModuleInfo.defOfssize )
                 .endif
             .endif
         .endif
@@ -647,7 +632,7 @@ set_rm_sib proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:uint_t
     imul ebx,edx,opnd_item
 
     .if ( ecx == T_RIP )
-        mov [rsi].base_rip,1
+        mov [rsi].Flags.B_RIP,1
     .endif
 
     mov al,MOD_01 ; byte size displacement
@@ -665,15 +650,15 @@ set_rm_sib proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:uint_t
         ; direct memory.
         ; clear the rightmost 3 bits
 
-        mov [rsi].isdirect,1
+        mov [rsi].Flags.IsDirect,1
         mov mod_field,MOD_00
 
         ; default is DS:[], DS: segment override is not needed
         seg_override( rsi, T_DS, sym, TRUE )
 
 ifndef ASMC64
-        .if ( ( [rsi].Ofssize == USE16 && [rsi].adrsiz == 0 ) ||
-              ( [rsi].Ofssize == USE32 && [rsi].adrsiz == 1 ) )
+        .if ( ( [rsi].Ofssize == USE16 && [rsi].Prefix.Asize == 0 ) ||
+              ( [rsi].Ofssize == USE32 && [rsi].Prefix.Asize ) )
 
             .ifd !InWordRange( [rsi].opnd[rbx].data32l )
 
@@ -683,9 +668,8 @@ ifndef ASMC64
                 ; before v2.16, both cases were errors.
 
                 mov rm_field,RM_D32
-                xor [rsi].adrsiz,1
+                xor [rsi].Prefix.Asize,1
                 .if ( Parse_Pass == PASS_1 )
-
                     asmerr( 7009 )
                 .endif
             .else
@@ -736,8 +720,12 @@ endif
             mov base_reg,5
             .if ( ecx != T_RIP )
                 mov base_reg,GetRegNo(ecx)
+                .if ( al > 15 )
+                    .if ( GetValueSp(ecx) & OP_R )
+                        mov [rsi].Prefix.Rex2,1
+                    .endif
+                .endif
             .endif
-
             mov al,base_reg
             shr al,3
             mov bit3_base,al
@@ -756,14 +744,19 @@ endif
 
                 mov mod_field,MOD_01
             .endif
-            mov rex,bit3_base ; set REX_R
+            mov rex,bit3_base
         .endsw
         seg_override(rsi, ecx, sym, FALSE)
 
     .elseif ( edi != EMPTY && ecx == EMPTY )
 
         mov idx_reg,GetRegNo(edi)
-        mov al,idx_reg
+        .if ( al > 15 )
+            .if ( GetValueSp(edi) & OP_R )
+                mov [rsi].Prefix.Rex2,1
+            .endif
+            mov al,idx_reg
+        .endif
         shr al,3
         mov bit3_idx,al
         and idx_reg,BIT_012
@@ -783,6 +776,7 @@ endif
         or  al,s
         or  al,0x05
         mov [rsi].sib,al
+
         mov al,bit3_idx
         shl al,1
         mov rex,al ; set REX_X
@@ -792,9 +786,9 @@ endif
         seg_override(rsi, T_DS, sym, FALSE)
 
         mov rax,[rsi].pinstr
-        .if ( [rax].instr_item.evex & VX_XMMI )
+        .if ( [rax].instr_item.evex & V_SIB )
             mov [rsi].opc_or,GetRegNo(index)
-            .if GetValueSp(edi) > 16
+            .if GetValueSp(edi) & OP_YMM or OP_ZMM
                 or [rsi].opc_or,0x40 ; YMM/ZMM
             .endif
         .endif
@@ -804,13 +798,26 @@ endif
         mov ebx,ecx
         mov base_reg,5
         .if ( ecx != T_RIP )
-            mov base_reg,GetRegNo(ecx)
+            mov base_reg,GetRegNo(ebx)
+            .if ( al > 15 )
+                .if ( GetValueSp(ebx) & OP_R )
+                    mov [rsi].Prefix.Rex2,1
+                    mov [rsi].Apx.B_High,1
+                .endif
+            .endif
         .endif
         mov idx_reg,GetRegNo(edi)
         mov al,base_reg
         shr al,3
         mov bit3_base,al
         mov al,idx_reg
+        .if ( al > 15 )
+            .if ( GetValueSp(edi) & OP_R )
+                mov [rsi].Prefix.Rex2,1
+                mov [rsi].Apx.X_High,1
+            .endif
+            mov al,idx_reg
+        .endif
         shr al,3
         mov bit3_idx,al
         and base_reg,BIT_012
@@ -820,9 +827,9 @@ endif
 
         .if ecx == 0
             mov rcx,[rsi].pinstr
-            .if ( GetValueSp(edi) > 8 && [rcx].instr_item.evex & VX_XMMI )
+            .if ( GetValueSp(edi) & OP_V && [rcx].instr_item.evex & V_SIB )
                 mov [rsi].opc_or,idx_reg
-                .if ( GetValueSp(edi) > 16 )
+                .if ( GetValueSp(edi) & OP_YMM or OP_ZMM )
                     or [rsi].opc_or,0x40 ;; YMM/ZMM
                 .endif
             .else
@@ -837,13 +844,13 @@ endif
             .return .ifd comp_mem16( edi, ebx ) == ERROR
             mov rm_field,al
             seg_override( rsi, edi, sym, FALSE )
-            .endc
+           .endc
         .case T_SI
         .case T_DI
             .return .ifd comp_mem16( ebx, edi ) == ERROR
             mov rm_field,al
             seg_override( rsi, ebx, sym, FALSE )
-            .endc
+           .endc
         .case T_RSP
         .case T_RIP
         .case T_ESP
@@ -870,10 +877,10 @@ endif
             seg_override( rsi, ebx, sym, FALSE )
         .endsw
     .endif
-
     .if ( base == T_RIP )
         and mod_field,BIT_012
     .endif
+
     .if ( CurrOpnd == OPND2 )
 
         ; shift the register field to left by 3 bit
@@ -892,14 +899,16 @@ endif
         and cl,REX_X
         and dl,1
         shl dl,2
-        or al,cl
-        or al,dl
-        or [rsi].rex,al
+        or  al,cl
+        or  al,dl
+        or  [rsi].Rex,al
+
     .elseif ( CurrOpnd == OPND1 )
+
         mov al,mod_field
         or  al,rm_field
         mov [rsi].rm_byte,al
-        or [rsi].rex,rex
+        or  [rsi].Rex,rex
     .endif
     .return( NOT_ERROR )
     endp
@@ -990,7 +999,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
         and edx,MT_SIZE_MASK
         inc edx
         mov eax,4
-        movzx ecx,[rsi].token
+        mov ecx,[rsi].token
         .switch ecx
         .case T_ADDSD
         .case T_SUBSD
@@ -1061,7 +1070,8 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
 
         .if ( [rsi].Ofssize >= USE32 && CurrOpnd == OPND2 && [rsi].opnd[OPND1].type == OP_M64 )
 
-            .if ( [rsi].token == T_COMISD || ( [rsi].token == T_MOV && [rsi].mem_type == MT_BITS ) )
+            .if ( [rsi].token == T_COMISD || ( [rsi].mem_type == MT_BITS && 
+                ( [rsi].token == T_MOV || [rsi].token == T_AND ) ) )
 
                 mov [rsi].opnd[rbx].type,OP_I64
                 mov [rsi].opnd[rbx].data32h,[rdi].hvalue
@@ -1082,7 +1092,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
 
         ; size coercion for immediate value
 
-        mov [rsi].constsizefixed,1
+        mov [rsi].Flags.ConstSizeFixed,1
 
         ; don't check if size and value are compatible.
 
@@ -1111,7 +1121,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
         .endif
     .endif
 
-    movzx eax,[rsi].token
+    mov eax,[rsi].token
     .switch eax
     .case T_OR
     .case T_TEST
@@ -1126,7 +1136,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
                ( edx == OP_M16 || edx == OP_M32  || edx == OP_M64 ) )
 
             sub rdi,expr
-            mov [rsi].rex,0
+            mov [rsi].Rex,0
 
             .if ( op_type == OP_I8 )
 
@@ -1176,10 +1186,10 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
                 mov op_type,OP_I32
             .endif
         .endif
-        .if op_type == OP_I16
-            mov [rsi].opsiz,OPSIZE16(rsi)
-        .elseif op_type == OP_I32
-            mov [rsi].opsiz,OPSIZE32(rsi)
+        .if ( op_type == OP_I16 )
+            mov [rsi].Prefix.Osize,OPSIZE16([rsi].Ofssize)
+        .elseif ( op_type == OP_I32 )
+            mov [rsi].Prefix.Osize,OPSIZE32([rsi].Ofssize)
         .endif
         .endc
     .case T_PUSHW
@@ -1205,7 +1215,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
 
     .if ( CurrOpnd == OPND2 )
         .if ( !([rsi].mem_type & MT_SPECIAL) && ( [rsi].mem_type & MT_SIZE_MASK ) )
-            mov [rsi].iswide,1
+            mov [rsi].Flags.IsWide,1
         .endif
     .endif
     mov [rsi].opnd[rbx].type,op_type
@@ -1273,7 +1283,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
     ; - check if Codeinfo->mem_type really has to be set here!
 
     .if ( [rdi].explicit && !( [rdi].is_abs ) )
-        mov [rsi].constsizefixed,1
+        mov [rsi].Flags.ConstSizeFixed,1
         .if ( [rsi].mem_type == MT_EMPTY )
             mov [rsi].mem_type,[rdi].mem_type
         .endif
@@ -1349,7 +1359,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
                 mov [rsi].mem_type,cl
             .endif
         .else
-            movzx eax,[rsi].token
+            mov eax,[rsi].token
             .switch eax
             .case T_PUSHW
             .case T_PUSHD
@@ -1432,10 +1442,16 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
     .switch eax
     .case 1
         mov [rsi].opnd[rbx].type,OP_I8
-        mov [rsi].opsiz,FALSE ; v2.10: reset opsize is not really a good idea
-       .endc                  ; - might have been set by previous operand
-    .case 2: mov [rsi].opnd[rbx].type,OP_I16 : mov [rsi].opsiz,OPSIZE16(rsi) : .endc
-    .case 4: mov [rsi].opnd[rbx].type,OP_I32 : mov [rsi].opsiz,OPSIZE32(rsi) : .endc
+        mov [rsi].Prefix.Asize,FALSE    ; v2.10: reset opsize is not really a good idea
+       .endc                            ; - might have been set by previous operand
+    .case 2
+        mov [rsi].opnd[rbx].type,OP_I16
+        mov [rsi].Prefix.Osize,OPSIZE16([rsi].Ofssize)
+       .endc
+    .case 4
+        mov [rsi].opnd[rbx].type,OP_I32
+        mov [rsi].Prefix.Osize,OPSIZE32([rsi].Ofssize)
+       .endc
     .case 8
 
         ; v2.05: do only assume size 8 if the constant won't fit in 4 bytes.
@@ -1466,7 +1482,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
         .else
             mov [rsi].opnd[rbx].type,OP_I32
         .endif
-        mov [rsi].opsiz,OPSIZE32(rsi)
+        mov [rsi].Prefix.Osize,OPSIZE32([rsi].Ofssize)
        .endc
     .endsw
 
@@ -1510,7 +1526,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
     ; and first operand is a memory reference with size > 1
 
     .if ( CurrOpnd == OPND2 && size != 1 )
-        mov [rsi].iswide,1
+        mov [rsi].Flags.IsWide,1
     .endif
     segm_override(rdi, NULL) ;; set SegOverride global var
 
@@ -1556,18 +1572,18 @@ SetPtrMemtype proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         mov rcx,[rdi].type
         mov ebx,[rcx].asym.total_size
         .if [rcx].asym.is_far
-            mov [rsi].isfar,1
+            mov [rsi].Flags.IsFar,1
         .else
-            mov [rsi].isfar,0
+            mov [rsi].Flags.IsFar,0
         .endif
     .elseif ( rdx )
         .if ( [rdx].asym.type )
             mov rcx,[rdx].asym.type
             mov ebx,[rcx].asym.total_size
             .if [rcx].asym.is_far
-                mov [rsi].isfar,1
+                mov [rsi].Flags.IsFar,1
             .else
-                mov [rsi].isfar,0
+                mov [rsi].Flags.IsFar,0
             .endif
 
             ; there's an ambiguity with pointers of size DWORD,
@@ -1584,10 +1600,10 @@ SetPtrMemtype proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .endif
             mov sym,rdx
             mov ebx,SizeFromMemtype( cl, [rdx].asym.Ofssize, NULL )
-            mov [rsi].isfar,0
+            mov [rsi].Flags.IsFar,0
             mov rdx,sym
             .if [rdx].asym.is_far
-                mov [rsi].isfar,1
+                mov [rsi].Flags.IsFar,1
             .endif
         .else
             .if ( [rdx].asym.isarray )
@@ -1648,7 +1664,7 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
         ; Exceptions ( MOVSX and MOVZX ) are handled in check_size().
 
         .if IS_MEM_TYPE( al, WORD )
-            mov [rsi].opsiz,TRUE
+            mov [rsi].Prefix.Osize,TRUE
 
             ; set rex Wide bit if a QWORD operand is found (not for FPU/MMX/SSE instr).
             ; This looks pretty hackish now and is to be cleaned!
@@ -1659,7 +1675,7 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
 
         .elseif IS_MEMTYPE_SIZ( al, QWORD )
 
-            movzx eax,[rsi].token
+            mov eax,[rsi].token
             .switch eax
             .case T_PUSH ; for PUSH/POP, REX_W isn't needed (no 32-bit variants in 64-bit mode)
             .case T_POP
@@ -1688,7 +1704,7 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
 
                 .if ( [rbx].cpu & P_EXT_MASK )
 
-                    movzx eax,[rsi].token
+                    mov eax,[rsi].token
                     .switch eax
 
                         ; [V]CMPSD and [V]MOVSD are also candidates,
@@ -1704,11 +1720,11 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
                     .case T_VPEXTRQ
                     .case T_VPINSRQ
                     .case T_VMOVD
-                        or [rsi].rex,REX_W
-                        .endc
+                        mov [rsi].Rex.W,1
+                       .endc
                     .endsw
                 .else
-                    or [rsi].rex,REX_W
+                    mov [rsi].Rex.W,1
                 .endif
             .endsw
         .endif
@@ -1719,7 +1735,7 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
             ; prefix. A few instructions, which access m16:16 operands,
             ; are exceptions.
 
-            movzx eax,[rsi].token
+            mov eax,[rsi].token
             .switch eax
             .case T_LDS
             .case T_LES
@@ -1731,7 +1747,7 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
                 ; in these cases, opsize does NOT need to be changed
                 .endc
             .default
-                mov [rsi].opsiz,TRUE
+                mov [rsi].Prefix.Osize,TRUE
                 .endc
             .endsw
 
@@ -1752,7 +1768,7 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
 
                 ; setting REX.W will cause an error in codegen
 
-                or [rsi].rex,REX_W
+                mov [rsi].Rex.W,1
             .endif
         .endif
     .endif
@@ -1821,7 +1837,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         .endif
         mov rcx,[rdi].mbr
         .if ( [rcx].asym.state == SYM_UNDEFINED )
-            mov [rsi].undef_sym,1
+            mov [rsi].Flags.SymUndefined,1
         .endif
     .endif
 
@@ -1869,7 +1885,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
               ( ( [rsi].Ofssize == USE16 && [rdi].Ofssize != USE32 ) ||
                 ( [rsi].Ofssize == USE32 && [rdi].Ofssize == USE16 ) ) ) )
 
-            mov [rsi].isfar,1
+            mov [rsi].Flags.IsFar,1
         .endif
         .endc
     .endsw
@@ -1914,7 +1930,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
 
         ; v2.05: added
 
-        movzx eax,[rsi].token
+        mov eax,[rsi].token
         .switch eax
         .case T_INC
         .case T_DEC
@@ -1955,13 +1971,13 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         .if ( ( ( eax & OP_R32 ) && cl == USE32 ) ||
               ( ( eax & OP_R64 ) && cl == USE64 ) ||
               ( ( eax & OP_R16 ) && cl == USE16 ) )
-            mov [rsi].adrsiz,FALSE
+            mov [rsi].Prefix.Asize,FALSE
 ifndef MASMCOMPAT
         .elseif ( eax & OP_R32 && cl == USE64 && [rsi].token == T_LEA && [rsi].opnd.type & OP_R32 )
-            mov [rsi].adrsiz,FALSE
+            mov [rsi].Prefix.Asize,FALSE
 endif
         .else
-            mov [rsi].adrsiz,TRUE
+            mov [rsi].Prefix.Asize,TRUE
 
             ; 16bit addressing modes don't exist in long mode
 
@@ -1980,13 +1996,13 @@ endif
         .if ( ( ( eax & OP_R32 ) && cl == USE32 ) ||
               ( ( eax & OP_R64 ) && cl == USE64 ) ||
               ( ( eax & OP_R16 ) && cl == USE16 ) )
-            mov [rsi].adrsiz,FALSE
+            mov [rsi].Prefix.Asize,FALSE
 ifndef MASMCOMPAT
         .elseif ( eax & OP_R32 && cl == USE64 && [rsi].token == T_LEA && [rsi].opnd.type & OP_R32 )
-            mov [rsi].adrsiz,FALSE
+            mov [rsi].Prefix.Asize,FALSE
 endif
         .else
-            mov [rsi].adrsiz,TRUE
+            mov [rsi].Prefix.Asize,TRUE
 
             ; v2.13: check added. see expr6.asm
             ; 16bit addressing modes don't exist in 64-bit
@@ -1999,9 +2015,8 @@ endif
         ; v2.10: register swapping has been moved to expreval.asm, index_connect().
         ; what has remained here is the check if R/ESP is used as index reg.
 
-        mov rax,[rsi].pinstr
-        mov cl,[rax].instr_item.evex
-        .if ( GetRegNo( index ) == 4 && !( cl & VX_XMMI ) )
+        mov rcx,[rsi].pinstr
+        .if ( GetRegNo( index ) == 4 && ![rcx].instr_item.evex & V_SIB )
 
             ; [E|R]SP
 
@@ -2016,8 +2031,8 @@ endif
         ; 32/64 bit indirect addressing?
 
         mov cl,[rsi].Ofssize
-        .if ( ( cl == USE16 && [rsi].adrsiz == 1 ) || cl == USE64  ||
-              ( cl == USE32 && [rsi].adrsiz == 0 ) )
+        .if ( ( cl == USE16 && [rsi].Prefix.Asize ) || cl == USE64 ||
+              ( cl == USE32 && [rsi].Prefix.Asize == 0 ) )
             mov eax,MODULE.curr_cpu
             and eax,P_CPU_MASK
             .if ( eax >= P_386 )
@@ -2025,12 +2040,15 @@ endif
                 ; scale, 0 or 1->00, 2->40, 4->80, 8->C0
 
                 movzx eax,[rdi].scale
-                .switch eax
+                .switch pascal eax
                 .case 0
-                .case 1: .endc                          ; s = 00
-                .case 2: mov scale_factor,SCALE_FACTOR_2: .endc ; s = 01
-                .case 4: mov scale_factor,SCALE_FACTOR_4: .endc ; s = 10
-                .case 8: mov scale_factor,SCALE_FACTOR_8: .endc ; s = 11
+                .case 1 ; s = 00
+                .case 2 ; s = 01
+                    mov scale_factor,SCALE_FACTOR_2
+                .case 4 ; s = 10
+                    mov scale_factor,SCALE_FACTOR_4
+                .case 8 ; s = 11
+                    mov scale_factor,SCALE_FACTOR_8
                 .default ; must be * 1, 2, 4 or 8
                     .return( asmerr( 2083 ) )
                 .endsw
@@ -2050,9 +2068,7 @@ endif
         .new Ofssize:byte = 0
         .new fixup_type:int_t = 0
         .if ( [rdi].is_abs )
-            .if IS_ADDR32(rsi)
-                inc Ofssize
-            .endif
+            add Ofssize,IS_ADDR32(rsi)
         .elseif sym
             mov Ofssize,GetSymOfssize(sym)
         .elseif SegOverride
@@ -2079,7 +2095,7 @@ endif
                 .endif
             .endif
 
-            mov [rsi].adrsiz,ADDRSIZE( [rsi].Ofssize, Ofssize )
+            mov [rsi].Prefix.Asize,ADDRSIZE( [rsi].Ofssize, Ofssize )
 
             ; v2.13: also check CI->Ofssize. if current segm is 64-bit,
             ; use 32-bit rel fixups (mixed mode 64-bit mz binary) - ignore Ofssize
@@ -2449,9 +2465,10 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
 
     ldr rsi,CodeInfo
     ldr rdi,opndx
+    ldr ecx,CurrOpnd
 
-    imul ebx,CurrOpnd,opnd_item
-    imul eax,CurrOpnd,expr
+    imul ebx,ecx,opnd_item
+    imul eax,ecx,expr
 
     mov rax,[rdi+rax].base_reg
     mov regtok,[rax].asm_tok.tokval
@@ -2462,23 +2479,30 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
 
     mov flags,GetValueSp(regtok)
     mov [rsi].opnd[rbx].type,eax
+    mov edx,regno
 
-    .if ( ( ( eax == OP_XMM || eax == OP_YMM ) && regno > 15 ) || eax & OP_ZMM )
-        or [rsi].prefix,PREFIX_EVEX
-        .if eax == OP_ZMM
-            or [rsi].vflags,VX_ZMM
+    .if ( ( eax & OP_V && eax & OP_H ) || eax & OP_ZMM )
+        mov [rsi].Prefix.Evex,1
+        .if ( eax & OP_ZMM )
+            mov [rsi].Vector.ZMM_Used,1
         .endif
-        .if regno > 15 ; v2.38.09: added YMM
+        .if ( eax & OP_H ) ; v2.38.09: added YMM
             mov ecx,index
-            mov edx,1
-            shl edx,cl
-            .if ( regno > 23 )
-                or edx,VX_ZMM24
+            .if ( !ecx )
+                mov [rsi].Vector.Op1_High,1
+            .elseif ( ecx == 1 )
+                mov [rsi].Vector.Op2_High,1
+            .else
+                mov [rsi].Vector.Op3_High,1
             .endif
-            or [rsi].vflags,dl
-        .elseif regno > 7
-            or [rsi].vflags,VX_ZMM8
+            .if ( edx > 23 )
+                mov [rsi].Vector.V24_Used,1
+            .endif
+        .elseif ( edx > 7 )
+            mov [rsi].Vector.V08_Used,1
         .endif
+    .elseif ( eax & OP_H && eax & OP_R )
+        mov [rsi].Prefix.Rex2,1
     .endif
 
     .if ( eax & OP_R8 )
@@ -2486,16 +2510,16 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
         ; it's probably better to not reset the wide bit at all
         ;
         .if ( eax != OP_CL ) ; problem: SHL AX|AL, CL
-            mov [rsi].iswide,0
+            mov [rsi].Flags.IsWide,0
         .endif
-        .if ( [rsi].Ofssize == USE64 && regno >=4 && regno <= 7 )
+        .if ( [rsi].Ofssize == USE64 && edx >=4 && edx <= 7 )
             .if ( GetCpuSp(regtok) == P_86 )
-                mov [rsi].x86hi_used,1 ;; it's AH,BH,CH,DH
+                mov [rsi].Flags.X86HUsed,1 ;; it's AH,BH,CH,DH
             .else
-                mov [rsi].x64lo_used,1 ;; it's SPL,BPL,SIL,DIL
+                mov [rsi].Flags.X64LUsed,1 ;; it's SPL,BPL,SIL,DIL
             .endif
         .endif
-        imul eax,regno,assume_info
+        imul eax,edx,assume_info
         mov ecx,RL_ERROR
         .if ( regtok >= T_AH && regtok <= T_BH )
             mov ecx,RH_ERROR
@@ -2507,8 +2531,8 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
 
     .elseif ( eax & OP_R ) ; 16-, 32- or 64-bit GPR?
 
-        mov [rsi].iswide,1
-        imul ecx,regno,assume_info
+        mov [rsi].Flags.IsWide,1
+        imul ecx,edx,assume_info
         and al,OP_R
         lea rdx,StdAssumeTable
         .if ( [rdx+rcx].assume_info.error & al )
@@ -2516,15 +2540,15 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
         .endif
         .if ( flags & OP_R16 )
             .if ( [rsi].Ofssize > USE16 )
-                mov [rsi].opsiz,TRUE
+                mov [rsi].Prefix.Osize,TRUE
             .endif
         .elseif ( [rsi].Ofssize == USE16 )
-            mov [rsi].opsiz,TRUE
+            mov [rsi].Prefix.Osize,TRUE
         .endif
 
     .elseif ( eax & OP_SR )
 
-        .if ( regno == 1 ) ; 1 is CS
+        .if ( edx == 1 ) ; 1 is CS
             ;
             ; POP CS is not allowed
             ;
@@ -2576,7 +2600,7 @@ endif
         ; used now: CRx are numbers 0-F, DRx are numbers 0x10-0x1F and
         ; TRx are 0x20-0x2F.
 
-        .if ( regno >= 0x20 ) ; TRx?
+        .if ( edx >= 0x20 ) ; TRx?
 
             or [rsi].opc_or,0x04
 
@@ -2588,16 +2612,16 @@ endif
             and eax,P_CPU_MASK
             .if ( eax >= P_686 )
                 mov eax,3
-                .if ( regno > 0x25 )
+                .if ( edx > 0x25 )
                     mov eax,6
                 .endif
                 mov ecx,5
-                .if ( regno > 0x25 )
+                .if ( edx > 0x25 )
                     mov ecx,7
                 .endif
                 .return asmerr( 3004, eax, ecx )
             .endif
-        .elseif ( regno >= 0x10 ) ; DRx?
+        .elseif ( edx >= 0x10 ) ; DRx?
             or [rsi].opc_or,0x01
         .endif
         and regno,0x0F
@@ -2605,31 +2629,37 @@ endif
 
     ; if it's a x86-64 register (SIL, R8W, R8D, RSI, ...
 
-    mov eax,GetCpuSp(regtok)
-    and eax,P_CPU_MASK
-    .if ( eax == P_64 )
-        or [rsi].rex,0x40
+    mov edx,GetCpuSp(regtok)
+    mov eax,regno
+    mov cl,[rsi].Rex
+    mov ch,[rsi].rm_byte
+    and edx,P_CPU_MASK
+    .if ( edx == P_64 )
+        or cl,REX_R4
         .if ( flags & OP_R64 )
-            or [rsi].rex,REX_W
+            or cl,REX_W
         .endif
     .endif
+    mov edx,eax
+    and eax,8
 
     .if ( CurrOpnd == OPND1 )
 
         ; the first operand
         ; r/m is treated as a 'reg' field
 
-        mov eax,regno
-        mov ecx,eax
-        and eax,8
         shr eax,3
-        or [rsi].rex,al ;; set REX_B
-        and ecx,BIT_012
-        or  ecx,MOD_11
 
-        ; fill the r/m field
+        .if ( dl > 15 && flags & OP_R )
+            mov [rsi].Apx.R_High,1
+            ;and cl,not REX_R4
+            ;shl al,4
+        .endif
 
-        or [rsi].rm_byte,cl
+        or  cl,al   ; set REX_B
+        and dl,BIT_012
+        or  dl,MOD_11
+        or  ch,dl   ; fill the r/m field
 
     .else
 
@@ -2639,30 +2669,26 @@ endif
         .if ( [rsi].token == T_XCHG && [rsi].opnd[OPND1].type & OP_A &&
               !( [rsi].opnd[OPND1].type & OP_R8 ) )
 
-            mov eax,regno
-            mov ecx,eax
-            and eax,8
             shr eax,3
-            or  [rsi].rex,al ; set REX_B
-            and ecx,BIT_012
-            and [rsi].rm_byte,BIT_67
-            or  [rsi].rm_byte,cl
+            or  cl,al ; set REX_B
+            and dl,BIT_012
+            and ch,BIT_67
+            or  ch,dl
 
         .else
 
             ; fill reg field with reg
 
-            mov eax,regno
-            mov ecx,eax
-            and eax,8
             shr eax,1
-            or  [rsi].rex,al ;; set REX_R
-            and ecx,BIT_012
-            and [rsi].rm_byte,not BIT_345
-            shl ecx,3
-            or  [rsi].rm_byte,cl
+            or  cl,al ; set REX_R
+            and dl,BIT_012
+            and ch,not BIT_345
+            shl dl,3
+            or  ch,dl
         .endif
     .endif
+    mov [rsi].Rex,cl
+    mov [rsi].rm_byte,ch
     .return( NOT_ERROR )
     endp
 
@@ -2706,7 +2732,7 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
     ldr rsi,CodeInfo
     ldr rdi,opndx
 
-    movzx eax,[rsi].token
+    mov eax,[rsi].token
     .switch eax
     .case T_VCMPSD
     .case T_CMPSD
@@ -2717,7 +2743,7 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
             ;
             ; v2.01: QWORD operand for CMPSD/MOVSD may have set REX_W!
             ;
-            and [rsi].rex,not REX_W
+            mov [rsi].Rex.W,0
            .return
         .endif
 
@@ -2780,7 +2806,7 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
 
             ; v2.01: QWORD operand for CMPSD/MOVSD may have set REX_W!
 
-            and [rsi].rex,not REX_W
+            mov [rsi].Rex.W,0
            .return
         .endif
 
@@ -2903,8 +2929,8 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
     lea   rdx,opnd_clstab
     add   rdx,rax
     .if ( [rdx].opnd_class.opnd_type[rcx] == OP_NONE )
-        mov [rsi].iswide,0
-        mov [rsi].opsiz,FALSE
+        mov [rsi].Flags.IsWide,0
+        mov [rsi].Prefix.Osize,FALSE
     .endif
 
     ; if the instruction is the variant without suffix (MOVS, LODS, ..),
@@ -2935,30 +2961,28 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
         .endif
         .switch eax
         .case 1
-            mov [rsi].iswide,0
-            mov [rsi].opsiz,FALSE
+            mov [rsi].Flags.IsWide,0
+            mov [rsi].Prefix.Osize,FALSE
            .endc
         .case 2
-            mov [rsi].iswide,1
-            xor eax,eax
+            mov [rsi].Flags.IsWide,1
+            mov [rsi].Prefix.Osize,0
             .if ( [rsi].Ofssize )
-                inc eax
+                mov [rsi].Prefix.Osize,1
             .endif
-            mov [rsi].opsiz,al
-           .endc
+            .endc
         .case 4
-            mov [rsi].iswide,1
-            xor eax,eax
+            mov [rsi].Flags.IsWide,1
+            mov [rsi].Prefix.Osize,0
             .if ( ![rsi].Ofssize )
-                inc eax
+                mov [rsi].Prefix.Osize,1
             .endif
-            mov [rsi].opsiz,al
-           .endc
+            .endc
         .case 8
             .if ( [rsi].Ofssize == USE64 )
-                mov [rsi].iswide,1
-                mov [rsi].opsiz,FALSE
-                mov [rsi].rex,REX_W
+                mov [rsi].Flags.IsWide,1
+                mov [rsi].Prefix.Osize,FALSE
+                mov [rsi].Rex.W,1
             .endif
             .endc
         .endsw
@@ -2991,7 +3015,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
     mov op1,ecx
     mov op2,edx
 
-    movzx eax,[rsi].token
+    mov eax,[rsi].token
     .switch eax
     .case T_HRESET ; added v2.34.59
         .if ( ecx != OP_I8 && edx != OP_EAX )
@@ -3009,10 +3033,10 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .case OP_AX
                 .endc
             .case OP_AL
-                mov [rsi].iswide,0 ; clear w-bit
+                mov [rsi].Flags.IsWide,0 ; clear w-bit
             .case OP_EAX
                 .if ( [rsi].Ofssize )
-                    mov [rsi].opsiz,FALSE
+                    mov [rsi].Prefix.Osize,FALSE
                 .endif
                 .endc
             .endsw
@@ -3024,10 +3048,10 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .case OP_AX
                 .endc
             .case OP_AL
-                mov [rsi].iswide,0 ; clear w-bit
+                mov [rsi].Flags.IsWide,0 ; clear w-bit
             .case OP_EAX
                 .if [rsi].Ofssize
-                    mov [rsi].opsiz,FALSE
+                    mov [rsi].Prefix.Osize,FALSE
                 .endif
             .endsw
         .endif
@@ -3046,7 +3070,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         ; v2.11: added
 
         mov rcx,[rdi].sym
-        .if ( [rsi].opnd[OPND1].type == OP_M && !( [rsi].undef_sym ) &&
+        .if ( [rsi].opnd[OPND1].type == OP_M && ![rsi].Flags.SymUndefined &&
               ( rcx == NULL || [rcx].asym.state != SYM_UNDEFINED ) )
 
             asmerr( 2023 )
@@ -3069,7 +3093,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         ; isn't set!)
 
         .if ( OperandSize( op1, rsi ) > 1 )
-            mov [rsi].iswide,1
+            mov [rsi].Flags.IsWide,1
         .endif
 
         ; v2.06: makes the OP_CL_ONLY case in codegen.c obsolete
@@ -3099,7 +3123,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         .endc
     .case T_MOVSX
     .case T_MOVZX
-        mov [rsi].iswide,0
+        mov [rsi].Flags.IsWide,0
         mov op1_size,OperandSize(op1, rsi)
         mov op2_size,OperandSize(op2, rsi)
         .if ( op2_size == 0 && Parse_Pass == PASS_2 )
@@ -3115,24 +3139,24 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .if ( op2_size < 2 )
                 ;
             .elseif ( op2_size == 2 )
-                mov [rsi].iswide,1
+                mov [rsi].Flags.IsWide,1
             .else
                 mov rc,asmerr( 2024 )
             .endif
-            xor eax,eax
-            cmp [rsi].Ofssize,al
-            sete al
-            mov [rsi].opsiz,al
-           .endc
+            mov [rsi].Prefix.Osize,0
+            .if ( [rsi].Ofssize == 0 )
+                mov [rsi].Prefix.Osize,1
+            .endif
+            .endc
         .case 2
             .if ( op2_size >= 2 )
                 mov rc,asmerr( 2024 )
             .endif
-            xor eax,eax
-            cmp [rsi].Ofssize,al
-            setne al
-            mov [rsi].opsiz,al
-           .endc
+            mov [rsi].Prefix.Osize,0
+            .if ( [rsi].Ofssize )
+                mov [rsi].Prefix.Osize,1
+            .endif
+            .endc
         .default
 
             ; op1 must be r16/r32/r64
@@ -3143,7 +3167,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
     .case T_MOVSXD
         .endc
     .case T_ARPL ; v2.06: new, avoids the OP_R16 hack in codegen.c
-        mov [rsi].opsiz,0
+        mov [rsi].Prefix.Osize,0
         jmp def_check
     .case T_LAR ; v2.04: added
     .case T_LSL ; 19-sep-93
@@ -3162,7 +3186,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
 
         mov op1_size,OperandSize(op1, rsi)
         .if ( eax != 2 )
-            mov [rsi].opsiz,FALSE
+            mov [rsi].Prefix.Osize,FALSE
         .endif
         .endc
     .case T_IMUL ; v2.06: check for 3rd operand must be done here
@@ -3229,18 +3253,14 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         ; OPSIZE prefix byte is to be written.
 
         mov op2_size,OperandSize(op2, rsi)
+        mov [rsi].Prefix.Osize,FALSE
         .if ( eax < 2 )
-            mov [rsi].opsiz,FALSE
         .elseif ( eax == 2 )
-            xor eax,eax
-            cmp [rsi].Ofssize,al
-            setne al
-            mov [rsi].opsiz,al
-        .else
-            xor eax,eax
-            cmp [rsi].Ofssize,al
-            sete al
-            mov [rsi].opsiz,al
+            .if ( [rsi].Ofssize )
+                mov [rsi].Prefix.Osize,TRUE
+            .endif
+        .elseif ( ![rsi].Ofssize )
+            mov [rsi].Prefix.Osize,TRUE
         .endif
         .endc
     .case T_MOVD
@@ -3258,7 +3278,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .endif
         .elseif ( ( op1 & OP_M ) && ( op2 & OP_A ) ) ; 1. operand memory reference, 2. AL|AX|EAX|RAX?
 
-            .if !( [rsi].isdirect )
+            .if !( [rsi].Flags.IsDirect )
 
                 ; address mode is indirect.
                 ; don't use the short format (opcodes A0-A3) - it exists for direct
@@ -3300,7 +3320,7 @@ endif
 
         .elseif ( ( op1 & OP_A ) && ( op2 & OP_M ) ) ; 2. operand memory reference, 1. AL|AX|EAX|RAX?
 
-            .if ( !( [rsi].isdirect ) )
+            .if ( !( [rsi].Flags.IsDirect ) )
 
                 and [rsi].opnd[OPND1].type,not OP_A
 
@@ -3363,7 +3383,7 @@ endif
 
             mov eax,op1
             or  eax,op2
-            .if ( eax & ( OP_MMX or OP_XMM or OP_YMM or OP_ZMM or OP_K ) || [rsi].token >= VEX_START )
+            .if ( eax & ( OP_MMX or OP_V or OP_K ) || [rsi].token >= VEX_START )
 
             .elseif ( op1_size != 0 && op2_size != 0 )
 
@@ -3372,7 +3392,7 @@ endif
 
                     ; v2.30 - Memory to memory operands.
 
-                    movzx ecx,[rsi].token
+                    mov ecx,[rsi].token
                     .switch ecx
                     .case T_MOV
                     .case T_CMP
@@ -3434,13 +3454,13 @@ endif
                     .elseifs ( op2_size == 2 && !( ( eax < 0 && eax < SHRT_MIN ) || eax > USHRT_MAX ) )
 
                         mov [rsi].mem_type,MT_WORD
-                        mov [rsi].iswide,1
+                        mov [rsi].Flags.IsWide,1
                         mov [rsi].opnd[OPNI2].type,OP_I16
                         lea rcx,@CStr("WORD")
 
                     .else
 
-                        mov [rsi].iswide,1
+                        mov [rsi].Flags.IsWide,1
                         .if MODULE.Ofssize == USE16 && op2_size > 2 && InWordRange([rsi].opnd[OPNI2].data32l)
                             mov op2_size,2
                         .endif
@@ -3460,7 +3480,7 @@ endif
                         ; v2.06b: added "undefined" check
 
                         mov rax,[rsi].opnd[OPND1].InsFixup
-                        .if ( ( rax  == NULL && Parse_Pass == PASS_1 && !( [rsi].undef_sym ) ) ||
+                        .if ( ( rax  == NULL && Parse_Pass == PASS_1 && ![rsi].Flags.SymUndefined ) ||
                             ( rax && Parse_Pass == PASS_2 ) )
                             asmerr( 8012, rcx )
                         .endif
@@ -3486,17 +3506,17 @@ endif
                         .endc
                     .case 2
                         mov [rsi].mem_type,MT_WORD
-                        mov [rsi].iswide,1
+                        mov [rsi].Flags.IsWide,1
                         .if ( Parse_Pass == PASS_1 && ( op2 & OP_I ) )
                             asmerr( 8012, "WORD" )
                         .endif
                         .if ( [rsi].Ofssize )
-                            mov [rsi].opsiz,TRUE
+                            mov [rsi].Prefix.Osize,TRUE
                         .endif
                         .endc
                     .case 4
                         mov [rsi].mem_type,MT_DWORD
-                        mov [rsi].iswide,1
+                        mov [rsi].Flags.IsWide,1
                         .if ( Parse_Pass == PASS_1 && ( op2 & OP_I ) )
                             asmerr( 8012, "DWORD" )
                         .endif
@@ -3532,63 +3552,64 @@ IsType proc fastcall name:string_t
 ; Zero Mask                  {k1}{z}
 ;
 
-ParsEvexModifier proc fastcall string:string_t, result:ptr uchar_t
+ParsEvexModifier proc fastcall string:string_t, CodeInfo:ptr code_info
+
     mov eax,[rcx]
     .switch al
-      .case 9
-      .case ' '
+
+    .case 9
+    .case ' '
         inc rcx
         mov eax,[rcx]
-        .gotosw
-      .case 'k' ; {k1}
+       .gotosw
+    .case 'k' ; {k1}
         .endc .if ah < '1'
         .endc .if ah > '7'
         .endc .if eax & 0xFF0000
         sub ah,'0'
-        or  [rdx],ah
-        .return 1
-      .case '1' ; {1to2} {1to4} {1to8} {1to16}
-        .endc .if ah != 't'
+        or  [rdx].code_info.EvexP2,ah
+       .return( 1 )
+    .case '1' ; {1to2} {1to4} {1to8} {1to16}
+        .endc .if ( ah != 't' )
         shr eax,24
         .switch al
-          .case '1'
-            .endc .if byte ptr [rcx+4] != '6'
-          .case '2'
-          .case '4'
-          .case '8'
-            or  byte ptr [rdx],0x10
-            .return 1
+        .case '1'
+            .endc .if ( byte ptr [rcx+4] != '6' )
+        .case '8'
+        .case '4'
+        .case '2'
+            mov [rdx].code_info.EvexP2.b,1
+           .return( 1 )
         .endsw
         .endc
-      .case 'z' ; {z}
-        .endc .if ah
-        or byte ptr [rdx],0x80
-        .return 1
-      .case 'r' ; {rn-sae} {ru-sae} {rd-sae} {rz-sae}
-        .endc .if byte ptr [rcx+2] != '-'
-        .endc .if byte ptr [rcx+3] != 's'
-        mov ecx,0x2000
-        .switch ah
-          .case 'u'
-            or cl,0x50  ; B|L1
-            .endc
-          .case 'z'
-            or cl,0x70  ; B|L0|L1
-          .case 'd'
-            or cl,0x30  ; B|L0
-          .case 'n'
-            or cl,0x10  ; B
-        .endsw
-        .if cl
-            or [rdx],cx
-            .return 1
+    .case 'z' ; {z}
+        .if ( ah == 0 )
+            mov [rdx].code_info.EvexP2.z,1
+           .return( 1 )
         .endif
         .endc
-      .case 's' ; {sae}
+    .case 'r' ; {rn-sae} {ru-sae} {rd-sae} {rz-sae}
+        .endc .if byte ptr [rcx+2] != '-'
+        .endc .if byte ptr [rcx+3] != 's'
+        .if ( ah == 'z' )
+            mov eax,EVEX_P2_B or EVEX_P2_L
+        .elseif ( ah == 'u' )
+            mov eax,EVEX_P2_B or EVEX_P2_L1
+        .elseif ( ah == 'd' )
+            mov eax,EVEX_P2_B or EVEX_P2_L0
+        .elseif ( ah == 'n' )
+            mov eax,EVEX_P2_B
+        .else
+            .endc
+        .endif
+        or  [rdx].code_info.EvexP2,al
+        mov [rdx].code_info.Vector.SAE_Used,1
+       .return( 1 )
+    .case 's' ; {sae}
         .endc .if eax != 'eas'
-        mov ecx,0x2010  ; B
-        or [rdx],cx
-        .return 1
+        mov [rdx].code_info.EvexP2.b,1
+        mov [rdx].code_info.Vector.SAE_Used,1
+       .return( 1 )
     .endsw
     .return( 0 )
     endp
@@ -3783,7 +3804,7 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
     add rsi,rbx
 
     mov j,0
-    mov CodeInfo.prefix,0
+    mov CodeInfo.Prefix,0
 
     .if ( MODULE.ComStack )
 
@@ -3986,16 +4007,16 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
                     mov cl,[rcx+4]
 
                     .if ( eax == 'xeve' && cl == 0 )
-                        mov eax,PREFIX_EVEX
+                        mov CodeInfo.Prefix.Evex,1
                         jmp init_prefix
                     .elseif ( eax == ' xev' )
-                        mov eax,PREFIX_VEX
+                        mov CodeInfo.Prefix.Vex,1
                         jmp init_prefix
                     .elseif ( eax == '2xev' && cl == 0 )
-                        mov eax,PREFIX_VEX2
+                        mov CodeInfo.Prefix.Vex2,1
                         jmp init_prefix
                     .elseif ( eax == '3xev' && cl == 0 )
-                        mov eax,PREFIX_VEX3
+                        mov CodeInfo.Prefix.Vex3,1
                         jmp init_prefix
                     .endif
                 .endif
@@ -4016,7 +4037,6 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
             .endif
             .return asmerr( 2008, [rsi].string_ptr )
 init_prefix:
-            mov CodeInfo.prefix,al
             inc i
             add rsi,asm_tok
 
@@ -4026,8 +4046,7 @@ init_prefix:
             mov eax,[rcx]
             or  eax,0x20202020
             .if ( eax == 'xeve' )
-
-                mov eax,PREFIX_EVEX
+                mov CodeInfo.Prefix.Evex,1
                 jmp init_prefix
             .endif
         .endif
@@ -4045,7 +4064,7 @@ init_prefix:
 
     ; init CodeInfo
 
-    mov dl,CodeInfo.prefix
+    mov dl,CodeInfo.Prefix
     xor eax,eax
     mov ecx,sizeof(CodeInfo) / 4
     lea rdi,CodeInfo
@@ -4054,7 +4073,7 @@ init_prefix:
     mov CodeInfo.RegOverride,EMPTY
     mov CodeInfo.mem_type,MT_EMPTY
     mov CodeInfo.Ofssize,MODULE.Ofssize
-    mov CodeInfo.prefix,dl
+    mov CodeInfo.Prefix,dl
 
     ; instruction prefix?
     ;
@@ -4163,8 +4182,7 @@ init_prefix:
 
     imul esi,i,asm_tok
     add rsi,rbx
-    mov eax,[rsi].tokval
-    mov CodeInfo.token,ax
+    mov CodeInfo.token,[rsi].tokval
 
     ; get the instruction's start position in InstrTable[]
 
@@ -4216,9 +4234,9 @@ init_prefix:
                         .return asmerr( 2008, [rbx-asm_tok].tokpos )
                     .endif
                 .else
-                    or CodeInfo.prefix,PREFIX_EVEX
+                    mov CodeInfo.Prefix.Evex,1
                     .repeat
-                        .ifd !ParsEvexModifier( [rbx].string_ptr, &CodeInfo.evexP3 )
+                        .ifd !ParsEvexModifier( [rbx].string_ptr, &CodeInfo )
                             .return asmerr( 2008, [rbx].string_ptr )
                         .endif
                         sub rbx,asm_tok
@@ -4229,8 +4247,8 @@ init_prefix:
                    .continue
                 .endif
             .else
-                or CodeInfo.prefix,PREFIX_EVEX
-                or CodeInfo.evexP3,0x10
+                mov CodeInfo.Prefix.Evex,1
+                mov CodeInfo.EvexP2.b,1
             .endif
         .endif
 
@@ -4342,7 +4360,7 @@ init_prefix:
         .return asmerr( 2008, [rsi].tokpos )
     .endif
     .if ( j >= 3 )
-        or CodeInfo.vflags,VX_OP3
+        mov CodeInfo.Vector.Op3_Used,1
     .endif
 
     .for ( q = 0, ebx = 0: ebx < j && ebx < MAX_OPND: ebx++, q++ )
@@ -4354,24 +4372,23 @@ init_prefix:
         ; if encoding is VEX and destination op is XMM, YMM or memory,
         ; the second argument may be stored in the vexregop field.
 
-        movzx eax,CodeInfo.token
+        mov eax,CodeInfo.token
         mov ecx,CodeInfo.opnd[OPND1].type
 
         .if ( eax >= VEX_START && ebx == OPND2 &&
-              ( ecx & ( OP_XMM or OP_YMM or OP_ZMM or OP_M or OP_K or OP_M256 or OP_M512 or OP_R32 or OP_R64 ) ) )
+              ( ecx & ( OP_V or OP_M or OP_K or OP_M256 or OP_M512 or OP_R32 or OP_R64 ) ) )
 
             lea rdi,vex_flags
             movzx edi,byte ptr [rdi+rax-VEX_START]
 
             .if ( ( eax < T_ANDN || eax > T_PEXT ) && ( ecx & ( OP_R32 or OP_R64 ) ) )
             .elseif ( edi & VX_NND )
-            .elseif ( ( edi & VX_IMM ) && ( opndx[expr*2].kind == EXPR_CONST ) && ( j > 2 ) )
-            .elseif ( ( edi & VX_HALF ) && ( ( ecx & ( OP_XMM or OP_YMM or OP_ZMM ) ) &&
-                      ( opndx[rdx].indirect ) ) )
+            .elseif ( edi & VX_IMM && opndx[expr*2].kind == EXPR_CONST && j > 2 )
+            .elseif ( edi & VX_HALF && ( ecx & OP_V && opndx[rdx].indirect ) )
 
                 mov CodeInfo.rm_byte,0
 
-            .elseif ( ( edi & VX_NMEM ) && ( ( ecx & OP_M ) ||
+            .elseif ( edi & VX_NMEM && ( ecx & OP_M ||
                      ( ( eax == T_VMOVSD || eax == T_VMOVSS ) &&
                      ( opndx[expr].kind != EXPR_REG || opndx[expr].indirect ) ) ) )
 
@@ -4385,7 +4402,7 @@ init_prefix:
                 mov rax,opndx[rdx].base_reg
                 mov eax,[rax].asm_tok.tokval
 
-                .if ( !( GetValueSp(eax) & ( OP_R32 or OP_R64 or OP_XMM or OP_YMM or OP_ZMM or OP_K ) ) )
+                .if ( !( GetValueSp(eax) & ( OP_R32 or OP_R64 or OP_V or OP_K ) ) )
                     .return asmerr( 2070 )
                 .endif
 
@@ -4398,7 +4415,7 @@ init_prefix:
                     ; v2.11: next line should be activated - currently the
                     ; error is emitted below as syntax error
 
-                    movzx eax,CodeInfo.token
+                    mov eax,CodeInfo.token
 ifdef _WIN64
                     lea rcx,ResWordTable
                     .if ( [rcx+rax*8].ReservedWord.flags & RWF_EVEX )
@@ -4474,13 +4491,13 @@ endif
                     mov CodeInfo.vexregop,al
                     .if ( CodeInfo.vexregop > 16 || edi & OP_ZMM )
 
-                        or CodeInfo.prefix,PREFIX_EVEX
+                        mov CodeInfo.Prefix.Evex,1
                         .if ( CodeInfo.vexregop > 16 )
-                            or CodeInfo.vflags,VX_OP2V
+                            or CodeInfo.Vector.Op2_High,1
                         .endif
                         .if ( edi & OP_ZMM )
-                            or CodeInfo.vexregop,0x80
-                            or CodeInfo.vflags,VX_ZMM
+                            or  CodeInfo.vexregop,0x80
+                            mov CodeInfo.Vector.ZMM_Used,1
                         .endif
                     .elseif ( edi & OP_YMM )
                         or CodeInfo.vexregop,0x40
@@ -4513,11 +4530,9 @@ endif
         .case EXPR_REG
 
             .if ( opndx[rdx].indirect ) ; indirect operand ( "[EBX+...]" )?
-
                 .ifd ( process_address( &CodeInfo, ebx, &opndx[rdx] ) == ERROR )
                     .return
                 .endif
-
             .else
 
                 ; process_register() can't handle 3rd operand
@@ -4531,17 +4546,13 @@ endif
                     movzx eax,[rcx].asm_tok.bytval
                     mov CodeInfo.opnd[OPNI3].data32l,eax
                     mov rcx,CodeInfo.pinstr
-
-                    .if ( [rcx].instr_item.evex & VX_XMMI )
-
+                    .if ( [rcx].instr_item.evex & V_SIB )
                         mov cl,CodeInfo.opc_or
                         and cl,0xF0
                         or  al,cl
                         mov CodeInfo.opc_or,al
                     .endif
-
                 .elseifd ( process_register( &CodeInfo, ebx, &opndx, q ) == ERROR )
-
                     .return
                 .endif
             .endif
@@ -4603,7 +4614,7 @@ endif
     ; the "near" entries, that's why it's needed to skip all items
     ; until the next "first" item is found.
     ;
-    .if ( CodeInfo.isfar )
+    .if ( CodeInfo.Flags.IsFar )
         .if ( CodeInfo.token == T_CALL || CodeInfo.token == T_JMP )
 
             .repeat
@@ -4673,8 +4684,8 @@ endif
                 .endif
                 .if ( CodeInfo.opnd[OPNI3].type == OP_NONE && ( CodeInfo.opnd[OPNI2].type & OP_I ) )
 
-                    .if ( CodeInfo.rex & REX_B )
-                        or CodeInfo.rex,REX_R
+                    .if ( CodeInfo.Rex.B )
+                        mov CodeInfo.Rex.R,1
                     .endif
                     mov al,CodeInfo.rm_byte
                     mov dl,al
@@ -4697,7 +4708,7 @@ endif
 
         .if ( CodeInfo.Ofssize == USE64 )
 
-            .if ( CodeInfo.x86hi_used && CodeInfo.rex )
+            .if ( CodeInfo.Flags.X86HUsed && CodeInfo.Rex )
                 asmerr( 2218 )
             .endif
 
@@ -4706,7 +4717,7 @@ endif
 
             ; added v2.31.32
 
-            movzx eax,CodeInfo.token
+            mov eax,CodeInfo.token
             .if ( eax < VEX_START && eax >= T_ADDPD && j > 1 && opndx[expr].kind == EXPR_CONST )
                 mov rdx,opndx[expr].quoted_string
                 .if rdx
@@ -4721,7 +4732,7 @@ endif
             .case T_PUSH
             .case T_POP
                 ;; v2.06: REX.W prefix is always 0, because size is either 2 or 8
-                and CodeInfo.rex,0x7
+                and CodeInfo.Rex,0x7
                .endc
             .case T_CALL
             .case T_JMP
@@ -4731,7 +4742,7 @@ endif
                 ;; but bits 0-2 are needed to make "call rax" and "call r8"
                 ;; distinguishable!
 
-                and CodeInfo.rex,0x7
+                and CodeInfo.Rex,0x7
                .endc
                 ;; v2.31.32: immediate operand to XMM { 1.0, 2.0 }
             .case T_MOVAPS
@@ -4763,7 +4774,7 @@ endif
             .case T_MOV:
                 ;; don't use the Wide bit for moves to/from special regs
                 .if ( CodeInfo.opnd[OPND1].type & OP_RSPEC || CodeInfo.opnd[OPNI2].type & OP_RSPEC )
-                    and CodeInfo.rex,0x7
+                    and CodeInfo.Rex,0x7
                 .endif
                 .endc
             .endsw
@@ -4771,7 +4782,7 @@ endif
 
         assume rbx:nothing, rsi:nothing
 
-        movzx eax,CodeInfo.token
+        mov eax,CodeInfo.token
         mov ecx,CodeInfo.opnd[OPND1].type
         mov edx,CodeInfo.opnd[OPNI2].type
 
@@ -4791,10 +4802,11 @@ endif
 
                     .switch eax
                     .case T_OR
+                    .case T_AND
                     .case T_XOR
                     .case T_TEST
                     .case T_CMP
-                        .if ( edx & OP_I )
+                        .if ( edx & OP_IS )
                             xor ebx,ebx
                         .endif
                         .endc

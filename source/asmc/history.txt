@@ -3,7 +3,16 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.39 - xx xxx 2026
-- added Apx Extended Registers (EGPR) r16-r31
+- added AVX-VNNI-IN8/16 instructions
+- added Pseudo-Op for [V]PCLMULQDQ, VCMP*, and VPCMP*
+- added Pseudo-Op for
+- added XRSTOR64, XSAVE64, and XSAVEOPT64 instructions
+- added Galois Field New Instructions (GFNI)
+- added Xeon Phi Instructions
+- added KTEST[B|W|D|Q] instructions (missing)
+- added more AVX-512dq instructions
+- added more AVX-512BW instructions
+- added Apx Extended Registers (EGPR) r16-31
 - added .ENDC( level )
 - added AND to record fields
 - removed ALIGN <forward_label> <value>

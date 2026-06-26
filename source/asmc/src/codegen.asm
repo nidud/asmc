@@ -98,10 +98,8 @@ output_opc proc __ccall uses rdi rbx
 
     mov cl,GetCurrCpu()
     mov ch,GetCpuExtensions(CurrCpu)
-    mov dl,GetFpu(CurrCpu)
-    GetFpu([rdi].cpu)
 
-    .if ( bl > cl || al > dl || bh > ch )
+    .if ( bl > cl || ( [rdi].cpu.Fpu && !CurrCpu.Fpu ) || bh > ch )
 
         ;; if instruction is valid for 16bit cpu, but operands aren't,
         ;; then display a more specific error message!

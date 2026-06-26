@@ -1533,6 +1533,25 @@ insa(STTILECFG,  sttilecfg,      1, OpCls( M_ANY, NONE,       NONE ), F_660F38, 
 
 insa(VINSERTF128, vinsertf128,   1, OpCls( YMM, XMM_M128,     I8_U ), F_660F3A, 1, 2, 0x18, 0x00, P_AVX, 0x00, 0x08, 0x00, MR or ZR )
 
+insa(VPSLLDQ,  vpslldq, 1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x73, 0x38, P_SSE2, 0, 0x28, 0x49, WIG or FVM )
+insa(VPSRLDQ,  vpsrldq, 1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x73, 0x18, P_SSE2, 0, 0x28, 0x49, WIG or FVM )
+insa(VPSLLW,   vpsllw,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x71, 0x30, P_SSE2, 0, 0x28, 0x69, MR or ZR or WIG or FVM )
+insa(VPSLLW,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xF1, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or WIG or M128 )
+insa(VPSLLD,   vpslld,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x72, 0x30, P_AVX,  0, 0x28, 0x69, MR or ZR or BC or FV )
+insa(VPSLLD,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xF2, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or M128 )
+insa(VPSLLQ,   vpsllq,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x73, 0x30, P_AVX,  0, 0x28, 0xA9, W1 or MR or ZR or BC or FV )
+insa(VPSLLQ,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xF3, 0x00, P_SSE2, 0, 0x00, 0x00, W1 or MR or ZR or M128 )
+insa(VPSRAW,   vpsraw,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x71, 0x20, P_SSE2, 0, 0x28, 0x69, MR or ZR or WIG or FVM ) ; /ib
+insa(VPSRAW,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xE1, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or WIG or M128 ) ; /ib
+insa(VPSRAD,   vpsrad,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x72, 0x20, P_AVX,  0, 0x28, 0x69, MR or ZR or BC or FV )
+insa(VPSRAD,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xE2, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or M128 )
+insa(VPSRLW,   vpsrlw,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x71, 0x10, P_SSE2, 0, 0x28, 0x69, MR or ZR or WIG or FVM )
+insa(VPSRLW,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xD1, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or WIG or M128 )
+insa(VPSRLD,   vpsrld,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x72, 0x10, P_AVX,  0, 0x28, 0x69, MR or ZR or BC or FV )
+insa(VPSRLD,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xD2, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or M128 )
+insa(VPSRLQ,   vpsrlq,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x73, 0x10, P_AVX,  0, 0x28, 0xA9, W1 or MR or ZR or BC or FV )
+insa(VPSRLQ,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xD3, 0x00, P_SSE2, 0, 0x00, 0x00, W1 or MR or M128 )
+
 
 ; avxins(alias, tok, string, rsw_flags, vex_flags)
 
@@ -1727,25 +1746,6 @@ avxins(PSIGNB,     VPSIGNB,     vpsignb,     0x08, 0x41 )
 avxins(PSIGNW,     VPSIGNW,     vpsignw,     0x08, 0x41 )
 avxins(PSIGND,     VPSIGND,     vpsignd,     0x08, 0x41 )
 
-insa(VPSLLDQ,  vpslldq, 1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x73, 0x38, P_SSE2, 0, 0x28, 0x49, WIG or FVM )
-insa(VPSRLDQ,  vpsrldq, 1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x73, 0x18, P_SSE2, 0, 0x28, 0x49, WIG or FVM )
-insa(VPSLLW,   vpsllw,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x71, 0x30, P_SSE2, 0, 0x28, 0x69, MR or ZR or WIG or FVM )
-insa(VPSLLW,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xF1, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or WIG or M128 )
-insa(VPSLLD,   vpslld,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x72, 0x30, P_AVX,  0, 0x28, 0x69, MR or ZR or BC or FV )
-insa(VPSLLD,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xF2, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or M128 )
-insa(VPSLLQ,   vpsllq,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x73, 0x30, P_AVX,  0, 0x28, 0xA9, W1 or MR or ZR or BC or FV )
-insa(VPSLLQ,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xF3, 0x00, P_SSE2, 0, 0x00, 0x00, W1 or MR or ZR or M128 )
-insa(VPSRAW,   vpsraw,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x71, 0x20, P_SSE2, 0, 0x28, 0x69, MR or ZR or WIG or FVM ) ; /ib
-insa(VPSRAW,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xE1, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or WIG or M128 ) ; /ib
-insa(VPSRAD,   vpsrad,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x72, 0x20, P_AVX,  0, 0x28, 0x69, MR or ZR or BC or FV )
-insa(VPSRAD,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xE2, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or M128 )
-insa(VPSRLW,   vpsrlw,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x71, 0x10, P_SSE2, 0, 0x28, 0x69, MR or ZR or WIG or FVM )
-insa(VPSRLW,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xD1, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or WIG or M128 )
-insa(VPSRLD,   vpsrld,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x72, 0x10, P_AVX,  0, 0x28, 0x69, MR or ZR or BC or FV )
-insa(VPSRLD,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xD2, 0x00, P_SSE2, 0, 0x00, 0x00, MR or ZR or M128 )
-insa(VPSRLQ,   vpsrlq,  1, OpCls( XMM, XMM_M128, I8_U ), F_660F, 1, 2, 0x73, 0x10, P_AVX,  0, 0x28, 0xA9, W1 or MR or ZR or BC or FV )
-insa(VPSRLQ,   1,       0, OpCls( XMM, XMM_M128, NONE ), F_660F, 1, 2, 0xD3, 0x00, P_SSE2, 0, 0x00, 0x00, W1 or MR or M128 )
-
 avxins(PTEST,      VPTEST,      vptest,      0x08, 0x03 )
 avxins(PSUBB,      VPSUBB,      vpsubb,      0x08, 0x41 )
 avxins(PSUBW,      VPSUBW,      vpsubw,      0x08, 0x41 )
@@ -1936,10 +1936,28 @@ insa(VPMADD52HUQ, vpmadd52huq, 1, OpCls( XMM, XMM_M128_M64, NONE ),  F_660F38, 1
 
 ; VEX-Encoded Vector Neural Network Instructions (VNNI) - v2.34.59
 
-insa(VPDPBUSD,  vpdpbusd,  1, OpCls( XMM, XMM_M128_M32, NONE ),  F_660F38, 1, 0, 0x50, 0x00, P_AVX, 0x00, 0x18, 0x01, MR or ZR or BC or FV )
-insa(VPDPBUSDS, vpdpbusds, 1, OpCls( XMM, XMM_M128_M32, NONE ),  F_660F38, 1, 0, 0x51, 0x00, P_AVX, 0x00, 0x18, 0x01, MR or ZR or BC or FV )
-insa(VPDPWSSD,  vpdpwssd,  1, OpCls( XMM, XMM_M128_M32, NONE ),  F_660F38, 1, 0, 0x52, 0x00, P_AVX, 0x00, 0x18, 0x01, MR or ZR or BC or FV )
-insa(VPDPWSSDS, vpdpwssds, 1, OpCls( XMM, XMM_M128_M32, NONE ),  F_660F38, 1, 0, 0x53, 0x00, P_AVX, 0x00, 0x18, 0x01, MR or ZR or BC or FV )
+insa(VPDPBUSD,  vpdpbusd,  1, OpCls( XMM, XMM_M128_M32, NONE ),  F_660F38, 1, 0, 0x50, 0x00, P_VNNI, 0x00, 0x18, 0x01, MR or ZR or BC or FV )
+insa(VPDPBUSDS, vpdpbusds, 1, OpCls( XMM, XMM_M128_M32, NONE ),  F_660F38, 1, 0, 0x51, 0x00, P_VNNI, 0x00, 0x18, 0x01, MR or ZR or BC or FV )
+insa(VPDPWSSD,  vpdpwssd,  1, OpCls( XMM, XMM_M128_M32, NONE ),  F_660F38, 1, 0, 0x52, 0x00, P_VNNI, 0x00, 0x18, 0x01, MR or ZR or BC or FV )
+insa(VPDPWSSDS, vpdpwssds, 1, OpCls( XMM, XMM_M128_M32, NONE ),  F_660F38, 1, 0, 0x53, 0x00, P_VNNI, 0x00, 0x18, 0x01, MR or ZR or BC or FV )
+
+; AVX-VNNI-INT8 instructions
+
+insa(VPDPBSSD,  vpdpbssd,  1, OpCls( XMM, XMM_M128, NONE ), F_F20F38, 1, 0, 0x50, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+insa(VPDPBSSDS, vpdpbssds, 1, OpCls( XMM, XMM_M128, NONE ), F_F20F38, 1, 0, 0x51, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+insa(VPDPBSUD,  vpdpbsud,  1, OpCls( XMM, XMM_M128, NONE ), F_F30F38, 1, 0, 0x50, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+insa(VPDPBSUDS, vpdpbsuds, 1, OpCls( XMM, XMM_M128, NONE ), F_F30F38, 1, 0, 0x51, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+insa(VPDPBUUD,  vpdpbuud,  1, OpCls( XMM, XMM_M128, NONE ), F_NP0F38, 1, 0, 0x50, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+insa(VPDPBUUDS, vpdpbuuds, 1, OpCls( XMM, XMM_M128, NONE ), F_NP0F38, 1, 0, 0x51, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+
+; AVX-VNNI-INT16 instructions
+
+insa(VPDPWSUD,  vpdpwsud,  1, OpCls( XMM, XMM_M128, NONE ), F_F30F38, 1, 0, 0xD2, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+insa(VPDPWSUDS, vpdpwsuds, 1, OpCls( XMM, XMM_M128, NONE ), F_F30F38, 1, 0, 0xD3, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+insa(VPDPWUSD,  vpdpwusd,  1, OpCls( XMM, XMM_M128, NONE ), F_660F38, 1, 0, 0xD2, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+insa(VPDPWUSDS, vpdpwusds, 1, OpCls( XMM, XMM_M128, NONE ), F_660F38, 1, 0, 0xD3, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+insa(VPDPWUUD,  vpdpwuud,  1, OpCls( XMM, XMM_M128, NONE ), F_NP0F38, 1, 0, 0xD2, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
+insa(VPDPWUUDS, vpdpwuuds, 1, OpCls( XMM, XMM_M128, NONE ), F_NP0F38, 1, 0, 0xD3, 0x00, P_VNNI, 0x00, 0x08, 0x01, 0 )
 
 ; Galois Field New Instructions (GFNI)
 

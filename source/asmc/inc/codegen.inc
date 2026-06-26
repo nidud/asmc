@@ -97,6 +97,7 @@ IS_MEMTYPE_SIZ macro op, siz
     F_0FNO66,       ; 0F escape, no size prefix
     F_480F,         ; REX.W + 0F prefix ( cmpxchg16b )
     F_0F38,         ; must be first of 38/3A variants
+    F_NP0F38 = F_0F38,
     E_OF38,
     F_0F3A,
     E_0F3A,

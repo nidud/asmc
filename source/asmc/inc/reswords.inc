@@ -14,15 +14,7 @@ RWF_IA32	equ 0x02 ; keyword specific to IA32 mode
 RWF_X64		equ 0x04 ; keyword specific to IA32+ mode
 RWF_VEX		equ 0x08 ; keyword triggers VEX encoding
 RWF_EVEX	equ 0x10 ; keyword triggers EVEX encoding
-RWF_QVM		equ 0x20
-RWF_OVM		equ 0x40
-RWF_HVM		equ 0x60
-RWF_T1S		equ 0x80 ; +Tuple1 Fixed (T1F)
-RWF_T2		equ 0xA0
-RWF_T4		equ 0xC0
-RWF_M128	equ 0xE0
-RWF_MASK	equ 0xE0 ; TupleType
-
+RWF_EVEXW	equ 0x80 ; EVEX encoding: W=1
 
 ; structure of items in the "reserved names" table ResWordTable[]
 

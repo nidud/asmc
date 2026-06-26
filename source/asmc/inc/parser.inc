@@ -5,12 +5,49 @@
 ;
 ; Parser items
 ;
-.pragma list(push, 1)
+.pragma list(push, 0)
 ifndef __PARSER_INC
 define __PARSER_INC
 
 include operands.inc
 include fixup.inc
+
+; Flags used for instructions
+; VEX flags is "general" for each instruction
+; EVEX flags is set for all instruction varints
+;
+; EVEX.LZ.NDS.[128,256,512,LLIG].[66,F2,F3].0F/0F3A/0F38.[W0,W1,WIG] opcode [/r] [/ib]
+;
+
+.enum tuple_type {
+    FV = 1,             ; Full Vector / Load+Op (Full Vector Dword/Qword)
+    HV,                 ; Half Vector / Load+Op (Half Vector)
+    FVM,                ; Full Mem / SubDword Convention
+    T1S,                ; Tuple1 Scalar
+    T1F,                ; Tuple1 Fixed 4/8 not affected by EVEX.W
+    T2,                 ; Broadcast (2 elements)
+    T4,                 ; Broadcast (4 elements)
+    T8,                 ; Broadcast (8 elements)
+    HVM,                ; Half Mem / SubQword Convention
+    QVM,                ; QuarterMem
+    OVM,                ; OctMem / SubWord Convention
+    M128,               ; Mem128 / Shift count from memory
+    DDUP,               ; VMOVDDUP
+    T14X,               ; Tuple1_4X
+    }
+
+define LZ       0x10    ; VEX.LZ VEX-Encoded GPR instructions
+define VSIB     0x20    ; /vsib Use VSIB memory addressing
+define WIG      0x40    ; W ignored - same bit for VEX and EVEX
+define W1       0x80    ; W set - same bit for VEX and EVEX
+define MR       0x0100  ; Support {k1}
+define BC       0x0200  ; Support /m32bcst /m64bcst {1tox} BCST
+define SA       0x0400  ; Support {sae}
+define ER       0x0800  ; Support {er} ({rx-sae})
+define ZR       0x1000  ; Support {z}
+define SZ       0x2000  ; Support {sae} for ZMM only
+define EZ       0x4000  ; Support {er}  for ZMM only
+define LLIG     0x8000  ; EVEX.L'L Ignored
 
 ; define tokens for SpecialTable (registers, operators, ... )
 
@@ -49,7 +86,6 @@ undef insa
 undef avxins
 
 VEX_START equ T_VBROADCASTSS ; first VEX encoded item
-
 
 ; queue of symbols
 
@@ -98,7 +134,8 @@ ProcTable   equ <SymTables[TAB_PROC].head>
     AP_REP      = 0x02,
     AP_REPxx    = 0x03,
     AP_FWAIT    = 0x04,
-    AP_NO_FWAIT = 0x05
+    AP_NO_FWAIT = 0x05,
+    AP_REX_W    = 0x06,
     }
 
 ; values for field type in special_item.
@@ -129,16 +166,6 @@ opnd_class      STRUC
 opnd_type       dd 2 dup(?)
 opnd_type_3rd   db ?    ; operand 3
 opnd_class      ENDS
-
-; instr_item is the structure used to store instructions
-; in InstrTable (instruct.h).
-; Most compilers will use unsigned type for enums, just OW
-; allows to use the smallest size possible.
-
-II_ALLOWED_PREFIX equ 0x07 ; 3 - allowed prefix
-II_FIRST        equ 0x08 ; 1 - 1=opcode's first entry
-II_RM_INFO      equ 0x70 ; 3 - info on r/m byte
-II_OPND_DIR     equ 0x80 ; 1 - operand direction
 
 ; special_item is the structure used to store directives and
 ; other reserved words in SpecialTable (special.h).
@@ -249,170 +276,181 @@ UNION
 ENDS
 opnd_item       ENDS
 
-; code_info describes the current instruction. It's the communication
-; structure between parser and code generator.
+
+; instr_item is the structure used to store instructions
+; in InstrTable (instruct.h).
+; Most compilers will use unsigned type for enums, just OW
+; allows to use the smallest size possible.
 
 .template instr_item
     opclsidx    db ?        ; v2.06: index for opnd_clstab
     byte1_info  db ?        ; flags for 1st byte
     flags       db ?
-    evex        db ?
-    cpu         dw ?
+    cpu         db ?
+    evex        dw ?        ; flags for EVEX and VEX-Encoded GPR Instructions
     opcode      db ?        ; opcode byte
     rm_byte     db ?        ; mod_rm_byte
    .ends
-    instr_t     typedef ptr instr_item
 
-; VEX, VEX2, VEX3, EXEX, and {evex} prefix -- not reserved words
+
+; VEX, VEX2, VEX3, EVEX, and {evex} prefix -- not reserved words
 ;
 ; These may also be set by option avxencoding
 
+define VEX_PREFIX 0x1F
+
+
 .enum {
-
-    V_W0                = 0x01,     ; no REX.W bit
-    V_W1                = 0x02,     ; set REX.W bit
-    V_NDS               = 0x04,     ; set if NDS register supported
-    V_SIB               = 0x08,     ; set if VSIB memory addressing supported
-    V_R1                = 0x10,     ; set if High-16 registers supported
-    V_B                 = 0x20,     ; set if Next-8 base register supported
-    V_X                 = 0x40,     ; set if Next-8 index register supported
-    V_R                 = 0x80,     ; set if Next-8 register supported
-    V_RXB               = 0xE0,     ;
-
-    REX_B               = 0x01,     ; regno 0-7 <-> 8-15 of ModR/M or SIB base
-    REX_X               = 0x02,     ; regno 0-7 <-> 8-15 of SIB index
-    REX_R               = 0x04,     ; regno 0-7 <-> 8-15 of ModR/M REG
-    REX_W               = 0x08,     ; wide 32 <-> 64
-    REX_B4              = 0x10,     ; REX2: regno 16-31 of ModR/M or SIB base
-    REX_X4              = 0x20,     ; REX2: regno 16-31 of SIB index
-    REX_R4              = 0x40,     ; REX2: regno 16-31 of ModR/M REG
-    REX_M0              = 0x80,
-
-    APX_B_H             = 0x01,     ; GPR ModR/M or SIB base is regno 16-31
-    APX_X_H             = 0x02,     ; GPR SIB index is regno 16-31
-    APX_R_H             = 0x04,     ; GPR ModR/M REG is regno 16-31
-
-    V_OP1_H             = 0x01,     ; Vector op1 is regno 16-31
-    V_OP2_H             = 0x02,     ; Vector op2 is regno 16-31
-    V_OP3_H             = 0x04,     ; Vector op3 is regno 16-31
-    V_OP3_USED          = 0x08,
-    V_ZMM_USED          = 0x10,
-    V_SAE_USED          = 0x20,
-    V_Z08_USED          = 0x40,
-    V_Z24_USED          = 0x80,
-
-    VEX_P0_MMMMM        = 0x1F,
-    VEX_P0_B            = 0x20,
-    VEX_P0_X            = 0x40,
-    VEX_P0_R            = 0x80,
-
-    VEX_P1_P0           = 0x01,
-    VEX_P1_P1           = 0x02,
-    VEX_P1_PP           = 0x03,
-    VEX_P1_L            = 0x04,
-    VEX_P1_VVVV         = 0x78,
-    VEX_P1_W            = 0x80,
-
-    VEX2_P0_PP          = 0x03,
-    VEX2_P0_L           = 0x04,
-    VEX2_P0_VVVV        = 0x78,
-    VEX2_P0_R           = 0x80,
-
-    EVEX_P0_M0          = 0x01,
-    EVEX_P0_M1          = 0x02,
-    EVEX_P0_MM          = 0x03,
-    EVEX_P0_RESERVED    = 0x0C,
-    EVEX_P0_R1          = 0x10,
-    EVEX_P0_B           = 0x20,
-    EVEX_P0_X           = 0x40,
-    EVEX_P0_R           = 0x80,
-
-    EVEX_P1_P0          = 0x01,
-    EVEX_P1_P1          = 0x02,
-    EVEX_P1_PP          = 0x03,
-    EVEX_P1_FIXED       = 0x04,
-    EVEX_P1_V0          = 0x08,
-    EVEX_P1_V1          = 0x10,
-    EVEX_P1_V2          = 0x20,
-    EVEX_P1_V3          = 0x40,
-    EVEX_P1_VVVV        = 0x78,
-    EVEX_P1_W           = 0x80,
-
-    EVEX_P2_A0          = 0x01,
-    EVEX_P2_A1          = 0x02,
-    EVEX_P2_A2          = 0x04,
-    EVEX_P2_MASK        = 0x07,
-    EVEX_P2_V           = 0x08,
-    EVEX_P2_B           = 0x10,
-    EVEX_P2_L0          = 0x20,
-    EVEX_P2_L1          = 0x40,
-    EVEX_P2_L           = 0x60,
-    EVEX_P2_Z           = 0x80,
+    REX_B       = 0x01,     ; regno 0-7 <-> 8-15 of ModR/M or SIB base
+    REX_X       = 0x02,     ; regno 0-7 <-> 8-15 of SIB index
+    REX_R       = 0x04,     ; regno 0-7 <-> 8-15 of ModR/M REG
+    REX_W       = 0x08,     ; wide 32 <-> 64
+    REX_B4      = 0x10,     ; REX2: regno 16-31 of ModR/M or SIB base
+    REX_X4      = 0x20,     ; REX2: regno 16-31 of SIB index
+    REX_R4      = 0x40,     ; REX2: regno 16-31 of ModR/M REG
+    REX_M0      = 0x80
     }
+
+.template ResWFlags
+    record
+     Disabled   db : 1 ?    ; keyword disabled
+     IA32       db : 1 ?    ; keyword specific to IA32 mode
+     X64        db : 1 ?    ; keyword specific to IA32+ mode
+     VEX        db : 1 ?    ; keyword triggers VEX encoding
+     EVEX       db : 1 ?    ; keyword triggers EVEX encoding
+     DRIMM      db : 1 ?    ; reg,r/m,imm - VPSLLD/..
+     SWAP       db : 1 ?    ; short version of VMOV*
+     EVEX_W     db : 1 ?    ; used for EVEX encoding
+    ends
+   .ends
+
+.template VexFlags
+    record
+     L          db : 1 ?    ; Support 256/512 Vectors
+     NND        db : 1 ?    ; VEX.NDS/NDD not supported
+     DST        db : 1 ?    ; VEX.NDD (if op3 is an immediate)
+     IMM        db : 1 ?    ; no VEX.NDS if op3 is an immediate
+     NMEM       db : 1 ?    ; no VEX.NDS if op1 is a mem ref (vmovs[d|s], vmov[h|l]p[d|s] )
+     HALF       db : 1 ?    ; op2 is half-sized
+     WIgnored   db : 1 ?    ; no REX.W bit
+     W          db : 1 ?    ; set REX.W bit
+    ends
+   .ends
+
+.template Instruction
+    opclsidx    db ?        ; v2.06: index for opnd_clstab
+    byte1_info  db ?        ; flags for 1st byte
+    record
+     prefix     db : 3 ?    ; allowed prefix
+     first      db : 1 ?    ; 1=opcode's first entry
+     rm_info    db : 3 ?    ; info on r/m byte
+     opnd_dir   db : 1 ?    ; operand direction
+    ends
+    cpu         CPU <>
+    record Evex
+     Tuple      dw : 4 ?    ; Tuple type
+     vgpr       dw : 1 ?    ; Support VEX.LZ VEX instructions using 3 registers (BMI)
+     vsib       dw : 1 ?    ; Support VSIB memory addressing /vsib
+     WIgnored   dw : 1 ?    ; EVEX.W bit ignored
+     W          dw : 1 ?    ; EVEX.W=1
+     KMask      dw : 1 ?    ; Support {k1}
+     Broadcast  dw : 1 ?    ; Support BCST / {1tox} /m32bcst /m64bcst
+     Suppress   dw : 1 ?    ; Support {sae} Suppress All Exceptions
+     Rounding   dw : 1 ?    ; Support {rx-sae} {er}
+     Zeroing    dw : 1 ?    ; Support {z} Zeroing/Merging
+     SuppressZ  dw : 1 ?    ; Support {sae} for ZMM only
+     RoundingZ  dw : 1 ?    ; Support {rx-sae} {er} for ZMM only
+     LIgnored   dw : 1 ?    ; LLIG
+    ends
+    opcode      db ?        ; opcode byte
+    rm_byte     db ?        ; mod_rm_byte
+   .ends
+    instr_t     typedef ptr Instruction
+
+if sizeof(Instruction) ne 8
+.err @CatStr(%@FileName,<(>,%@Line,<): >, <Instruction need to 8 byte!!!!>)
+endif
+
+; code_info describes the current instruction. It's the communication
+; structure between parser and code generator.
 
 .template code_info
     record Flags
-     IsWide             db : 1 ?    ; 0=byte, 1=word/dword/qword
-     IsDirect           db : 1 ?    ; 1=direct addressing mode
-     IsFar              db : 1 ?    ; CALL/JMP far
-     ConstSizeFixed     db : 1 ?    ; v2.01
-     X86HUsed           db : 1 ?    ; AH,BH,CH,DH used
-     X64LUsed           db : 1 ?    ; SPL,BPL,SIL,DIL used
-     SymUndefined       db : 1 ?    ; v2.06b: struct member is forward ref
-     B_RIP              db : 1 ?    ; Base:     RIP
+     IsWide     db : 1 ?    ; 0=byte, 1=word/dword/qword
+     IsDirect   db : 1 ?    ; 1=direct addressing mode
+     IsFar      db : 1 ?    ; CALL/JMP far
+     ConstFixed db : 1 ?    ; v2.01
+     X86HUsed   db : 1 ?    ; AH,BH,CH,DH used
+     X64LUsed   db : 1 ?    ; SPL,BPL,SIL,DIL used
+     SymUndef   db : 1 ?    ; v2.06b: struct member is forward ref
+     B_RIP      db : 1 ?    ; Base: RIP
     ends
     record Prefix
-     Osize              db : 1 ?    ; 0x66
-     Asize              db : 1 ?    ; 0x67
-     Vex                db : 1 ?    ; 0x4*
-     Vex2               db : 1 ?    ; 0xC5
-     Vex3               db : 1 ?    ; 0xC4
-     Evex               db : 1 ?    ; 0x62
-     Rex2               db : 1 ?    ; 0xD5
+     Vex        db : 1 ?    ; VEX prefix 0x4* is to be emitted
+     Vex2       db : 1 ?    ; VEX2 prefix 0xC5 is to be emitted
+     Vex3       db : 1 ?    ; VEX3 prefix 0xC4 is to be emitted
+     Evex       db : 1 ?    ; EVEX prefix 0x62 is to be emitted
+     Rex2       db : 1 ?    ; REX2 prefix 0xD5 is to be emitted
+     Osize      db : 1 ?    ; operand size prefix 0x66 is to be emitted
+     Asize      db : 1 ?    ; address size prefix 0x67 is to be emitted
     ends
     record Rex
-     B                  db : 1 ?    ; Base  0-15 of ModR/M or SIB base
-     X                  db : 1 ?    ; Index 0-15 of SIB index
-     R                  db : 1 ?    ; Reg   0-15 of ModR/M REG
-     W                  db : 1 ?    ; wide  32/64
-     B4                 db : 1 ?    ; Base  16-31 of ModR/M or SIB base
-     X4                 db : 1 ?    ; Index 16-31 of SIB index
-     R4                 db : 1 ?    ; Reg   16-31 of ModR/M REG
-     M0                 db : 1 ?
+     B          db : 1 ?    ; Base  0-15 of ModR/M or SIB base
+     X          db : 1 ?    ; Index 0-15 of SIB index
+     R          db : 1 ?    ; Reg   0-15 of ModR/M REG
+     W          db : 1 ?    ; wide  32/64
+     Fixed      db : 2 ?    ; 0
+     P64        db : 1 ?    ;
     ends
-    record Apx
-     B_High             db : 1 ?    ; Base:     GPR 16-31
-     X_High             db : 1 ?    ; Index:    GPR 16-31
-     R_High             db : 1 ?    ; Register: GPR 16-31 (REX2)
+    record Rex2             ; High-16 registers used
+     B          db : 1 ?    ; Rex: Base  0-15 of ModR/M or SIB base
+     X          db : 1 ?    ; Rex: Index 0-15 of SIB index
+     R          db : 1 ?    ; Rex: Reg   0-15 of ModR/M REG
+     W          db : 1 ?    ; Rex: wide  32/64
+     B4         db : 1 ?    ; Base  16-31 of ModR/M or SIB base
+     X4         db : 1 ?    ; Index 16-31 of SIB index
+     R4         db : 1 ?    ; Reg   16-31 of ModR/M REG
+     M          db : 1 ?    ; map 0 (1-byte opcodes) or map 1 (2-byte opcodes, +0x0F)
     ends
-    record Vector
-     Op1_High           db : 1 ?    ; Operand1: xMM 16-31
-     Op2_High           db : 1 ?    ; Operand2: xMM 16-31
-     Op3_High           db : 1 ?    ; Operand3: xMM 16-31
-     Op3_Used           db : 1 ?    ; more than 2 operands used
-     ZMM_Used           db : 1 ?    ; ZMM used
-     SAE_Used           db : 1 ?    ; {sae}
-     V08_Used           db : 1 ?    ; xMM  8-15 used
-     V24_Used           db : 1 ?    ; xMM 24-31 used
+    struct Evex             ; EVEX.P2 - User settings
+     record P2
+      Mask      db : 3 ?    ; Embedded opmask register specifier: {k1..k7}
+      V         db : 1 ?    ; Combine with vvvv or when VSIB present
+      b         db : 1 ?    ; Brodcast/RC/SAE Context: {1to2/4/8/16}
+      L0        db : 1 ?    ; Vector length/RC - YMM
+      L1        db : 1 ?    ; Vector length/RC - ZMM
+      z         db : 1 ?    ; Zeroing/Merging: {z}
+     ends
     ends
-    record EvexP2                   ; Payload byte 2
-     Mask               db : 3 ?    ; Embedded opmask register specifier: {k1..k7}
-     V                  db : 1 ?    ; Combine with vvvv or when VSIB present
-     b                  db : 1 ?    ; Brodcast/RC/SAE Context: {1to4} {1to8} {1to16}
-     L                  db : 2 ?    ; Vector length/RC
-     z                  db : 1 ?    ; Zeroing/Merging: {z}
+    record Modifier         ; Modifiers used:
+     Broadcast  db : 1 ?    ; {1tox}
+     BroadCST   db : 1 ?    ; /bcst
+     Rounding   db : 1 ?    ; {rx-sae} Rounding control {er}
+     Suppress   db : 1 ?    ; {sae} Suppress All Exceptions
+     Zeroing    db : 1 ?    ; {z} Zeroing/Merging
+     ZMMUsed    db : 1 ?    ; Rounding/Suppress only supported for ZMM
+     BCShift    db : 2 ?    ; {1tox} value 0..3 --> 2 << Shift
     ends
-    mem_type            db ?        ; byte / word / etc. NOT near/far
-    Ofssize             db ?
-    rm_byte             db ?
-    sib                 db ?
-    opc_or              db ?
-    vexregop            db ?        ; in based-1 format (0=empty)
-    token               dd ?
-    inst                int_t ?
-    RegOverride         int_t ?
-    opnd                opnd_item MAX_OPND dup(<>)
-    pinstr              instr_t ?
+    Vex         VexFlags <> ; set by code_gen
+    ResW        ResWFlags<> ; set by parser
+    mem_type    db ?        ; byte / word / etc. NOT near/far
+    Ofssize     db ?
+    rm_byte     db ?
+    sib         db ?
+    opc_or      db ?
+    rrm_ib      db ?
+    vexregop    db ?        ; in based-1 format (0=empty)
+    record VReg
+     R_YMM      db : 1 ?    ; the reg-type in vexregop
+     R_ZMM      db : 1 ?
+     X_YMM      db : 1 ?    ; the reg-type in opc_or (VSIB index)
+     X_ZMM      db : 1 ?
+    ends
+    token       dd ?
+    inst        int_t ?
+    RegOverride int_t ?
+    opnd        opnd_item MAX_OPND dup(<>)
+    pinstr      instr_t ?
    .ends
 
 .enum { OPND1, OPND2, OPND3 }

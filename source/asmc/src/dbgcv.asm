@@ -2502,12 +2502,7 @@ endif
         mov byte ptr [rdx-1],0
 
         mov [rdi].COMPILESYM3.flags,CV_CFL_MASM
-        mov eax,MODULE.curr_cpu
-        and eax,P_CPU_MASK
-        shr eax,4
-        .if ( MODULE.Ofssize == USE64 )
-            mov eax,CV_CFL_X64
-        .endif
+        GetCurrCFL()
         mov [rdi].COMPILESYM3.machine,     ax
         mov [rdi].COMPILESYM3.verFEMajor,  0
         mov [rdi].COMPILESYM3.verFEMinor,  0
@@ -2632,18 +2627,10 @@ endif
 
         ;; v2.11: use a valid 64-bit value
 
-        mov eax,CV_CFL_X64
-        .if ( MODULE.defOfssize != USE64 )
-             mov eax,MODULE.curr_cpu
-             and eax,P_CPU_MASK
-             shr eax,4
-        .endif
+        GetCurrCFL()
 
         ;; 0 isnt possible, 1 is 8086 and 80186
 
-        .if ( al == 0 )
-            mov al,CV_CFL_8086
-        .endif
         mov [rdi].CFLAGSYM.machine,al
         mov [rdi].CFLAGSYM.language,CV_CFL_MASM
         mov [rdi].CFLAGSYM.flags,0

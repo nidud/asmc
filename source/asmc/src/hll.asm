@@ -1231,9 +1231,8 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:t
                             mov esi,T_XMM0
                         .endif
                     .elseif ( MODULE.Ofssize == USE16 )
-                        mov eax,MODULE.curr_cpu ; v2.37.07: added
-                        and eax,P_CPU_MASK
-                        .if ( eax < P_386 )
+                        ; v2.37.07: added
+                        .ifd ( GetCurrCpu() < P_386 )
                             .if ( [rbx-asm_tok].token == T_DBL_COLON )
                                 ; reg::func()
                                 mov esi,T_AX
@@ -1333,17 +1332,8 @@ size_from_ptr:
                     .ifd EvalOperand( &i, tokenarray, edx, &opnd, EXPF_NOERRMSG ) != ERROR
                         xor eax,eax
                         .if ( opnd.kind == EXPR_ADDR || ( opnd.indirect ) )
-if 0
-                            xor edx,edx
-                            mov ecx,MODULE.curr_cpu ; ??
-                            and ecx,P_CPU_MASK
-                            .if ( ecx > P_686 || ( ecx == P_686 && MODULE.curr_cpu & P_SSEALL ) )
-                                inc edx
-                            .endif
-                            .if ( edx && ( opnd.mem_type == MT_REAL4 || opnd.mem_type == MT_REAL8 ) )
-else
-                            .if ( MODULE.Ofssize == USE64 && ( opnd.mem_type == MT_REAL4 || opnd.mem_type == MT_REAL8 ) )
-endif
+                            .if ( MODULE.Ofssize == USE64 &&
+                                ( opnd.mem_type == MT_REAL4 || opnd.mem_type == MT_REAL8 ) )
                                 mov eax,16
                             .else
                                 SizeFromMemtype( opnd.mem_type, USE_EMPTY, opnd.type )

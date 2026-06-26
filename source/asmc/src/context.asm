@@ -69,17 +69,17 @@ define NUM_STDREGS 16
    .ends
 
 .template cpu_context
-    cpu int_t ?             ; saved ModuleInfo.cpu
-    curr_cpu cpu_info ?     ; saved ModuleInfo.curr_cpu
+    cpu dd ?             ; saved ModuleInfo.cpu
+    curr_cpu CPU <>      ; saved ModuleInfo.curr_cpu
    .ends
 
 .template radix_context
-    radix db ?              ; saved ModuleInfo.radix
+    radix db ?           ; saved ModuleInfo.radix
    .ends
 
 .template alignment_context
-    fieldalign db ?         ; saved ModuleInfo.fieldalign
-    procalign db ?          ; saved ModuleInfo.procalign
+    fieldalign db ?      ; saved ModuleInfo.fieldalign
+    procalign db ?       ; saved ModuleInfo.procalign
    .ends
 
 

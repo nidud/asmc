@@ -460,12 +460,11 @@ seg_override proc __ccall uses rbx CodeInfo:ptr code_info, seg_reg:int_t, sym:as
     ; with the current address mode;
     ; - seg_reg: register index (T_DS, T_BP, T_EBP, T_BX, ... )
 
-    ldr     rbx,CodeInfo
-    ldr     ecx,seg_reg
+    ldr rbx,CodeInfo
+    ldr ecx,seg_reg
 
-    mov     rax,[rbx].pinstr
-    movzx   eax,[rax].instr_item.flags
-    and     eax,II_ALLOWED_PREFIX
+    mov rax,[rbx].pinstr
+    mov eax,[rax].Instruction.prefix
 
     ; don't touch segment overrides for string instructions
 
@@ -623,14 +622,14 @@ set_rm_sib proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:uint_t
    .new bit3_base :uchar_t = 0
    .new bit3_idx  :uchar_t = 0
    .new rex       :uchar_t = 0
+   .new rex2      :uchar_t = 0
 
     ldr rsi,CodeInfo
     ldr edx,CurrOpnd
     ldr edi,index
+
     mov ecx,base
-
     imul ebx,edx,opnd_item
-
     .if ( ecx == T_RIP )
         mov [rsi].Flags.B_RIP,1
     .endif
@@ -720,11 +719,13 @@ endif
             mov base_reg,5
             .if ( ecx != T_RIP )
                 mov base_reg,GetRegNo(ecx)
-                .if ( al > 15 )
-                    .if ( GetValueSp(ecx) & OP_R )
-                        mov [rsi].Prefix.Rex2,1
-                    .endif
+            .endif
+            .if ( base_reg > 15 )
+                .if ( GetValueSp(ecx) & OP_R )
+                    mov [rsi].Prefix.Rex2,1
                 .endif
+                mov rex2,0x10
+                and base_reg,0x0F
             .endif
             mov al,base_reg
             shr al,3
@@ -750,15 +751,19 @@ endif
 
     .elseif ( edi != EMPTY && ecx == EMPTY )
 
+        mov ebx,GetValueSp(edi)
         mov idx_reg,GetRegNo(edi)
         .if ( al > 15 )
-            .if ( GetValueSp(edi) & OP_R )
+            .if ( ebx & OP_R )
                 mov [rsi].Prefix.Rex2,1
             .endif
-            mov al,idx_reg
+            mov rex2,0x20 ; X4.X.xxx 16-31
+            and al,0x0F
         .endif
         shr al,3
-        mov bit3_idx,al
+        shl al,1
+        mov rex,al ; set Rex.X
+
         and idx_reg,BIT_012
 
         ; mod field is 00
@@ -777,47 +782,52 @@ endif
         or  al,0x05
         mov [rsi].sib,al
 
-        mov al,bit3_idx
-        shl al,1
-        mov rex,al ; set REX_X
-
         ; default is DS:[], DS: segment override is not needed
 
         seg_override(rsi, T_DS, sym, FALSE)
 
         mov rax,[rsi].pinstr
-        .if ( [rax].instr_item.evex & V_SIB )
-            mov [rsi].opc_or,GetRegNo(index)
-            .if GetValueSp(edi) & OP_YMM or OP_ZMM
-                or [rsi].opc_or,0x40 ; YMM/ZMM
+        .if ( [rax].Instruction.Evex.vsib )
+            mov al,GetRegNo(edi)
+            .if ( ebx & OP_YMM or OP_ZMM )
+                or al,0x40 ; YMM/ZMM
+                .if ( ebx & OP_ZMM )
+                    mov [rsi].VReg.X_ZMM,1
+                .else
+                    mov [rsi].VReg.X_YMM,1
+                .endif
             .endif
+            mov [rsi].opc_or,al
         .endif
 
     .else ; base != EMPTY && index != EMPTY
 
         mov ebx,ecx
+        mov ecx,GetValueSp(ebx)
+        mov edx,GetValueSp(edi)
         mov base_reg,5
-        .if ( ecx != T_RIP )
+        .if ( ebx != T_RIP )
             mov base_reg,GetRegNo(ebx)
             .if ( al > 15 )
-                .if ( GetValueSp(ebx) & OP_R )
+                .if ( ecx & OP_R )
                     mov [rsi].Prefix.Rex2,1
-                    mov [rsi].Apx.B_High,1
                 .endif
+                mov rex2,0x10
+                and base_reg,0x0F
             .endif
         .endif
         mov idx_reg,GetRegNo(edi)
+        .if ( al > 15 )
+            .if ( edx & OP_R )
+                mov [rsi].Prefix.Rex2,1
+            .endif
+            or  rex2,0x20
+            and idx_reg,0x0F
+        .endif
         mov al,base_reg
         shr al,3
         mov bit3_base,al
         mov al,idx_reg
-        .if ( al > 15 )
-            .if ( GetValueSp(edi) & OP_R )
-                mov [rsi].Prefix.Rex2,1
-                mov [rsi].Apx.X_High,1
-            .endif
-            mov al,idx_reg
-        .endif
         shr al,3
         mov bit3_idx,al
         and base_reg,BIT_012
@@ -825,12 +835,17 @@ endif
         and ecx,GetSflagsSp(edi)
         and ecx,SFR_SIZMSK
 
-        .if ecx == 0
+        .if ( ecx == 0 )
             mov rcx,[rsi].pinstr
-            .if ( GetValueSp(edi) & OP_V && [rcx].instr_item.evex & V_SIB )
-                mov [rsi].opc_or,idx_reg
-                .if ( GetValueSp(edi) & OP_YMM or OP_ZMM )
-                    or [rsi].opc_or,0x40 ;; YMM/ZMM
+            .if ( edx & OP_V && [rcx].Instruction.Evex.vsib )
+                mov [rsi].opc_or,GetRegNo(edi)
+                .if ( edx & OP_YMM or OP_ZMM )
+                    or [rsi].opc_or,0x40 ;; YMM
+                    .if ( edx & OP_ZMM )
+                        mov [rsi].VReg.X_ZMM,1
+                    .else
+                        mov [rsi].VReg.X_YMM,1
+                    .endif
                 .endif
             .else
                 .return( asmerr( 2082 ) )
@@ -870,6 +885,7 @@ endif
             or  al,s
             or  al,base_reg
             mov [rsi].sib,al
+
             mov al,bit3_idx
             shl al,1
             add al,bit3_base
@@ -885,23 +901,36 @@ endif
 
         ; shift the register field to left by 3 bit
 
-        mov al,rm_field
-        shl al,3
-        mov cl,[rsi].rm_byte
-        and cl,BIT_012
-        or  al,mod_field
-        or  al,cl
-        mov [rsi].rm_byte,al
-        mov al,rex
-        mov cl,al
-        mov dl,al
-        shr al,2
-        and cl,REX_X
-        and dl,1
-        shl dl,2
-        or  al,cl
-        or  al,dl
-        or  [rsi].Rex,al
+        mov     al,rm_field
+        shl     al,3
+        mov     cl,[rsi].rm_byte
+        and     cl,BIT_012
+        or      al,mod_field
+        or      al,cl
+        mov     [rsi].rm_byte,al
+
+        mov     al,rex
+        mov     cl,al
+        mov     dl,al
+        shr     al,2
+        and     cl,REX_X
+        and     dl,1
+        shl     dl,2
+        or      al,cl
+        or      al,dl
+        or      [rsi].Rex,al
+
+        mov     al,rex2
+        mov     cl,al
+        mov     dl,al
+        and     al,0x40
+        and     dl,0x10
+        and     cl,0x20
+        shr     al,2
+        shl     dl,2
+        or      al,cl
+        or      al,dl
+        or      [rsi].Rex2,al
 
     .elseif ( CurrOpnd == OPND1 )
 
@@ -909,6 +938,7 @@ endif
         or  al,rm_field
         mov [rsi].rm_byte,al
         or  [rsi].Rex,rex
+        or  [rsi].Rex2,rex2
     .endif
     .return( NOT_ERROR )
     endp
@@ -1070,7 +1100,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
 
         .if ( [rsi].Ofssize >= USE32 && CurrOpnd == OPND2 && [rsi].opnd[OPND1].type == OP_M64 )
 
-            .if ( [rsi].token == T_COMISD || ( [rsi].mem_type == MT_BITS && 
+            .if ( [rsi].token == T_COMISD || ( [rsi].mem_type == MT_BITS &&
                 ( [rsi].token == T_MOV || [rsi].token == T_AND ) ) )
 
                 mov [rsi].opnd[rbx].type,OP_I64
@@ -1092,7 +1122,7 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
 
         ; size coercion for immediate value
 
-        mov [rsi].Flags.ConstSizeFixed,1
+        mov [rsi].Flags.ConstFixed,1
 
         ; don't check if size and value are compatible.
 
@@ -1283,7 +1313,7 @@ idata_fixup proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpn
     ; - check if Codeinfo->mem_type really has to be set here!
 
     .if ( [rdi].explicit && !( [rdi].is_abs ) )
-        mov [rsi].Flags.ConstSizeFixed,1
+        mov [rsi].Flags.ConstFixed,1
         .if ( [rsi].mem_type == MT_EMPTY )
             mov [rsi].mem_type,[rdi].mem_type
         .endif
@@ -1641,7 +1671,7 @@ SetPtrMemtype proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
 ; - prefix.rex REX_W
 ; called by memory_operand()
 
-    assume rbx:ptr instr_item
+    assume rbx:ptr Instruction
 
 Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_type:uchar_t
 
@@ -1698,11 +1728,11 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
 
                 ; don't set REX for FPU opcodes
 
-                .endc .if ( [rbx].cpu & P_FPU_MASK )
+                .endc .if ( [rbx].cpu.Fpu )
 
                 ; don't set REX for - most - MMX/SSE opcodes
 
-                .if ( [rbx].cpu & P_EXT_MASK )
+                .ifd ( GetCpuExtensions([rbx].cpu) )
 
                     mov eax,[rsi].token
                     .switch eax
@@ -1762,7 +1792,7 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
 
             .if ( [rcx+rax].opnd_class.opnd_type[OPND1] == OP_M_ANY )
 
-            .elseif ( [rbx].cpu & ( P_FPU_MASK or P_EXT_MASK ) )
+            .elseifd ( [rbx].cpu.Fpu || GetCpuExtensions([rbx].cpu) )
 
             .elseif ( [rsi].token != T_CMPXCHG8B )
 
@@ -1837,7 +1867,7 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
         .endif
         mov rcx,[rdi].mbr
         .if ( [rcx].asym.state == SYM_UNDEFINED )
-            mov [rsi].Flags.SymUndefined,1
+            mov [rsi].Flags.SymUndef,1
         .endif
     .endif
 
@@ -2016,7 +2046,7 @@ endif
         ; what has remained here is the check if R/ESP is used as index reg.
 
         mov rcx,[rsi].pinstr
-        .if ( GetRegNo( index ) == 4 && ![rcx].instr_item.evex & V_SIB )
+        .if ( GetRegNo( index ) == 4 && ![rcx].Instruction.Evex.vsib )
 
             ; [E|R]SP
 
@@ -2033,9 +2063,7 @@ endif
         mov cl,[rsi].Ofssize
         .if ( ( cl == USE16 && [rsi].Prefix.Asize ) || cl == USE64 ||
               ( cl == USE32 && [rsi].Prefix.Asize == 0 ) )
-            mov eax,MODULE.curr_cpu
-            and eax,P_CPU_MASK
-            .if ( eax >= P_386 )
+            .ifd ( GetCurrCpu() >= P_386 )
 
                 ; scale, 0 or 1->00, 2->40, 4->80, 8->C0
 
@@ -2334,9 +2362,7 @@ endif
 
             ; v2.0: don't assume immediate operand if cpu is 8086
 
-            mov eax,MODULE.curr_cpu
-            and eax,P_CPU_MASK
-            .if eax > P_86
+            .ifd ( GetCurrCpu() > P_86 )
                 .return idata_fixup( rsi, ebx, rdi )
             .endif
             .endc
@@ -2354,14 +2380,14 @@ endif
 
                 mov rcx,[rsi].pinstr
                 .repeat
-                    movzx eax,[rcx].instr_item.opclsidx
+                    movzx eax,[rcx].Instruction.opclsidx
                     imul eax,eax,opnd_class
                     lea rdx,opnd_clstab
                     .if ( [rdx+rax].opnd_class.opnd_type[4] & OP_I )
                         .return idata_fixup( rsi, ebx, rdi )
                     .endif
-                    add rcx,instr_item
-                .until ( [rcx].instr_item.flags & II_FIRST )
+                    add rcx,Instruction
+                .until ( [rcx].Instruction.first )
             .endif
 
             ; v2.10: if current operand is the third argument, always assume an immediate
@@ -2481,29 +2507,23 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
     mov [rsi].opnd[rbx].type,eax
     mov edx,regno
 
-    .if ( ( eax & OP_V && eax & OP_H ) || eax & OP_ZMM )
+    .switch
+    .case eax & OP_YMM
+        ;mov [rsi].Evex.P2.L0,1 ; specifying 256-bit vector length
+       .endc .if !( eax & OP_H )
+    .case eax & OP_H
+        .if ( eax & OP_R )
+            mov [rsi].Prefix.Rex2,1
+           .endc
+        .endif
+    .case eax & OP_ZMM
         mov [rsi].Prefix.Evex,1
         .if ( eax & OP_ZMM )
-            mov [rsi].Vector.ZMM_Used,1
+            ;mov [rsi].Evex.P2.L1,1 ; specifying 512-bit vector length
+            ;mov [rsi].Evex.P2.L0,0
+            mov [rsi].Modifier.ZMMUsed,1
         .endif
-        .if ( eax & OP_H ) ; v2.38.09: added YMM
-            mov ecx,index
-            .if ( !ecx )
-                mov [rsi].Vector.Op1_High,1
-            .elseif ( ecx == 1 )
-                mov [rsi].Vector.Op2_High,1
-            .else
-                mov [rsi].Vector.Op3_High,1
-            .endif
-            .if ( edx > 23 )
-                mov [rsi].Vector.V24_Used,1
-            .endif
-        .elseif ( edx > 7 )
-            mov [rsi].Vector.V08_Used,1
-        .endif
-    .elseif ( eax & OP_H && eax & OP_R )
-        mov [rsi].Prefix.Rex2,1
-    .endif
+    .endsw
 
     .if ( eax & OP_R8 )
         ;
@@ -2608,9 +2628,7 @@ endif
             ; TR6+TR7 are available on 386-586
             ; v2.11: simplified.
 
-            mov eax,MODULE.curr_cpu
-            and eax,P_CPU_MASK
-            .if ( eax >= P_686 )
+            .ifd ( GetCurrCpu() >= P_686 )
                 mov eax,3
                 .if ( edx > 0x25 )
                     mov eax,6
@@ -2633,8 +2651,8 @@ endif
     mov eax,regno
     mov cl,[rsi].Rex
     mov ch,[rsi].rm_byte
-    and edx,P_CPU_MASK
-    .if ( edx == P_64 )
+    and edx,P_CPU_MASK or P_64
+    .if ( edx & P_64 )
         or cl,REX_R4
         .if ( flags & OP_R64 )
             or cl,REX_W
@@ -2642,20 +2660,21 @@ endif
     .endif
     mov edx,eax
     and eax,8
+    mov dh,[rsi].Rex2
 
     .if ( CurrOpnd == OPND1 )
 
         ; the first operand
         ; r/m is treated as a 'reg' field
 
-        shr eax,3
-
-        .if ( dl > 15 && flags & OP_R )
-            mov [rsi].Apx.R_High,1
-            ;and cl,not REX_R4
-            ;shl al,4
+        shr al,3
+        .if ( dl > 15 )
+            or dh,0x10
+            ;
+            ; REX2.B4.B.xxx
+            ; EVEX.0.B.xxx
+            ;
         .endif
-
         or  cl,al   ; set REX_B
         and dl,BIT_012
         or  dl,MOD_11
@@ -2669,7 +2688,7 @@ endif
         .if ( [rsi].token == T_XCHG && [rsi].opnd[OPND1].type & OP_A &&
               !( [rsi].opnd[OPND1].type & OP_R8 ) )
 
-            shr eax,3
+            shr al,3
             or  cl,al ; set REX_B
             and dl,BIT_012
             and ch,BIT_67
@@ -2679,7 +2698,13 @@ endif
 
             ; fill reg field with reg
 
-            shr eax,1
+            shr al,1
+            .if ( dl > 15 )
+                or dh,0x40
+                ;
+                ; EVEX.R1.R.xxx
+                ;
+            .endif
             or  cl,al ; set REX_R
             and dl,BIT_012
             and ch,not BIT_345
@@ -2688,6 +2713,7 @@ endif
         .endif
     .endif
     mov [rsi].Rex,cl
+    mov [rsi].Rex2,dh
     mov [rsi].rm_byte,ch
     .return( NOT_ERROR )
     endp
@@ -3070,7 +3096,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         ; v2.11: added
 
         mov rcx,[rdi].sym
-        .if ( [rsi].opnd[OPND1].type == OP_M && ![rsi].Flags.SymUndefined &&
+        .if ( [rsi].opnd[OPND1].type == OP_M && ![rsi].Flags.SymUndef &&
               ( rcx == NULL || [rcx].asym.state != SYM_UNDEFINED ) )
 
             asmerr( 2023 )
@@ -3211,7 +3237,7 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             .endif
         .endif
         jmp def_check
-        .endc
+
     .case T_CVTSD2SI
     .case T_CVTTSD2SI
     .case T_CVTSS2SI
@@ -3231,6 +3257,11 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
     .case T_VCVTPD2DQ
     .case T_VCVTTPD2DQ
     .case T_VCVTPD2PS
+
+        ; this should work for EVEX..
+
+        .endc .if ( [rsi].Modifier.Broadcast )
+
         .if ( edx == OP_M && ( [rdi+expr].indirect ) )
             .return asmerr( 2023 )
         .endif
@@ -3480,7 +3511,7 @@ endif
                         ; v2.06b: added "undefined" check
 
                         mov rax,[rsi].opnd[OPND1].InsFixup
-                        .if ( ( rax  == NULL && Parse_Pass == PASS_1 && ![rsi].Flags.SymUndefined ) ||
+                        .if ( ( rax  == NULL && Parse_Pass == PASS_1 && ![rsi].Flags.SymUndef ) ||
                             ( rax && Parse_Pass == PASS_2 ) )
                             asmerr( 8012, rcx )
                         .endif
@@ -3556,7 +3587,6 @@ ParsEvexModifier proc fastcall string:string_t, CodeInfo:ptr code_info
 
     mov eax,[rcx]
     .switch al
-
     .case 9
     .case ' '
         inc rcx
@@ -3567,48 +3597,69 @@ ParsEvexModifier proc fastcall string:string_t, CodeInfo:ptr code_info
         .endc .if ah > '7'
         .endc .if eax & 0xFF0000
         sub ah,'0'
-        or  [rdx].code_info.EvexP2,ah
+        or  [rdx].code_info.Evex.P2,ah
+        ;mov [rdx].code_info.Modifier.Opmask,1
        .return( 1 )
     .case '1' ; {1to2} {1to4} {1to8} {1to16}
         .endc .if ( ah != 't' )
-        shr eax,24
-        .switch al
+        mov ecx,[rcx+3]
+        xor eax,eax
+        .switch cl
         .case '1'
-            .endc .if ( byte ptr [rcx+4] != '6' )
+            .if ( ch == '6' )
+                or [rdx].code_info.Modifier.BCShift,3
+                inc eax
+            .endif
+            .endc
         .case '8'
+            or [rdx].code_info.Modifier.BCShift,2
+            inc eax
+           .endc
         .case '4'
+            or [rdx].code_info.Modifier.BCShift,1
         .case '2'
-            mov [rdx].code_info.EvexP2.b,1
-           .return( 1 )
+            inc eax
+           .endc
         .endsw
-        .endc
+        .if ( eax )
+            mov [rdx].code_info.Evex.P2.b,1
+            mov [rdx].code_info.Modifier.Broadcast,1
+        .endif
+        .return
     .case 'z' ; {z}
         .if ( ah == 0 )
-            mov [rdx].code_info.EvexP2.z,1
+            mov [rdx].code_info.Evex.P2.z,1
+            mov [rdx].code_info.Modifier.Zeroing,1
            .return( 1 )
         .endif
         .endc
     .case 'r' ; {rn-sae} {ru-sae} {rd-sae} {rz-sae}
         .endc .if byte ptr [rcx+2] != '-'
         .endc .if byte ptr [rcx+3] != 's'
-        .if ( ah == 'z' )
-            mov eax,EVEX_P2_B or EVEX_P2_L
-        .elseif ( ah == 'u' )
-            mov eax,EVEX_P2_B or EVEX_P2_L1
-        .elseif ( ah == 'd' )
-            mov eax,EVEX_P2_B or EVEX_P2_L0
-        .elseif ( ah == 'n' )
-            mov eax,EVEX_P2_B
-        .else
-            .endc
-        .endif
-        or  [rdx].code_info.EvexP2,al
-        mov [rdx].code_info.Vector.SAE_Used,1
-       .return( 1 )
+        mov cl,ah
+        xor eax,eax
+        .switch cl
+        .case 'z'
+            or al,0x20
+        .case 'u'
+            or al,0x50
+           .endc
+        .case 'd'
+            or al,0x20
+        .case 'n'
+            or al,0x10
+           .endc
+        .default
+            .return
+        .endsw
+        and [rdx].code_info.Evex.P2,0x8F
+        or  [rdx].code_info.Evex.P2,al
+        mov [rdx].code_info.Modifier.Rounding,1
+       .return
     .case 's' ; {sae}
         .endc .if eax != 'eas'
-        mov [rdx].code_info.EvexP2.b,1
-        mov [rdx].code_info.Vector.SAE_Used,1
+        mov [rdx].code_info.Evex.P2.b,1
+        mov [rdx].code_info.Modifier.Suppress,1
        .return( 1 )
     .endsw
     .return( 0 )
@@ -4183,6 +4234,9 @@ init_prefix:
     imul esi,i,asm_tok
     add rsi,rbx
     mov CodeInfo.token,[rsi].tokval
+    lea rcx,ResWordTable
+    mov cl,[rcx+rax*8].ReservedWord.flags
+    mov CodeInfo.ResW,cl
 
     ; get the instruction's start position in InstrTable[]
 
@@ -4248,7 +4302,8 @@ init_prefix:
                 .endif
             .else
                 mov CodeInfo.Prefix.Evex,1
-                mov CodeInfo.EvexP2.b,1
+                mov CodeInfo.Evex.P2.b,1
+                mov CodeInfo.Modifier.BroadCST,1
             .endif
         .endif
 
@@ -4359,9 +4414,6 @@ init_prefix:
     .if ( [rsi].token != T_FINAL )
         .return asmerr( 2008, [rsi].tokpos )
     .endif
-    .if ( j >= 3 )
-        mov CodeInfo.Vector.Op3_Used,1
-    .endif
 
     .for ( q = 0, ebx = 0: ebx < j && ebx < MAX_OPND: ebx++, q++ )
 
@@ -4384,6 +4436,19 @@ init_prefix:
             .if ( ( eax < T_ANDN || eax > T_PEXT ) && ( ecx & ( OP_R32 or OP_R64 ) ) )
             .elseif ( edi & VX_NND )
             .elseif ( edi & VX_IMM && opndx[expr*2].kind == EXPR_CONST && j > 2 )
+
+                ; handle reg, mem, imm
+
+                .if ( CodeInfo.ResW.DRIMM )
+                    mov rcx,opndx.base_reg
+                    mov al,[rcx].asm_tok.bytval
+                    mov CodeInfo.Rex.B,0
+                    mov CodeInfo.Rex2.B4,0
+                    inc al
+                    mov CodeInfo.rrm_ib,al
+                    and CodeInfo.rm_byte,0xC0
+                .endif
+
             .elseif ( edi & VX_HALF && ( ecx & OP_V && opndx[rdx].indirect ) )
 
                 mov CodeInfo.rm_byte,0
@@ -4396,7 +4461,7 @@ init_prefix:
 
             .else
 
-                .if opndx[expr].kind != EXPR_REG
+                .if ( opndx[expr].kind != EXPR_REG )
                     .return asmerr( 2070 )
                 .endif
                 mov rax,opndx[rdx].base_reg
@@ -4415,13 +4480,7 @@ init_prefix:
                     ; v2.11: next line should be activated - currently the
                     ; error is emitted below as syntax error
 
-                    mov eax,CodeInfo.token
-ifdef _WIN64
-                    lea rcx,ResWordTable
-                    .if ( [rcx+rax*8].ReservedWord.flags & RWF_EVEX )
-else
-                    .if ( ResWordTable[eax*8].flags & RWF_EVEX )
-endif
+                    .if ( CodeInfo.ResW.EVEX )
                         inc j
                     .endif
 
@@ -4437,25 +4496,16 @@ endif
                         mov rcx,opndx[rdx].base_reg
                         mov eax,[rcx].asm_tok.tokval
                         mov eax,GetValueSp(eax)
-
                         mov rcx,opndx[OPND1].base_reg
                         mov cl,[rcx].asm_tok.bytval
                         inc cl
                         mov CodeInfo.vexregop,cl
-
-                        .if ( eax & OP_ZMM )
-                            or CodeInfo.vexregop,0x80
-                        .elseif ( eax & OP_YMM )
-                            or CodeInfo.vexregop,0x40
-                        .endif
-
                         lea  rdi,opndx[0]
                         lea  rax,opndx[rdx]
                         xchg rax,rsi
                         mov  ecx,expr * 3
                         rep  movsb
                         mov  rsi,rax
-
                         mov CodeInfo.rm_byte,0
                         .ifd ( process_register( &CodeInfo, OPND1, &opndx, q ) == ERROR )
                             .return
@@ -4489,18 +4539,14 @@ endif
                     mov al,[rcx].asm_tok.bytval
                     inc al
                     mov CodeInfo.vexregop,al
-                    .if ( CodeInfo.vexregop > 16 || edi & OP_ZMM )
-
-                        mov CodeInfo.Prefix.Evex,1
-                        .if ( CodeInfo.vexregop > 16 )
-                            or CodeInfo.Vector.Op2_High,1
-                        .endif
-                        .if ( edi & OP_ZMM )
-                            or  CodeInfo.vexregop,0x80
-                            mov CodeInfo.Vector.ZMM_Used,1
-                        .endif
+                    .if ( edi & OP_ZMM )
+                        mov CodeInfo.VReg.R_ZMM,1
+                        mov CodeInfo.Modifier.ZMMUsed,1
                     .elseif ( edi & OP_YMM )
-                        or CodeInfo.vexregop,0x40
+                        mov CodeInfo.VReg.R_YMM,1
+                    .endif
+                    .if ( CodeInfo.vexregop > 16 || edi & OP_ZMM )
+                        mov CodeInfo.Prefix.Evex,1
                     .endif
                     inc  q
                     lea  rdi,opndx[rdx]
@@ -4545,8 +4591,11 @@ endif
                     mov CodeInfo.opnd[OPNI3].type,eax
                     movzx eax,[rcx].asm_tok.bytval
                     mov CodeInfo.opnd[OPNI3].data32l,eax
+
+                    ; this needs a fix: VEX-Encoded GPR
+
                     mov rcx,CodeInfo.pinstr
-                    .if ( [rcx].instr_item.evex & V_SIB )
+                    .if ( [rcx].Instruction.Evex.vsib || [rcx].Instruction.Evex.vgpr )
                         mov cl,CodeInfo.opc_or
                         and cl,0xF0
                         or  al,cl
@@ -4620,15 +4669,13 @@ endif
             .repeat
                 add CodeInfo.pinstr,instr_item
                 mov rdx,CodeInfo.pinstr
-            .until [rdx].instr_item.flags & II_FIRST
+            .until [rdx].Instruction.first
         .endif
     .endif
 
     ;; special handling for string instructions
     mov rdx,CodeInfo.pinstr
-    mov al,[rdx].instr_item.flags
-    and eax,II_ALLOWED_PREFIX
-
+    mov eax,[rdx].Instruction.prefix
     .if ( eax == AP_REP || eax == AP_REPxx )
         ;
         ; v2.31.24: immediate operand to XMM
@@ -4651,17 +4698,12 @@ endif
 
                 mov rdx,CodeInfo.pinstr
                 .while 1
-
-                    movzx eax,[rdx].instr_item.opclsidx
+                    movzx eax,[rdx].Instruction.opclsidx
                     imul  eax,eax,opnd_class
                     lea   rcx,opnd_clstab
-
                     .break .if ( [rcx+rax].opnd_class.opnd_type_3rd != OP3_NONE )
-
-                    add rdx,instr_item
-
-                    .if ( [rdx].instr_item.flags & II_FIRST )
-
+                    add rdx,Instruction
+                    .if ( [rdx].Instruction.first )
                         .for ( : [rsi].token != T_COMMA: rsi -= asm_tok )
                         .endf
                         .return asmerr( 2008, [rsi].tokpos )
@@ -4700,7 +4742,6 @@ endif
                     mov CodeInfo.opnd[OPNI2].type,OP_M
                 .endif
             .endif
-
             .ifd ( check_size( &CodeInfo, &opndx ) == ERROR )
                 .return
             .endif

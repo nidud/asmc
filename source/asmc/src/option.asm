@@ -368,9 +368,7 @@ endif
             ; externals defined outside of segments.
             ;
             .if ( [rbx].token == T_RES_ID && [rbx].tokval == T_FLAT )
-                mov eax,MODULE.curr_cpu
-                and eax,P_CPU_MASK
-                .if ( eax >= P_64 )
+                .ifd ( GetCurrCpu() >= P_64 )
                     mov MODULE.defOfssize,USE64
                 .else
                     mov MODULE.defOfssize,USE32

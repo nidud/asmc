@@ -16,7 +16,6 @@ include tchar.inc
 .code
 
 print_usage proc
-
     printf( "Usage:     fcmp [-option] <file1> <file2>\n"
             "\n"
             "-d         Desimal (default is hex)\n"
@@ -26,11 +25,9 @@ print_usage proc
             "-o<offs>   Offset start of compare\n"
             "-n<lines>  Number of lines (default is 10)\n"
             "\n" )
-
     xor eax,eax
     ret
-
-print_usage endp
+    endp
 
 
 main proc argc:int_t, argv:array_t
@@ -49,6 +46,7 @@ main proc argc:int_t, argv:array_t
    .new size2:size_t
    .new rsize1:size_t
    .new rsize2:size_t
+   .new curoffs:size_t = 0
    .new unequal:uint_t = 0
    .new h1:int_t
    .new h2:int_t
@@ -59,7 +57,6 @@ main proc argc:int_t, argv:array_t
    .new q:string_t
 
     .if ( argc == 1 )
-
         .return( print_usage() )
     .endif
 
@@ -69,13 +66,11 @@ main proc argc:int_t, argv:array_t
         mov rdx,argv
         mov rcx,[rdx+rcx*size_t]
         mov eax,[rcx]
-
         .switch al
 ifndef __UNIX__
         .case '/'
 endif
         .case '-'
-
             shr eax,8
             .switch al
             .case 'd'
@@ -104,7 +99,7 @@ endif
                 .endc
             .default
                 perror(rcx)
-               .return(1)
+               .return( 1 )
             .endsw
             .endc
         .default
@@ -115,84 +110,62 @@ endif
             .endif
         .endsw
     .endf
-
     .if ( !file1 || !file2 )
-
         print_usage()
        .return( 1 )
     .endif
-
     .ifd ( _open(file1, O_RDONLY or O_BINARY, 0) == -1 )
-
         perror(file1)
        .return( 1 )
     .endif
     mov h1,eax
-
     .ifd ( _open(file2, O_RDONLY or O_BINARY, 0) == -1 )
-
         perror(file2)
+        _close(h1)
        .return( 1 )
     .endif
     mov h2,eax
-
     mov size2,_filelength(eax)
     mov size1,_filelength(h1)
-
     .if !malloc(0x10000*2)
-
         perror("No memory")
-       .return( 1 )
+        jmp error
     .endif
     mov buffer1,rax
     add rax,0x10000
     mov buffer2,rax
-
     .if !_read(h1, buffer1, 0x10000)
-
         perror("Read error")
-       .return( 1 )
+        jmp error
     .endif
     mov rsize1,rax
-
     .if !_read(h2, buffer2, 0x10000)
-
         perror("Read error")
-       .return( 1 )
+        jmp error
     .endif
     mov rsize2,rax
-
     mov rsi,buffer1
     mov rdi,buffer2
     mov rbx,size1
     mov eax,off_start
-
     .if ( rax >= rbx )
-
         printf("%s: Offset >= File Size\n", file1)
-       .return( 1 )
+        jmp error
     .endif
-
     sub rbx,rax
     add rsi,rax
     add rdi,rax
-
     .if ( compare_pe )
-
         .repeat
-
             .repeat
-
                 mov     eax,[rsi+0x3C]
                 add     rsi,rax
                 .break .if ( size1 < rax )
                 .break .if ( dword ptr [rsi] != 'EP' )
-
                 mov     eax,[rdi+0x3C]
                 add     rdi,rax
                 .break .if ( size2 < rax )
                 .break .if ( dword ptr [rdi] != 'EP' )
-
                 mov     a,[rsi+4+20+0x3C]
                 mov     b,[rdi+4+20+0x3C]
                 movzx   eax,word ptr [rsi+4+2]
@@ -200,12 +173,9 @@ endif
                 add     ecx,0xE0+20+4
                 mov     eax,[rsi+8]
                 mov     [rdi+8],eax
-
                 .repeat
-
                     repe cmpsb
                     .break .ifz
-
                     mov     p,rsi
                     mov     q,rdi
                     inc     unequal
@@ -215,7 +185,6 @@ endif
                     dec     eax
                     movzx   ecx,byte ptr [rdi-1]
                     movzx   edx,byte ptr [rsi-1]
-
                     .if ( desimal )
                         printf("%d: %d %d\n", eax, edx, ecx)
                     .else
@@ -227,7 +196,6 @@ endif
                     dec lines
                    .break .ifz
                 .until !rcx
-
                 mov     rsi,buffer1
                 mov     eax,a
                 add     rsi,rax
@@ -241,23 +209,17 @@ endif
                 .break( 1 )
             .until 1
             perror("invalid PE binary")
-           .return( 1 )
+            jmp error
         .until 1
-
     .elseif ( compare_coff )
-
         mov eax,[rdi+4]
         mov [rsi+4],eax
     .endif
-
     .if ( size1 != size2 )
-
         printf("%s(%d), %s(%d): file sizes differ\n", file1, size1, file2, size2)
         inc unequal
     .endif
-
     .while 1
-
         mov rsi,buffer1
         mov rdi,buffer2
         mov rcx,rsize1
@@ -275,6 +237,7 @@ endif
             mov rax,rsi
             sub rax,buffer1
             dec eax
+            add rax,curoffs
             movzx ecx,byte ptr [rdi-1]
             movzx edx,byte ptr [rsi-1]
             .if ( desimal )
@@ -286,12 +249,14 @@ endif
             mov rdi,q
             mov ecx,ebx
             dec lines
-           .break .ifz
+           .break( 1 ) .ifz
         .until !ecx
+        add curoffs,rsize1
         mov rsize1,_read(h1, buffer1, 0x10000)
         mov rsize2,_read(h2, buffer2, 0x10000)
     .endw
-
+    _close(h1)
+    _close(h2)
     .if !unequal
         .if ( verbose )
             printf("%s == %s (Ok)\n", file1, file2)
@@ -301,8 +266,13 @@ endif
         printf("%d unequal bytes found cmp(%s, %s)\n", unequal, file1, file2)
         mov eax,1
     .endif
+toend:
     ret
-
-main endp
+error:
+    _close(h1)
+    _close(h2)
+    mov eax,1
+    jmp toend
+    endp
 
     end _tstart

@@ -475,9 +475,7 @@ GetSwitchArg proc __ccall uses rsi rdi rbx reg:int_t, hll:ptr hll_item, arg:stri
         ; BYTE value
         ;
 ifndef ASMC64
-        mov eax,MODULE.curr_cpu
-        and eax,P_CPU_MASK
-        .if ( eax >= P_386 )
+        .ifd ( GetCurrCpu() >= P_386 )
 endif
             mov edx,T_MOVSX
             .if ( [rsi].SwitchMem )

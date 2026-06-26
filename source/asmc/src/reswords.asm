@@ -75,6 +75,7 @@ include unaryop.inc
     OP_XMM_M128_16 = ( OP_XMM or OP_M128 or OP_M16 ),
     OP_XMM_M128_32 = ( OP_XMM or OP_M128 or OP_M32 ),
     OP_XMM_M128_64 = ( OP_XMM or OP_M128 or OP_M64 ),
+    OP_XMM_MGT16   = ( OP_XMM or OP_M32 or OP_M64 ),
 
     OP_YMM_M256_08 = ( OP_YMM or OP_M256 or OP_M08 ),
     OP_YMM_M256_16 = ( OP_YMM or OP_M256 or OP_M16 ),
@@ -103,7 +104,6 @@ include unaryop.inc
     OP_ZMM_M128    = ( OP_ZMM or OP_M128 ),
     OP_ZMM_M256    = ( OP_ZMM or OP_M256 ),
     OP_M256_M128   = ( OP_M256 or OP_M128 ),
-    OP_XMM_MXMM    = ( OP_XMM or OP_YMM or OP_M128 or OP_M256 or OP_M512 or OP_M64 or OP_M32 ),
     OP_XMM_YMM     = ( OP_XMM or OP_YMM ),
     OP_YMM_ZMM     = ( OP_YMM or OP_ZMM ),
     OP_M32_M64     = ( OP_M32 or OP_M64 ),
@@ -111,10 +111,11 @@ include unaryop.inc
     OP_M64_M256    = ( OP_M64 or OP_M256 ),
     OP_M32_M512    = ( OP_M32 or OP_M512 ),
     OP_M64_M512    = ( OP_M64 or OP_M512 ),
-    OP_XYZMM       = ( OP_XMM or OP_YMM or OP_ZMM ),
     OP_XMM_MXQ     = ( OP_XMM or OP_M128 or OP_M64 ),
     OP_XMM_MXQD    = ( OP_XMM or OP_M128 or OP_M64 or OP_M32 ),
     OP_XMM_MXQDW   = ( OP_XMM or OP_M128 or OP_M64 or OP_M32 or OP_M16 ),
+    OP_XMM_RMGT16  = ( OP_XMM or OP_RMGT16 ),
+
 }
 
 ; v2.06: operand types have been removed from InstrTable[], they
@@ -174,7 +175,7 @@ avxins macro alias, tok, string, cpu, flgs
     exitm<>
     endm
 insa macro tok, string, first, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, flags, vex, evex
-    exitm<instr_item { opcls, byte1_info, InstFlags(prefix, first, rm_info, op_dir), evex, cpu, opcode, rm_byte }>
+    exitm<instr_item { opcls, byte1_info, InstFlags(prefix, first, rm_info, op_dir), cpu, evex, opcode, rm_byte }>
     endm
 InstrTable label instr_item
 include instruct.inc
@@ -287,8 +288,9 @@ size_resw_strings equ $ - resw_strings
 
 .data
 align size_t*2
+ResWordTable ReservedWord 0 dup(<>)
 
-ResWordTable ReservedWord { 0, 0, 0, 0 } ;; dummy entry for T_NULL
+    ReservedWord { 0, 0, 0, 0 } ;; dummy entry for T_NULL
 res macro tok, string, type, value, bytval, flags, cpu, sflags
     ReservedWord { 0, @SizeStr(string), flags, HASH(string) }
     endm
@@ -306,7 +308,7 @@ if first eq 1
 endif
     endm
 avxins macro alias, tok, string, rwf, flgs
-    ReservedWord { 0, @SizeStr(string), rwf or RWF_VEX, HASH(string) }
+    ReservedWord { 0, @SizeStr(string), rwf, HASH(string) }
     endm
 include instruct.inc
 undef insa
@@ -325,7 +327,7 @@ align size_t*2
 ; but in fact it's the wrong place, since the content of vex_flags[]
 ; are associated with opcodes, not with instruction variants.
 
-vex_flags label byte
+vex_flags VexFlags 0 dup(<?>)
 
     ; flags for the AVX instructions in instruct.inc. The order must
     ; be equal to the one in instruct.h! ( this is to be improved.)
@@ -333,7 +335,7 @@ vex_flags label byte
 
 insa macro tok, string, first, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, flags, vex, evex
 if first eq 1
-if flags and RWF_VEX
+if flags and ( RWF_VEX or RWF_EVEX )
     db vex
 endif
 endif
@@ -790,8 +792,8 @@ ResWordsInit proc uses rsi rdi rbx
         ; currently these flags must be set manually, since the
         ; RWF_ flags aren't contained in instravx.inc
 
-        or ResWordTable[T_VPEXTRQ*ReservedWord].flags,RWF_X64
-        or ResWordTable[T_VPINSRQ*ReservedWord].flags,RWF_X64
+        ; or ResWordTable[T_VPEXTRQ*ReservedWord].flags,RWF_X64
+        ; or ResWordTable[T_VPINSRQ*ReservedWord].flags,RWF_X64
 
         ; initialize ResWordTable[].name and .len.
         ; add keyword to hash table ( unless it is 64-bit only ).

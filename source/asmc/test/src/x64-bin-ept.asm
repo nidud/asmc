@@ -1,0 +1,17 @@
+; X64-BIN-EPT.ASM--
+;
+; From GAS: x86-64-ept-intel.d
+;
+testcase macro B, S
+ ifdef BIN
+  db B
+ else
+  S
+ endif
+ endm
+.code
+testcase <0x66, 0x0f, 0x38, 0x80, 0x19>, <invept rbx,OWORD PTR [rcx]>
+testcase <0x66, 0x44, 0x0f, 0x38, 0x80, 0x19>, <invept r11,OWORD PTR [rcx]>
+testcase <0x66, 0x0f, 0x38, 0x81, 0x19>, <invvpid rbx,OWORD PTR [rcx]>
+testcase <0x66, 0x44, 0x0f, 0x38, 0x81, 0x19>, <invvpid r11,OWORD PTR [rcx]>
+end

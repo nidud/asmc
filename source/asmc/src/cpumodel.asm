@@ -83,17 +83,18 @@ sym_CodeSize  asym_t 0 ; numeric. requires model
 sym_DataSize  asym_t 0 ; numeric. requires model
 sym_Model     asym_t 0 ; numeric. requires model
 
+endif
+
 .code
 
 AddPredefinedConstant proc fastcall private name:string_t, value:int_t
-
     .if CreateVariable( rcx, edx )
         mov [rax].asym.predefined,1
     .endif
     ret
+    endp
 
-AddPredefinedConstant endp
-
+ifndef ASMC64
 
 ;; set default wordsize for segment definitions
 
@@ -106,7 +107,6 @@ SetDefaultOfssize proc fastcall private size:int_t
     .endif
     .return( SetOfssize() )
     endp
-
 
 ; set memory model, called by ModelDirective()
 ; also set predefined symbols:
@@ -130,10 +130,9 @@ SetModel proc __ccall private uses rsi rdi rbx
     .if ( MODULE._model == MODEL_FLAT )
 
         mov MODULE.offsettype,OT_FLAT
-        mov esi,MODULE.curr_cpu
-        and esi,P_CPU_MASK
+        mov esi,GetCurrCpu()
         mov eax,USE32
-        .if ( esi >= P_64 )
+        .if ( esi & P_64 )
             mov eax,USE64
         .endif
         SetDefaultOfssize( eax )
@@ -145,7 +144,7 @@ SetModel proc __ccall private uses rsi rdi rbx
 
         mov al,MODULE.langtype
         mov cl,MODULE.fctype
-        .if ( esi >= P_64 )
+        .if ( esi & P_64 )
 
             .if ( al == LANG_NONE )
 ifdef __UNIX__
@@ -349,12 +348,10 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .return( asmerr( 2008, [rbx].tokpos ) )
     .endif
     .if ( esi == MODEL_FLAT )
-        mov eax,MODULE.curr_cpu
-        and eax,P_CPU_MASK
-        .if ( eax < P_386 )
+        .ifd ( GetCurrCpu() < P_386 )
             .return( asmerr( 2085 ) )
         .endif
-        .if ( eax >= P_64 ) ;; cpu 64-bit?
+        .if ( CurrCpu.x64 ) ;; cpu 64-bit?
             .if ( Options.output_format == OFORMAT_COFF )
                 mov MODULE.fmtopt,&coff64_fmtopt
             .elseif ( Options.output_format == OFORMAT_ELF )
@@ -379,6 +376,7 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .return( NOT_ERROR )
     endp
 
+endif
 
 ; set CPU and FPU parameter in ModuleInfo.cpu + ModuleInfo.curr_cpu.
 ; ModuleInfo.cpu is the value of Masm's @CPU symbol.
@@ -387,59 +385,49 @@ ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 ; .[1|2|3|4|5|6]86 will reset .MMX, .K3D and .XMM,
 ; OTOH, .MMX/.XMM won't automatically enable .586/.686 ( Masm does! )
 
-SetCPU proc __ccall newcpu:cpu_info
 
-    ldr edx,newcpu
-    mov ecx,MODULE.curr_cpu
-    .if ( edx == P_86 || ( edx & P_CPU_MASK ) )
+SetCPU proc __ccall newcpu:CPU
+
+    ldr cl,newcpu
+
+    mov edx,GetCpuExtensions(cl)
+    GetCpu(cl)
+
+    .if ( cl == P_86 || ( eax && !edx ) )
+
         ;; reset CPU and EXT bits
-        and ecx, not ( P_CPU_MASK or P_EXT_MASK or P_PM )
+
+        SetCurrCpu(eax)
+        mov CurrCpu.Pm,0
+
         ;; set CPU bits
-        mov eax,edx
-        and eax,( P_CPU_MASK or P_PM )
-        or  ecx,eax
+
+        mov al,cl
+        and al,P_PM
+        or CurrCpu,al
+
         ;; set default FPU bits if nothing is given and .NO87 not active
-        mov eax,ecx
-        and eax,P_FPU_MASK
-        .if ( eax != P_NO87 && !( edx & P_FPU_MASK ) )
-            and ecx,not P_FPU_MASK
-            mov eax,ecx
-            and eax,P_CPU_MASK
-            .if ( eax < P_286 )
-                or ecx,P_87
-            .elseif ( eax < P_386 )
-                or ecx,P_287
-            .else
-                or ecx,P_387
-            .endif
+
+        .if ( !Options.no_cpu && !( cl & P_FPU_MASK ) )
+            mov CurrCpu.Fpu,1
         .endif
-    .endif
-    .if ( edx & P_FPU_MASK )
-        and ecx,not P_FPU_MASK
-        mov eax,edx
-        and eax,P_FPU_MASK
-        or  ecx,eax
     .endif
 
     ;; enable MMX, K3D, SSEx for 64bit cpus
 
-    mov eax,edx
-    and eax,P_CPU_MASK
-    .if ( eax == P_64 )
-        or ecx,P_EXT_ALL
+    .if ( cl & P_64 )
+        SetCurrCpu(P_64 or P_EXT_ALL)
     .endif
-    .if ( edx & P_EXT_MASK )
-        and ecx,not P_EXT_MASK
-        and edx,P_EXT_MASK
-        or  ecx,edx
+    .if ( edx )
+        SetCurrCpuExtensions( edx )
     .endif
-    mov MODULE.curr_cpu,ecx
-    mov eax,ecx
-    and eax,P_CPU_MASK
 
     ;; set the Masm compatible @Cpu value
 
-    .switch eax
+ifndef ASMC64
+
+    mov ecx,GetCurrCpu()
+    .switch ecx
     .case P_186
         mov eax,M_8086 or M_186
        .endc
@@ -463,26 +451,29 @@ SetCPU proc __ccall newcpu:cpu_info
         mov eax,M_8086
        .endc
     .endsw
-    .if ( ecx & P_PM )
+    .if ( CurrCpu.Pm )
         or eax,M_PROT
     .endif
-    mov edx,ecx
-    and edx,P_FPU_MASK
-    .switch edx
-    .case P_87
-        or eax,M_8087
-       .endc
-    .case P_287
-        or eax,M_8087 or M_287
-       .endc
-    .case P_387
-        or eax,M_8087 or M_287 or M_387
-       .endc
-    .endsw
+    .if ( CurrCpu.Fpu )
+        mov edx,ecx
+        .if ( edx > P_386 )
+            mov edx,P_386
+        .endif
+        .switch edx
+        .case P_86
+            or eax,M_8087
+           .endc
+        .case P_286
+            or eax,M_8087 or M_287
+           .endc
+        .case P_386
+            or eax,M_8087 or M_287 or M_387
+           .endc
+        .endsw
+    .endif
     mov MODULE.cpu,eax
     .if ( MODULE._model == MODEL_NONE )
-        and ecx,P_CPU_MASK
-        .if ( ecx >= P_64 )
+        .if ( ecx & P_64 )
             mov eax,USE64
         .else
             mov eax,USE16
@@ -497,82 +488,11 @@ SetCPU proc __ccall newcpu:cpu_info
     ; differs from Codeinfo cpu setting
 
     mov sym_Cpu,CreateVariable( "@Cpu", MODULE.cpu )
-    .return( NOT_ERROR )
-    endp
-
-
-; handles
-; .8086,
-; .[1|2|3|4|5|6]86[p],
-; .8087,
-; .[2|3]87,
-; .NO87, .MMX, .K3D, .XMM directives.
-
-CpuDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
-    mov edx,GetSflagsSp( [rbx].tokval )
-    add rbx,asm_tok
-    .if ( [rbx].token != T_FINAL )
-        .return( asmerr(2008, [rbx].tokpos ) )
-    .endif
-    .return( SetCPU( edx ) )
-    endp
 
 else
 
-    .code
-
-AddPredefinedConstant proc fastcall private name:string_t, value:int_t
-    .if CreateVariable( rcx, edx )
-        mov [rax].asym.predefined,1
-    .endif
-    ret
-    endp
-
-
-SetCPU proc __ccall newcpu:cpu_info
-
-    ldr edx,newcpu
-    mov ecx,MODULE.curr_cpu
-
-    .if ( edx == P_86 || ( edx & P_CPU_MASK ) )
-
-        ;; reset CPU and EXT bits
-        and ecx, not ( P_CPU_MASK or P_EXT_MASK or P_PM )
-
-        ;; set CPU bits
-        mov eax,edx
-        and eax,( P_CPU_MASK or P_PM )
-        or  ecx,eax
-
-        ;; set default FPU bits if nothing is given and .NO87 not active
-        .if ( !( edx & P_FPU_MASK ) )
-            and ecx, not P_FPU_MASK
-            or  ecx,P_387
-        .endif
-    .endif
-
-    .if ( edx & P_FPU_MASK )
-        and ecx,not P_FPU_MASK
-        mov eax,edx
-        and eax,P_FPU_MASK
-        or  ecx,eax
-    .endif
-
-    ;; enable MMX, K3D, SSEx for 64bit cpus
-    or ecx,P_EXT_ALL
-    .if ( edx & P_EXT_MASK )
-        and ecx,not P_EXT_MASK
-        and edx,P_EXT_MASK
-        or  ecx,edx
-    .endif
-    mov MODULE.curr_cpu,ecx
-
-    ;; set the Masm compatible @Cpu value
-
     mov edx,M_8086 or M_186 or M_286 or M_386 or M_486 or M_686
-    .if ( ecx & P_PM )
+    .if ( CurrCpu.Pm )
         or edx,M_PROT
     .endif
 
@@ -633,7 +553,29 @@ SetCPU proc __ccall newcpu:cpu_info
         ( MODULE.sub_format == SFORMAT_64BIT && Options.output_format == OFORMAT_BIN ) )
         pe_create_PE_header()
     .endif
+endif
     .return( NOT_ERROR )
     endp
+
+ifndef ASMC64
+
+; handles
+; .8086,
+; .[1|2|3|4|5|6]86[p],
+; .8087,
+; .[2|3]87,
+; .NO87, .MMX, .K3D, .XMM directives.
+
+CpuDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
+    imul ebx,i,asm_tok
+    add rbx,tokenarray
+    mov edx,GetSflagsSp( [rbx].tokval )
+    add rbx,asm_tok
+    .if ( [rbx].token != T_FINAL )
+        .return( asmerr(2008, [rbx].tokpos ) )
+    .endif
+    .return( SetCPU( dl ) )
+    endp
+
 endif
     end

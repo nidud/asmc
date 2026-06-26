@@ -1056,16 +1056,15 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
     .case T_REG
         mov [rdi].kind,EXPR_REG
         mov [rdi].base_reg,rbx
-        mov eax,GetCpuSp([rbx].tokval)
-        mov ecx,MODULE.curr_cpu
-        mov edx,ecx
-        and ecx,P_EXT_MASK
-        and edx,P_CPU_MASK
-        mov esi,eax
-        and esi,P_CPU_MASK
 
-        .if ( ( eax & P_EXT_MASK ) && !( eax & ecx ) || edx < esi )
+        ; check if cpu is sufficient for register
 
+        mov edx,GetCpuSp([rbx].tokval)
+        mov ecx,GetCpu(dl)
+        mov esi,GetCpuExtensions(dl)
+        mov edx,GetCurrCpu()
+        GetCpuExtensions(CurrCpu)
+        .if ( ( esi && eax < esi ) || edx < ecx )
             .if flags & EXPF_IN_SQBR
                 mov [rdi].kind,EXPR_ERROR
                 fnasmerr( 2085 )
@@ -1469,10 +1468,9 @@ endif
     .case T_RES_ID
         .if ( [rbx].tokval == T_FLAT )
             .if !( flags & EXPF_NOUNDEF )
-
-                mov eax,MODULE.curr_cpu
-                and eax,P_CPU_MASK
-                .return fnasmerr(2085) .if eax < P_386
+                .ifd ( GetCurrCpu() < P_386 )
+                    .return fnasmerr( 2085 )
+                .endif
                 DefineFlatGroup()
             .endif
             mov [rdi].sym,MODULE.flat_grp

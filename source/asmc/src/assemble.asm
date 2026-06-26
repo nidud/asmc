@@ -426,7 +426,7 @@ SetMasm510 proc __ccall value:int_t
 ModulePassInit proc __ccall private uses rsi rdi rbx
     lea rdi,Options
     mov MODULE.flags,[rdi].flags
-    mov ecx,[rdi].cpu
+    movzx ecx,[rdi].cpu
     mov esi,[rdi]._model
     ;
     ; set default values not affected by the masm 5.1 compat switch
@@ -446,7 +446,7 @@ endif
         mov eax,[rdi].fctype
         mov MODULE.fctype,al
         mov eax,ecx
-        and eax,P_CPU_MASK
+        and eax,P_CPU_MASK or P_64
 ifndef ASMC64
         .if ( MODULE.sub_format == SFORMAT_64BIT )
 endif
@@ -479,12 +479,11 @@ ifndef ASMC64
             ; if model FLAT is to be set, ensure that cpu is compat.
             ;
             .if ( esi == MODEL_FLAT && eax < P_386 ) ; cpu < 386?
-
                 mov ecx,P_386
             .endif
         .endif
 endif
-        SetCPU( ecx )
+        SetCPU( cl )
         ;
         ; table ModelToken starts with MODEL_TINY, which is index 1"
         ;

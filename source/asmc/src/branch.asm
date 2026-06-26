@@ -315,8 +315,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
             ; for 386 and above this is not needed, since there exists
             ; an extended version of Jcc
 
-            mov ecx,MODULE.curr_cpu
-            and ecx,P_CPU_MASK
+            mov ecx,GetCurrCpu()
             .if ( ecx < P_386 && IS_JCC( [rsi].token ) )
                 ; look into jump extension
                 .if ( [rsi].opnd[OPND1].type != OP_I8 )
@@ -504,9 +503,8 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
            .endc
         .endif
         ; just Jxx remaining
-        mov eax,MODULE.curr_cpu
-        and eax,P_CPU_MASK
-        .if ( eax >= P_386 )
+
+        .ifd ( GetCurrCpu() >= P_386 )
             mov al,[rsi].mem_type
             .switch ( al )
             .case MT_EMPTY

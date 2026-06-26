@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.39 - xx xxx 2026
+- added Apx Extended Registers (EGPR) r16-r31
 - added .ENDC( level )
 - added AND to record fields
 - removed ALIGN <forward_label> <value>

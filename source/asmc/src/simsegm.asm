@@ -126,8 +126,7 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
         .else
             mov pUse,&T("USE32")
         .endif
-        mov eax,MODULE.curr_cpu
-        and eax,P_CPU_MASK
+        GetCurrCpu()
         .if ( Options.segmentalign != 4 )
             mov pAlign,&calign
         .elseif ( eax <= P_386 )

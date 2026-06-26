@@ -81,6 +81,7 @@ OP_HXMM		equ OP_H or OP_XMM
 OP_HYMM		equ OP_H or OP_YMM
 OP_HZMM		equ OP_H or OP_ZMM
 OP_V		equ OP_XMM or OP_YMM or OP_ZMM
+OP_VM		equ OP_M128 or OP_M256 or OP_M512
 
 OP_I		equ OP_I8 or OP_I16 or OP_I32
 OP_IGE8		equ OP_I8 or OP_I16 or OP_I32

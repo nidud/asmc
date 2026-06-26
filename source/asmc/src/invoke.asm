@@ -389,7 +389,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
    .new arg_expandsize:int_t    ; extend register to this size (byte to [d]word)
    .new arg_offset:int_t = 0    ; current stack offset
 
-   .new cpu:int_t               ; current CPU
+   .new cpu:byte                ; current CPU
    .new stkreg:int_t            ; SP/ESP/RSP
    .new wordsize:int_t          ; sizeof(stkreg) in proc segment
 
@@ -465,9 +465,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
     ; Use SIMD if 64-bit or CPU >= SSE2
 
     mov cl,Ofssize
-    mov eax,MODULE.curr_cpu
-    and eax,P_CPU_MASK
-    mov cpu,eax
+    mov cpu,GetCurrCpu()
     movzx edx,[rbx].asym.sys_size
     mov arg_stksize,edx
 
@@ -1568,17 +1566,43 @@ endif
     .if ( param_reg )
 
         mov edx,param_regsize
-        .if ( edx < eax && memtype == MT_PTR )
+        .if ( edx < arg_size && memtype == MT_PTR )
             jmp arg_error
         .endif
 
         .if ( edx > arg_regsize )
 
-            mov param_reg,get_register( param_reg, arg_regsize )
+            get_register( param_reg, arg_regsize )
             .if ( eax == arg_reg && !stack )
                 .return
             .endif
-            mov param_regsize,arg_regsize
+
+            .if ( eax > T_BH && arg_regsize == 1 && cpu < P_64 )
+
+                ; v2.39: byte register is 64-bit
+
+                mov esi,2
+                .if ( cpu >= P_386 )
+                    add esi,esi
+                .endif
+                .if ( stack )
+                    ;
+                    ; use AX ?
+                    ;
+                    jmp arg_error
+                .endif
+                mov ebx,get_register( arg_reg, esi )
+                AddLineQueueX( " mov %r, %r", ebx, get_register( param_reg , esi ) )
+                mov arg_size,esi
+                mov arg_regsize,esi
+                mov arg_reg,ebx
+                mov param_reg,get_register( ebx, 1 )
+                mov eax,1
+                mov param_regsize,eax
+            .else
+                mov param_reg,eax
+                mov param_regsize,arg_regsize
+            .endif
             mov param_size,eax
             mov edx,eax
         .endif
@@ -1867,7 +1891,7 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_
   local r_ax:int_t
   local fullparam[MAX_LINE_LEN]:char_t
   local buffer[64]:char_t
-  local curr_cpu:uint_t
+  local cpu:CPU
   local ParamId:int_t
   local Ofssize:byte
   local pfastcall:byte
@@ -1898,9 +1922,8 @@ PushInvokeParam proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:token_
     mov eax,reqParam
     inc eax
     mov ParamId,eax
-    mov eax,MODULE.curr_cpu
-    and eax,P_CPU_MASK
-    mov curr_cpu,eax
+
+    mov cpu,GetCurrCpu()
     mov rsi,pproc
     mov r_ax,T_EAX
     mov t_addr,FALSE
@@ -2042,7 +2065,7 @@ ifndef ASMC64
 
             ; push offset part of address
 
-            .if ( curr_cpu < P_186 )
+            .if ( cpu < P_186 )
                 AddLineQueueX(
                     " mov ax, offset %s\n"
                     " push ax", &fullparam )
@@ -2347,7 +2370,7 @@ endif
         .endif
         .if ( asize > pushsize )
             .new t_dw:int_t = T_WORD
-            .if ( curr_cpu >= P_386 )
+            .if ( cpu >= P_386 )
                 mov pushsize,4
                 mov t_dw,T_DWORD
             .endif
@@ -2407,7 +2430,7 @@ endif
 
             ; v2.11: added, use MOVSX/MOVZX if cpu >= 80386
 
-            .if ( asize < 4 && psize > 2 && IS_SIGNED(opnd.mem_type) && curr_cpu >= P_386 )
+            .if ( asize < 4 && psize > 2 && IS_SIGNED(opnd.mem_type) && cpu >= P_386 )
                 AddLineQueueX(
                     " movsx eax, %s\n"
                     " push %r", &fullparam, r_ax )
@@ -2426,7 +2449,7 @@ ifndef ASMC64
                     .elseif ( pushsize == 2 ) ; 16-bit code?
                         .if ( opnd.mem_type == MT_BYTE )
                             .if ( psize == 4 )
-                                .if ( curr_cpu < P_186 )
+                                .if ( cpu < P_186 )
                                     mov rcx,r0flags
                                     .if ( !( byte ptr [rcx] & R0_X_CLEARED ) )
                                         AddLineQueue( " xor ax, ax" )
@@ -2546,7 +2569,7 @@ endif
                         " push %s", &fullparam )
                 .endif
             .elseif ( IS_SIGNED(opnd.mem_type) && psize > asize )
-                .if ( psize > 2 && ( curr_cpu >= P_386 ) )
+                .if ( psize > 2 && ( cpu >= P_386 ) )
                     AddLineQueueX(
                         " movsx eax, %s\n"
                         " push %r", &fullparam, r_ax )
@@ -2568,7 +2591,7 @@ endif
             .else
 ifndef ASMC64
                 .if ( pushsize == 2 && psize > 2 )
-                    .if ( curr_cpu < P_186 )
+                    .if ( cpu < P_186 )
                         mov rcx,r0flags
                         .if ( !( byte ptr [rcx] & R0_X_CLEARED ) )
                             AddLineQueue( " xor ax, ax" )
@@ -2648,7 +2671,7 @@ endif
                     .endif
                 .endif
                 .if ( asize <= 2 && ( psize == 4 || pushsize == 4 ) )
-                    .if ( curr_cpu >= P_386 && asize == psize )
+                    .if ( cpu >= P_386 && asize == psize )
                         .if ( asize == 2 )
                             sub reg,T_AX
                             add reg,T_EAX
@@ -2673,7 +2696,7 @@ ifndef ASMC64
                         ;
                         ; psize is 4 in this branch
                         ;
-                        .if ( curr_cpu >= P_386 )
+                        .if ( cpu >= P_386 )
                             AddLineQueueX( " movsx eax, %s", &fullparam )
                             mov rcx,r0flags
                             mov byte ptr [rcx],R0_USED
@@ -2695,7 +2718,7 @@ ifndef ASMC64
                             mov reg,T_AX
                         .endif
                         mov asize,2 ; done
-                    .elseif ( curr_cpu >= P_186 )
+                    .elseif ( cpu >= P_186 )
                         .if ( pushsize == 4 )
                             .if ( asize == 1 )
                                 ;
@@ -2766,7 +2789,7 @@ endif
                 .if ( asize == 1 )
                     mov eax,reg
                     .if ( ( eax >= T_AH && eax <= T_BH ) || psize != 1 )
-                        .if ( psize != 1 && curr_cpu >= P_386 )
+                        .if ( psize != 1 && cpu >= P_386 )
                             ;
                             ; v2.10: consider signed type coercion!
                             ;
@@ -2802,10 +2825,10 @@ endif
                         ;
                         ; convert 8-bit to 16/32-bit register name
                         ;
-                        .if ( ( curr_cpu >= P_386) && ( psize == 4 || pushsize == 4 ) )
+                        .if ( ( cpu >= P_386) && ( psize == 4 || pushsize == 4 ) )
                             sub eax,T_AL
                             add eax,T_EAX
-                        .elseif ( pushsize == 8 && curr_cpu >= P_64 )
+                        .elseif ( pushsize == 8 && cpu >= P_64 )
                             .if ( eax >= T_AL && eax <= T_BL )
                                 sub eax,T_AL
                                 add eax,T_RAX
@@ -2883,7 +2906,7 @@ endif
                     mov psize,eax
                 .endif
             .endif
-            .if ( curr_cpu < P_186 )
+            .if ( cpu < P_186 )
 ifndef ASMC64p
                 mov rcx,r0flags
                 or byte ptr [rcx],R0_USED
@@ -2946,7 +2969,7 @@ endif
                         ; no break
                     .case 4
 ifndef ASMC64
-                        .if ( curr_cpu >= P_386 )
+                        .if ( cpu >= P_386 )
                             mov ebx,T_PUSHD
                         .else
                             mov ebx,T_PUSHW
@@ -2967,7 +2990,7 @@ endif
 ifdef ASMC64
                         jmp push_ll_rax
 else
-                        cmp curr_cpu,P_64
+                        cmp cpu,P_64
                         jae push_ll_rax
                         mov ebx,T_PUSHD
                         jmp pushd_ll_32

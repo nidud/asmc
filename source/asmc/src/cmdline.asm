@@ -29,10 +29,10 @@ Options global_options {
         SFORMAT_NONE,           ; .sub_format
         LANG_NONE,              ; .langtype
         MODEL_NONE,             ; ._model
-        P_86,                   ; .cpu
         FCT_MSC,                ; .fctype
         0,                      ; .codepage
         1,                      ; .floatdigits
+        {{0,0,0,0}},            ; .cpu
         0,                      ; .frame_auto
         0,                      ; .debug_symbols
         0,                      ; .debug_ext
@@ -57,7 +57,7 @@ Options global_options {
 
      ; array for options -0..10
 
-     cpu_option int_t \
+     cpu_option byte \
         P_86,
         P_186,
         P_286,
@@ -65,9 +65,9 @@ Options global_options {
         P_486,
         P_586,
         P_686,
-        P_686 or P_MMX,
-        P_686 or P_MMX or P_SSE1,
-        P_686 or P_MMX or P_SSE1 or P_SSE2,
+        P_MMX,
+        P_SSE1,
+        P_SSE2,
         P_64
 
 
@@ -95,11 +95,11 @@ define_cpu proc fastcall cpu:int_t
 
 set_cpu proc fastcall _cpu:int_t, pm:int_t
     lea rax,cpu_option
-    mov eax,[rax+rcx*int_t]
-    and Options.cpu,not ( P_CPU_MASK or P_EXT_MASK or P_PM )
-    or  Options.cpu,eax
-    .if ( edx && Options.cpu >= P_286 )
-        or Options.cpu,P_PM
+    mov al,[rax+rcx]
+    and Options.cpu,not ( P_CPU_MASK or P_PM or P_64 )
+    or  Options.cpu,al
+    .if ( edx && al >= P_286 )
+        mov Options.cpu.Pm,1
     .endif
     .return define_cpu( ecx )
     endp
@@ -573,7 +573,8 @@ ifndef ASMC64
         mov Options.cpu,P_387
         .return
     .case 'cpf'             ; -fpc
-        mov Options.cpu,P_NO87
+        mov Options.cpu.Fpu,0
+        mov Options.no_cpu,1
         .return
 endif
     .case 'CIPf'            ; -fPIC

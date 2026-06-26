@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    238
-define _ASMC_BUILD  15
+define _ASMC_BUILD  16
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -103,6 +103,7 @@ include ltype.inc
 include token.inc
 include symbols.inc
 include errmsg.inc      ; must be located AFTER #defines lines
+include cpumodel.inc
 
 define EMPTY            (-2) ; function return values
 define ERROR            (-1)
@@ -221,105 +222,6 @@ define SIZE_CODEPTR 0x70 ; far for MEDIUM, LARGE, HUGE
     ASSUME_GS
     }
 
-.enum cpu_info {
-
-    ; bit count from left:
-
-    ; bit 0-2:     Math coprocessor
-    ; bit 3:       privileged?
-    ; bit 4-7:     cpu type
-    ; bit 8-15;    extension set
-
-    P_NO87  = 0x0001,         ; no FPU
-    P_87    = 0x0002,         ; 8087
-    P_287   = 0x0003,         ; 80287
-    P_387   = 0x0004,         ; 80387
-
-    P_PM    = 0x0008,         ; privileged opcode
-
-    P_86    = 0x0000,         ; 8086, default
-    P_186   = 0x0010,         ; 80186
-    P_286   = 0x0020,         ; 80286
-    P_386   = 0x0030,         ; 80386
-    P_486   = 0x0040,         ; 80486
-    P_586   = 0x0050,         ; pentium
-    P_686   = 0x0060,         ; ppro
-    P_64    = 0x0070,         ; x64 cpu
-
-    P_286p  = P_286 or P_PM,  ; 286, priv mode
-    P_386p  = P_386 or P_PM,  ; 386, priv mode
-    P_486p  = P_486 or P_PM,  ; 486, priv mode
-    P_586p  = P_586 or P_PM,  ; 586, priv mode
-    P_686p  = P_686 or P_PM,  ; 686, priv mode
-    P_64p   = P_64 or P_PM,   ; x64, priv mode
-
-    P_MMX   = 0x0100,         ; MMX extension instructions
-    P_K3D   = 0x0200,         ; 3DNow extension instructions
-    P_SSE1  = 0x0400,         ; SSE1 extension instructions
-    P_SSE2  = 0x0800,         ; SSE2 extension instructions
-    P_SSE3  = 0x1000,         ; SSE3 extension instructions
-    P_SSSE3 = 0x2000,         ; SSSE3 extension instructions
-    P_SSE4  = 0x4000,         ; SSE4 extension instructions
-    P_AVX   = 0x8000,         ; AVX extension instructions
-
-    ; all SSE extension instructions
-
-    P_SSEALL    = P_SSE1 or P_SSE2 or P_SSE3 or P_SSSE3 or P_SSE4 or P_AVX,
-    NO_OPPRFX   = P_MMX or P_SSEALL,
-
-    P_FPU_MASK  = 0x0007,
-    P_CPU_MASK  = 0x00F0,
-
-    P_EXT_MASK  = P_MMX or P_K3D or P_SSEALL,
-    P_EXT_ALL   = P_MMX or P_K3D or P_SSEALL
-    }
-
-
-; option -0..10
-
-.enum cpu_type {
-    CPU_86                  ;  0  __P86__
-    CPU_186,                ;  1  __P186__
-    CPU_286,                ;  2  __P286__
-    CPU_386,                ;  3  __P386__
-    CPU_486,                ;  4  __P486__
-    CPU_586,                ;  5  __P586__
-    CPU_686,                ;  6  __P686__
-    CPU_MMX,                ;  7  __P686__
-    CPU_SSE,                ;  8  __SSE__
-    CPU_SSE2,               ;  9  __SSE2__
-    CPU_64                  ; 10  __P64__
-    }
-
-
-; option -arch:[IA32|SSE|SSE2|AVX|AVX2|AVX512]
-
-.enum cpu_architecture {
-    ARCH_IX86_FP,           ; 0  _M_IX86_FP
-    ARCH_SSE,               ; 1  __SSE__
-    ARCH_SSE2,              ; 2  __SSE2__
-    ARCH_AVX,               ; 3  __AVX__
-    ARCH_AVX2,              ; 4  __AVX2__
-    ARCH_AVX512             ; 5  __AVX512F__, __AVX512CD__, __AVX512BW__,
-    }                       ;    __AVX512DQ__ and __AVX512VL__
-
-
-; the MASM compatible @CPU value flags:
-
-.enum masm_cpu {
-    M_8086      = 0x0001,   ; 8086
-    M_186       = 0x0002,   ; 186
-    M_286       = 0x0004,   ; 286
-    M_386       = 0x0008,   ; 386
-    M_486       = 0x0010,   ; 486
-    M_586       = 0x0020,   ; Pentium
-    M_686       = 0x0040,   ; PPro
-    M_CPUMSK    = 0x007F,
-    M_PROT      = 0x0080,   ; protected instructions ok
-    M_8087      = 0x0100,   ; 8087
-    M_287       = 0x0400,   ; 287
-    M_387       = 0x0800    ; 387
-    }
 
 .enum segofssize {
     USE_EMPTY   = 0xFE,
@@ -631,6 +533,7 @@ define PE_DLL               0x04
       switch_regax          dd: 1 ? ; use [R|E]AX to render jump-code
       assert                dd: 1 ? ; -assert Generate .assert code
       assert_pushf          dd: 1 ? ; Push/Pop flags
+      no_cpu                dd: 1 ? ; -fpc
       ; ----
       mscrt                 dd: 1 ? ; pragma init/exit option
       debug_frame           dd: 1 ? ; -Z7
@@ -684,10 +587,10 @@ define PE_DLL               0x04
     sub_format              dd ?    ; -mz, -pe, -win64, -elf64 options
     langtype                dd ?    ; -Gc|d|z option
     _model                  dd ?    ; -mt|s|m|c|l|h|f option
-    cpu                     dd ?    ; -0|1|2|3|4|5|6 & -fp{0|2|3|5|6|c} option
     fctype                  dd ?    ; -zf0 & -zf1 option
     codepage                dd ?    ; Unicode code page
     floatdigits             dd ?    ; option floatdigits:<value>
+    cpu                     CPU <>  ; -0|1|2|3|4|5|6 & -fp{0|2|3|5|6|c} option
     frame_auto              db ?    ; win64 only
     debug_symbols           db ?    ; -Zi option
     debug_ext               db ?    ; -Zi option numeric argument
@@ -730,6 +633,7 @@ define PE_DLL               0x04
       switch_regax          dd: 1 ? ; use [R|E]AX to render jump-code
       assert                dd: 1 ? ; -assert Generate .assert code
       assert_pushf          dd: 1 ? ; Push/Pop flags
+      no_cpu                dd: 1 ?
       ; ----
       procs_private         dd: 1 ? ; option proc:private
       procs_export          dd: 1 ? ; option proc:export
@@ -754,8 +658,8 @@ define PE_DLL               0x04
     fieldalign              db ?    ; -Zp, OPTION:FIELDALIGN setting
     sub_format              db ?    ; sub-output format
     cpu                     dd ?    ; cpu setting (value @cpu symbol);
-    curr_cpu                dd ?    ; cpu setting (OW stylex);
     srcfile                 dd ?    ; main source file - is an index for FNames[]
+    curr_cpu                CPU <>  ; cpu setting (OW stylex); -- extended type.
     _model                  db ?    ; memory model
     line_flags              db ?    ; current line has been printed
     offsettype              db ?    ; OFFSET:GROUP|FLAT|SEGMENT
@@ -868,6 +772,7 @@ define PE_DLL               0x04
     ends
    .ends
 
+CurrCpu                 equ <MODULE.curr_cpu>
 TokenCount              equ <MODULE.token_count>
 TokenArray              equ <MODULE.tokenarray>
 CurrSource              equ <MODULE.currsource>
@@ -907,7 +812,6 @@ DelayExpand             proto fastcall :token_t
 
 get_logo                proto __ccall :string_t
 write_logo              proto __ccall
-SetCPU                  proto __ccall :int_t
 OutputByte              proto __ccall :int_t
 FillDataBytes           proto __ccall :byte, :int_t
 OutputBytes             proto __ccall :ptr byte, :int_t, :ptr fixup

@@ -458,9 +458,10 @@ SetOfssize proc
         mov rax,[rcx].asym.seginfo
         movzx ecx,[rax].seg_info.Ofssize
         mov MODULE.Ofssize,cl
+        mov edx,GetCurrCpu()
         lea rax,min_cpu
         movzx eax,word ptr [rax+rcx*2]
-        .if ( MODULE.curr_cpu < eax )
+        .if ( edx < eax )
             mov eax,16
             shl eax,cl
             .return( asmerr( 2066, eax ) )

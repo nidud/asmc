@@ -1050,8 +1050,7 @@ endif
         ; set type of epilog code
         ; v2.11: if base register isn't [E|R]BP, don't use LEAVE!
 
-        mov ebx,MODULE.curr_cpu
-        and ebx,P_CPU_MASK
+        mov ebx,GetCurrCpu()
         xor edi,edi
 
         .if ( GetRegNo( [rsi].basereg ) != 5 )

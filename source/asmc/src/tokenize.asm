@@ -1150,15 +1150,12 @@ endif
             ; some instructions in the table (i.e. MOV) start with a 386 variant!
 
             GetInstrTable(eax)
-            movzx ecx,[rax].instr_item.cpu
-            mov eax,ecx
-            and eax,P_CPU_MASK
-            and ecx,P_EXT_MASK
-            mov edi,MODULE.curr_cpu
-            mov esi,edi
-            and edi,P_CPU_MASK
-            and esi,P_EXT_MASK
-            .if ( eax > edi || ecx > esi )
+            movzx ecx,[rax].Instruction.cpu
+            mov edx,GetCpu(ecx)
+            mov ecx,GetCpuExtensions(ecx)
+            mov edi,GetCurrCpu()
+            mov esi,GetCpuExtensions(CurrCpu)
+            .if ( edx > edi || ecx > esi )
                 mov ecx,T_ID
                 mov [rbx].tokval,0
                .endc

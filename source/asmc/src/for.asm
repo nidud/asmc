@@ -169,10 +169,8 @@ ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarr
         .endif
         .switch dl
         .case 0 ; reg <> val
-            mov eax,MODULE.curr_cpu
-            and eax,P_CPU_MASK
             mov edx,[rbx].tokval
-            .if ( eax >= P_686 )
+            .ifd ( GetCurrCpu() >= P_686 )
                 tsprintf( rdi, "%r %r, %r\n%r %r, %s", T_TEST, edx, edx, T_CMOVNZ, edx, rcx )
             .else
                 tsprintf( rdi, "%r %r\n%r %r, %s\n%r", T_DOT_IF, edx, T_MOV, edx, rcx, T_DOT_ENDIF )

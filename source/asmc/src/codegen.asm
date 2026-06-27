@@ -1386,7 +1386,7 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
             or eax,ebx
         .endif
 
-        .if ( [rdi].Evex.Broadcast && ( eax & OP_MGT8 || ebx & OP_MGT8 ) )
+        .if ( [rsi].Prefix.Evex && [rdi].Evex.Broadcast && ( eax & OP_MGT8 || ebx & OP_MGT8 ) )
 
             ; Vector, QWORD BCST mem
 

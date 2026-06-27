@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.39 - xx xxx 2026
+- added AVX512-4VNNIW instructions
 - added AVX-NE-CONVERT instructions
 - added {vex}, {vex2}, and {vex3} prefix
 - added AVX-VNNI-IN8/16 instructions

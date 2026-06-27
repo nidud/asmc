@@ -4091,13 +4091,24 @@ init_prefix:
             inc i
             add rsi,asm_tok
 
-        .elseif ( i == 0 && [rbx].dirtype == '{' && [rbx].stringlen == 4 )
+        .elseif ( i == 0 && [rbx].dirtype == '{' )
 
             mov rcx,[rbx].string_ptr
             mov eax,[rcx]
-            or  eax,0x20202020
-            .if ( eax == 'xeve' )
-                mov CodeInfo.Prefix.Evex,1
+            .if ( [rbx].stringlen == 4 )
+                or  eax,0x20202020
+                .if ( eax == 'xeve' )
+                    mov CodeInfo.Prefix.Evex,1
+                    jmp init_prefix
+                .elseif ( eax == '2xev' && cl == 0 )
+                    mov CodeInfo.Prefix.Vex2,1
+                    jmp init_prefix
+                .elseif ( eax == '3xev' && cl == 0 )
+                    mov CodeInfo.Prefix.Vex3,1
+                    jmp init_prefix
+                .endif
+            .elseif ( [rbx].stringlen == 3 && eax == 'xev' )
+                mov CodeInfo.Prefix.Vex,1
                 jmp init_prefix
             .endif
         .endif

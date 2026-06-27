@@ -67,20 +67,22 @@ include unaryop.inc
 ; for the memory operand, although the mem access will always
 ; be QWORD/OWORD.
 
-    OP_MMX_M64_08  = ( OP_MMX or OP_M64  or OP_M08 ),
-    OP_MMX_M64_16  = ( OP_MMX or OP_M64  or OP_M16 ),
-    OP_MMX_M64_32  = ( OP_MMX or OP_M64  or OP_M32 ),
+    OP_MMX_M64_M08  = ( OP_MMX or OP_M64  or OP_M08 ),
+    OP_MMX_M64_M16  = ( OP_MMX or OP_M64  or OP_M16 ),
+    OP_MMX_M64_M32  = ( OP_MMX or OP_M64  or OP_M32 ),
 
-    OP_XMM_M128_08 = ( OP_XMM or OP_M128 or OP_M08 ),
-    OP_XMM_M128_16 = ( OP_XMM or OP_M128 or OP_M16 ),
-    OP_XMM_M128_32 = ( OP_XMM or OP_M128 or OP_M32 ),
-    OP_XMM_M128_64 = ( OP_XMM or OP_M128 or OP_M64 ),
+    OP_XMM_M128_M08 = ( OP_XMM or OP_M128 or OP_M08 ),
+    OP_XMM_M128_M16 = ( OP_XMM or OP_M128 or OP_M16 ),
+    OP_XMM_M128_M32 = ( OP_XMM or OP_M128 or OP_M32 ),
+    OP_XMM_M128_M64 = ( OP_XMM or OP_M128 or OP_M64 ),
+
+    OP_YMM_M256_M08 = ( OP_YMM or OP_M256 or OP_M08 ),
+    OP_YMM_M256_M32 = ( OP_YMM or OP_M256 or OP_M32 ),
+    OP_YMM_M256_M64 = ( OP_YMM or OP_M256 or OP_M64 ),
+
     OP_XMM_MGT16   = ( OP_XMM or OP_M32 or OP_M64 ),
-
-    OP_YMM_M256_08 = ( OP_YMM or OP_M256 or OP_M08 ),
-    OP_YMM_M256_16 = ( OP_YMM or OP_M256 or OP_M16 ),
-    OP_YMM_M256_32 = ( OP_YMM or OP_M256 or OP_M32 ),
-    OP_YMM_M256_64 = ( OP_YMM or OP_M256 or OP_M64 ),
+    OP_XMM_MXGT8   = ( OP_XMM or OP_M128 or OP_M16 or OP_M32 or OP_M64 ),
+    OP_XMM_MXGT16  = ( OP_XMM or OP_M128 or OP_M32 or OP_M64 ),
 
     OP_YMM_M256    = ( OP_YMM or OP_M256 ),
     OP_ZMM_M512    = ( OP_ZMM or OP_M512 ),
@@ -90,15 +92,13 @@ include unaryop.inc
     OP_ZMM_M64     = ( OP_ZMM or OP_M64 ),
     OP_XMM_M256    = ( OP_XMM or OP_M256 ),
     OP_XMM_M_ANY   = ( OP_XMM or OP_M_ANY ),
-    OP_XMM_M128_M32= ( OP_XMM or OP_M128 or OP_M32 ),
-    OP_YMM_M256_M32= ( OP_YMM or OP_M256 or OP_M32 ),
+
+    OP_YMM_M128_M64= ( OP_YMM or OP_M128 or OP_M64 ),
+
     OP_ZMM_M512_M32= ( OP_ZMM or OP_M512 or OP_M32 ),
     OP_YMM_M128_M32= ( OP_YMM or OP_M128 or OP_M32 ),
     OP_ZMM_M128_M32= ( OP_ZMM or OP_M128 or OP_M32 ),
-    OP_XMM_M128_M64= ( OP_XMM or OP_M128 or OP_M64 ),
-    OP_YMM_M128_M64= ( OP_YMM or OP_M128 or OP_M64 ),
     OP_ZMM_M128_M64= ( OP_ZMM or OP_M128 or OP_M64 ),
-    OP_YMM_M256_M64= ( OP_YMM or OP_M256 or OP_M64 ),
     OP_ZMM_M512_M64= ( OP_ZMM or OP_M512 or OP_M64 ),
     OP_YMM_M128    = ( OP_YMM or OP_M128 ),
     OP_ZMM_M128    = ( OP_ZMM or OP_M128 ),
@@ -111,11 +111,7 @@ include unaryop.inc
     OP_M64_M256    = ( OP_M64 or OP_M256 ),
     OP_M32_M512    = ( OP_M32 or OP_M512 ),
     OP_M64_M512    = ( OP_M64 or OP_M512 ),
-    OP_XMM_MXQ     = ( OP_XMM or OP_M128 or OP_M64 ),
-    OP_XMM_MXQD    = ( OP_XMM or OP_M128 or OP_M64 or OP_M32 ),
-    OP_XMM_MXQDW   = ( OP_XMM or OP_M128 or OP_M64 or OP_M32 or OP_M16 ),
     OP_XMM_RMGT16  = ( OP_XMM or OP_RMGT16 ),
-
 }
 
 ; v2.06: operand types have been removed from InstrTable[], they

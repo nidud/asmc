@@ -3,10 +3,10 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.39 - xx xxx 2026
+- added AVX-NE-CONVERT instructions
 - added {vex}, {vex2}, and {vex3} prefix
 - added AVX-VNNI-IN8/16 instructions
 - added Pseudo-Op for [V]PCLMULQDQ, VCMP*, and VPCMP*
-- added Pseudo-Op for
 - added XRSTOR64, XSAVE64, and XSAVEOPT64 instructions
 - added Galois Field New Instructions (GFNI)
 - added Xeon Phi Instructions

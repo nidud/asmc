@@ -1,8 +1,5 @@
 ; X64-BIN-AVX-VNNI-INT16.ASM--
 ;
-; Copyright (c) The Asmc Contributors. All rights reserved.
-; Consult your license regarding permissions and restrictions.
-;
 ; From GAS: avx-vnni-int16-intel.d
 ;
 testcase macro B, S

@@ -22,9 +22,9 @@ The remaining prefixes control how AVX instructions are encoded.
 <tr><td><b>LOCK</b></td><td>Perform the operation atomically on a memory operand.</td></tr>
 <tr><td><b>XACQUIRE</b></td><td>Begin an HLE transaction, most often used with LOCK prefix.</td></tr>
 <tr><td><b>XRELEASE</b></td><td>Complete an HLE transaction, most often used with LOCK prefix.</td></tr>
-<tr><td><b>VEX</b></td><td>Encode an AVX instruction using a VEX prefix.</td></tr>
-<tr><td><b>VEX2</b></td><td>Encode an AVX instruction using a 2-byte VEX prefix.</td></tr>
-<tr><td><b>VEX3</b></td><td>Encode an AVX instruction using a 3-byte VEX prefix.</td></tr>
+<tr><td><b>VEX, {vex}</b></td><td>Encode an AVX instruction using a VEX prefix.</td></tr>
+<tr><td><b>VEX2, {vex2}</b></td><td>Encode an AVX instruction using a 2-byte VEX prefix.</td></tr>
+<tr><td><b>VEX3, {vex3}</b></td><td>Encode an AVX instruction using a 3-byte VEX prefix.</td></tr>
 <tr><td><b>EVEX, {evex}</b></td><td>Encode an AVX instruction using an EVEX prefix.</td></tr>
 </table>
 

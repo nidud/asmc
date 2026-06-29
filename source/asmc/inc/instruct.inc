@@ -2689,4 +2689,15 @@ insa(VSUBPH,         vsubph,         1, OpCls( XMM, XMM_M128_M16,     NONE ), F_
 insa(VSUBSH,         vsubsh,         1, OpCls( XMM, XMM_M128_M16,     NONE ), F_F3MAP5, 1, 2, 0x5C, 0x00, P_F16C, 0x00, 0x10, 0x21, MR or ZR or ER or LLIG or T1S )
 insa(VUCOMISH,       vucomish,       1, OpCls( XMM, XMM_M128_M16,     NONE ), F_NPMAP5, 1, 2, 0x2E, 0x00, P_F16C, 0x00, 0x10, 0x23, SA or LLIG or T1S )
 
+; AVX512-VPOPCNTDQ instructions
+
+insa(VPOPCNTD,       vpopcntd,       1, OpCls( XMM, XMM_M128_M32,     NONE ), F_660F38, 1, 2, 0x55, 0x00, P_AVX512, 0x00, 0x10, 0x23, MR or ZR or BC or FV )
+insa(VPOPCNTQ,       vpopcntq,       1, OpCls( XMM, XMM_M128_M64,     NONE ), F_660F38, 1, 2, 0x55, 0x00, P_AVX512, 0x00, 0x10, 0xA3, W1 or MR or ZR or BC or FV )
+
+; AVX512-BITALG instructions
+
+insa(VPOPCNTB,       vpopcntb,       1, OpCls( XMM, XMM_M128,         NONE ), F_660F38, 1, 2, 0x54, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR or FVM )
+insa(VPOPCNTW,       vpopcntw,       1, OpCls( XMM, XMM_M128,         NONE ), F_660F38, 1, 2, 0x54, 0x00, P_AVX512, 0x00, 0x10, 0x83, W1 or MR or ZR or FVM )
+insa(VPSHUFBITQMB,   vpshufbitqmb,   1, OpCls( K,   XMM_M128_M32,     NONE ), F_660F38, 1, 2, 0x8F, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or FVM )
+
 .pragma list(pop)

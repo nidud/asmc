@@ -4091,16 +4091,20 @@ init_prefix:
             mov eax,[rcx]
             .if ( [rbx].stringlen == 4 )
                 or  eax,0x20202020
-                .if ( eax == 'xeve' )
+                .switch eax
+                .case 'xeve'
                     mov CodeInfo.Prefix.Evex,1
                     jmp init_prefix
-                .elseif ( eax == '2xev' && cl == 0 )
+                .case '2xev'
                     mov CodeInfo.Prefix.Vex2,1
                     jmp init_prefix
-                .elseif ( eax == '3xev' && cl == 0 )
+                .case '3xev'
                     mov CodeInfo.Prefix.Vex3,1
                     jmp init_prefix
-                .endif
+                .case 'paws'
+                    mov CodeInfo.Prefix.Swap,1
+                    jmp init_prefix
+                .endsw
             .elseif ( [rbx].stringlen == 3 && eax == 'xev' )
                 mov CodeInfo.Prefix.Vex,1
                 jmp init_prefix

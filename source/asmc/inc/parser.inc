@@ -394,6 +394,7 @@ endif
      Rex2       db : 1 ?    ; REX2 prefix 0xD5 is to be emitted
      Osize      db : 1 ?    ; operand size prefix 0x66 is to be emitted
      Asize      db : 1 ?    ; address size prefix 0x67 is to be emitted
+     Swap       db : 1 ?    ; Swap encoding
     ends
     record Rex
      B          db : 1 ?    ; Base  0-15 of ModR/M or SIB base

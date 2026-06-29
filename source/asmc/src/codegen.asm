@@ -315,9 +315,22 @@ output_opc proc __ccall uses rdi rbx
     .if ( [rsi].ResW & RWF_VEX or RWF_EVEX )
 
         mov do_swap,0
+        .if ( [rsi].Prefix.Swap )
+            mov al,[rsi].rm_byte
+            and al,0xC0
+            .if ( al == 0xC0 && [rdi].opnd_dir && ![rdi+instr_item].opnd_dir )
+                add rdi,instr_item
+                mov [rsi].pinstr,rdi
+                mov [rsi].rm_byte,rmbyte
+                inc do_swap
+            .else
+                asmerr( 2008, "{swap} not supported" )
+            .endif
+        .endif
+
         .if ( [rsi].Prefix.Evex )
             OutputByte(0x62)
-        .elseif ( [rsi].ResW.SWAP )
+        .elseif ( [rsi].ResW.SWAP && !do_swap )
             mov al,[rsi].Rex
             mov ah,[rsi].rm_byte
             and eax,0xC00B
@@ -469,7 +482,15 @@ output_opc proc __ccall uses rdi rbx
 
         .if ( do_swap )
 
-            mov bl,0xC5
+            .if ( [rsi].Prefix.Evex == 0 )
+                mov bl,0xC5
+            .else
+                mov al,[rsi].Rex
+                not al
+                and al,7
+                shl al,5
+                or  bl,al
+            .endif
             and bh,0x7F
 
         .elseif ( [rdi].byte1_info >= F_0F38 || al & 0x0B )

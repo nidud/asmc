@@ -112,6 +112,7 @@ include unaryop.inc
     OP_M32_M512    = ( OP_M32 or OP_M512 ),
     OP_M64_M512    = ( OP_M64 or OP_M512 ),
     OP_XMM_RMGT16  = ( OP_XMM or OP_RMGT16 ),
+    OP_RMGT8       = ( OP_R16 or OP_R32 or OP_R64 or OP_M16 or OP_M32 or OP_M64 ),
 }
 
 ; v2.06: operand types have been removed from InstrTable[], they

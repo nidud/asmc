@@ -328,38 +328,79 @@ output_opc proc __ccall uses rdi rbx
                 inc do_swap
             .endif
         .endif
-        xor ebx,ebx
-        .if ( [rsi].Vex.W )
-            mov bh,0x80
-        .endif
-        .if ( [rsi].Prefix.Evex == 0 && ( [rsi].token == T_VCVTSI2SD || [rsi].token == T_VMOVQ ) )
-            xor ebx,ebx
-        .endif
+
+        movzx ebx,[rsi].Vex
+        and bl,0x80
+        shl ebx,8
         mov al,[rdi].byte1_info
         .switch al
+        .case F_0F
+        .case F_660F
+        .case F_F20F
+        .case F_F30F
+        .case F_F2660F
+        .case F_L10FW1
+        .case F_L166W1
+        .case F_L00FW1
+        .case F_L066W1
+            or bl,0x01
+           .endc
         .case F_0F38
-            mov bl,0x80
+            or bl,0x80
+        .case F_660F38
+        .case F_F20F38
+        .case F_F30F38
+            or bl,0x02
            .endc
-        .case E_0F
-        .case E_OF38
-            or bh,0x04
+        .case F_0F3A
+        .case F_660F3A
+        .case F_F20F3A
+        .case F_F30F3A
+            or bl,0x03
            .endc
-        .case E_660F
-        .case E_660F38
-            or bh,0x04
+        .case F_66MAP5 ; map 5 -- AVX512-FP16 instructions
+        .case F_F2MAP5
+        .case F_F3MAP5
+        .case F_NPMAP5
+            or bl,0x05
+           .endc
+        .case F_66MAP6 ; map 6 -- AVX512-FP16 instructions
+        .case F_F2MAP6
+        .case F_F3MAP6
+        .case F_NPMAP6
+            or bl,0x06
+        .endsw
+
+        .switch al
         .case F_660F
         .case F_660F38
         .case F_660F3A
-        .case E_660F3A
+        .case F_66MAP6
+        .case F_66MAP5
+        .case F_L066W1
             or bh,0x01
            .endc
         .case F_F30F
         .case F_F30F38
+        .case F_F30F3A
+        .case F_F3MAP5
+        .case F_F3MAP6
             or bh,0x02
            .endc
         .case F_F20F
         .case F_F20F38
+        .case F_F20F3A
+        .case F_F2MAP6
+        .case F_F2MAP5
             or bh,0x03
+           .endc
+        .case F_L10FW0
+        .case F_L10FW1
+            or bh,0x04
+           .endc
+        .case F_L166W0
+        .case F_L166W1
+            or bh,0x05
         .endsw
 
         mov eax,[rsi].opnd[OPND1].type
@@ -442,27 +483,6 @@ output_opc proc __ccall uses rdi rbx
             .if ( [rsi].Prefix.Evex == 0 )
                 OutputByte( 0xC4 )
             .endif
-            mov al,[rdi].byte1_info
-            .switch al
-            .case F_0F38
-            .case F_660F38
-            .case F_F20F38
-            .case F_F30F38
-                or bl,0x02
-               .endc
-            .case F_F20F3A
-                .if ( [rsi].token == T_RORX )
-                    or bh,0x03
-                .endif
-            .case F_0F3A
-            .case F_660F3A
-                or bl,0x03
-               .endc
-            .default
-                .if ( al >= F_0F )
-                    or bl,0x01
-                .endif
-            .endsw
             mov al,[rsi].Rex
             mov ah,al
             not al
@@ -477,7 +497,6 @@ output_opc proc __ccall uses rdi rbx
             and al,7
             shl al,5
             or  bl,al   ; P0.RXB
-            or  bl,0x01 ; P0.m0
             .if ( ![rsi].Rex.R )
                 or bh,0x80
             .endif
@@ -512,9 +531,8 @@ output_opc proc __ccall uses rdi rbx
             and al,MOD_11
             .if ( al == MOD_11 )
 
-
                 .if ( [rsi].Rex2.B4 )
-                    and bl,not 0x40 ; EVEX.B4 High-16 register
+                    and bl,not 0x40 ; EVEX.X = High-16 register
                 .endif
 
                 ; EVEX.L Vector length
@@ -595,8 +613,10 @@ output_opc proc __ccall uses rdi rbx
                 xor eax,eax
                 .if ( [rsi].Modifier.Broadcast )
                     mov cl,[rsi].Modifier.BCShift
-                    mov al,2
-                    shl al,cl ; {1to<al>}
+                    .if ( cl )
+                        mov al,2
+                        shl al,cl ; {1to<al>}
+                    .endif
                 .endif
                 mov brccnt,al
 
@@ -625,7 +645,7 @@ output_opc proc __ccall uses rdi rbx
                 mov v_size,al
 
                 .if ( !m_size )
-                    .if ( ![rsi].Modifier.Broadcast && ![rsi].Modifier.BroadCST )
+                    .if ( ![rsi].Modifier.Broadcast )
                         mov m_size,al
                     .else
                         mov m_size,w_size
@@ -639,7 +659,7 @@ output_opc proc __ccall uses rdi rbx
                         .endif
                     .endif
                 .elseif ( brccnt ) ; ...
-                    mov al,w_size
+                    mov al,m_size
                     mul brccnt
                     mov v_size,al
                     .if ( al > 64 || al < 16 )
@@ -661,19 +681,12 @@ output_opc proc __ccall uses rdi rbx
                 .case FV
                     .if ( [rsi].Evex.P2.b )
                         movzx eax,w_size
-                        .if ( eax == 8 && [rsi].Evex.P2.L0 && ![rsi].Modifier.Rounding )
-                            mov ecx,[rsi].token
-                            .switch ecx
-                            .case T_VCVTPD2PS
-                            .case T_VCVTPD2DQ
-                            .case T_VCVTTPD2DQ
-                            .case T_VCVTPD2UDQ
-                            .case T_VCVTTPD2UDQ
-                            .case T_VCVTQQ2PS
-                            .case T_VCVTUQQ2PS
-                                mov [rsi].Evex.P2.L1,1
-                                mov [rsi].Evex.P2.L0,0
-                            .endsw
+                        .if ( [rsi].Evex.P2.L0 && ![rsi].Modifier.Rounding )
+                            mov [rsi].Evex.P2.L1,1
+                            mov [rsi].Evex.P2.L0,0
+                        .endif
+                        .if ( m_size == 2 )
+                            mov eax,2
                         .endif
                         .endc
                     .endif
@@ -683,6 +696,9 @@ output_opc proc __ccall uses rdi rbx
                 .case HV
                     .if ( [rsi].Evex.P2.b )
                         mov eax,4
+                        .if ( m_size == 2 )
+                            mov eax,2
+                        .endif
                     .else
                         movzx eax,v_size
                         shr eax,1
@@ -723,6 +739,9 @@ output_opc proc __ccall uses rdi rbx
                 .case QVM       ;  4  8 16 Quarter Mem
                     movzx eax,v_size
                     shr eax,2
+                    .if ( m_size == 2 )
+                        mov eax,2
+                    .endif
                    .endc
                 .case HVM       ;  8 16 32 Half Mem
                     movzx eax,v_size
@@ -799,8 +818,7 @@ output_opc proc __ccall uses rdi rbx
             .endif
             OutputByte(ebx)
 
-            .if ( ( [rsi].Modifier.BroadCST || [rsi].Modifier.Broadcast ) &&
-                  [rdi].Evex.Broadcast == 0 )
+            .if ( [rsi].Modifier.Broadcast && [rdi].Evex.Broadcast == 0 )
                 asmerr( 2152 )
             .endif
             .if ( [rsi].Modifier.Suppress )

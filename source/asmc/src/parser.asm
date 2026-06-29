@@ -3598,34 +3598,28 @@ ParsEvexModifier proc fastcall string:string_t, CodeInfo:ptr code_info
         .endc .if eax & 0xFF0000
         sub ah,'0'
         or  [rdx].code_info.Evex.P2,ah
-        ;mov [rdx].code_info.Modifier.Opmask,1
        .return( 1 )
-    .case '1' ; {1to2} {1to4} {1to8} {1to16}
+    .case '1' ; {1to2..n}
         .endc .if ( ah != 't' )
-        mov ecx,[rcx+3]
-        xor eax,eax
-        .switch cl
-        .case '1'
-            .if ( ch == '6' )
-                or [rdx].code_info.Modifier.BCShift,3
-                inc eax
-            .endif
-            .endc
-        .case '8'
-            or [rdx].code_info.Modifier.BCShift,2
-            inc eax
-           .endc
-        .case '4'
-            or [rdx].code_info.Modifier.BCShift,1
-        .case '2'
-            inc eax
-           .endc
-        .endsw
+        movzx eax,byte ptr [rcx+4]
+        movzx ecx,byte ptr [rcx+3]
+        sub cl,'0'
         .if ( eax )
-            mov [rdx].code_info.Evex.P2.b,1
-            mov [rdx].code_info.Modifier.Broadcast,1
+            sub al,'0'
+            imul ecx,ecx,10
+            add ecx,eax
         .endif
-        .return
+        .for ( ah = 0, al = 2 : al < cl : al+=al, ah++ )
+        .endf
+        .if ( al != cl )
+            asmerr( 2063, ecx )
+           .endc
+        .endif
+        shl ah,5
+        or  [rdx].code_info.Modifier,ah
+        mov [rdx].code_info.Evex.P2.b,1
+        mov [rdx].code_info.Modifier.Broadcast,1
+       .return( 1 )
     .case 'z' ; {z}
         .if ( ah == 0 )
             mov [rdx].code_info.Evex.P2.z,1
@@ -4314,7 +4308,7 @@ init_prefix:
             .else
                 mov CodeInfo.Prefix.Evex,1
                 mov CodeInfo.Evex.P2.b,1
-                mov CodeInfo.Modifier.BroadCST,1
+                mov CodeInfo.Modifier.Broadcast,1
             .endif
         .endif
 
@@ -4445,7 +4439,7 @@ init_prefix:
             movzx edi,byte ptr [rdi+rax-VEX_START]
 
             .if ( ( eax < T_ANDN || eax > T_PEXT ) && ( ecx & ( OP_R32 or OP_R64 ) ) )
-            .elseif ( edi & VX_NND )
+            .elseif ( edi & VX_NND && !( eax == T_VMOVSH && j == 3 ) )
             .elseif ( edi & VX_IMM && opndx[expr*2].kind == EXPR_CONST && j > 2 )
 
                 ; handle reg, mem, imm

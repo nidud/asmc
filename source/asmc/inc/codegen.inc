@@ -89,15 +89,19 @@ IS_MEMTYPE_SIZ macro op, siz
     F_48,           ; REX.W prefix
     F_NPMAP5,
     F_NPMAP6,
-    F_66MAP6,
     F_0F = 16,      ; 0F escape
     F_L10FW0,       ; OpMask
     F_0F0F,         ; AMD 3DNow "prefix"
     F_660F,         ; SSEx prefix 1
+    F_66MAP5,
+    F_66MAP6,
     F_L166W0,
     F_F20F,         ; SSEx prefix 2
+    F_F2MAP5,
+    F_F2MAP6,
     F_F30F,         ; SSEx prefix 3
     F_F3MAP5,
+    F_F3MAP6,
     F_0FNO66,       ; 0F escape, no size prefix
     F_480F,         ; REX.W + 0F prefix ( cmpxchg16b )
     F_0F38,         ; must be first of 38/3A variants
@@ -107,18 +111,14 @@ IS_MEMTYPE_SIZ macro op, siz
     F_NP0F3A = F_0F3A,
     F_L00FW1,
     F_660F38,
-    F_66MAP5,
     F_L166W1,
     F_660F3A,
     F_L066W1,
     F_F2660F,
     F_F20F38,
-    F_F2MAP5,
-    F_F2MAP6,
     F_F30F38,
     F_F20F3A,
     F_F30F3A,
-    F_F3MAP6,
     }
 
 ; VX_NND is only needed if instruction has more than 2 operands

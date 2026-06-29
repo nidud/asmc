@@ -14,7 +14,7 @@ include fixup.inc
 
 ; Flags used for instructions
 ; VEX flags is "general" for each instruction
-; EVEX flags is set for all instruction varints
+; EVEX flags is set for all instruction variants
 ;
 ; EVEX.LZ.NDS.[128,256,512,LLIG].[66,F2,F3].0F/0F3A/0F38.[W0,W1,WIG] opcode [/r] [/ib]
 ;
@@ -34,8 +34,7 @@ include fixup.inc
     M128,               ; Mem128 / Shift count from memory
     DDUP,               ; VMOVDDUP
     T14X,               ; Tuple1_4X
-    TS = T1S,           ; Scalar ?
-    QV = QVM,           ; Quarter ?
+    FV512,              ; Full Vector, 256 --> 512
     }
 
 define LZ       0x10    ; VEX.LZ VEX-Encoded GPR instructions

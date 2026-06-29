@@ -403,12 +403,6 @@ output_opc proc __ccall uses rdi rbx
             or bh,0x05
         .endsw
 
-        mov eax,[rsi].opnd[OPND1].type
-        .if ( eax & OP_YMM || ( [rsi].opnd[OPNI2].type & OP_YMM or OP_M256 ) ||
-            ( eax == OP_NONE && [rsi].Vex.L ) ) ; no operands? use VX_L flag from vex_flags[]
-            or bh,0x04
-        .endif
-
         .if ( [rsi].vexregop )
 
             mov dl,[rsi].vexregop
@@ -667,24 +661,16 @@ output_opc proc __ccall uses rdi rbx
                     .endif
                 .endif
 
-                .if ( [rsi].Modifier.Rounding == 0 )
-                    .if ( v_size == 64 || [rsi].VReg.X_ZMM )
-                        mov [rsi].Evex.P2.L1,1
-                    .elseif ( v_size == 32 || [rsi].VReg.X_YMM )
-                        mov [rsi].Evex.P2.L0,1
-                    .endif
-                .endif
-
                 xor eax,eax
                 mov ecx,[rdi].Evex.Tuple
                 .switch ecx
+                .case FV512
+                    .if ( [rsi].Evex.P2.b && v_size == 32 && !brccnt )
+                        mov v_size,64
+                    .endif
                 .case FV
                     .if ( [rsi].Evex.P2.b )
                         movzx eax,w_size
-                        .if ( [rsi].Evex.P2.L0 && ![rsi].Modifier.Rounding )
-                            mov [rsi].Evex.P2.L1,1
-                            mov [rsi].Evex.P2.L0,0
-                        .endif
                         .if ( m_size == 2 )
                             mov eax,2
                         .endif
@@ -760,6 +746,13 @@ output_opc proc __ccall uses rdi rbx
                 .default
                     xor eax,eax
                 .endsw
+                .if ( [rsi].Modifier.Rounding == 0 )
+                    .if ( v_size == 64 || [rsi].VReg.X_ZMM )
+                        mov [rsi].Evex.P2.L1,1
+                    .elseif ( v_size == 32 || [rsi].VReg.X_YMM )
+                        mov [rsi].Evex.P2.L0,1
+                    .endif
+                .endif
                 mov edx,m_opid
 
                 ; the displacement in disp8 will be scaled in MOD_01
@@ -836,6 +829,11 @@ output_opc proc __ccall uses rdi rbx
 
         .else
 
+            mov eax,[rsi].opnd[OPND1].type
+            .if ( eax & OP_YMM || ( [rsi].opnd[OPNI2].type & OP_YMM or OP_M256 ) ||
+                ( eax == OP_NONE && [rsi].Vex.L ) ) ; no operands? use VX_L flag from vex_flags[]
+                or bh,0x04
+            .endif
             .if ( [rsi].Evex.P2.b )
                 asmerr( 2152 )
             .endif

@@ -34,6 +34,8 @@ include fixup.inc
     M128,               ; Mem128 / Shift count from memory
     DDUP,               ; VMOVDDUP
     T14X,               ; Tuple1_4X
+    TS = T1S,           ; Scalar ?
+    QV = QVM,           ; Quarter ?
     }
 
 define LZ       0x10    ; VEX.LZ VEX-Encoded GPR instructions
@@ -423,13 +425,12 @@ endif
      ends
     ends
     record Modifier         ; Modifiers used:
-     Broadcast  db : 1 ?    ; {1tox}
-     BroadCST   db : 1 ?    ; /bcst
+     Broadcast  db : 1 ?    ; /bcst {1tox}
      Rounding   db : 1 ?    ; {rx-sae} Rounding control {er}
      Suppress   db : 1 ?    ; {sae} Suppress All Exceptions
      Zeroing    db : 1 ?    ; {z} Zeroing/Merging
      ZMMUsed    db : 1 ?    ; Rounding/Suppress only supported for ZMM
-     BCShift    db : 2 ?    ; {1tox} value 0..3 --> 2 << Shift
+     BCShift    db : 3 ?    ; {1tox} value --> 2 << Shift
     ends
     Vex         VexFlags <> ; set by code_gen
     ResW        ResWFlags<> ; set by parser

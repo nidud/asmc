@@ -155,8 +155,8 @@ OpCls( XMM,      R32_M16,    I8_U  ) ;; PINSRW
 OpCls( XMM,      R32_M08,    I8_U  ) ;; PINSRB
 OpCls( XMM,      R32_M32,    I8_U  ) ;; PINSRD
 OpCls( XMM,      R64_M64,    I8_U  )
-OpCls( XMM,      XMM_M32 ,   I8_U  )
-OpCls( XMM,      XMM_M64 ,   I8_U  )
+OpCls( XMM,      XMM_M32,    I8_U  )
+OpCls( XMM,      XMM_M64,    I8_U  )
 OpCls( XMM,      XMM_M128,   I8_U  )
 OpCls( XMM,      XMM_M128,   XMM0  )
 OpCls( M128,     YMM,        I8_U  )
@@ -175,10 +175,10 @@ OpCls( XMM,      XMM_M08,     NONE )
 OpCls( YMM,      XMM_M32,     NONE )
 OpCls( YMM,      XMM_M128,    NONE )
 
-OpCls( K,        XMM_M128,    NONE ) ;; PCMPEQB
-OpCls( K,        XMM_M128,    I8_U ) ;; VCMPPD
-OpCls( K,        XMM_M32,     NONE ) ;; VPTESTNMD
-OpCls( K,        XMM_M64,     NONE ) ;; VPTESTNMQ
+;OpCls( K,        XMM_M128,    NONE ) ;; PCMPEQB
+;OpCls( K,        XMM_M128,    I8_U ) ;; VCMPPD
+;OpCls( K,        XMM_M32,     NONE ) ;; VPTESTNMD
+;OpCls( K,        XMM_M64,     NONE ) ;; VPTESTNMQ
 OpCls( XMM,      K,           NONE ) ;; VPBROADCASTMW2D
 OpCls( K,        K,           NONE ) ;; KNUTB
 OpCls( K,        K,           I8_U ) ;; KSHIFTLB
@@ -186,8 +186,8 @@ OpCls( K,        M08,         NONE ) ;; KMOVB
 OpCls( M08,      K,           NONE )
 ;OpCls( K,        R32,         NONE )
 ;OpCls( R32,      K,           NONE )
-OpCls( K,       RGT16,        NONE ) ; allow kmov[b|w|d] k,r64
-OpCls( RGT16,   K,            NONE ) ; allow kmov[b|w|d] r64,k
+OpCls( K,        RGT16,       NONE ) ; allow kmov[b|w|d] k,r64
+OpCls( RGT16,    K,           NONE ) ; allow kmov[b|w|d] r64,k
 OpCls( K,        M32,         NONE )
 OpCls( M32,      K,           NONE )
 OpCls( K,        M64,         NONE )
@@ -201,6 +201,7 @@ OpCls( K,       XMM_M128_M32, NONE )
 OpCls( K,       XMM_M128_M64, NONE )
 OpCls( K,       XMM_M128_M32, I8_U )
 OpCls( K,       XMM_M128_M64, I8_U )
+OpCls( K,       XMM_M128_M16, NONE )
 
 OpCls( MMX, MMX_M64_M08,      NONE )
 OpCls( MMX, MMX_M64_M16,      NONE )
@@ -224,7 +225,6 @@ OpCls( XMM, YMM_M256_M32,     NONE )
 OpCls( XMM, YMM_M256_M64,     NONE )
 OpCls( XMM, RGT16,            NONE ) ; allow vpbroadcastd zmm6,rax
 OpCls( XMM, XMM_MGT16,        NONE )
-OpCls( XMM, M16,              NONE ) ; FP16
 OpCls( XMM, XMM_MXGT8,        NONE )
 OpCls( XMM, R32_M32,          NONE )
 OpCls( XMM, R64_M64,          NONE )
@@ -260,7 +260,16 @@ OpCls( RGT16,   R_MS,         RGT16)
 OpCls( RGT8,    MGT8,         NONE )
 OpCls( I8_U,    EAX,          NONE ) ; HRESET
 
-OpCls( XMM,     XMM_M128,     HID  )
-OpCls( XMM,     XMM_MXGT16,   HID  )
-OpCls( K,       XMM_MXGT16,   HID  )
-OpCls( ZMM,     M128,         NONE )
+OpCls( XMM, XMM_M128,         HID  )
+OpCls( XMM, XMM_MXGT16,       HID  )
+OpCls( K,   XMM_MXGT16,       HID  )
+OpCls( ZMM, M128,             NONE )
+
+OpCls( XMM, RMGT8,            NONE ) ; FP16
+OpCls( RMGT8, XMM,            NONE )
+OpCls( R32, XMM_M16,          NONE )
+OpCls( R64, XMM_M16,          NONE )
+OpCls( XMM, XMM_M128_M16,     I8_U )
+OpCls( K,   XMM_M128_M16,     I8_U )
+OpCls( XMM_M128_M16, XMM,     NONE )
+

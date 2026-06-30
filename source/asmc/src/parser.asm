@@ -2508,9 +2508,13 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
     mov edx,regno
 
     .switch
+    .case eax & OP_K
+        .if ( [rsi].token < T_KANDB || [rsi].token > T_KMOVQ )
+            mov [rsi].Prefix.Evex,1
+        .endif
+        .endc
     .case eax & OP_YMM
-        ;mov [rsi].Evex.P2.L0,1 ; specifying 256-bit vector length
-       .endc .if !( eax & OP_H )
+        .endc .if !( eax & OP_H )
     .case eax & OP_H
         .if ( eax & OP_R )
             mov [rsi].Prefix.Rex2,1
@@ -2519,8 +2523,6 @@ process_register proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:
     .case eax & OP_ZMM
         mov [rsi].Prefix.Evex,1
         .if ( eax & OP_ZMM )
-            ;mov [rsi].Evex.P2.L1,1 ; specifying 512-bit vector length
-            ;mov [rsi].Evex.P2.L0,0
             mov [rsi].Modifier.ZMMUsed,1
         .endif
     .endsw

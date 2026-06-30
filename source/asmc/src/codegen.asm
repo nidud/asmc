@@ -665,7 +665,7 @@ output_opc proc __ccall uses rdi rbx
                     .else
                         mov m_size,w_size
                         .if ( brccnt )
-                            mov al,w_size
+                            ;mov al,w_size
                             mul brccnt
                             mov v_size,al
                             .if ( al > 64 || al < 16 )
@@ -712,9 +712,24 @@ output_opc proc __ccall uses rdi rbx
                     .endif
                     .endc
                 .case T1S   ; Tuple1 Scalar
-                    movzx eax,w_size
-                    .if ( m_size == 1 || m_size == 2 )
-                        mov al,m_size
+                    mov cl,m_size
+                    ;
+                    ; issue: m_size = vector size
+                    ;
+                    mov edx,[rsi].token
+                    .switch edx
+                    .case T_VPEXPANDB
+                    .case T_VPCOMPRESSB
+                        mov cl,1
+                       .endc
+                    .case T_VPEXPANDW
+                    .case T_VPCOMPRESSW
+                        mov cl,2
+                    .endsw
+
+                    mov al,w_size
+                    .if ( cl == 1 || cl == 2 )
+                        mov al,cl
                     .endif
                     .endc
                 .case T1F       ; Tuple1 Fixed 4/8 not affected by EVEX.W

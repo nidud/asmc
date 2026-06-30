@@ -1258,7 +1258,7 @@ insa(PSIGND, 1,      0, OpCls( XMM, XMM_M128,NONE ),F_660F38,1, no_WDS, 0x0A, 0x
 insa(PSIGNW, psignw, 1, OpCls( MMX, MMX_M64, NONE ), F_0F38, 1, no_WDS, 0x09, 0x00, P_SSSE3, 0, 0, 0, 0 )
 insa(PSIGNW, 1,      0, OpCls( XMM, XMM_M128,NONE ),F_660F38,1, no_WDS, 0x09, 0x00, P_SSSE3, 0, 0, 0, 0 )
 
-insa(PCLMULQDQ, pclmulqdq, 1, OpCls( XMM, XMM_M128, I8_U ), F_660F3A, 1, no_WDS, 0x44, 0x00, P_SSSE3, 0, 0, 0, 0 )
+insa(PCLMULQDQ, pclmulqdq, 1, OpCls( XMM, XMM_M128, I8_U ), F_660F3A, 1, no_WDS, 0x44, 0x00, P_SSSE3, 0, 0, 0, WIG or FVM )
 
 ; Pseudo-Op for PCLMULQDQ -- 0, 1, 16, 17
 
@@ -1788,8 +1788,8 @@ avxins(PCLMULQDQ,  VPCLMULQDQ,  vpclmulqdq,  0x08, 0x41 ) ; /ib
 avxins(MOVDDUP,    VMOVDDUP,    vmovddup,    0x88, 0x83 )
 
 avxins(AESDECLAST, VAESDECLAST, vaesdeclast, 0x08, 0x41 )
-avxins(AESDEC,     VAESDEC,     vaesdec,     0x08, 0x40 )
-avxins(AESENC,     VAESENC,     vaesenc,     0x08, 0x40 )
+avxins(AESDEC,     VAESDEC,     vaesdec,     0x08, 0x41 )
+avxins(AESENC,     VAESENC,     vaesenc,     0x08, 0x41 )
 avxins(AESENCLAST, VAESENCLAST, vaesenclast, 0x08, 0x41 )
 avxins(AESIMC,     VAESIMC,     vaesimc,     0x08, 0x42 )
 avxins(AESKEYGENASSIST, VAESKEYGENASSIST, vaeskeygenassist, 0x08, 0x42 )
@@ -2188,7 +2188,7 @@ insa(VPMOVM2D,  vpmovm2d,       1, OpCls( XMM, K,             NONE ), F_F30F38, 
 insa(VPMOVDB,   vpmovdb,        1, OpCls( XMM_MXGT16,   XMM,  NONE ), F_F30F38, 0, 2, 0x31, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR or QVM )
 insa(VPMOVDW,   vpmovdw,        1, OpCls( XMM_M128_M64, XMM,  NONE ), F_F30F38, 0, 2, 0x33, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR or HVM )
 insa(VPMOVQB,   vpmovqb,        1, OpCls( XMM_MXGT8,    XMM,  NONE ), F_F30F38, 0, 2, 0x32, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR or T8 )
-insa(VPMOVQD,   vpmovqd,        1, OpCls( XMM_M128,     XMM,  NONE ), F_F30F38, 0, 2, 0x35, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR or HVM )
+insa(VPMOVQD,   vpmovqd,        1, OpCls( XMM_M128_M64, XMM,  NONE ), F_F30F38, 0, 2, 0x35, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR or HVM )
 insa(VPMOVQW,   vpmovqw,        1, OpCls( XMM_MXGT16,   XMM,  NONE ), F_F30F38, 0, 2, 0x34, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR or QVM )
 insa(VPMOVWB,   vpmovwb,        1, OpCls( XMM_M128_M64, XMM,  NONE ), F_F30F38, 0, 2, 0x30, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR or HVM )
 insa(VPMOVSQB,  vpmovsqb,       1, OpCls( XMM_MXGT8,    XMM,  NONE ), F_F30F38, 0, 2, 0x22, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR or T8 )
@@ -2304,8 +2304,6 @@ avxins(VSCATTERPF1QPS, VSCATTERPF1QPD, vscatterpf1qpd, 0x90, 0x83 )
 
 insa(VDBPSADBW,    vdbpsadbw,    1, OpCls( XMM,  XMM_M128, I8_U ), F_660F3A, 1, 2, 0x42, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or FVM )
 insa(VPBLENDMB,    vpblendmb,    1, OpCls( XMM,  XMM_M128, NONE ), F_660F38, 1, 2, 0x66, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or FVM )
-insa(VPERMI2W,     vpermi2w,     1, OpCls( XMM,  XMM_M128, NONE ), F_660F38, 1, 2, 0x75, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or FVM )
-insa(VPERMT2W,     vpermt2w,     1, OpCls( XMM,  XMM_M128, NONE ), F_660F38, 1, 2, 0x7D, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or FVM )
 insa(VPCMPB,       vpcmpb,       1, OpCls( K,XMM_M128_M64, I8_U ), F_660F3A, 1, 2, 0x3F, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or FVM )
 insa(VPCMPUB,      vpcmpub,      1, OpCls( K,XMM_M128_M64, I8_U ), F_660F3A, 1, 2, 0x3E, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or FVM )
 insa(VPCMPW,       vpcmpw,       1, OpCls( K,XMM_M128_M64, I8_U ), F_660F3A, 1, 2, 0x3F, 0x00, P_AVX512, 0x00, 0x10, 0x01, W1 or MR or FVM )
@@ -2699,5 +2697,35 @@ insa(VPOPCNTQ,       vpopcntq,       1, OpCls( XMM, XMM_M128_M64,     NONE ), F_
 insa(VPOPCNTB,       vpopcntb,       1, OpCls( XMM, XMM_M128,         NONE ), F_660F38, 1, 2, 0x54, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR or FVM )
 insa(VPOPCNTW,       vpopcntw,       1, OpCls( XMM, XMM_M128,         NONE ), F_660F38, 1, 2, 0x54, 0x00, P_AVX512, 0x00, 0x10, 0x83, W1 or MR or ZR or FVM )
 insa(VPSHUFBITQMB,   vpshufbitqmb,   1, OpCls( K,   XMM_M128_M32,     NONE ), F_660F38, 1, 2, 0x8F, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or FVM )
+
+; AVX512-VBMI instructions
+
+insa(VPERMI2B,       vpermi2b,       1, OpCls( XMM, XMM_M128,     NONE ), F_660F38, 1, 2, 0x75, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or FVM )
+insa(VPERMT2B,       vpermt2b,       1, OpCls( XMM, XMM_M128,     NONE ), F_660F38, 1, 2, 0x7D, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or FVM )
+insa(VPMULTISHIFTQB, vpmultishiftqb, 1, OpCls( XMM, XMM_M128_M64, NONE ), F_660F38, 1, 2, 0x83, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or BC or FV )
+
+avxins(VPERMI2B, VPERMI2W, vpermi2w, 0x90, 0x81 )
+avxins(VPERMT2B, VPERMT2W, vpermt2w, 0x90, 0x81 )
+
+; AVX512-VBMI2 instructions
+
+insa(VPCOMPRESSB,    vpcompressb,    1, OpCls( XMM_M128, XMM,     NONE ), F_660F38, 0, 2, 0x63, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or T1S )
+insa(VPEXPANDB,      vpexpandb,      1, OpCls( XMM, XMM,          NONE ), F_660F38, 1, 2, 0x62, 0x00, P_AVX512, 0x00, 0x10, 0x03, MR or ZR )
+insa(VPEXPANDB,      1,              0, OpCls( XMM, M128,         NONE ), F_660F38, 1, 2, 0x62, 0x00, P_AVX512, 0x00, 0x10, 0x00, MR or T1S )
+insa(VPSHLDVW,       vpshldvw,       1, OpCls( XMM, XMM_M128,     NONE ), F_660F38, 1, 2, 0x70, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or FVM )
+insa(VPSHLDVD,       vpshldvd,       1, OpCls( XMM, XMM_M128_M32, NONE ), F_660F38, 1, 2, 0x71, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or BC or FV )
+insa(VPSHLDVQ,       vpshldvq,       1, OpCls( XMM, XMM_M128_M64, NONE ), F_660F38, 1, 2, 0x71, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or BC or FV )
+insa(VPSHRDVW,       vpshrdvw,       1, OpCls( XMM, XMM_M128,     NONE ), F_660F38, 1, 2, 0x72, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or FVM )
+insa(VPSHRDVD,       vpshrdvd,       1, OpCls( XMM, XMM_M128_M32, NONE ), F_660F38, 1, 2, 0x73, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or BC or FV )
+insa(VPSHRDVQ,       vpshrdvq,       1, OpCls( XMM, XMM_M128_M64, NONE ), F_660F38, 1, 2, 0x73, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or BC or FV )
+insa(VPSHLDW,        vpshldw,        1, OpCls( XMM, XMM_M128,     I8_U ), F_660F3A, 1, 2, 0x70, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or FVM )
+insa(VPSHLDD,        vpshldd,        1, OpCls( XMM, XMM_M128_M32, I8_U ), F_660F3A, 1, 2, 0x71, 0x00, P_AVX512, 0x00, 0x10, 0x81, MR or ZR or BC or FV )
+insa(VPSHLDQ,        vpshldq,        1, OpCls( XMM, XMM_M128_M64, I8_U ), F_660F3A, 1, 2, 0x71, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or BC or FV )
+insa(VPSHRDW,        vpshrdw,        1, OpCls( XMM, XMM_M128,     I8_U ), F_660F3A, 1, 2, 0x72, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or FVM )
+insa(VPSHRDD,        vpshrdd,        1, OpCls( XMM, XMM_M128_M32, I8_U ), F_660F3A, 1, 2, 0x73, 0x00, P_AVX512, 0x00, 0x10, 0x81, MR or ZR or BC or FV )
+insa(VPSHRDQ,        vpshrdq,        1, OpCls( XMM, XMM_M128_M64, I8_U ), F_660F3A, 1, 2, 0x73, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or MR or ZR or BC or FV )
+
+avxins(VPCOMPRESSB, VPCOMPRESSW, vpcompressw, 0x90, 0x81 )
+avxins(VPEXPANDB,   VPEXPANDW,   vpexpandw,   0x90, 0x83 )
 
 .pragma list(pop)

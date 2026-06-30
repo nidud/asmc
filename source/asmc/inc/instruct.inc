@@ -791,12 +791,13 @@ insa(FYL2XP1, fyl2xp1, 1, OpCls( NONE, NONE, NONE ), 0,      0, 0,      0xD9, 0x
 
 ; MMX/SSE related opcodes (except SSE instructions CMPSD and MOVSD)
 
-insa(EMMS, emms,     1, OpCls( NONE, NONE,   NONE ), F_0F,   0, no_RM,  0x77, 0x00, P_MMX,  0, 0, 0, 0 )
-insa(CLFLUSH, clflush, 1, OpCls( M_ANY, NONE,NONE ), F_0F,   0, no_WDS, 0xAE, 0x38, P_SSE2, 0, 0, 0, 0 )
+insa(EMMS,       emms,       1, OpCls( NONE,   NONE, NONE ), F_0F,   0, no_RM,  0x77, 0x00, P_MMX,  0, 0, 0, 0 )
+insa(PTWRITE,    ptwrite,    1, OpCls( RMGT16, NONE, NONE ), F_F30F, 0, no_WDS, 0xAE, 0x20, P_386,  0, 0, 0, 0 )
+insa(CLWB,       clwb,       1, OpCls( M_ANY,  NONE, NONE ), F_660F, 0, no_WDS, 0xAE, 0x30, P_686,  0, 0, 0, 0 )
+insa(CLFLUSH,    clflush,    1, OpCls( M_ANY,  NONE, NONE ), F_0F,   0, no_WDS, 0xAE, 0x38, P_SSE2, 0, 0, 0, 0 )
+insa(CLFLUSHOPT, clflushopt, 1, OpCls( M_ANY,  NONE, NONE ), F_660F, 0, no_WDS, 0xAE, 0x38, P_SSE2, 0, 0, 0, 0 )
+insa(CLDEMOTE,   cldemote,   1, OpCls( M_ANY,  NONE, NONE ), F_0F,   0, no_WDS, 0x1C, 0x00, P_386,  0, 0, 0, 0 )
 
-; v2.39: added
-insa(CLFLUSHOPT,clflushopt,1,OpCls(M_ANY,NONE,NONE), F_660F, 0, no_WDS, 0xAE, 0x38, P_64,   0, 0, 0, 0 )
-insa(CLWB, clwb,    1, OpCls( M_ANY, NONE,   NONE ), F_660F, 0, no_WDS, 0xAE, 0x30, P_686,  0, 0, 0, 0 )
 
 insa(LDMXCSR, ldmxcsr, 1, OpCls( M32, NONE,  NONE ), F_0F,   0, no_WDS, 0xAE, 0x10, P_SSE1, 0, 0, 0, LZ )
 insa(STMXCSR, stmxcsr, 1, OpCls( M32, NONE,  NONE ), F_0F,   0, no_WDS, 0xAE, 0x18, P_SSE1, 0, 0, 0, LZ )
@@ -807,6 +808,7 @@ insa(PREFETCHNTA,prefetchnta,1,OpCls(M_ANY,NONE,NONE), F_0F, 0, no_WDS, 0x18, 0x
 insa(PREFETCHT0, prefetcht0,1,OpCls(M_ANY,NONE,NONE), F_0F,  0, no_WDS, 0x18, 0x08, P_SSE1, 0, 0, 0, 0 )
 insa(PREFETCHT1, prefetcht1,1,OpCls(M_ANY,NONE,NONE), F_0F,  0, no_WDS, 0x18, 0x10, P_SSE1, 0, 0, 0, 0 )
 insa(PREFETCHT2, prefetcht2,1,OpCls(M_ANY,NONE,NONE), F_0F,  0, no_WDS, 0x18, 0x18, P_SSE1, 0, 0, 0, 0 )
+
 
 ; Xeon Phi
 insa(PREFETCHWT1,prefetchwt1,1,OpCls(M_ANY,NONE,NONE),F_0F,  0, no_WDS, 0x0D, 0x10, P_SSE1, 0, 0, 0, 0 )
@@ -1434,8 +1436,8 @@ insa(ROUNDSD,  roundsd,     1, OpCls( XMM, XMM_M64,      I8_U ), F_660F3A, 1, no
 
 ; SSE4.2
 
-insa(CRC32,     crc32,      1, OpCls( RGT16, R8_M08,   NONE ), F_F20F38, 1, no_WDS, 0xF0, 0x00, P_SSE4, 0, 0, 0, 0 )
-insa(CRC32,     1,          0, OpCls( RGT16, RGT8_MS,  NONE ), F_F20F38, 1, no_WDS, 0xF1, 0x00, P_SSE4, 0, 0, 0, 0 )
+insa(CRC32,     crc32,      1, OpCls( RGT16, R8_M08,   NONE ), F_F20F38, 1, no_WDS, 0xF0, 0x00, P_686,  0, 0, 0, 0 )
+insa(CRC32,     1,          0, OpCls( RGT16, RGT8_MS,  NONE ), F_F20F38, 1, no_WDS, 0xF1, 0x00, P_686,  0, 0, 0, 0 )
 insa(PCMPESTRM, pcmpestrm,  1, OpCls( XMM, XMM_M128,   I8_U ), F_660F3A, 1, no_WDS, 0x60, 0x00, P_SSE4, 0, 0, 0, 0 )
 insa(PCMPESTRI, pcmpestri,  1, OpCls( XMM, XMM_M128,   I8_U ), F_660F3A, 1, no_WDS, 0x61, 0x00, P_SSE4, 0, 0, 0, 0 )
 insa(PCMPISTRM, pcmpistrm,  1, OpCls( XMM, XMM_M128,   I8_U ), F_660F3A, 1, no_WDS, 0x62, 0x00, P_SSE4, 0, 0, 0, 0 )
@@ -1793,6 +1795,12 @@ avxins(AESENC,     VAESENC,     vaesenc,     0x08, 0x41 )
 avxins(AESENCLAST, VAESENCLAST, vaesenclast, 0x08, 0x41 )
 avxins(AESIMC,     VAESIMC,     vaesimc,     0x08, 0x42 )
 avxins(AESKEYGENASSIST, VAESKEYGENASSIST, vaeskeygenassist, 0x08, 0x42 )
+
+; SHA512 instructions
+
+insa(VSHA512MSG1,  vsha512msg1,  1, OpCls( YMM, XMM_M128,     NONE ), F_F20F38, 1, 2, 0xCC, 0x00, P_AVX, 0x00, 0x08, 0x22, 0 )
+insa(VSHA512MSG2,  vsha512msg2,  1, OpCls( YMM, YMM_M256,     NONE ), F_F20F38, 1, 2, 0xCD, 0x00, P_AVX, 0x00, 0x08, 0x02, 0 )
+insa(VSHA512RNDS2, vsha512rnds2, 1, OpCls( YMM, XMM_M128,     NONE ), F_F20F38, 1, 2, 0xCB, 0x00, P_AVX, 0x00, 0x08, 0x20, 0 )
 
 ; AVX-2 - v2.26
 

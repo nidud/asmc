@@ -1,0 +1,15 @@
+; X64-BIN-CLWB.ASM--
+;
+; From GAS: clwb-intel.d
+;
+testcase macro B, S
+ ifdef BIN
+  db B
+ else
+  S
+ endif
+ endm
+.code
+testcase <0x66, 0x0f, 0xae, 0x31>, <clwb BYTE PTR [rcx]>
+testcase <0x66, 0x0f, 0xae, 0xb4, 0xf4, 0xc0, 0x1d, 0xfe, 0xff>, <clwb BYTE PTR [rsp+rsi*8-0x1e240]>
+end

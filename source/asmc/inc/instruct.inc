@@ -798,7 +798,6 @@ insa(CLFLUSH,    clflush,    1, OpCls( M_ANY,  NONE, NONE ), F_0F,   0, no_WDS, 
 insa(CLFLUSHOPT, clflushopt, 1, OpCls( M_ANY,  NONE, NONE ), F_660F, 0, no_WDS, 0xAE, 0x38, P_SSE2, 0, 0, 0, 0 )
 insa(CLDEMOTE,   cldemote,   1, OpCls( M_ANY,  NONE, NONE ), F_0F,   0, no_WDS, 0x1C, 0x00, P_386,  0, 0, 0, 0 )
 
-
 insa(LDMXCSR, ldmxcsr, 1, OpCls( M32, NONE,  NONE ), F_0F,   0, no_WDS, 0xAE, 0x10, P_SSE1, 0, 0, 0, LZ )
 insa(STMXCSR, stmxcsr, 1, OpCls( M32, NONE,  NONE ), F_0F,   0, no_WDS, 0xAE, 0x18, P_SSE1, 0, 0, 0, LZ )
 insa(LFENCE, lfence, 1, OpCls( NONE, NONE,   NONE ), F_0F,   0, no_WDS, 0xAE, 0xE8, P_SSE2, 0, 0, 0, 0 )
@@ -1354,20 +1353,21 @@ insa(SENDUIPI,senduipi,     1, OpCls( R64,  NONE,        NONE ), F_F30F,   0, 0,
 insa(TESTUI, testui,        1, OpCls( NONE, NONE,        NONE ), F_F30F,   0, 0,      0x01, 0xED, P_64, 0, RWF_X64, 0, 0 )
 insa(UIRET, uiret,          1, OpCls( NONE, NONE,        NONE ), F_F30F,   0, 0,      0x01, 0xEC, P_64, 0, RWF_X64, 0, 0 )
 
-insa(XRSTOR64, xrstor64,    1, OpCls( M_ANY, NONE,       NONE ), F_0F,     0, no_WDS, 0xAE, 0x28, P_64, 6, RWF_X64, 0, 0 )
-insa(XSAVE64,  xsave64,     1, OpCls( M_ANY, NONE,       NONE ), F_0F,     0, no_WDS, 0xAE, 0x20, P_64, 6, RWF_X64, 0, 0 )
+insa(XRSTOR64,   xrstor64,  1, OpCls( M_ANY, NONE,       NONE ), F_0F,     0, no_WDS, 0xAE, 0x28, P_64, 6, RWF_X64, 0, 0 )
+insa(XSAVE64,    xsave64,   1, OpCls( M_ANY, NONE,       NONE ), F_0F,     0, no_WDS, 0xAE, 0x20, P_64, 6, RWF_X64, 0, 0 )
 insa(XSAVEOPT64, xsaveopt64, 1, OpCls( M_ANY, NONE,      NONE ), F_0F,     0, no_WDS, 0xAE, 0x30, P_64, 6, RWF_X64, 0, 0 )
 
 ; Terminate an Indirect Branch in 64-bit Mode
 
-insa(ENDBR64, endbr64,      1, OpCls( NONE, NONE,        NONE ), F_F30F,   0, 0,      0x1E, 0xFA, P_64, 0, RWF_X64, 0, 0 )
-insa(ENDBR32, endbr32,      1, OpCls( NONE, NONE,        NONE ), F_F30F,   0, 0,      0x1E, 0xFB, P_686, 0, 0, 0, 0 )
+insa(ENDBR64,    endbr64,   1, OpCls( NONE, NONE,        NONE ), F_F30F,   0, 0,      0x1E, 0xFA, P_64, 0, RWF_X64, 0, 0 )
+insa(ENDBR32,    endbr32,   1, OpCls( NONE, NONE,        NONE ), F_F30F,   0, 0,      0x1E, 0xFB, P_686, 0, 0, 0, 0 )
 
-insa(ENQCMD, enqcmd,        1, OpCls( RGT16, M_ANY,      NONE ), F_F20F38, 1, no_WDS, 0xF8, 0x00, P_686, 0, 0, 0, 0 )
-insa(ENQCMDS, enqcmds,      1, OpCls( RGT16, M_ANY,      NONE ), F_F30F38, 1, no_WDS, 0xF8, 0x00, P_686, 0, 0, 0, 0 )
-insa(MOVDIR64B, movdir64b,  1, OpCls( R, MS,             NONE ), F_660F38, 1, no_WDS, 0xF8, 0x00, P_686, 0, 0, 0, 0 )
+insa(ENQCMD,     enqcmd,    1, OpCls( RGT16, M_ANY,      NONE ), F_F20F38, 1, no_WDS, 0xF8, 0x00, P_686, 0, 0, 0, 0 )
+insa(ENQCMDS,    enqcmds,   1, OpCls( RGT16, M_ANY,      NONE ), F_F30F38, 1, no_WDS, 0xF8, 0x00, P_686, 0, 0, 0, 0 )
+insa(MOVDIR64B,  movdir64b, 1, OpCls( R, MS,             NONE ), F_660F38, 1, no_WDS, 0xF8, 0x00, P_686, 0, 0, 0, 0 )
+insa(MOVDIRI,    movdiri,   1, OpCls( MGT16, RGT16,      NONE ), F_NP0F38, 0, no_WDS, 0xF9, 0x00, P_686, 0, 0, 0, 0 )
 if 0
-insa(SERIALIZE, serialize,  1, OpCls( NONE, NONE,        NONE ), F_0F,     1, no_WDS, 0x01, 0xE8, P_686, 0, 0, 0, 0 )
+insa(SERIALIZE,  serialize, 1, OpCls( NONE, NONE,        NONE ), F_0F,     1, no_WDS, 0x01, 0xE8, P_686, 0, 0, 0, 0 )
 endif
 
 ; SSE4.1
@@ -2735,5 +2735,10 @@ insa(VPSHRDQ,        vpshrdq,        1, OpCls( XMM, XMM_M128_M64, I8_U ), F_660F
 
 avxins(VPCOMPRESSB, VPCOMPRESSW, vpcompressw, 0x90, 0x81 )
 avxins(VPEXPANDB,   VPEXPANDW,   vpexpandw,   0x90, 0x83 )
+
+; AVX-512 Vector Pair Intersection (AVX512VP2INTERSECT)
+
+insa(VP2INTERSECTD,   vp2intersectd, 1, OpCls( K, XMM_M128_M32,    NONE ), F_F20F38, 1, 2, 0x68, 0x00, P_AVX512, 0x00, 0x10, 0x01, BC or FV )
+insa(VP2INTERSECTQ,   vp2intersectq, 1, OpCls( K, XMM_M128_M64,    NONE ), F_F20F38, 1, 2, 0x68, 0x00, P_AVX512, 0x00, 0x10, 0x81, W1 or BC or FV )
 
 .pragma list(pop)

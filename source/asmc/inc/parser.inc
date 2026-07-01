@@ -447,6 +447,7 @@ endif
      X_YMM      db : 1 ?    ; the reg-type in opc_or (VSIB index)
      X_ZMM      db : 1 ?
     ends
+    HLE         db ?        ; Hardware Lock Elision Prefix Hints
     token       dd ?
     inst        int_t ?
     RegOverride int_t ?

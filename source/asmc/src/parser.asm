@@ -1198,10 +1198,11 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
                     adc [rdi].hvalue,0
                     mov [rsi].opnd[rbx].data32l,eax
                     mov [rdi+expr].value,eax
-                .else
+
+                .elseif ( edx == OP_M64 )
                     ;
                     ; mem64 --> mem32
-                    ; mem16 --> mem32
+                    ; mem16 --> mem32 (removed)
                     ;
                     mov op_type,OP_I32
                     mov [rdi].mem_type,MT_DWORD
@@ -4141,26 +4142,47 @@ init_prefix:
     ;
     ; v2.36.36 - added VEX, VEX2, VEX3, EXEX, XACQUIRE, and XRELEASE
     ;
+
     mov eax,[rsi].tokval
+    mov ecx,[rsi+asm_tok].tokval
+
+    ; v2.39: XACQUIRE LOCK or LOCK XACQUIRE
+
+    .if ( eax == T_LOCK && ( ecx == T_XACQUIRE || ecx == T_XRELEASE ) )
+        xchg eax,ecx
+    .endif
+
     .if ( eax == T_XACQUIRE || eax == T_XRELEASE )
 
+        .if ( eax == T_XACQUIRE )
+            mov CodeInfo.HLE,0xF2
+        .else
+            mov CodeInfo.HLE,0xF3
+        .endif
         mov edx,eax
 
         inc i
         add rsi,asm_tok
-        mov eax,[rsi].tokval
+        mov eax,ecx
 
         .if ( eax == T_LOCK && ( [rsi+asm_tok].tokval == T_MOV || [rsi+asm_tok].tokval == T_XCHG ) )
 
             ; Masm ignore the LOCK prefix here..
 
+            .if ( edx == T_XACQUIRE && [rsi+asm_tok].tokval == T_MOV )
+                asmerr( 2068 )
+            .endif
             inc i
             add rsi,asm_tok
             mov eax,[rsi].tokval
-        .endif
-        .if ( eax != T_LOCK )
-            mov eax,edx
-            mov CodeInfo.inst,edx
+        .elseif ( edx == T_XACQUIRE && ( eax == T_MOV || [rsi+asm_tok].tokval == T_MOV ) )
+            asmerr( 2068 )
+        .elseif ( eax != T_XCHG && eax != T_MOV )
+            mov eax,T_LOCK
+            .if ( ecx != T_LOCK )
+                sub rsi,asm_tok
+                dec i
+            .endif
         .endif
     .endif
 

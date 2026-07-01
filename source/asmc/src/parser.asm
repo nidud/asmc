@@ -3046,6 +3046,27 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
 
     mov eax,[rsi].token
     .switch eax
+ifndef MASMCOMPAT
+    .case T_KMOVB ; Masm reject
+    .case T_KMOVW ; Masm reject
+    .case T_KMOVD ; Masm allow this and convert to r32
+        .if ( edx & OP_R64 && [rdi+expr].kind == EXPR_REG )
+            mov [rsi].Rex.W,0
+            .if ( eax != T_KMOVD && Options.strict_masm_compat )
+                asmerr( 2070 )
+            .endif
+            .endc
+        .endif
+        jmp def_check
+    .case T_KMOVQ ; Masm reject
+        .if ( edx & OP_R32 && [rdi+expr].kind == EXPR_REG )
+            .if ( Options.strict_masm_compat )
+                asmerr( 2070 )
+            .endif
+        .endif
+        jmp def_check
+endif
+
     .case T_HRESET ; added v2.34.59
         .if ( ecx != OP_I8 && edx != OP_EAX )
             jmp def_check

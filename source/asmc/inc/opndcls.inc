@@ -147,11 +147,11 @@ OpCls( R32_M32,  XMM,        I8_U )
 OpCls( R64_M64,  XMM,        I8_U )
 OpCls( RGT16,    MMX,        I8_U )
 OpCls( RGT16,    XMM,        I8_U )
-OpCls( RGT16_M08,XMM,        I8_U )
+OpCls( RGT16_M08, XMM,       I8_U )
 OpCls( RGT8,     R_MS,       I    )
 OpCls( RGT8,     R_MS,       I8_U )
-OpCls( RGT8_MGT8,RGT8,       CL   )
-OpCls( RGT8_MGT8,RGT8,       I8_U )
+OpCls( RGT8_MGT8, RGT8,      CL   )
+OpCls( RGT8_MGT8, RGT8,      I8_U )
 OpCls( XMM,      R32_M16,    I8_U ) ;; PINSRW
 OpCls( XMM,      R32_M08,    I8_U ) ;; PINSRB
 OpCls( XMM,      R32_M32,    I8_U ) ;; PINSRD
@@ -175,39 +175,22 @@ OpCls( XMM,      R,          NONE )
 OpCls( XMM,      XMM_M08,    NONE )
 OpCls( YMM,      XMM_M32,    NONE )
 OpCls( YMM,      XMM_M128,   NONE )
-
-;OpCls( K,        XMM_M128,    NONE ) ;; PCMPEQB
-;OpCls( K,        XMM_M128,    I8_U ) ;; VCMPPD
-;OpCls( K,        XMM_M32,     NONE ) ;; VPTESTNMD
-;OpCls( K,        XMM_M64,     NONE ) ;; VPTESTNMQ
-OpCls( XMM,      K,          NONE ) ;; VPBROADCASTMW2D
 OpCls( K,        K,          NONE ) ;; KNUTB
 OpCls( K,        K,          I8_U ) ;; KSHIFTLB
-OpCls( K,        M08,        NONE ) ;; KMOVB
-OpCls( M08,      K,          NONE )
-;OpCls( K,        R32,        NONE )
-;OpCls( R32,      K,          NONE )
+OpCls( K,        K_M,        NONE )
+OpCls( M,        K,          NONE )
 OpCls( K,        RGT16,      NONE ) ; allow kmov[b|w|d] k,r64
 OpCls( RGT16,    K,          NONE ) ; allow kmov[b|w|d] r64,k
-OpCls( K,        M32,        NONE )
-OpCls( M32,      K,          NONE )
-OpCls( K,        M64,        NONE )
-OpCls( M64,      K,          NONE )
-OpCls( K,        R64,        NONE )
-OpCls( R64,      K,          NONE )
-OpCls( K,        M16,        NONE )
-OpCls( M16,      K,          NONE )
-OpCls( K,      XMM,          NONE )
-OpCls( K,      XMM_M128_M32, NONE )
-OpCls( K,      XMM_M128_M64, NONE )
-OpCls( K,      XMM_M128_M32, I8_U )
-OpCls( K,      XMM_M128_M64, I8_U )
-OpCls( K,      XMM_M128_M16, NONE )
-
+OpCls( K,        XMM,        NONE )
+OpCls( XMM,      K,          NONE ) ;; VPBROADCASTMW2D
+OpCls( K,   XMM_M128_M32,    NONE )
+OpCls( K,   XMM_M128_M64,    NONE )
+OpCls( K,   XMM_M128_M32,    I8_U )
+OpCls( K,   XMM_M128_M64,    I8_U )
+OpCls( K,   XMM_M128_M16,    NONE )
 OpCls( MMX, MMX_M64_M08,     NONE )
 OpCls( MMX, MMX_M64_M16,     NONE )
 OpCls( MMX, MMX_M64_M32,     NONE )
-
 OpCls( XMM, XMM_M128_M08,    NONE )
 OpCls( XMM, XMM_M128_M16,    NONE )
 OpCls( XMM, XMM_M128_M32,    NONE )
@@ -221,7 +204,6 @@ OpCls( YMM, YMM_M256_M32,    I8_U )
 OpCls( YMM, YMM_M256_M64,    I8_U )
 OpCls( ZMM, ZMM_M512_M32,    NONE )
 OpCls( ZMM, ZMM_M512_M64,    NONE )
-
 OpCls( XMM, YMM_M256_M32,    NONE )
 OpCls( XMM, YMM_M256_M64,    NONE )
 OpCls( XMM, RGT16,           NONE ) ; allow vpbroadcastd zmm6,rax
@@ -230,14 +212,11 @@ OpCls( XMM, XMM_MXGT8,       NONE )
 OpCls( XMM, R32_M32,         NONE )
 OpCls( XMM, R64_M64,         NONE )
 OpCls( XMM, M32_M64,         XMM  )
-
 OpCls( YMM, XMM_M128_M32,    NONE )
 OpCls( YMM, XMM_M128_M64,    NONE )
-
 OpCls( ZMM, XMM_M128_M64,    NONE )
 OpCls( ZMM, XMM_M32,         NONE )
 OpCls( ZMM, M256_M128,       NONE )
-
 OpCls( XMM_M128_M64, XMM_YMM, I8_U )
 OpCls( XMM_M128, YMM_ZMM,     I8_U )
 OpCls( YMM_M256, ZMM,         I8_U )
@@ -245,12 +224,10 @@ OpCls( M32_M256, NONE,        NONE )
 OpCls( M64_M256, NONE,        NONE )
 OpCls( M32_M512, NONE,        NONE )
 OpCls( M64_M512, NONE,        NONE )
-OpCls( M32_M64, XMM,          NONE )
-
-OpCls( XMM_MXGT8,    XMM,     NONE )
-OpCls( XMM_MXGT16,   XMM,     NONE )
+OpCls( M32_M64,  XMM,         NONE )
+OpCls( XMM_MXGT8, XMM,        NONE )
+OpCls( XMM_MXGT16, XMM,       NONE )
 OpCls( XMM_M128_M64, XMM,     NONE )
-
 OpCls( R32_M32, XMM_M64,      NONE )
 OpCls( R64_M64, XMM_M64,      NONE )
 OpCls( R64_M64, XMM_M32,      NONE )
@@ -260,17 +237,14 @@ OpCls( RGT16,   RGT16,        I8_U )
 OpCls( RGT16,   R_MS,         RGT16)
 OpCls( RGT8,    MGT8,         NONE )
 OpCls( I8_U,    EAX,          NONE ) ; HRESET
-
-OpCls( XMM, XMM_M128,         HID  )
-OpCls( XMM, XMM_MXGT16,       HID  )
-OpCls( K,   XMM_MXGT16,       HID  )
-OpCls( ZMM, M128,             NONE )
-
-OpCls( XMM, RMGT8,            NONE ) ; FP16
-OpCls( RMGT8, XMM,            NONE )
-OpCls( R32, XMM_M16,          NONE )
-OpCls( R64, XMM_M16,          NONE )
-OpCls( XMM, XMM_M128_M16,     I8_U )
-OpCls( K,   XMM_M128_M16,     I8_U )
+OpCls( XMM,     XMM_M128,     HID  )
+OpCls( XMM,     XMM_MXGT16,   HID  )
+OpCls( K,       XMM_MXGT16,   HID  )
+OpCls( ZMM,     M128,         NONE )
+OpCls( XMM,     RMGT8,        NONE ) ; FP16
+OpCls( RMGT8,   XMM,          NONE )
+OpCls( R32,     XMM_M16,      NONE )
+OpCls( R64,     XMM_M16,      NONE )
+OpCls( XMM,     XMM_M128_M16, I8_U )
+OpCls( K,       XMM_M128_M16, I8_U )
 OpCls( XMM_M128_M16, XMM,     NONE )
-

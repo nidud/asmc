@@ -134,6 +134,10 @@ output_opc proc __ccall uses rdi rbx
 
     ; Output instruction prefix
 
+    .if ( [rsi].HLE )
+        OutputByte( [rsi].HLE ) ; Hardware Lock Elision Prefix Hints
+    .endif
+
     ; Output instruction prefix LOCK, REP, or REP[N]E|Z
 
     .if ( [rsi].inst != EMPTY )
@@ -150,7 +154,7 @@ output_opc proc __ccall uses rdi rbx
         .endif
         mov rmbyte,al
         .if ( ecx != eax )
-            .if !( [rsi].inst == T_XRELEASE && [rsi].token == T_MOV )
+            .if !( [rsi].HLE == 0xF3 && [rsi].token == T_MOV )
                 asmerr( 2068 )
             .endif
         .else

@@ -30,6 +30,7 @@ Changes in 2.39 - xx xxx 2026
   instructions using YMM16..24 or [r8..15]
 - fixed bug in VPBRODCASTx - wrong prefix + additional types
 - fixed bug in ALIAS - missing name mangling
+- fixed bug in XACQUIRE/XRELEASE
 - added option -arch:AVX10.1 and -arch:AVX10.2
 - added ALIGN <forward_label> <value>
 

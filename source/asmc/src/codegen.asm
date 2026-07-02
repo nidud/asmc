@@ -241,8 +241,21 @@ output_opc proc __ccall uses rdi rbx
         .case F_F20F38
             OutputByte(0xF2)
            .endc
-        .case F_F3      ; PAUSE instruction
         .case F_F30F
+            .if ( [rsi].token == T_UMONITOR )
+                .if ( MODULE.Ofssize == USE64 )
+                    mov [rsi].Rex,0
+                    .if ( [rsi].opnd.type & OP_R32 )
+                        mov [rsi].Prefix.Asize,1
+                    .elseif ( [rsi].opnd.type & OP_R16 )
+                        asmerr( 2024 )
+                    .endif
+                .elseif ( [rsi].Prefix.Osize )
+                    mov [rsi].Prefix.Osize,0
+                    mov [rsi].Prefix.Asize,1
+                .endif
+            .endif
+        .case F_F3      ; PAUSE instruction
         .case F_F30F38
         .case F_F30F3A  ; HRESET instruction
             OutputByte(0xF3)

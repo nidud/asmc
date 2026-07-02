@@ -3052,7 +3052,7 @@ ifndef MASMCOMPAT
     .case T_KMOVD ; Masm allow this and convert to r32
         .if ( edx & OP_R64 && [rdi+expr].kind == EXPR_REG )
             mov [rsi].Rex.W,0
-            .if ( eax != T_KMOVD && Options.strict_masm_compat )
+            .if ( eax != T_KMOVD )
                 asmerr( 2070 )
             .endif
             .endc

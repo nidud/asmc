@@ -83,6 +83,7 @@ include unaryop.inc
     OP_XMM_MGT16   = ( OP_XMM or OP_M32 or OP_M64 ),
     OP_XMM_MXGT8   = ( OP_XMM or OP_M128 or OP_M16 or OP_M32 or OP_M64 ),
     OP_XMM_MXGT16  = ( OP_XMM or OP_M128 or OP_M32 or OP_M64 ),
+    OP_ZMM_MZGT16  = ( OP_ZMM or OP_M512 or OP_M32 or OP_M64 ),
 
     OP_YMM_M256    = ( OP_YMM or OP_M256 ),
     OP_ZMM_M512    = ( OP_ZMM or OP_M512 ),
@@ -95,7 +96,6 @@ include unaryop.inc
 
     OP_YMM_M128_M64= ( OP_YMM or OP_M128 or OP_M64 ),
 
-    OP_ZMM_M512_M32= ( OP_ZMM or OP_M512 or OP_M32 ),
     OP_YMM_M128_M32= ( OP_YMM or OP_M128 or OP_M32 ),
     OP_ZMM_M128_M32= ( OP_ZMM or OP_M128 or OP_M32 ),
     OP_ZMM_M128_M64= ( OP_ZMM or OP_M128 or OP_M64 ),

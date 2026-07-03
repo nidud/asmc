@@ -354,7 +354,7 @@ define VEX_PREFIX 0x1F
      vsib       dw : 1 ?    ; Support VSIB memory addressing /vsib
      WIgnored   dw : 1 ?    ; EVEX.W bit ignored
      W          dw : 1 ?    ; EVEX.W=1
-     KMask      dw : 1 ?    ; Support {k1}
+     Mask       dw : 1 ?    ; Support {k1}
      Broadcast  dw : 1 ?    ; Support BCST / {1tox} /m32bcst /m64bcst
      Suppress   dw : 1 ?    ; Support {sae} Suppress All Exceptions
      Rounding   dw : 1 ?    ; Support {rx-sae} {er}

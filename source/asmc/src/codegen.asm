@@ -864,6 +864,13 @@ output_opc proc __ccall uses rdi rbx
             .endif
             OutputByte(ebx)
 
+            .if ( [rsi].Evex.P2.Mask && [rdi].Evex.Mask == 0 )
+                asmerr( 2152 )
+            .endif
+            .if ( [rsi].Evex.P2.z && [rdi].Evex.Zeroing == 0 )
+                asmerr( 2152 )
+            .endif
+
             .if ( [rsi].Modifier.Broadcast && [rdi].Evex.Broadcast == 0 )
                 asmerr( 2152 )
             .endif

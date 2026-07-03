@@ -192,7 +192,8 @@ externdef jmpenv:byte
     A2149 equ <"byte register cannot be first operand">
     A2150 equ <"word register cannot be first operand">
     A2151 equ <"special register cannot be first operand">
-    A2152 equ <"coprocessor register cannot be first operand">
+    ;A2152 equ <"coprocessor register cannot be first operand">
+    A2152 equ <"unsupported mode decorator for instruction">
     A2153 equ <"cannot change size of expression computations">
     A2154 equ <"syntax error in control-flow directive">
     A2155 equ <"cannot use 16-bit register with a 32-bit address">

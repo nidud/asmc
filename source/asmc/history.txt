@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.39 - xx xxx 2026
+- fixed bug in INVOKE (JWasm v2.21) - see x86-bin-pproc.asm
 - added syntax error for unsupported EVEX modifiers
 - added WAITPKG instructions
 - added AVX-SM3 instructions

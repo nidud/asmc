@@ -15,13 +15,7 @@ include reswords.inc
 include input.inc
 include parser.inc
 include preproc.inc
-
-lq_line struct  ; item of a line queue
-next    ptr_t ?
-line    char_t 1 dup(?)
-lq_line ends
-
-LineQueue equ <MODULE.line_queue>
+include lqueue.inc
 
 .code
 

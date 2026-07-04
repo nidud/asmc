@@ -26,14 +26,15 @@ include qfloat.inc
 include reswords.inc
 include operator.inc
 include lqueue.inc
-
-public SegOverride
-
-externdef ProcStatus:int_t
-externdef opnd_clstab:opnd_class
-externdef vex_flags:byte
-externdef Frame_Type:byte  ; Frame of current fixup
-externdef Frame_Datum:word ; Frame datum of current fixup
+include macro.inc
+include indirect.inc
+include hll.inc
+include branch.inc
+include data.inc
+include enum.inc
+include mem2mem.inc
+include class.inc
+include new.inc
 
 ADDRSIZE proto watcall :byte, :byte {
     test    al,al
@@ -66,17 +67,7 @@ InWordRange macro val
     exitm<!!(val !> 65535 || val !< -65535)>
     endm
 
-CCALLBACK(fpDirective, :int_t, :token_t)
-
-extern directive_tab:fpDirective
-
 ; parsing of branch instructions with imm operand is found in branch.asm
-
-data_dir            proto __ccall :int_t, :token_t, :asym_t
-process_branch      proto __ccall :ptr code_info, :uint_t, :expr_t
-ExpandLine          proto __ccall :string_t, :token_t
-ExpandHllProcEx     proto __ccall :string_t, :int_t, :token_t
-HandleIndirection   proto __ccall :asym_t, :token_t, :int_t
 
     .data
     SegOverride asym_t 0
@@ -1722,10 +1713,9 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
                 ; of any size.
 
                 movzx eax,[rbx].opclsidx
-                imul  eax,eax,opnd_class
-                lea   rcx,opnd_clstab
+                lea rcx,opnd_clstab
 
-                .endc .if ( [rcx+rax].opnd_class.opnd_type[OPND1] == OP_M_ANY )
+                .endc .if ( [rcx+rax*8].opnd_class.opnd_type[OPND1] == OP_M_ANY )
 
                 ; don't set REX for FPU opcodes
 
@@ -1733,7 +1723,7 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
 
                 ; don't set REX for - most - MMX/SSE opcodes
 
-                .ifd ( GetCpuExtensions([rbx].cpu) )
+                .ifd GetCpuExtensions([rbx].cpu)
 
                     mov eax,[rsi].token
                     .switch eax
@@ -1788,13 +1778,9 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
         .elseif IS_MEMTYPE_SIZ( mem_type, QWORD )
 
             movzx eax,[rbx].opclsidx
-            imul  eax,eax,opnd_class
-            lea   rcx,opnd_clstab
-
-            .if ( [rcx+rax].opnd_class.opnd_type[OPND1] == OP_M_ANY )
-
+            lea rcx,opnd_clstab
+            .if ( [rcx+rax*8].opnd_class.opnd_type[OPND1] == OP_M_ANY )
             .elseifd ( [rbx].cpu.Fpu || GetCpuExtensions([rbx].cpu) )
-
             .elseif ( [rsi].token != T_CMPXCHG8B )
 
                 ; setting REX.W will cause an error in codegen
@@ -1848,7 +1834,6 @@ memory_operand proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info,
     .elseif ( ah == MT_ADDRESS )
 
         .if ( [rdi].Ofssize == USE_EMPTY && sym )
-
             mov [rdi].Ofssize,GetSymOfssize( sym )
         .endif
         mov ecx,SizeFromMemtype( [rdi].mem_type, [rdi].Ofssize, [rdi].type )
@@ -2374,17 +2359,13 @@ endif
             ; instruction table if the instruction allows an immediate!
             ; If so, assume the undefined symbol is a constant.
 
-            mov eax,[rsi].opnd[OPND1].type
-            and eax,OP_SR
-
-            .if ( ebx == OPND2 && eax == 0 )
+            .if ( ebx == OPND2 && !( [rsi].opnd[OPND1].type & OP_SR ) )
 
                 mov rcx,[rsi].pinstr
+                lea rdx,opnd_clstab
                 .repeat
                     movzx eax,[rcx].Instruction.opclsidx
-                    imul eax,eax,opnd_class
-                    lea rdx,opnd_clstab
-                    .if ( [rdx+rax].opnd_class.opnd_type[4] & OP_I )
+                    .if ( [rdx+rax*8].opnd_class.opnd_type[4] & OP_I )
                         .return idata_fixup( rsi, ebx, rdi )
                     .endif
                     add rcx,Instruction
@@ -2950,14 +2931,14 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
         .endif
     .endsw
 
-    mov   ecx,opndidx
-    shl   ecx,2
-    mov   rax,[rsi].pinstr
+    mov ecx,opndidx
+    shl ecx,2
+    mov rax,[rsi].pinstr
     movzx eax,[rax].instr_item.opclsidx
-    imul  eax,eax,opnd_class
-    lea   rdx,opnd_clstab
-    add   rdx,rax
-    .if ( [rdx].opnd_class.opnd_type[rcx] == OP_NONE )
+    lea rdx,opnd_clstab
+    add rdx,rcx
+    mov eax,[rdx+rax*8].opnd_class.opnd_type
+    .if ( eax == OP_NONE )
         mov [rsi].Flags.IsWide,0
         mov [rsi].Prefix.Osize,FALSE
     .endif
@@ -2968,7 +2949,7 @@ HandleStringInstructions proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, o
     mov ebx,opndidx
     imul ebx,ebx,opnd_item
 
-    .if ( [rdx].opnd_class.opnd_type[rcx] != OP_NONE && [rsi].opnd[rbx].type != OP_NONE )
+    .if ( eax != OP_NONE && [rsi].opnd[rbx].type != OP_NONE )
 
         ; v2.06: added. if memory operand has no size
 
@@ -3750,19 +3731,6 @@ ParseRecord proc fastcall uses rsi rdi opnd:expr_t
 ; - for data items and data directives: call data_dir()
 ; - for other directives: call directive[]()
 ; - for instructions: fill CodeInfo and call codegen()
-
-; callback PROC(...) [?]
-
-ProcType        proto __ccall :int_t, :token_t
-PublicDirective proto __ccall :int_t, :token_t
-mem2mem         proto __ccall :uint_t, :uint_t, :token_t, :ptr expr
-imm2xmm         proto __ccall :token_t, :expr_t, :uint_t
-NewDirective    proto __ccall :int_t, :token_t
-CRecordField    proto __ccall :int_t, :ptr expr, :ptr expr
-
-externdef       CurrEnum:asym_t
-EnumDirective   proto __ccall :int_t, :token_t
-SizeFromExpression proto __ccall :ptr expr
 
     assume rdi:nothing, rsi:token_t, rbx:token_t
 
@@ -4753,9 +4721,8 @@ endif
                 mov rdx,CodeInfo.pinstr
                 .while 1
                     movzx eax,[rdx].Instruction.opclsidx
-                    imul  eax,eax,opnd_class
-                    lea   rcx,opnd_clstab
-                    .break .if ( [rcx+rax].opnd_class.opnd_type_3rd != OP3_NONE )
+                    lea rcx,opnd_clstab3
+                    .break .if ( byte ptr [rcx+rax] != OP3_NONE )
                     add rdx,Instruction
                     .if ( [rdx].Instruction.first )
                         .for ( : [rsi].token != T_COMMA: rsi -= asm_tok )

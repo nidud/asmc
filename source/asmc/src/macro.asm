@@ -21,6 +21,8 @@ include tokenize.inc
 include macro.inc
 include fastpass.inc
 include listing.inc
+include preproc.inc
+include lqueue.inc
 
 CCALLBACK(GETLINE, :string_t)
 
@@ -749,16 +751,6 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     endp
 
     assume rsi:nothing
-
-
-lq_line struct  ; item of a line queue
-next    ptr_t ?
-line    char_t 1 dup(?)
-lq_line ends
-
-LineQueue equ <MODULE.line_queue>
-
-PreprocessLine proto __ccall :token_t
 
 GeLineQueue proc __ccall private uses rsi rdi rbx buffer:string_t
 

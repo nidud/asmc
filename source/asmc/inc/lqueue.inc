@@ -5,8 +5,15 @@
 ;
 ; v2.11: line queue functions moved from input.asm to lqueue.asm
 ;
-ifndef __LQUEUE_INC
-define __LQUEUE_INC
+ifndef _LQUEUE_
+define _LQUEUE_
+
+.template lq_line  ; item of a line queue
+    next    ptr lq_line ?
+    line    char_t 1 dup(?)
+   .ends
+
+LineQueue equ <MODULE.line_queue>
 
 DeleteLineQueue proto __ccall
 AddLineQueue    proto fastcall :string_t

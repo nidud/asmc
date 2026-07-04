@@ -11,13 +11,13 @@ include asmc.inc
 include parser.inc
 include segment.inc
 include fixup.inc
+include omf.inc
 include omfint.inc
 include omfspec.inc
 
 ifndef ASMC64
 
 externdef szNull:char_t
-omf_GetGrpIdx proto fastcall :asym_t
 
 ; logical data for fixup subrecord creation
 

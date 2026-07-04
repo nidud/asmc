@@ -18,12 +18,11 @@ include qfloat.inc
 include reswords.inc
 include proc.inc
 include lqueue.inc
+include typeid.inc
 
 externdef list_pos:DWORD
 
-GetTypeId proto __ccall :string_t, :token_t
-
-    .code
+   .code
 
     B equ <byte ptr>
     W equ <word ptr>

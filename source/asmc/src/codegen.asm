@@ -17,12 +17,7 @@ include listing.inc
 include input.inc
 include proc.inc
 
-AddFloatingPointEmulationFixup proto __ccall :ptr code_info
-
 public  szNull
-
-externdef opnd_clstab:opnd_class
-externdef vex_flags:byte
 
 ;; segment order must match the one in special.inc
 
@@ -619,9 +614,8 @@ output_opc proc __ccall uses rdi rbx
                 mov m_opid,edx
 
                 movzx eax,[rdi].opclsidx
-                imul eax,eax,opnd_class
                 lea rdx,opnd_clstab
-                add rdx,rax
+                lea rdx,[rdx+rax*8]
                 mov eax,[rdx].opnd_class.opnd_type[rcx]
                 .if ( [rsi].Vex.HALF && ecx )
                     or eax,[rdx].opnd_class.opnd_type[0]
@@ -1250,13 +1244,12 @@ output_data proc __ccall uses rdi rbx determinant:int_t, index:int_t
     endp
 
 
-check_3rd_operand proc __ccall uses rdi rbx
+check_3rd_operand proc
 
-    mov   rdi,[rsi].pinstr
-    movzx eax,[rdi].opclsidx
-    imul  ebx,eax,opnd_class
-    lea   rcx,opnd_clstab
-    movzx eax,[rcx+rbx].opnd_class.opnd_type_3rd
+    mov   rdx,[rsi].pinstr
+    movzx eax,[rdx].Instruction.opclsidx
+    lea   rcx,opnd_clstab3
+    movzx eax,byte ptr [rcx+rax]
 
     .if ( eax == OP3_NONE || eax == OP3_HID )
         .return( ERROR ) .if ( [rsi].opnd[OPNI3].type != OP_NONE )
@@ -1266,11 +1259,9 @@ check_3rd_operand proc __ccall uses rdi rbx
     ;; current variant needs a 3rd operand
 
     .switch eax
-
     .case OP3_CL
         .return( NOT_ERROR ) .if ( [rsi].opnd[OPNI3].type == OP_CL )
         .endc
-
     .case OP3_I8_U ;; IMUL, SHxD, a few MMX/SSE
 
         ;; for IMUL, the operand is signed!
@@ -1283,11 +1274,9 @@ check_3rd_operand proc __ccall uses rdi rbx
             .endif
         .endif
         .endc
-
     .case OP3_I ;; IMUL
         .endc .if !( [rsi].opnd[OPNI3].type & OP_I )
         .return( NOT_ERROR )
-
     .case OP3_XMM0
 
         ;; for VEX encoding, XMM0 has the meaning: any XMM/YMM register
@@ -1319,15 +1308,13 @@ check_3rd_operand proc __ccall uses rdi rbx
     endp
 
 
-output_3rd_operand proc __ccall uses rdi rbx
+output_3rd_operand proc
 
-    mov   rdi,[rsi].pinstr
-    movzx eax,[rdi].opclsidx
-    imul  ebx,eax,opnd_class
-    lea   rcx,opnd_clstab
-    add   rbx,rcx
+    mov   rdx,[rsi].pinstr
+    movzx eax,[rdx].Instruction.opclsidx
+    lea   rcx,opnd_clstab3
+    movzx eax,byte ptr [rcx+rax]
 
-    movzx eax,[rbx].opnd_class.opnd_type_3rd
     .switch pascal eax
     .case OP3_I8_U
         output_data( OP_I8, OPND3 )
@@ -1396,13 +1383,12 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
   local determinant:int_t
 
     mov rdi,[rsi].pinstr
-    movzx eax,[rdi].opclsidx
-    imul ebx,eax,opnd_class
-    lea rcx,opnd_clstab
 
     ;; remember first op type
 
-    mov determinant,[rbx+rcx].opnd_class.opnd_type[OPND1]
+    movzx eax,[rdi].opclsidx
+    lea rcx,opnd_clstab
+    mov determinant,[rcx+rax*8].opnd_class.opnd_type[OPND1]
     mov ebx,[rsi].opnd[OPNI2].type
 
     .if ( [rsi].token >= VEX_START && [rsi].Vex.L )
@@ -1449,12 +1435,9 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
 
     .repeat
 
-        mov   rdi,[rsi].pinstr
         movzx eax,[rdi].opclsidx
-        imul  eax,eax,opnd_class
-        lea   rcx,opnd_clstab
-        mov   eax,[rcx+rax].opnd_class.opnd_type[4] ; OPND2
-
+        lea rcx,opnd_clstab
+        mov eax,[rcx+rax*8].opnd_class.opnd_type[4] ; OPND2
         .if ( [rsi].Vex.L && eax == OP_XMM && ( ebx == OP_ZMM || ebx == OP_YMM ) )
 
             ; inst m[32|64],[z|y]mm -- VPSCATTER
@@ -1657,9 +1640,8 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
                 .endif
 
                 movzx eax,[rdi].opclsidx
-                imul eax,eax,opnd_class
-                lea rcx,opnd_clstab
-                .if ( [rcx+rax].opnd_class.opnd_type_3rd != OP3_NONE && ![rdi].Evex.vsib )
+                lea rcx,opnd_clstab3
+                .if ( byte ptr [rcx+rax] != OP3_NONE && ![rdi].Evex.vsib )
                     output_3rd_operand()
                 .endif
                 .if [rdi].byte1_info == F_0F0F ;; output 3dNow opcode?
@@ -1673,21 +1655,17 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
             .endif
             .endc
         .endsw
-
         add rdi,instr_item
         .while ( [rsi].Prefix.Evex && [rdi].Evex == 0 && ![rdi].first )
             add rdi,instr_item
         .endw
-        mov   [rsi].pinstr,rdi
+        mov [rsi].pinstr,rdi
         movzx eax,[rdi].opclsidx
-        imul  eax,eax,opnd_class
-        lea   rcx,opnd_clstab
-        mov   eax,[rcx+rax].opnd_class.opnd_type[OPND1]
-
+        lea rcx,opnd_clstab
+        mov eax,[rcx+rax*8].opnd_class.opnd_type[OPND1]
     .until !( eax == determinant && ![rdi].first )
-
     sub [rsi].pinstr,instr_item ;; pointer will be increased in codegen()
-   .return( ERROR )
+    .return( ERROR )
     endp
 
 
@@ -1717,7 +1695,7 @@ add_bytes proc __ccall uses rdi index:int_t
 
     assume rdi:instr_t
 
-check_operand_2 proc __ccall uses rdi rbx opnd1:int_t
+check_operand_2 proc __ccall opnd1:int_t
 ;
 ; check if a second operand has been entered.
 ; If yes, call match_phase_3();
@@ -1726,13 +1704,12 @@ check_operand_2 proc __ccall uses rdi rbx opnd1:int_t
 ;
     .if ( [rsi].opnd[OPNI2].type == OP_NONE )
 
-        mov     rdi,[rsi].pinstr
-        movzx   eax,[rdi].opclsidx
-        imul    ecx,eax,opnd_class
-        lea     rdx,opnd_clstab
-
-        .return ERROR .if [rdx+rcx].opnd_class.opnd_type[4] != OP_NONE
-
+        mov rcx,[rsi].pinstr
+        movzx eax,[rcx].Instruction.opclsidx
+        lea rdx,opnd_clstab
+        .if ( [rdx+rax*8].opnd_class.opnd_type[4] != OP_NONE )
+            .return( ERROR )
+        .endif
 
         ;; 1 opnd instruction found
 
@@ -1740,11 +1717,8 @@ check_operand_2 proc __ccall uses rdi rbx opnd1:int_t
 
         .if ( opnd1 == OP_M )
 
-            add   rdi,instr_item
-            movzx eax,[rdi].opclsidx
-            imul  eax,eax,opnd_class
-
-            .if ( ( [rdx+rax].opnd_class.opnd_type[OPND1] & OP_M ) && ![rdi].first )
+            movzx eax,[rcx+instr_item].Instruction.opclsidx
+            .if ( ( [rdx+rax*8].opnd_class.opnd_type[OPND1] & OP_M ) && ![rcx+instr_item].Instruction.first )
 
                 ;; skip error if mem op is a forward reference
 
@@ -1758,7 +1732,7 @@ check_operand_2 proc __ccall uses rdi rbx opnd1:int_t
                     .endif
                 .endif
                 .if ( !( [rsi].Flags.SymUndef ) && ( !eax || !rdx || ecx != SYM_UNDEFINED ) )
-                    asmerr(2023)
+                    asmerr( 2023 )
                 .endif
             .endif
         .endif
@@ -1873,9 +1847,8 @@ codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint
     .repeat
 
         movzx eax,[rdi].opclsidx
-        imul eax,eax,opnd_class
         lea rcx,opnd_clstab
-        mov ecx,[rcx+rax].opnd_class.opnd_type[OPND1]
+        mov ecx,[rcx+rax*8].opnd_class.opnd_type[OPND1]
 
         ;; v2.06: simplified
 

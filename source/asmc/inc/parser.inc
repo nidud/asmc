@@ -159,15 +159,6 @@ ProcTable   equ <SymTables[TAB_PROC].head>
     }
 
 
-; operand classes. this table is defined in reswords.c.
-; index into this array is member opclsidx in instr_item.
-; v2.06: data removed from struct instr_item.
-
-opnd_class      STRUC
-opnd_type       dd 2 dup(?)
-opnd_type_3rd   db ?    ; operand 3
-opnd_class      ENDS
-
 ; special_item is the structure used to store directives and
 ; other reserved words in SpecialTable (special.h).
 
@@ -498,6 +489,7 @@ IS_OPER_32 macro s
 
 externdef InstrTable:instr_item         ; instruction table
 externdef optable_idx:ushort_t          ; helper, access thru IndexFromToken() only
+externdef SegOverride:asym_t
 
 SizeFromMemtype         proto fastcall :uchar_t, :int_t, :asym_t
 MemtypeFromSize         proto fastcall :int_t, :ptr uchar_t
@@ -513,6 +505,8 @@ ParseLine               proto __ccall :token_t
 ProcessFile             proto __ccall :token_t
 WritePreprocessedLine   proto __ccall :string_t
 parsevex                proto fastcall :string_t, :ptr uchar_t
+segm_override           proto __ccall :ptr expr, :ptr code_info
+idata_fixup             proto __ccall :ptr code_info, :dword, :ptr expr
 
 endif
 .pragma list(pop)

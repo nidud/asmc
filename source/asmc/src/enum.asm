@@ -15,12 +15,12 @@ include parser.inc
 include tokenize.inc
 include expreval.inc
 include lqueue.inc
+include enum.inc
 
-public CurrEnum
-
-    .data
+   .data
     CurrEnum asym_t 0
-    .code
+
+   .code
 
     assume rbx:token_t, rsi:asym_t
 

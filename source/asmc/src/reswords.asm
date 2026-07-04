@@ -14,12 +14,6 @@ include expreval.inc
 include condasm.inc
 include codegen.inc
 
-public optable_idx
-public opnd_clstab
-public ResWordTable
-public vex_flags
-public max_resw_len
-
 .pragma list(push, 0)
 
 .data?
@@ -225,9 +219,17 @@ undef OpCls
 ; table of instruction operand classes
 
 OpCls macro op1, op2, op3
-    exitm<opnd_class { { OP_&op1&, OP_&op2& }, OP3_&op3& }>
+    exitm<opnd_class {{ OP_&op1&, OP_&op2& }}>
     endm
-opnd_clstab label opnd_class
+align size_t
+opnd_clstab opnd_class 0 dup(<>)
+include opndcls.inc
+undef OpCls
+
+OpCls macro op1, op2, op3
+    exitm<db OP3_&op3&>
+    endm
+opnd_clstab3 db 0 dup(?)
 include opndcls.inc
 undef OpCls
 
@@ -347,7 +349,7 @@ undef avxins
 
 align 4
 
-max_resw_len dd MAX_RESW_LEN
+max_resw_len int_t MAX_RESW_LEN
 
 ; keywords to be added for 64-bit
 patchtab64 instr_token \

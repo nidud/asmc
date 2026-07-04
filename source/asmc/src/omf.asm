@@ -7,6 +7,7 @@
 ;
 
 include time.inc
+include io.inc
 ifdef __UNIX__
 include sys/stat.inc
 else
@@ -16,10 +17,12 @@ endif
 include asmc.inc
 include parser.inc
 include segment.inc
+include omf.inc
 include omfint.inc
 include omfspec.inc
 include input.inc
 include linnum.inc
+include dbgcv.inc
 
 define TRUNCATE 1
 define MULTIHDR 1     ;; write muliple THEADR records (Masm compatible)
@@ -30,8 +33,6 @@ define MAX_ID_LEN_OMF 247
 define MAX_LNAME_SIZE 1024
 define MAX_EXT_LENGTH 1020 ;; max length ( in chars ) of EXTDEF
 define MAX_PUB_LENGTH 1024 ;; max length of PUBDEF record
-
-include io.inc
 
 .enum {
     TIME_SEC_B  = 0,
@@ -58,12 +59,6 @@ DOS_DATETIME union
     ends
     timet time_t ?
 DOS_DATETIME ends
-
-
-cv_write_debug_tables proto __ccall :asym_t, :asym_t, :ptr
-SortSegments proto __ccall :int_t
-
-externdef szNull:char_t
 
 .data
 

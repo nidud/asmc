@@ -35,8 +35,6 @@ IMPSTRSUF  equ <"6"> ;; import strings segment suffix
 
 include pespec.inc
 
-SortSegments proto __ccall :int_t
-
 .data
 
 ; if the structure changes, option.c, SetMZ() might need adjustment!

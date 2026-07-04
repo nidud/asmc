@@ -93,11 +93,15 @@ fixup		struct
  sym		asym_t ?
 fixup		ends
 
+externdef	Frame_Type:byte	 ; Frame of current fixup
+externdef	Frame_Datum:word ; Frame datum of current fixup
+
 CreateFixup	proto __ccall :asym_t, :fixup_types, :fixup_options
 SetFixupFrame	proto __ccall :asym_t, :char_t
 store_fixup	proto __ccall :ptr fixup, :asym_t, :ptr int_t
 BackPatch	proto fastcall :asym_t
 FixupRelease	proto fastcall :ptr fixup
+AddFloatingPointEmulationFixup proto __ccall :ptr code_info
 
 endif
 .pragma list(pop)

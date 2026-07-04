@@ -61,7 +61,9 @@ PopInputStatus      proto __ccall :ptr input_status
 ClearSrcStack       proto __ccall
 get_curr_srcfile    proto __ccall
 set_curr_srcfile    proto fastcall :uint_t, :uint_t
-GetFName        proto fastcall :uint_t
+GetFName            proto fastcall :uint_t
+UpdateLineNumber    proto fastcall :asym_t, :ptr
+print_source_nesting_structure proto __ccall
 
 GetAlignedPointer proto watcall p:ptr, size:int_t {
     add edx,size_t

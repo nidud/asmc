@@ -16,6 +16,7 @@ include reswords.inc
 include expreval.inc
 include tokenize.inc
 include input.inc
+include proc.inc
 
 define MAX_LOOP_ALIGN 16
 define MAX_CASE_ALIGN 16
@@ -23,9 +24,6 @@ define MAX_CASE_ALIGN 16
 ifndef ASMC64
 extern sym_Interface:asym_t
 endif
-
-UpdateStackBase  proto fastcall :asym_t, :ptr
-UpdateProcStatus proto fastcall :asym_t, :ptr
 
 opt macro value
     exitm<OP_&value&,>
@@ -59,7 +57,7 @@ InitStackBase proc fastcall private reg:int_t
         mov rcx,rax
         mov [rcx].asym.predefined,1
         mov [rcx].asym.sfunc_ptr,&UpdateStackBase
-        mov MODULE.ProcStatus,CreateVariable( "@ProcStatus", 0 )
+        mov MODULE.ProcStatusSym,CreateVariable( "@ProcStatus", 0 )
         mov rcx,rax
         mov [rcx].asym.predefined,1
         mov [rcx].asym.sfunc_ptr,&UpdateProcStatus

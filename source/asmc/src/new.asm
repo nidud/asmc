@@ -13,21 +13,8 @@ include tokenize.inc
 include qfloat.inc
 include fastpass.inc
 include lqueue.inc
-
-SIZE_DATAPTR    equ 0x68
-
-SymLCreate          proto __ccall :string_t
-GetQualifiedType    proto __ccall :ptr int_t, :token_t, :ptr qualified_type
-
-qualified_type  struc
-size            int_t ?
-symtype         asym_t ?
-mem_type        db ?
-is_ptr          db ?
-is_far          db ?
-Ofssize         db ?
-ptr_memtype     db ?
-qualified_type  ends
+include symbols.inc
+include types.inc
 
 .enum ClType { ClNew, ClMem, ClPtr }
 

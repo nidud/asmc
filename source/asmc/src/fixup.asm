@@ -8,16 +8,12 @@
 
 include asmc.inc
 include memalloc.inc
+include parser.inc
 include fixup.inc
 include segment.inc
 include omfspec.inc
 
 define GNURELOCS 1
-
-public Frame_Type
-public Frame_Datum
-
-extern SegOverride:asym_t
 
 .data
  Frame_Type  db 0 ; curr fixup frame type: SEG|GRP|EXT|ABS|NONE; see omfspec.inc

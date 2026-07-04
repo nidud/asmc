@@ -18,6 +18,7 @@ endif
 include asmc.inc
 include memalloc.inc
 include input.inc
+include cmdline.inc
 
 .enum LNK_OPTIONS {
     O_EXENAME       = 0x01,
@@ -36,8 +37,6 @@ else
     O_LIBW          = 0x200,
 endif
     }
-
-init_win64 proto
 
 .data
  _pgmptr string_t 0

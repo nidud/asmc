@@ -23,8 +23,7 @@ include hll.inc
 include qfloat.inc
 include assume.inc
 include lqueue.inc
-
-AlignCurrOffset proto __ccall :int_t
+include posndir.inc
 
 define NUMQUAL
 

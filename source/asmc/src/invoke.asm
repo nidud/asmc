@@ -3182,10 +3182,13 @@ InvokeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     isfnptr:
         ;; get the pointer target
         mov rsi,pproc
+    isfntype:
         mov sym,[rsi].target_type
         .if ( rax == NULL )
             .return( asmerr( 2190 ) )
         .endif
+    .elseif ( [rsi].mem_type == MT_PROC ) ; v2.21: added; see pproc.asm
+        jmp isfntype
     .else
         .return( asmerr( 2190 ) )
     .endif

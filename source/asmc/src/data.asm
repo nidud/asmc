@@ -29,10 +29,8 @@ include macro.inc
 include omf.inc
 include qfloat.inc
 
-segm_override   proto __ccall :ptr expr, :ptr code_info
-data_item       proto __ccall :ptr int_t, :token_t, :asym_t, :uint_32, :asym_t, :uint_32, :int_t, :int_t, :int_t, :int_t
+data_item proto __ccall :ptr int_t, :token_t, :asym_t, :uint_32, :asym_t, :uint_32, :int_t, :int_t, :int_t, :int_t
 
-externdef SegOverride:asym_t
 externdef szNull:char_t
 
 OutputDataBytes macro x, y

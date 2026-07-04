@@ -15,8 +15,6 @@ include expreval.inc
 include fastpass.inc
 include lqueue.inc
 
-OperandSize proto fastcall :int_t, :ptr code_info
-
 NUM_STDREGS equ 16
 
 ; todo: move static variables to ModuleInfo

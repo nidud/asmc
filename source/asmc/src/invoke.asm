@@ -15,8 +15,7 @@ include qfloat.inc
 include reswords.inc
 include hll.inc
 include lqueue.inc
-
-AssignPointer proto __ccall :asym_t, :int_t, :token_t, :asym_t, :int_t, :asym_t
+include indirect.inc
 
 define NUMQUAL
 

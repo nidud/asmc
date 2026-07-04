@@ -19,8 +19,6 @@ include tokenize.inc
 
 ; prototypes
 
-idata_fixup proto __ccall :ptr code_info, :dword, :ptr expr
-
     .data
 
     T equ <@CStr>

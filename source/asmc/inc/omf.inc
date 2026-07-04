@@ -17,6 +17,7 @@ omf_set_filepos     proto
 omf_OutSelect       proto fastcall :int_t
 omf_FlushCurrSeg    proto
 omf_check_flush     proto fastcall :ptr line_num_info
+omf_GetGrpIdx       proto fastcall :asym_t
 
 endif
 

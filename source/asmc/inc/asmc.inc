@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    238
-define _ASMC_BUILD  30
+define _ASMC_BUILD  31
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -754,7 +754,7 @@ define PE_DLL               0x04
     cntSavedContexts        int_t ?
     anonymous_label         uint_t ?        ; "anonymous label" counter
     StackBase               asym_t ?
-    ProcStatus              asym_t ?
+    ProcStatusSym           asym_t ?
     WriteModule             proc local
     EndDirHook              proc local
     Pass1Checks             proc local
@@ -784,6 +784,9 @@ StringBufferEnd         equ <MODULE.stringbufferend>
 CurrComment             equ <MODULE.currcomment>
 MaxLineLength           equ <MODULE.maxlinelen>
 
+CCALLBACK(fpDirective, :int_t, :token_t)
+
+externdef               directive_tab   : fpDirective
 externdef               StringBuffer    : string_t
 externdef               CommentBuffer   : string_t
 externdef               Parse_Pass      : uint_t

@@ -18,10 +18,6 @@ REMOVECOMENT    equ 0 ; 1=remove comments from source
 TF3_ISCONCAT    equ 1 ; line was concatenated
 TF3_EXPANSION   equ 2 ; expansion operator % at pos 0
 
-CCALLBACK(fpDirective, :int_t, :token_t)
-
-externdef directive_tab: fpDirective
-
     .code
 
     assume rbx:token_t

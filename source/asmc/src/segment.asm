@@ -92,7 +92,7 @@ ImageBase       db 0
 
 ; find token in a string table
 
-FindToken proc __ccall uses rsi rdi token:string_t, table:ptr, size:int_t
+FindToken proc __ccall uses rsi rdi token:string_t, table:ptr string_t, size:int_t
     ldr rsi,table
     .for ( edi = 0 : edi < size : edi++, rsi+=string_t )
         .ifd ( tstricmp( [rsi], token ) == 0 )

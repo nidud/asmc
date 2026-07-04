@@ -3,8 +3,8 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-ifndef __SEGMENT_INC
-define __SEGMENT_INC
+ifndef _SEGMENT_
+define _SEGMENT_
 
 ; segment related prototypes & externals
 
@@ -54,5 +54,9 @@ ModelSimSegmInit	proto __ccall :int_t
 ModelSimSegmExit	proto __ccall
 SetModelDefaultSegNames proto __ccall
 SetSimSeg		proto __ccall :sim_seg, :string_t
+UpdateWordSize		proto fastcall :asym_t, :ptr
+UpdateCurPC		proto fastcall :asym_t, :ptr
+FindToken		proto __ccall :string_t, :ptr string_t, :int_t
+SortSegments		proto __ccall :int_t
 
 endif

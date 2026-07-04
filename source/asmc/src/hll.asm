@@ -18,6 +18,7 @@ include tokenize.inc
 include listing.inc
 include reswords.inc
 include lqueue.inc
+include macro.inc
 
 GetExpression proto __ccall private :hllitem_t, :ptr int_t, :token_t, :int_t, :uint_t, :string_t, :ptr hll_opnd
 

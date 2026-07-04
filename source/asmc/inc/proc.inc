@@ -70,5 +70,7 @@ get_register	proto __ccall :int_t, :int_t
 get_fasttype	proto fastcall :int_t, :int_t
 MacroInline	proto __ccall :string_t, :int_t, :string_t, :string_t, :int_t
 SetLocalOffsets proto __ccall :proc_t
+UpdateStackBase proto fastcall :asym_t, :ptr expr
+UpdateProcStatus proto fastcall :asym_t, :ptr expr
 
 endif

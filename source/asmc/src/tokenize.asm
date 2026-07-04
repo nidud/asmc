@@ -24,7 +24,6 @@ endif
 define B <byte ptr>
 
 externdef CurrEnum:asym_t
-externdef max_resw_len:int_t
 
 .data
 

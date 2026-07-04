@@ -40,8 +40,6 @@ define COMPID       0 ; 1=add comp.id absolute symbol
     string  db 1 dup(?)
    .ends
 
-cv_write_debug_tables proto __ccall :asym_t, :asym_t, :ptr
-
 ; v2.10: COMDAT CRC calculation ( suggestion by drizz, slightly modified )
 
 .data?

@@ -30,15 +30,11 @@ include listing.inc
 include omf.inc
 include macro.inc
 
-public directive_tab
-
 res macro token, function
 exitm<function proto __ccall :int_t, :token_t>
 endm
 include dirtype.inc
 undef res
-
-CCALLBACK(fpDirective, :int_t, :token_t)
 
 .data
 

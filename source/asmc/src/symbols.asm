@@ -12,6 +12,8 @@ include proc.inc
 include macro.inc
 include extern.inc
 include fastpass.inc
+include input.inc
+include segment.inc
 
 public SymCmpFunc
 public strFUNC
@@ -22,10 +24,6 @@ public szTime
 externdef FileCur   :asym_t ; @FileCur symbol
 externdef LineCur   :asym_t ; @Line symbol
 externdef symCurSeg :asym_t ; @CurSeg symbol
-
-UpdateLineNumber    proto fastcall :asym_t, :ptr
-UpdateWordSize      proto fastcall :asym_t, :ptr
-UpdateCurPC         proto fastcall :asym_t, :ptr
 
 GHASH_TABLE_SIZE    equ 0x8000
 LHASH_TABLE_SIZE    equ 0x1000

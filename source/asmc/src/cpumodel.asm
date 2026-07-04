@@ -19,15 +19,12 @@ include proc.inc
 include macro.inc
 include fixup.inc
 include lqueue.inc
-
-pe_create_PE_header proto
+include bin.inc
 
 define DOT_XMMARG 0 ;; 1=optional argument for .XMM directive
 
 public sym_Cpu
 public sym_Interface
-
-FindToken proto __ccall :string_t, :ptr string_t, :int_t
 
 .data
 

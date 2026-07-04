@@ -24,9 +24,6 @@ OPSIZE proto fastcall s:byte, x:abs {
     retm    <al>
     }
 
-segm_override proto __ccall :ptr expr, :ptr code_info
-externdef SegOverride:asym_t
-
 ;
 ; "short jump extension": extend a (conditional) jump.
 ; example:

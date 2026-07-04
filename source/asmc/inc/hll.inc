@@ -59,12 +59,12 @@ PragmaInit		proto __ccall
 PragmaCheckOpen		proto __ccall
 ForDirective		proto __ccall :int_t, :token_t
 GetLabelStr		proto __ccall :int_t, :string_t
-ExpandLine		proto __ccall :string_t, :token_t
-ExpandCStrings		proto __ccall :token_t
 EvaluateHllExpression	proto __ccall :hllitem_t, :ptr int_t, :token_t, :int_t, :int_t, :string_t
 ExpandHllProc		proto __ccall :string_t, :int_t, :token_t
+ExpandHllProcEx		proto __ccall :string_t, :int_t, :token_t
 ExpandHllExpression	proto __ccall :hllitem_t, :ptr int_t, :token_t, :int_t, :int_t, :string_t
 HllContinueIf		proto __ccall :hllitem_t, :ptr int_t, :token_t, :int_t, :hllitem_t, :int_t
+ExpandCStrings		proto __ccall :token_t
 GenerateCString		proto __ccall :int_t, :token_t
 DefaultConstructor	proto __ccall :asym_t, :token_t
 

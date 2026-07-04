@@ -29,10 +29,9 @@ include proc.inc
 include expreval.inc
 include listing.inc
 include lqueue.inc
-
-bin_init proto
-elf_init proto
-ContextInit proto __ccall :int_t
+include bin.inc
+include elf.inc
+include context.inc
 
 define USELSLINE 1 ; must match switch in listing.asm!
 

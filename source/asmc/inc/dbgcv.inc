@@ -3394,6 +3394,9 @@ CV_columnpos_t		typedef WORD
     ends
    .ends
 
+
 .pragma pack(pop)
+
+cv_write_debug_tables proto __ccall :asym_t, :asym_t, :ptr
 
 endif

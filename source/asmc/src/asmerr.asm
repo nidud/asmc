@@ -12,10 +12,8 @@ include asmc.inc
 include input.inc
 include listing.inc
 include lqueue.inc
-
-warning_disable proto __ccall :int_t
-GetCurrOffset   proto __ccall
-print_source_nesting_structure proto __ccall
+include pragma.inc
+include segment.inc
 
 externdef jmpenv:byte
 

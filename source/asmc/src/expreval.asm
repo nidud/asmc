@@ -22,6 +22,7 @@ include qfloat.inc
 include operator.inc
 include unaryop.inc
 include extern.inc
+include indirect.inc
 
 define LS_SHORT 0xFF01
 define LS_FAR16 0xFF05
@@ -41,8 +42,6 @@ define OPATTR_SIGNED    0x8000
 externdef StackAdj:uint_t
 
 CCALLBACK(lpfnasmerr, :int_t, :vararg)
-
-FindDotSymbol proto fastcall :token_t
 
     .data
 
@@ -1683,6 +1682,7 @@ MakeConst proc fastcall opnd:expr_t
             .return
         .endif
         mov [rcx].value,1
+        mov [rcx].hvalue,0 ; added v2.39 (JWasm v2.21)
     .endif
     mov [rcx].label_tok,NULL
     mov rax,[rcx].mbr

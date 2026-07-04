@@ -11,10 +11,9 @@ include hll.inc
 include input.inc
 include expreval.inc
 include types.inc
+include extern.inc
 
 ifdef USE_COMALLOC
-
-CreateExternalFromType proto __ccall :string_t, :asym_t
 
 ; v2.36.16 - link to nearest public class
 ;

@@ -1075,22 +1075,17 @@ endif
     .if ( IsResWord )
 
         mov eax,[rbx].hash1
+        mov ecx,[rbx].hash1
+        and eax,HASH_TABITEMS-1
 ifdef _WIN64
-        mov r9d,eax
-        lea r10,resw_table
-        and eax,HASH_TABITEMS-1
-        .for ( r8 = &ResWordTable, ax = [r10+rax*2] : eax : ax = [r8+rax*8].ReservedWord.next )
-            .break .if ( cl == [r8+rax*8].ReservedWord.len && r9d == [r8+rax*8].ReservedWord.hash )
-        .endf
+        .for ( r10 = &resw_table, r8 = &ResWordTable,
+               ax = [r10+rax*2] : eax : ax = [r8+rax*8].ReservedWord.next )
+            .break .if ( ecx == [r8+rax*8].ReservedWord.hash )
 else
-        push edx
-        mov edx,eax
-        and eax,HASH_TABITEMS-1
         .for ( ax = resw_table[eax*2] : eax : ax = ResWordTable[eax*8].next )
-            .break .if ( cl == ResWordTable[eax*8].len && edx == ResWordTable[eax*8].hash )
-        .endf
-        pop edx
+            .break .if ( ecx == ResWordTable[eax*8].hash )
 endif
+        .endf
     .endif
     mov rcx,[rdx].output
     mov [rdx].output,rdi

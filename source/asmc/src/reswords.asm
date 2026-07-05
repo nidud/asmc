@@ -417,13 +417,11 @@ ResWordInitialized int_t FALSE
 
 FindResWord proc fastcall _name:string_t, size:uint_t
 ifdef _WIN64
-    mov     r10,rbx
     define  rqs <r8>
     define  rgn <r9>
 else
     push    esi
     push    edi
-    push    ebx
     define  rqs <esi>
     define  rgn <edi>
 endif
@@ -436,7 +434,6 @@ endif
     movzx   eax,byte ptr [rgn]
     cmp     al,'_'
     je      .6
-    mov     ebx,edx
     or      al,0x20
     xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
     dec     edx
@@ -473,22 +470,16 @@ ifdef _WIN64
     test    eax,eax
     jz      .7
 .3:
-    cmp     bl,[rcx+rax*8].ReservedWord.len
-    jne     .5
     cmp     edx,[rcx+rax*8].ReservedWord.hash
     je      .7
-.5:
     movzx   eax,[rcx+rax*8].ReservedWord.next
 else
     movzx   eax,resw_table[eax*2]
     test    eax,eax
     jz      .7
 .3:
-    cmp     bl,ResWordTable[eax*8].len
-    jne     .5
     cmp     edx,ResWordTable[eax*8].hash
     je      .7
-.5:
     movzx   eax,ResWordTable[eax*8].next
 endif
     test    eax,eax
@@ -496,10 +487,7 @@ endif
 .6:
     xor     eax,eax
 .7:
-ifdef _WIN64
-    mov     rbx,r10
-else
-    pop     ebx
+ifndef _WIN64
     pop     edi
     pop     esi
 endif

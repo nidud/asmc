@@ -6,6 +6,7 @@
 
 include stdio.inc
 include stdlib.inc
+include string.inc
 include assert.inc
 include errno.inc
 include tchar.inc

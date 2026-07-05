@@ -7,6 +7,7 @@
 include io.inc
 include stdio.inc
 include stdlib.inc
+include string.inc
 include assert.inc
 ifndef __UNIX__
 include wchar.inc

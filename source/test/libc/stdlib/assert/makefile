@@ -1,6 +1,3 @@
-# Makefile for assert
-# Sat Nov 30 16:14:59 2024
-
 assert:
 	asmc64 -q -MT $@.asm
 ifdef YACC

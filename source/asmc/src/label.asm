@@ -19,7 +19,6 @@ include listing.inc
 ; LABELARRAY: syntax extension to LABEL directive:
 ;  <label> LABEL <qualified type>[: index]
 
-
 define LABELARRAY 1
 
 if LABELARRAY

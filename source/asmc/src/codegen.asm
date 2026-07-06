@@ -964,6 +964,9 @@ output_opc proc __ccall uses rdi rbx
             .switch eax
             .case T_RDPID
             .case T_SENDUIPI
+            .case T_ENQCMD
+            .case T_ENQCMDS
+            .case T_MOVDIR64B
                 .endc
             .case T_INVEPT
             .case T_INVVPID

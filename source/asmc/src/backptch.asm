@@ -140,7 +140,7 @@ if LABELOPT
                         ; ( PROCs are NOT contained in this list because they
                         ; use the <next>-field of asym already!)
 
-                        .for ( rcx = [rdx].label_list: rcx: rcx = [rcx].asym.next )
+                        .for ( rcx = [rdx].label_list : rcx : rcx = [rcx].asym.next )
                             .break .if ( eax >= [rcx].asym.offs )
                             add [rcx].asym.offs,edi
                         .endf
@@ -149,7 +149,7 @@ if LABELOPT
                         ; label reference and the label. This should reduce the
                         ; number of passes to 2 for not too complex sources.
 
-                        .for ( rcx = [rdx].head: rcx: rcx = [rcx].fixup.nextrlc )
+                        .for ( rcx = [rdx].head : rcx : rcx = [rcx].fixup.nextrlc )
                             .if ( rsi != [rcx].fixup.sym )
                                 .break .if ( eax >= [rcx].fixup.locofs )
                                 add [rcx].fixup.locofs,edi

@@ -1367,8 +1367,8 @@ insa(XSAVEOPT64, xsaveopt64, 1, OpCls( M_ANY, NONE,      NONE ), F_0F,     0, no
 insa(ENDBR64,    endbr64,   1, OpCls( NONE, NONE,        NONE ), F_F30F,   0, 0,      0x1E, 0xFA, P_64, 0, RWF_X64, 0, 0 )
 insa(ENDBR32,    endbr32,   1, OpCls( NONE, NONE,        NONE ), F_F30F,   0, 0,      0x1E, 0xFB, P_686, 0, 0, 0, 0 )
 
-insa(ENQCMD,     enqcmd,    1, OpCls( RGT16, M_ANY,      NONE ), F_F20F38, 1, no_WDS, 0xF8, 0x00, P_686, 0, 0, 0, 0 )
-insa(ENQCMDS,    enqcmds,   1, OpCls( RGT16, M_ANY,      NONE ), F_F30F38, 1, no_WDS, 0xF8, 0x00, P_686, 0, 0, 0, 0 )
+insa(ENQCMD,     enqcmd,    1, OpCls( RGT16, M_ANY,      NONE ), F_F20F38, 1, no_WDS, 0xF8, 0x00, P_SSE1, 0, 0, 0, 0 )
+insa(ENQCMDS,    enqcmds,   1, OpCls( RGT16, M_ANY,      NONE ), F_F30F38, 1, no_WDS, 0xF8, 0x00, P_SSE1, 0, 0, 0, 0 )
 insa(MOVDIR64B,  movdir64b, 1, OpCls( R, MS,             NONE ), F_660F38, 1, no_WDS, 0xF8, 0x00, P_686, 0, 0, 0, 0 )
 insa(MOVDIRI,    movdiri,   1, OpCls( MGT16, RGT16,      NONE ), F_NP0F38, 0, no_WDS, 0xF9, 0x00, P_686, 0, 0, 0, 0 )
 if 0

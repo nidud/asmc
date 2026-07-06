@@ -2,8 +2,10 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
-Changes in 2.39 - xx xxx 2026
-- fixed bug in INVOKE (JWasm v2.21) - see x86-bin-pproc.asm
+Changes in 2.40 - xx xxx 2026
+- fixed encoding for ENQCMD, ENQCMDS, and MOVDIR64B
+
+Changes in 2.39 - 6 Jul 2026
 - added syntax error for unsupported EVEX modifiers
 - added WAITPKG instructions
 - added AVX-SM3 instructions
@@ -31,15 +33,14 @@ Changes in 2.39 - xx xxx 2026
 - added Apx Extended Registers (EGPR) r16-31
 - added .ENDC( level )
 - added AND to record fields
-- removed ALIGN <forward_label> <value>
 - added public ALIAS symbol for ELF
+- fixed bug in INVOKE (JWasm v2.21) - see x86-bin-pproc.asm
 - fixed bug in EVEX - wrong encoding for some two-operand
   instructions using YMM16..24 or [r8..15]
 - fixed bug in VPBRODCASTx - wrong prefix + additional types
 - fixed bug in ALIAS - missing name mangling
 - fixed bug in XACQUIRE/XRELEASE
 - added option -arch:AVX10.1 and -arch:AVX10.2
-- added ALIGN <forward_label> <value>
 
 Changes in 2.38 - 27 Apr 2026
 - added option -info -- display module assembly information

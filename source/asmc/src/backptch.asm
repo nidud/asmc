@@ -15,11 +15,11 @@ include segment.inc
 ; which cannot adjust any label offsets between the forward reference
 ; and the newly defined label, resulting in more passes to be needed.
 
-LABELOPT equ 1
+define LABELOPT
 
-    .code
+.code
 
-    assume rsi:asym_t, rbx:fixup_t
+ assume rsi:asym_t, rbx:fixup_t
 
 ;
 ; patching for forward reference labels in Jmp/Call instructions;
@@ -33,11 +33,9 @@ LABELOPT equ 1
 
 BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
 
-    .new next:fixup_t
+    .for ( rsi = rcx, rbx = [rsi].bp_fixup : rbx : rbx = [rbx].nextbp )
 
-    .for ( rsi = rcx, rbx = [rsi].bp_fixup : rbx : rbx = next )
-
-        mov next,[rbx].nextbp
+        .continue .if ( [rbx].options == OPTJ_NONE )
 
         ; all relative fixups should occure only at first pass and they signal forward references
         ; they must be removed after patching or skiped ( next processed as normal fixup )
@@ -51,127 +49,106 @@ BackPatch proc fastcall uses rsi rdi rbx _sym:asym_t
 
         xor edi,edi         ; size
         movzx ecx,[rbx].type
-        .if ( [rsi].mem_type == MT_FAR && [rbx].options == OPTJ_CALL )
-
-            ; convert near call to push cs + near call,
-            ; (only at first pass)
-
-            mov MODULE.PhaseError,TRUE
-            inc [rsi].offs ; a PUSH CS will be added
-
-            ; todo: insert LABELOPT block here
-
-            OutputByte(0) ; it's pass one, nothing is written
-           .continue
-        .endif
 
         ; forward reference, only at first pass
 
-        .continue .if ( ecx == FIX_RELOFF32 || ecx == FIX_RELOFF16 )
-        .if ( ecx == FIX_OFF8 ) ; push <forward reference>
-            .if ( [rbx].options == OPTJ_PUSH )
-                mov edi,1 ; size increases from 2 to 3/5
-                jmp patch
-            .endif
-        .endif
         .switch ecx
         .case FIX_RELOFF32
-            mov edi,2   ; will be 4 finally
-                        ; fall through
         .case FIX_RELOFF16
-            inc edi     ; will be 2 finally
-                        ; fall through
-        .case FIX_RELOFF8
-            inc edi     ; calculate the displacement
-            mov rcx,[rbx].sym
-            mov edx,[rbx].offs
-            add edx,[rcx].asym.offs
-            sub edx,[rbx].locofs
-            sub edx,edi
-            sub edx,1   ; displacement
-            lea ecx,[rdi*8-1]
-            mov eax,1
-            shl eax,cl
-            dec eax     ; max displacement
-            mov ecx,eax
-            neg ecx
-            dec ecx
-            .ifs ( edx > eax || edx < ecx )
-              patch:
+            .if ( [rsi].mem_type == MT_FAR && [rbx].options == OPTJ_CALL )
+
+                ; convert near call to push cs + near call,
+                ; (only at first pass)
+
                 mov MODULE.PhaseError,TRUE
-                ;
-                ; ok, the standard case is: there's a forward jump which
-                ; was assumed to be SHORT, but it must be NEAR instead.
-                ;
-                .switch edi
-                .case 1
-                    xor edi,edi
-                    .switch( [rbx].options )
-                    .case OPTJ_EXPLICIT
-                        .continue
-                    .case OPTJ_EXTEND   ; Jxx for 8086
-                        inc edi         ; will be 3/5 finally
-                                        ; fall through
-                    .case OPTJ_JXX      ; Jxx for 386
-                        inc edi         ; fall through
-                    .default            ; normal JMP (and PUSH)
-                        mov rdx,[rsi].segm
-                        mov rdx,[rdx].asym.seginfo
-                        assume rdx:segment_t
-                        .if ( [rdx].Ofssize )
-                            add edi,2 ; NEAR32 instead of NEAR16
-                        .endif
-                        inc edi
-if LABELOPT
-                        ; v2.04: if there's an ORG between src and dst, skip
-                        ; the optimization!
+                inc [rsi].offs ; a PUSH CS will be added
 
-                        .for ( eax = [rbx].locofs, rcx = [rdx].head : rcx : rcx = [rcx].fixup.nextrlc )
-                            .if ( [rcx].fixup.orgoccured )
-                                mov MODULE.OrgOccured,1 ; v2.37.93: added - see CreateLabel()
-                               .continue( 1 )
-                            .endif
-                            ; do this check after the check for ORG!
-                            .break .if ( eax >= [rcx].fixup.locofs )
-                        .endf
+                ; todo: insert LABELOPT block here
 
-                        ; scan the segment's label list and adjust all labels
-                        ; which are between the fixup loc and the current sym.
-                        ; ( PROCs are NOT contained in this list because they
-                        ; use the <next>-field of asym already!)
-
-                        .for ( rcx = [rdx].label_list : rcx : rcx = [rcx].asym.next )
-                            .break .if ( eax >= [rcx].asym.offs )
-                            add [rcx].asym.offs,edi
-                        .endf
-
-                        ; v2.03: also adjust fixup locations located between the
-                        ; label reference and the label. This should reduce the
-                        ; number of passes to 2 for not too complex sources.
-
-                        .for ( rcx = [rdx].head : rcx : rcx = [rcx].fixup.nextrlc )
-                            .if ( rsi != [rcx].fixup.sym )
-                                .break .if ( eax >= [rcx].fixup.locofs )
-                                add [rcx].fixup.locofs,edi
-                            .endif
-                        .endf
-else
-                        add [rsi].offs,edi
-endif
-                        ; it doesn't matter what's actually "written"
-
-                        .for ( : edi : edi-- )
-                            OutputByte( 0xCC )
-                        .endf
-                        .endc
-                    .endsw
-                    .endc
-                .case 2
-                .case 4
-                    sub edx,eax
-                    asmerr( 2075, edx ) ; warning ?
-                .endsw
+                OutputByte(0) ; it's pass one, nothing is written
             .endif
+            .continue
+        .case FIX_OFF8 ; push <forward reference>
+            .if ( [rbx].options == OPTJ_PUSH )
+                inc edi ; size increases from 2 to 3/5
+            .endif
+            .endc
+        .case FIX_RELOFF8
+            mov rcx,[rbx].sym ; calculate the displacement
+            mov eax,[rbx].offs
+            add eax,[rcx].asym.offs
+            sub eax,[rbx].locofs
+            sub eax,2
+            .ifs ( eax > 127 || eax < -128 )
+                inc edi
+            .endif
+        .endsw
+        .continue .if ( !edi )
+        ;
+        ; ok, the standard case is: there's a forward jump which
+        ; was assumed to be SHORT, but it must be NEAR instead.
+        ;
+        xor edi,edi
+        .switch( [rbx].options )
+        .case OPTJ_EXPLICIT
+            .continue
+        .case OPTJ_EXTEND   ; Jxx for 8086
+            inc edi         ; will be 3/5 finally
+                            ; fall through
+        .case OPTJ_JXX      ; Jxx for 386
+            inc edi         ; fall through
+        .default            ; normal JMP (and PUSH)
+
+            mov MODULE.PhaseError,TRUE
+
+            mov rdx,[rsi].segm
+            mov rdx,[rdx].asym.seginfo
+            assume rdx:segment_t
+            .if ( [rdx].Ofssize )
+                add edi,2 ; NEAR32 instead of NEAR16
+            .endif
+            inc edi
+ifdef LABELOPT
+            ; v2.04: if there's an ORG between src and dst, skip
+            ; the optimization!
+
+            .for ( eax = [rbx].locofs, rcx = [rdx].head : rcx : rcx = [rcx].fixup.nextrlc )
+                .if ( [rcx].fixup.orgoccured )
+                    mov MODULE.OrgOccured,1 ; v2.37.93: added - see CreateLabel()
+                   .endc
+                .endif
+                ; do this check after the check for ORG!
+                .break .if ( eax >= [rcx].fixup.locofs )
+            .endf
+
+            ; scan the segment's label list and adjust all labels
+            ; which are between the fixup loc and the current sym.
+            ; ( PROCs are NOT contained in this list because they
+            ; use the <next>-field of asym already!)
+
+            .for ( rcx = [rdx].label_list : rcx : rcx = [rcx].asym.next )
+                .break .if ( eax >= [rcx].asym.offs )
+                add [rcx].asym.offs,edi
+            .endf
+
+            ; v2.03: also adjust fixup locations located between the
+            ; label reference and the label. This should reduce the
+            ; number of passes to 2 for not too complex sources.
+
+            .for ( rcx = [rdx].head : rcx : rcx = [rcx].fixup.nextrlc )
+                .if ( rsi != [rcx].fixup.sym )
+                    .break .if ( eax >= [rcx].fixup.locofs )
+                    add [rcx].fixup.locofs,edi
+                .endif
+            .endf
+else
+            add [rsi].offs,edi
+endif
+            ; it doesn't matter what's actually "written"
+
+            .for ( : edi : edi-- )
+                OutputByte( 0xCC )
+            .endf
         .endsw
     .endf
     ret

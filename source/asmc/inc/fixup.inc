@@ -50,12 +50,13 @@ ELF64_DISALLOWED	equ 0x0F00 ; exclude SEG, PTR16, PTR32, HIBYTE
 
 
 .enum fixup_options {
-    OPTJ_NONE,		; normal jump
-    OPTJ_EXPLICIT,
-    OPTJ_EXTEND,
-    OPTJ_JXX,
-    OPTJ_CALL,
-    OPTJ_PUSH		; PUSH
+    OPTJ_NONE,		; 0 no jmp/call/push
+    OPTJ_JMPS,		; 1 Jmp short
+    OPTJ_EXPLICIT,	; 2
+    OPTJ_EXTEND,	; 3 Jcc for 8086/186/286
+    OPTJ_JXX,		; 4 Jcc for 80386/...
+    OPTJ_CALL,		; 5
+    OPTJ_PUSH		; 6
     }
 
 FX_ORGOCCURED		equ 0x02

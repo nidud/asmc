@@ -2436,8 +2436,8 @@ avxins(VCMPEQPD,   VCMPTRUE_USPD,  vcmptrue_uspd,  0x88, 0x81 )
 
 ; Pseudo-Op for VCMPSS
 
-insa(VCMPEQSS,     vcmpeqss,    1, OpCls( XMM, XMM_M128,  HID ), F_F30F, 1, 2, 0xC2, 0x00, P_AVX, 0x00, 0x08, 0x41, 0 )
-insa(VCMPEQSS,     1,           0, OpCls( K, XMM_MXGT16,  HID ), F_F30F, 1, 2, 0xC2, 0x00, P_AVX, 0x00, 0x00, 0x00, MR or SA or LLIG or T1S )
+insa(VCMPEQSS,     vcmpeqss,    1, OpCls( XMM, XMM_MXGT16, HID ), F_F30F, 1, 2, 0xC2, 0x00, P_AVX, 0x00, 0x08, 0x41, 0 )
+insa(VCMPEQSS,     1,           0, OpCls( K,   XMM_MXGT16, HID ), F_F30F, 1, 2, 0xC2, 0x00, P_AVX, 0x00, 0x00, 0x00, MR or SA or LLIG or T1S )
 
 avxins(VCMPEQSS,   VCMPLTSS,       vcmpltss,       0x08, 0x01 )
 avxins(VCMPEQSS,   VCMPLESS,       vcmpless,       0x08, 0x01 )
@@ -2473,8 +2473,8 @@ avxins(VCMPEQSS,   VCMPTRUE_USSS,  vcmptrue_usss,  0x08, 0x01 )
 
 ; Pseudo-Op for VCMPSD
 
-insa(VCMPEQSD,     vcmpeqsd,    1, OpCls( XMM, XMM_M128,  HID ), F_F20F, 1, 2, 0xC2, 0x00, P_AVX, 0x00, 0x08, 0x80, 0 )
-insa(VCMPEQSD,     1,           0, OpCls( K, XMM_MXGT16,  HID ), F_F20F, 1, 2, 0xC2, 0x00, P_AVX, 0x00, 0x00, 0x00, W1 or MR or SA or LLIG or T1S )
+insa(VCMPEQSD,     vcmpeqsd,    1, OpCls( XMM, XMM_MXGT16, HID ), F_F20F, 1, 2, 0xC2, 0x00, P_AVX, 0x00, 0x08, 0x80, 0 )
+insa(VCMPEQSD,     1,           0, OpCls( K,   XMM_MXGT16, HID ), F_F20F, 1, 2, 0xC2, 0x00, P_AVX, 0x00, 0x00, 0x00, W1 or MR or SA or LLIG or T1S )
 
 avxins(VCMPEQSD,   VCMPLTSD,       vcmpltsd,       0x88, 0x81 )
 avxins(VCMPEQSD,   VCMPLESD,       vcmplesd,       0x88, 0x81 )

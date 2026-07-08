@@ -347,7 +347,7 @@ process_branch proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, CurrOpnd:dw
         .endif
     .endif
 
-    mov fixup_option,OPTJ_NONE
+    mov fixup_option,OPTJ_JMPS
     mov fixup_type,FIX_RELOFF8
     mov mem_type,[rbx].mem_type
 

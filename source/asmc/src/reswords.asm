@@ -71,6 +71,7 @@ include unaryop.inc
     OP_XMM_M128_M64 = ( OP_XMM or OP_M128 or OP_M64 ),
 
     OP_YMM_M256_M08 = ( OP_YMM or OP_M256 or OP_M08 ),
+;    OP_YMM_M256_M16 = ( OP_YMM or OP_M256 or OP_M16 ),
     OP_YMM_M256_M32 = ( OP_YMM or OP_M256 or OP_M32 ),
     OP_YMM_M256_M64 = ( OP_YMM or OP_M256 or OP_M64 ),
 

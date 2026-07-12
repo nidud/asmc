@@ -4543,21 +4543,23 @@ init_prefix:
 
                     ; v2.08: no error here if first op is an untyped memory reference
                     ; note that OP_M includes OP_M128, but not OP_M256 (to be fixed?)
+                    ; v2.40: new inst: [x,x,x + x,y,y + y,z,z]
 
-                    .if ( CodeInfo.opnd[OPND1].type == OP_M )
+                    mov ecx,CodeInfo.opnd[OPND1].type
 
-                    .elseif ( ( eax & ( OP_XMM or OP_M128 ) ) &&
-                        ( CodeInfo.opnd[OPND1].type & (OP_YMM or OP_M256 ) ) ||
-                        ( eax & ( OP_YMM or OP_M256 ) ) &&
-                        ( CodeInfo.opnd[OPND1].type & (OP_XMM or OP_M128 ) ) )
+                    .if ( ecx == OP_M )
 
-                        .return asmerr(2070)
+                    .elseif ( ( eax & ( OP_XMM or OP_M128 ) && ecx & ( OP_YMM or OP_M256 ) ) ||
+                              ( eax & ( OP_YMM or OP_M256 ) && ecx & ( OP_XMM or OP_M128 ) && !( edi & VX_HALF ) ) )
+
+                        .return asmerr( 2070 )
                     .endif
 
                     ; second operand register is moved to vexregop
                     ; to be fixed: CurrOpnd is always OPND2, so use this const here
 
                     mov edi,eax
+                    mov rcx,opndx[rdx].base_reg
                     mov al,[rcx].asm_tok.bytval
                     inc al
                     mov CodeInfo.vexregop,al

@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    239
-define _ASMC_BUILD  3
+define _ASMC_BUILD  4
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 

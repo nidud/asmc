@@ -257,6 +257,9 @@ endif
                 mov al,'X'
                 mov fldwidth,size_t*2
                 mov char,'0'
+ifdef _WIN64
+                inc long
+endif
                .gotosw('X')
 
             .case '*'
@@ -288,14 +291,14 @@ endif
             .case '7'
             .case '8'
             .case '9'
-                .while ( al >= '0' && al <= '9' )
+                .repeat
                     movsx   eax,al
                     imul    edx,fldwidth,10
                     add     eax,edx
                     add     eax,-48
                     mov     fldwidth,eax
                     lodsb
-                .endw
+                .until ( al < '0' || al > '9' )
                 .gotosw
             .case 'l'
                 mov long,al

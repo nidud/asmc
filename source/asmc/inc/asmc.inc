@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    239
-define _ASMC_BUILD  4
+define _ASMC_BUILD  5
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -539,6 +539,7 @@ define PE_DLL               0x04
       debug_frame           dd: 1 ? ; -Z7
       pe_exe                dd: 1 ? ; -pe[g]
       asm_info              dd: 1 ? ; -info
+      switch_jtd            dd: 1 ? ; jump table in DATA segment
      ends
     ends
     record

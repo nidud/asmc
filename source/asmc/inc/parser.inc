@@ -169,7 +169,7 @@ endif
 ifdef _WIN64
 GetInstrTable proto watcall :dword {
         lea r11,optable_idx
-        mov ax,[r11+rax*2-SPECIAL_LAST*2]
+        movzx eax,word ptr [r11+rax*2-SPECIAL_LAST*2]
         lea rax,[r12+rax*8+SPECIAL_LAST*special_item]
         }
 GetSpecialTable proto watcall :dword {

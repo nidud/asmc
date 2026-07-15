@@ -560,7 +560,11 @@ GetJumpDist proc __ccall table_type:int_t, reg:int_t, min:intptr_t, table_addr:s
         mov edx,2
         mov ecx,T_MOVZX
     .endif
-    AddLineQueueX(" %r r10, %r ptr [r11+%r*%d-(%d*%d)+(%s-%s)]", ecx, table_type, reg, edx, min, edx, table_addr, base_addr )
+    .if ( Options.switch_jtd )
+        AddLineQueueX(" %r r10, %r ptr [r11+%r*%d-(%d*%d)]", ecx, table_type, reg, edx, min, edx )
+    .else
+        AddLineQueueX(" %r r10, %r ptr [r11+%r*%d-(%d*%d)+(%s-%s)]", ecx, table_type, reg, edx, min, edx, table_addr, base_addr )
+    .endif
     ret
     endp
 
@@ -892,7 +896,6 @@ endif
                     .elseif ( [rsi].Switch3264 )
                         mov rax,min
                         .ifs ( rax < 0 )
-
                             AddLineQueueX(" movsxd r10, %r", ebx)
                             mov ebx,T_RAX
                         .else
@@ -903,20 +906,30 @@ endif
                             .endif
                         .endif
                     .endif
-                    AddLineQueueX( " lea r11, %s", base_addr )
+                    mov rdx,base_addr
+                    .if ( Options.switch_jtd )
+                        mov rdx,table_addr
+                    .endif
+                    AddLineQueueX( " lea r11, %s", rdx )
                     mov rcx,min
                     .if ( use_index )
-                        .if ( dist < 256 )
-                            AddLineQueueX( " movzx r10, byte ptr [r11+%r-(%d)+(I$%s-%s)]",
-                                ebx, rcx, table_addr, base_addr )
-                        .else
-                            AddLineQueueX( " movzx r10, word ptr [r11+%r*2-(%d*2)+(I$%s-%s)]",
-                                ebx, rcx, table_addr, base_addr )
+                        mov rax,base_addr
+                        mov edx,T_WORD
+                        .if ( Options.switch_jtd )
+                            mov rax,table_addr
                         .endif
+                        .if ( dist < 256 )
+                            mov edx,T_BYTE
+                        .endif
+                        AddLineQueueX( " movzx r10, %r ptr [r11+%r*%r-(%d*%r)+(I$%s-%s)]",
+                            edx, ebx, edx, rcx, edx, table_addr, rax )
                         xor ecx,ecx
                         mov ebx,T_R10
                     .endif
                     GetJumpDist( table_type, ebx, rcx, table_addr, base_addr )
+                    .if ( Options.switch_jtd )
+                        AddLineQueueX( " lea r11, %s", base_addr )
+                    .endif
                     AddLineQueue(
                         " sub r11, r10\n"
                         " jmp r11" )
@@ -973,10 +986,17 @@ endif
             ;
             ; Create the jump table
             ;
+            .if ( Options.switch_jtd && ![rsi].SwitchTData )
+                AddLineQueue( ".data" )
+            .endif
             .if ( table_type != T_BYTE )
                 AddLineQueueX("ALIGN %r", table_type )
             .endif
-            AddLineQueueX("%s%s", table_addr, LABELQUAL )
+            .if ( Options.switch_jtd && ![rsi].SwitchTData )
+                AddLineQueueX("%s %r %r", table_addr, T_LABEL, table_type )
+            .else
+                AddLineQueueX("%s%s", table_addr, LABELQUAL )
+            .endif
         .endif
 
         .if ( use_index )
@@ -1108,7 +1128,7 @@ endif
                 .endif
             .endf
         .endif
-        .if ( [rsi].SwitchTData )
+        .if ( Options.switch_jtd || [rsi].SwitchTData )
             AddLineQueue( ".code" )
         .endif
         .if ( ncases )

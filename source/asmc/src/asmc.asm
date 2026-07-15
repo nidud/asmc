@@ -438,6 +438,13 @@ endif
 if 1
         tprintf( "File : %s\n", Options.names[TASM] )
 endif
+ifdef _LIN64
+        mov edx, 1
+        mov rsi,rdi
+        xor edi,edi
+        xor eax,eax
+        syscall
+endif
         asmerr( 1901 )
     .endif
     close_files()

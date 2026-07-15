@@ -1,0 +1,10 @@
+Git: https://github.com/gitGNU/objconv
+
+Added to elf.h:
+    #define R_X86_64_REX_GOTPCRELX 42
+
+Added to elf2asm.cpp(439):
+    case R_X86_64_REX_GOTPCRELX:
+
+Added to disasm2.cpp(600) at the end of function WriteOperandTypeGASM():
+    if (type) OutFile.Put("ptr ");

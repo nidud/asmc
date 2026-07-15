@@ -666,6 +666,9 @@ endif
     .case 'ofni'            ; -info
         mov Options.asm_info,1
         .return
+    .case 'dtj'             ; -jtd
+        mov Options.switch_jtd,1
+        .return
     .case 'knil'            ; -link
         mov Options.link,1
         .return

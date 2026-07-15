@@ -36,7 +36,7 @@ else
 acc = asmc64
 flags += -Zp8
 ifndef YACC
-flags += -win64 -frame
+flags += -frame
 endif
 endif
 

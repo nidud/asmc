@@ -1885,9 +1885,9 @@ minus_op proc fastcall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t
 
                 ; v2.37.63: label - $
 
-                mov rax,[rax].asym.name
-                movzx eax,word ptr [rax]
-                .if ( eax == '$' )
+                mov rcx,[rax].asym.name
+                movzx ecx,word ptr [rcx]
+                .if ( ecx == '$' )
                     mov [rsi].curpc_used,1
                    .endc
                 .endif

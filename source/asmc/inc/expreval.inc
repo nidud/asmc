@@ -92,9 +92,6 @@ ends
 override	token_t ?	; EXPR_ADDR: token holding the override label or segment register
 inst		int_t ?		; operator token
 kind		int_t ?		; Type of expression
-mem_type	uchar_t ?
-scale		uchar_t ?	; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
-Ofssize		uchar_t ?	; 16,32,64 bit if MT_NEAR, MT_FAR
 union
  flags		dd ?		; bit-flag
  record
@@ -110,6 +107,9 @@ union
   const_type	dd : 1 ?	; v2.38.05: constant was a type
  ends
 ends
+mem_type	uchar_t ?
+scale		uchar_t ?	; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
+Ofssize		uchar_t ?	; 16,32,64 bit if MT_NEAR, MT_FAR
 op		ptr opinfo ?
 sym		asym_t ?	; label used
 mbr		asym_t ?	; struct member

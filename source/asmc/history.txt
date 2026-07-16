@@ -6,6 +6,7 @@ Changes in 2.40 - xx xxx 2026
 - added AVX10.2-BF16 instructions
 - fixed encoding for ENQCMD, ENQCMDS, and MOVDIR64B
 - fixed bug in elf64 - regression from v2.37.65
+- fixed bug in handling of const values (v2.38)
 
 Changes in 2.39 - 6 Jul 2026
 - added syntax error for unsupported EVEX modifiers

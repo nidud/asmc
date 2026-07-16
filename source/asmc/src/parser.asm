@@ -36,6 +36,7 @@ include mem2mem.inc
 include class.inc
 include new.inc
 
+
 ADDRSIZE proto watcall :byte, :byte {
     test    al,al
     setnz   al
@@ -1714,7 +1715,6 @@ Set_Memtype proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, mem_ty
 
                 movzx eax,[rbx].opclsidx
                 lea rcx,opnd_clstab
-
                 .endc .if ( [rcx+rax*8].opnd_class.opnd_type[OPND1] == OP_M_ANY )
 
                 ; don't set REX for FPU opcodes

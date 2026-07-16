@@ -31,7 +31,7 @@ ReservedWord	ends
 
 opnd_class	STRUC
 opnd_type	dd 2 dup(?)
-;opnd_type_3rd	 db ?  moved --> opnd_clstab3
+;opnd_type_3rd	db ?  ;moved --> opnd_clstab3
 opnd_class	ENDS
 
 externdef	ResWordTable:ReservedWord

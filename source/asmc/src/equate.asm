@@ -121,6 +121,7 @@ CreateAssemblyTimeVariable proc __ccall private uses rsi rdi rbx tokenarray:toke
 
     .if ( [rbx].token == T_NUM && [rbx+asm_tok].token == T_FINAL )
 
+        mov opnd.flags,0 ; v2.39.07: added
         _atoow( &opnd, [rbx].string_ptr, [rbx].numbase, [rbx].itemlen )
 
 check_number:

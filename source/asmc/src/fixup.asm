@@ -8,7 +8,6 @@
 
 include asmc.inc
 include memalloc.inc
-include parser.inc
 include fixup.inc
 include segment.inc
 include omfspec.inc

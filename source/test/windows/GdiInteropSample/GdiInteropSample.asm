@@ -151,7 +151,7 @@ DemoApp::RunMessageLoop proc
     endp
 
 
-DemoApp::OnRender proc uses rsi rdi ps:PAINTSTRUCT
+DemoApp::OnRender proc uses rsi rdi ps:ptr PAINTSTRUCT
 
 
   local hr:HRESULT

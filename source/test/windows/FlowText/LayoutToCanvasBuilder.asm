@@ -91,15 +91,6 @@ ClusterMapToMappingArray proc uses rsi rdi rbx \
 
     assume class:rbx
 
-LayoutToCanvasBuilder::LayoutToCanvasBuilder proc xpsFactory:ptr IXpsOMObjectFactory
-    mov rbx,@ComAlloc(LayoutToCanvasBuilder)
-    inc _refCount
-    mov _xpsFactory,xpsFactory
-    AddRef()
-    mov rax,rbx
-    ret
-    endp
-
 ;;
 ;; This internal method creates empty canvas with resource dictionary holding
 ;; one solid color brush. It also creates empty IXpsOMPartResources object.
@@ -937,6 +928,16 @@ LayoutToCanvasBuilder::AddLinePath proc beginPoint:ptr XPS_POINT, endPoint:ptr X
     SafeRelease(geomFigures)
     SafeRelease(lineFigure)
     .return hr
+    endp
+
+
+LayoutToCanvasBuilder::LayoutToCanvasBuilder proc xpsFactory:ptr IXpsOMObjectFactory
+    mov rbx,@ComAlloc(LayoutToCanvasBuilder)
+    inc _refCount
+    mov _xpsFactory,xpsFactory
+    AddRef()
+    mov rax,rbx
+    ret
     endp
 
     end

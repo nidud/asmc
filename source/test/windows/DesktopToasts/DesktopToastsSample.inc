@@ -64,33 +64,18 @@ define HM_TEXTBUTTON 1
     SetNodeValueString proc :HSTRING, :ptr IXmlNode, :ptr IXmlDocument
    .ends
 
-
 DEFINE_CLASS macro name, base
+.class name : public base
+    m_ref LONG ?
+    m_app ptr DesktopToastsApp ?
+    name  proc :ptr DesktopToastsApp
+   .ends
+   exitm<>
+   endm
 
-    .class name : public base
-        m_ref LONG ?
-        m_app ptr DesktopToastsApp ?
-        name  proc :ptr DesktopToastsApp
-       .ends
-
-    name::AddRef proc
-        InterlockedIncrement(&m_ref)
-        ret
-        endp
-    name::Release proc
-        .if ( InterlockedDecrement(&m_ref) == 0 )
-            free(rbx)
-            xor eax,eax
-        .endif
-        ret
-        endp
-    name::name proc app:ptr DesktopToastsApp
-        ldr rbx,app
-        @ComAlloc(name)
-        mov [rax].name.m_app,rbx
-        mov [rax].name.m_ref,1
-        ret
-        endp
-    exitm<>
-    endm
+DEFINE_CLASS(NotificationActivationCallback, INotificationActivationCallback)
+DEFINE_CLASS(ClassFactory, IClassFactory)
+DEFINE_CLASS(ToastNotification, __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_IInspectable)
+DEFINE_CLASS(ToastDismissed, __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastDismissedEventArgs)
+DEFINE_CLASS(ToastFailed, __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastFailedEventArgs)
 

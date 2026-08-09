@@ -164,7 +164,7 @@ OnPaint proc uses rsi rdi hdc:HDC, prcPaint:PRECT
 
     ;mov hr,StringCchPrintfExW(&wzText, 1024, NULL, NULL, STRSAFE_NULL_ON_FAILURE,
     mov hr,S_OK
-    swprintf(&wzText,
+    _swprintf(&wzText,
             "Timer non-coalesced  Min = %I64d, Avg = %.1f, Max = %I64d, (%I64d / %I64d)\n\n"
             "Timer coalesced      Min = %I64d, Avg = %.1f, Max = %I64d, (%I64d / %I64d)\n\n"
             "[Elapse = %dms, Coaclescing tolerance = %dms]\n\n"

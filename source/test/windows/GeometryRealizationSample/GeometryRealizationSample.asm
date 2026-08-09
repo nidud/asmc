@@ -36,25 +36,78 @@ CreateGeometryRealizationFactory proc pRT:ptr ID2D1RenderTarget, maxRealizationD
     endp
 
 
-GeometryRealizationFactory::GeometryRealizationFactory proc
-
-    .if @ComAlloc(GeometryRealizationFactory)
-        inc [rax].GeometryRealizationFactory.m_cRef
-    .endif
-    ret
-    endp
-
-
-GeometryRealization::GeometryRealization proc
-
-    .if @ComAlloc(GeometryRealization)
-        inc [rax].GeometryRealization.m_cRef
-    .endif
-    ret
+IUnknown::QueryInterface proc iid:REFIID, ppvObject:ptr ptr
+    .return( E_NOINTERFACE )
     endp
 
 
     assume class:rbx
+
+; -- Class RingBuffer --
+
+RingBuffer::Release proc
+    free(rbx)
+    ret
+    endp
+
+
+RingBuffer::AddElement proc element:qword
+
+    ldr rdx,element
+
+    mov eax,m_start
+    add eax,m_count
+    and eax,maxElements-1
+    mov m_elements[rax*8],rdx
+    .if ( m_count < maxElements )
+        inc m_count
+    .else
+        mov eax,m_start
+        inc eax
+        and eax,maxElements-1
+        mov m_start,eax
+    .endif
+    ret
+    endp
+
+
+RingBuffer::GetFirst proc
+    mov eax,m_start
+    mov rax,m_elements[rax*8]
+    ret
+    endp
+
+
+RingBuffer::GetLast proc
+    mov eax,m_start
+    add eax,m_count
+    dec eax
+    and eax,maxElements-1
+    mov rax,m_elements[rax*8]
+    ret
+    endp
+
+
+RingBuffer::GetCount proc
+    mov eax,m_count
+    ret
+    endp
+
+
+RingBuffer::Reset proc
+    mov m_start,0
+    mov m_count,0
+    ret
+    endp
+
+
+RingBuffer::RingBuffer proc
+    @ComAlloc(RingBuffer)
+    ret
+    endp
+
+
+; -- Class GeometryRealizationFactory --
 
 GeometryRealizationFactory::Initialize proc pRT:ptr ID2D1RenderTarget, maxRealizationDimension:UINT
 
@@ -110,14 +163,12 @@ GeometryRealizationFactory::CreateGeometryRealization proc ppRealization:ptr ptr
 
 
 GeometryRealization::Fill proc pRT:ptr ID2D1RenderTarget, pBrush:ptr ID2D1Brush, mode:REALIZATION_RENDER_MODE
-
     RenderToTarget(TRUE, ldr(pRT), ldr(pBrush), ldr(mode))
     ret
     endp
 
 
 GeometryRealization::Draw proc pRT:ptr ID2D1RenderTarget, pBrush:ptr ID2D1Brush, mode:REALIZATION_RENDER_MODE
-
     RenderToTarget(FALSE, ldr(pRT), ldr(pBrush), ldr(mode))
     ret
     endp
@@ -354,12 +405,9 @@ GeometryRealization::RenderToTarget proc fill:BOOL, pRT:ptr ID2D1RenderTarget, p
                 .endif
 
             .else
-
                 .if ( !m_pStrokeRT )
-
                     mov hr,E_FAIL
                 .endif
-
                 .if (SUCCEEDED(hr))
 
                    .new pBitmap:ptr ID2D1Bitmap = NULL
@@ -378,44 +426,32 @@ GeometryRealization::RenderToTarget proc fill:BOOL, pRT:ptr ID2D1RenderTarget, p
             .endif
 
         .else
-
             .if ( fill )
-
                 .if ( !m_pFillMesh )
-
                     mov hr,E_FAIL
                 .endif
                 .if (SUCCEEDED(hr))
-
                     pRT.FillMesh(m_pFillMesh, pBrush)
                 .endif
-
             .else
-
                 .if ( !m_pStrokeMesh )
-
                     mov hr,E_FAIL
                 .endif
                 .if (SUCCEEDED(hr))
-
                     pRT.FillMesh(m_pStrokeMesh, pBrush)
                 .endif
             .endif
         .endif
 
         .if (SUCCEEDED(hr))
-
             pRT.SetAntialiasMode(originalAAMode)
-
             .if ( !m_realizationTransformIsIdentity )
-
                 pRT.SetTransform(&originalTransform)
             .endif
         .endif
     .endif
     .return hr
-
-GeometryRealization::RenderToTarget endp
+    endp
 
 
 GeometryRealization::Initialize proc \
@@ -842,24 +878,19 @@ GenerateOpacityMask proc \
         .endif
         pBrush.Release()
     .endif
-
     SafeRelease(pCompatRT)
-   .return hr
-
-GenerateOpacityMask endp
+    .return hr
+    endp
 
 
 GeometryRealizationFactory::AddRef proc
-
     InterlockedIncrement(&m_cRef)
     ret
     endp
 
 
 GeometryRealizationFactory::Release proc
-
-    .ifd ( !InterlockedDecrement(&m_cRef) )
-
+    .if !InterlockedDecrement(&m_cRef)
         SafeRelease(m_pRT)
         free(rbx)
     .endif
@@ -867,22 +898,24 @@ GeometryRealizationFactory::Release proc
     endp
 
 
-GeometryRealizationFactory::QueryInterface proc iid:REFIID, ppvObject:ptr ptr
+GeometryRealizationFactory::GeometryRealizationFactory proc
+    .if @ComAlloc(GeometryRealizationFactory)
+        inc [rax].GeometryRealizationFactory.m_cRef
+    .endif
     ret
     endp
 
 
-GeometryRealization::AddRef proc
+; -- Class GeometryRealization --
 
+GeometryRealization::AddRef proc
     InterlockedIncrement(&m_cRef)
     ret
     endp
 
 
 GeometryRealization::Release proc
-
-    .if ( !InterlockedDecrement(&m_cRef) )
-
+    .if !InterlockedDecrement(&m_cRef)
         SafeRelease(m_pFillMesh)
         SafeRelease(m_pStrokeMesh)
         SafeRelease(m_pFillRT)
@@ -896,48 +929,15 @@ GeometryRealization::Release proc
     endp
 
 
-GeometryRealization::QueryInterface proc iid:REFIID, ppvObject:ptr ptr
+GeometryRealization::GeometryRealization proc
+    .if @ComAlloc(GeometryRealization)
+        inc [rax].GeometryRealization.m_cRef
+    .endif
     ret
     endp
 
 
-
-DemoApp::DemoApp proc tmring:ptr
-
-  local time:LARGE_INTEGER
-
-    ldr rbx,tmring
-    @ComAlloc(DemoApp)
-    xchg rax,rbx
-    mov m_times,rax
-    mov m_updateRealization,TRUE
-    mov m_autoGeometryRegen,TRUE
-    mov m_numSquares,sc_defaultNumSquares
-    mov m_targetZoomFactor,1.0
-    mov m_currentZoomFactor,1.0
-
-    QueryPerformanceCounter(&time)
-    mov rax,time.QuadPart
-    neg rax
-    mov m_timeDelta,rax
-    mov rax,rbx
-    ret
-    endp
-
-
-DemoApp::Release proc
-
-    SafeRelease(m_pD2DFactory)
-    SafeRelease(m_pWICFactory)
-    SafeRelease(m_pDWriteFactory)
-    SafeRelease(m_pRT)
-    SafeRelease(m_pTextFormat)
-    SafeRelease(m_pSolidColorBrush)
-    SafeRelease(m_pRealization)
-    SafeRelease(m_pGeometry)
-    ret
-    endp
-
+; -- Class DemoApp --
 
 DemoApp::Initialize proc
 
@@ -1119,7 +1119,6 @@ DemoApp::CreateDeviceResources proc
 ;
 
 DemoApp::DiscardDeviceResources proc
-
     SafeRelease(m_pRT)
     SafeRelease(m_pSolidColorBrush)
     SafeRelease(m_pRealization)
@@ -1128,7 +1127,6 @@ DemoApp::DiscardDeviceResources proc
 
 
 DemoApp::DiscardGeometryData proc
-
     mov m_updateRealization,TRUE
     SafeRelease(m_pGeometry)
     ret
@@ -1136,11 +1134,8 @@ DemoApp::DiscardGeometryData proc
 
 
 DemoApp::RunMessageLoop proc
-
-  local msg:MSG
-
+    .new msg:MSG
     .while GetMessage(&msg, NULL, 0, 0)
-
         TranslateMessage(&msg)
         DispatchMessage(&msg)
     .endw
@@ -1242,7 +1237,6 @@ DemoApp::CreateGeometries proc
     .endif
     .return hr
     endp
-
 
 DemoApp::RenderMainContent proc uses rsi rdi time:float
 
@@ -1471,7 +1465,7 @@ DemoApp::OnRender proc
         cvtsd2ss    xmm0,xmm0
         movss       floatTime,xmm0
 
-        m_times.AddT(time.QuadPart)
+        m_times.AddElement(time.QuadPart)
 
         movss   xmm0,m_currentZoomFactor
         comiss  xmm0,m_targetZoomFactor
@@ -1531,8 +1525,7 @@ DemoApp::OnRender proc
         .endif
     .endif
     .return hr
-
-DemoApp::OnRender endp
+    endp
 
 ;
 ;  Draw the stats text (AA type, fps, etc...).
@@ -1571,6 +1564,7 @@ DemoApp::RenderTextInfo proc uses rdi
         cvtsi2ss    xmm1,numPrimitives
         mulss       xmm0,xmm1
         movss       primsPerSecond,xmm0
+
     .endif
 
     cmp         m_antialiasMode,D2D1_ANTIALIAS_MODE_ALIASED
@@ -1773,14 +1767,49 @@ DemoApp::OnWheel proc wParam:WPARAM
     cvtsi2sd    xmm1,rdx
     divsd       xmm1,120.0
     pow(sc_zoomStep, xmm1)
-    cvtsd2ss    xmm0,xmm0
 
+    cvtsd2ss    xmm0,xmm0
     mulss       xmm0,m_targetZoomFactor
     movss       xmm1,sc_minZoom
     maxss       xmm0,xmm1
     movss       xmm1,sc_maxZoom
     minss       xmm0,xmm1
     movss       m_targetZoomFactor,xmm0
+    ret
+    endp
+
+
+DemoApp::Release proc
+    SafeRelease(m_pD2DFactory)
+    SafeRelease(m_pWICFactory)
+    SafeRelease(m_pDWriteFactory)
+    SafeRelease(m_pRT)
+    SafeRelease(m_pTextFormat)
+    SafeRelease(m_pSolidColorBrush)
+    SafeRelease(m_pRealization)
+    SafeRelease(m_pGeometry)
+    SafeRelease(m_times)
+    free(rbx)
+    ret
+    endp
+
+
+DemoApp::DemoApp proc
+
+  local time:LARGE_INTEGER
+
+    mov rbx,@ComAlloc(DemoApp)
+    mov m_times,RingBuffer()
+    mov m_updateRealization,TRUE
+    mov m_autoGeometryRegen,TRUE
+    mov m_numSquares,sc_defaultNumSquares
+    mov m_targetZoomFactor,1.0
+    mov m_currentZoomFactor,1.0
+    QueryPerformanceCounter(&time)
+    mov rax,time.QuadPart
+    neg rax
+    mov m_timeDelta,rax
+    mov rax,rbx
     ret
     endp
 
@@ -1806,78 +1835,58 @@ WndProc proc WINAPI hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .if rax
 
             .switch(message)
-
             .case WM_SIZE
-
                 movzx edx,word ptr lParam
                 movzx r8d,word ptr lParam[2]
                 pDemoApp.OnResize(edx, r8d)
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_PAINT
             .case WM_DISPLAYCHANGE
-
                .new ps:PAINTSTRUCT
                 BeginPaint(hwnd, &ps)
                 pDemoApp.OnRender()
                 EndPaint(hwnd, &ps)
                 InvalidateRect(hwnd, NULL, FALSE)
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_KEYDOWN
                 movzx edx,word ptr wParam
                 pDemoApp.OnKeyDown(dx)
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_MOUSEMOVE
                 pDemoApp.OnMouseMove(lParam)
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_MOUSEWHEEL
                 pDemoApp.OnWheel(wParam)
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_DESTROY
                 PostQuitMessage(0)
-
                 mov result,1
                 mov wasHandled,TRUE
-                .endc
+               .endc
             .case WM_CHAR
                 .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
                 .endc
             .endsw
         .endif
-
         .if (!wasHandled)
-
             mov result,DefWindowProc(hwnd, message, wParam, lParam)
         .endif
     .endif
-
     .return result
-
-WndProc endp
+    endp
 
 
 wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
-
-  local tmring:RingBuffer
 
     ; Ignore the return value because we want to continue running even in the
     ; unlikely event that HeapSetInformation fails.
@@ -1885,11 +1894,8 @@ wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPW
     HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
 
     .if (SUCCEEDED(CoInitialize(NULL)))
-
-        .new app:ptr DemoApp(&tmring)
-
+        .new app:ptr DemoApp()
         .if (SUCCEEDED(app.Initialize()))
-
             app.RunMessageLoop()
         .endif
         app.Release()

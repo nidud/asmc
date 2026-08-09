@@ -9,23 +9,18 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nC
     ; unlikely event that HeapSetInformation fails.
 
     HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
-
     .ifd CoInitialize(NULL) == S_OK
-
        .new app:ptr DemoApp()
-
         .ifd app.Initialize() == S_OK
             app.RunMessageLoop()
         .endif
         CoUninitialize()
     .endif
     .return 0
-
-wWinMain endp
+    endp
 
 
 DemoApp::DemoApp proc
-
     @ComAlloc(DemoApp)
     ret
     endp
@@ -33,7 +28,6 @@ DemoApp::DemoApp proc
     assume class:rbx
 
 DemoApp::Release proc
-
     SafeRelease(m_pD2DFactory)
     SafeRelease(m_pRT)
     SafeRelease(m_pPathGeometry)
@@ -308,7 +302,6 @@ DemoApp::CreateDeviceResources proc
 ;
 
 DemoApp::DiscardDeviceResources proc
-
     SafeRelease(m_pRT)
     SafeRelease(m_pRedBrush)
     SafeRelease(m_pYellowBrush)
@@ -317,11 +310,8 @@ DemoApp::DiscardDeviceResources proc
 
 
 DemoApp::RunMessageLoop proc
-
-  local msg:MSG
-
+    .new msg:MSG
     .while GetMessage(&msg, NULL, 0, 0)
-
         TranslateMessage(&msg)
         DispatchMessage(&msg)
     .endw
@@ -340,7 +330,7 @@ DemoApp::RunMessageLoop proc
 ;  invoked.
 ;
 
-DemoApp::OnRender proc ps:PAINTSTRUCT
+DemoApp::OnRender proc ps:ptr PAINTSTRUCT
 
   local hr:HRESULT
   local hdc:HDC
@@ -422,9 +412,7 @@ DemoApp::OnRender proc ps:PAINTSTRUCT
 
         ; Commit the drawing operations.
         mov hr,pRT.EndDraw(NULL, NULL)
-
         .if (hr == D2DERR_RECREATE_TARGET)
-
             mov hr,S_OK
             DiscardDeviceResources()
         .endif
@@ -435,24 +423,17 @@ DemoApp::OnRender proc ps:PAINTSTRUCT
         comiss xmm0,m_Animation.m_Duration
 
         .ifnb ;(float_time >= [rsi].m_Animation.GetDuration())
-
             mov m_Time,0.0
-
         .else
-
             cvtsi2ss xmm1,m_DwmTimingInfo.rateCompose.uiDenominator
             cvtsi2ss xmm2,m_DwmTimingInfo.rateCompose.uiNumerator
             divss xmm1,xmm2
             addss xmm0,xmm1
             movss m_Time,xmm0
-
         .endif
     .endif
-
     InvalidateRect(m_hwnd, NULL, FALSE)
-
     .return hr
-
     endp
 
 
@@ -502,51 +483,37 @@ WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .if rax
 
             .switch(message)
-
             .case WM_SIZE
-
                 movzx edx,word ptr lParam
                 movzx r8d,word ptr lParam[2]
                 pDemoApp.OnResize(edx, r8d)
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_PAINT
             .case WM_DISPLAYCHANGE
-
-                .new ps:PAINTSTRUCT
+               .new ps:PAINTSTRUCT
                 BeginPaint(hwnd, &ps)
-
                 pDemoApp.OnRender(&ps)
                 EndPaint(hwnd, &ps)
-
                 mov result,0
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_DESTROY
-
                 PostQuitMessage(0)
                 mov result,1
                 mov wasHandled,TRUE
-                .endc
-
+               .endc
             .case WM_CHAR
                 .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
                 .endc
-
             .endsw
         .endif
-
         .if (!wasHandled)
-
             mov result,DefWindowProc(hwnd, message, wParam, lParam)
         .endif
     .endif
     .return result
-
-WndProc endp
+    endp
 
     end _tstart

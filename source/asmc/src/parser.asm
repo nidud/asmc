@@ -34,8 +34,8 @@ include data.inc
 include enum.inc
 include mem2mem.inc
 include class.inc
-include new.inc
 
+NewDirective proto __ccall :int_t, :token_t
 
 ADDRSIZE proto watcall :byte, :byte {
     test    al,al

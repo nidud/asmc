@@ -408,7 +408,7 @@ SetInputTransform proc hwndDlg:HWND, fSetInputTransform:BOOL
             .new dwErr:DWORD = GetLastError()
             .new szError[256]:WCHAR
 
-            swprintf(&szError, L"Failed to get current magnification. Error was %d", dwErr)
+            _swprintf(&szError, L"Failed to get current magnification. Error was %d", dwErr)
 
             MessageBox(hwndDlg, &szError, g_pszAppTitle, MB_OK)
         .endif
@@ -426,7 +426,7 @@ SetInputTransform proc hwndDlg:HWND, fSetInputTransform:BOOL
             ;; required in order for MagSetInputTransform() to success.
 
             .new szError[256]:WCHAR
-            swprintf(&szError, L"Failed to set input transform. Error was %d", dwErr)
+            _swprintf(&szError, L"Failed to set input transform. Error was %d", dwErr)
             MessageBox(hwndDlg, &szError, g_pszAppTitle, MB_OK)
         .endif
     .endif
@@ -511,7 +511,7 @@ GetSettings proc hwndDlg:HWND
 
     .if (fSuccess)
 
-        swprintf(&szMessage,
+        _swprintf(&szMessage,
             L"The current settings are:\r\n\r\nMagnification level: %f\r\n"
             "Color effect: %s\r\nInput transform state: %d",
             magnificationLevel, pszColorStatus, fInputTransformEnabled)
@@ -519,7 +519,7 @@ GetSettings proc hwndDlg:HWND
     .else
 
         .new dwErr:DWORD = GetLastError()
-        swprintf(&szMessage,
+        _swprintf(&szMessage,
             L"Failed to get magnification setting. Error was %d", dwErr)
     .endif
 

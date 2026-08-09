@@ -99,6 +99,10 @@ AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, re
                     .endif
                     .if ( m == 0 )
                         .if ( externSym && symFound )
+                            ;
+                            ; This force the override of member functions
+                            ; to be defined above the @ComAlloc macro.
+                            ;
                             CreateExternalFromType(&q, typeSym)
                         .endif
                         mov ebx,reg

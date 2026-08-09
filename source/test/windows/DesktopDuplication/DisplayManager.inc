@@ -27,8 +27,8 @@ include CommonTypes.inc
     ProcessFrame        proc :ptr FRAME_DATA, :ptr ID3D11Texture2D, :SINT, :SINT, :ptr DXGI_OUTPUT_DESC
     CleanRefs           proc
 
-    CopyDirty           proc :ID3D11Texture2D, : ptr ID3D11Texture2D, :ptr RECT, :UINT, :SINT, :SINT, :ptr DXGI_OUTPUT_DESC
-    CopyMove            proc :ID3D11Texture2D, :ptr DXGI_OUTDUPL_MOVE_RECT, :UINT, :SINT, :SINT, : ptr DXGI_OUTPUT_DESC, :SINT, :SINT
+    CopyDirty           proc :ptr ID3D11Texture2D, :ptr ID3D11Texture2D, :ptr RECT, :UINT, :SINT, :SINT, :ptr DXGI_OUTPUT_DESC
+    CopyMove            proc :ptr ID3D11Texture2D, :ptr DXGI_OUTDUPL_MOVE_RECT, :UINT, :SINT, :SINT, : ptr DXGI_OUTPUT_DESC, :SINT, :SINT
     SetDirtyVert        proc :ptr VERTEX, :ptr RECT, :SINT, :SINT, :ptr DXGI_OUTPUT_DESC, :ptr D3D11_TEXTURE2D_DESC, :ptr D3D11_TEXTURE2D_DESC
     SetMoveRect         proc :ptr RECT, :ptr RECT, :ptr DXGI_OUTPUT_DESC, :ptr DXGI_OUTDUPL_MOVE_RECT, :SINT, :SINT
    .ends

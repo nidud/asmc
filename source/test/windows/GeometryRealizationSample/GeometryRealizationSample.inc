@@ -47,7 +47,7 @@ define sc_maxRealizationDimension 2000
     m_pRealization      ptr IGeometryRealization ?
     m_pGeometry         ptr ID2D1Geometry ?
 
-    DemoApp             proc :ptr
+    DemoApp             proc
     Release             proc
 
     Initialize          proc
@@ -62,7 +62,7 @@ define sc_maxRealizationDimension 2000
     OnRender            proc
     OnResize            proc :UINT, :UINT
     OnMouseMove         proc :LPARAM
-    OnKeyDown           proc :WORD
+    OnKeyDown           proc :SWORD
     OnWheel             proc :WPARAM
 
     WndProc             proto :HWND, :UINT, :WPARAM, :LPARAM

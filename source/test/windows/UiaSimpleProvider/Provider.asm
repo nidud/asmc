@@ -16,18 +16,6 @@ include Provider.inc
 
     assume class:rbx
 
-Provider::Provider proc hwnd:HWND
-
-    .if @ComAlloc(Provider)
-
-        mov rbx,rax
-        mov rdx,hwnd
-        mov m_controlHWnd,rdx
-    .endif
-    ret
-    endp
-
-
 ; IUnknown implementation.
 
 Provider::AddRef proc
@@ -134,6 +122,16 @@ Provider::get_HostRawElementProvider proc pRetVal:ptr ptr IRawElementProviderSim
 Provider::_Invoke proc
     PostMessage(m_controlHWnd,  WM_LBUTTONDOWN, NULL, NULL)
     xor eax,eax
+    ret
+    endp
+
+
+Provider::Provider proc hwnd:HWND
+    .if @ComAlloc(Provider)
+        mov rbx,rax
+        mov rdx,hwnd
+        mov m_controlHWnd,rdx
+    .endif
     ret
     endp
 

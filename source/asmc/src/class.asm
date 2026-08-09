@@ -261,9 +261,7 @@ GetTypeName proc __ccall uses rsi rdi rbx type:string_t, string:string_t, tokena
             inc args
 
             .if ( [rdi].token == T_RES_ID && [rdi].tokval == T_VARARG )
-
-                imul ebx,ebx,FNVPRIME
-                xor bl,'V'
+                add ebx,[rdi].hash1
                .break
             .endif
 
@@ -274,8 +272,7 @@ GetTypeName proc __ccall uses rsi rdi rbx type:string_t, string:string_t, tokena
                 or  eax,0x202020
             .endif
             .if ( eax == 'sba' )
-                imul ebx,ebx,FNVPRIME
-                xor bl,'A'
+                add ebx,[rdi].hash1
                 inc i
                 add rdi,asm_tok
             .else
@@ -292,18 +289,7 @@ GetTypeName proc __ccall uses rsi rdi rbx type:string_t, string:string_t, tokena
                 .endif
                 mov rdx,ti.symtype
                 .if ( rdx )
-                    mov al,[rdx].asym.mem_type
-                    .if ( !ti.is_ptr && ti.mem_type == MT_TYPE && !( al & MT_SPECIAL ) )
-
-                        xor edx,edx
-                        mov ti.mem_type,al
-                    .else
-                        .for ( ecx = [rdx].asym.name_size, rdx = [rdx].asym.name : ecx : ecx--, rdx++ )
-
-                            imul ebx,ebx,FNVPRIME
-                            xor bl,[rdx]
-                        .endf
-                    .endif
+                    add ebx,[rdx].asym.hash
                 .endif
                 movzx ecx,ti.mem_type
                 .if ( ecx == MT_PTR && ti.ptr_memtype != MT_EMPTY )

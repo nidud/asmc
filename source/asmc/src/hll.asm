@@ -1210,11 +1210,7 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:t
         mov ecx,eax
         .if GetProc( ecx, tokenarray, &opnd )
             .if ( [rax].asym.mem_type == MT_TYPE )
-                .if ( [rax].asym.isvmacro )
-                    mov rax,[rax].asym.vmacro
-                .else
-                    mov rax,[rax].asym.type
-                .endif
+                mov rax,[rax].asym.type
                 .if ( [rax].asym.mem_type == MT_PTR && [rax].asym.is_ptr )
                     mov rax,[rax].asym.target_type
                 .endif

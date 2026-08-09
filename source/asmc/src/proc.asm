@@ -874,7 +874,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:
             ; arguments aren't "pushed".
             ;
             ; asmc: Win64 is right to left.
-
+            
             .if !( flags & _P_LEFT )
 
                 mov [rdi].asym.nextparam,[rsi].paralist

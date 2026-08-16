@@ -2419,7 +2419,8 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                             mov al,[rcx]
                         .endw
 
-                        .if ( [rbx+rdx].token == T_COLON || [rbx+rdx+asm_tok].token == T_COLON )
+                        .if ( [rbx+rdx].token == T_COLON || 
+                            ( [rbx+rdx].token != T_FINAL && [rbx+rdx+asm_tok].token == T_COLON ) )
                             mov eax,' ,'
                             stosw
                         .endif

@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    239
-define _ASMC_BUILD  8
+define _ASMC_BUILD  9
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -510,6 +510,8 @@ define PE_SUBSYSTEM_CUI     0x03
 define PE_SUBSYSTEM_MASK    0x03
 define PE_DLL               0x04
 
+.enum { SH_SHA_256, SH_MD5, SH_SHA384, SH_SHA512 }
+
 .template global_options
     union
      flags                  dd ?    ; v2.36.40
@@ -608,6 +610,7 @@ define PE_DLL               0x04
     win64_flags             db ?    ; -homeparams, -autostack, -stackalign
     arch                    db ?    ; -arch:AVX[2|512]
     iddc                    db ?    ; -idd
+    cv_checksum             db ?    ; -ZH:[MD5|SHA_256|SHA384|SHA512]
    .ends
 
 

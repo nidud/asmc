@@ -17,8 +17,24 @@ include coff.inc
 include fixup.inc
 include dbgcv.inc
 include linnum.inc
+;
+; Older versions of Visual Studio (2019 and earlier) defaulted to MD5 for PDB
+; source hashing. Beginning with Visual Studio 2022 (version 17.0), the MSVC
+; toolchain, including Masm, switched its default to SHA-256.
+;
+; Giving an unresolved bug in Visual Studio debugger's Disassembly window,
+; introduced in July 2026, Asmc now default to SHA-256.
+;
+; The minimum supported client for the BCrypt API used is Windows Vista.
+;
+; Additional support for source hashing is added via command line option -ZH:#.
+;
+define USEBCRYPT
 
 ifndef __UNIX__
+ifdef USEBCRYPT
+include bcrypt.inc
+endif
 define USEMD5
 endif
 
@@ -1861,15 +1877,75 @@ dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
 
 ifdef USEMD5
 
+define MD5BUFSIZ 1024*4
+
+define MD5_TYPE     0x0110
+define SHA256_TYPE  0x0320
+define SHA384_TYPE  0x0430
+define SHA512_TYPE  0x0540
+
+define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 16 + sizeof( uint_16 ) )
+define SHA256_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 32 + sizeof( uint_16 ) )
+define SHA384_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 48 + sizeof( uint_16 ) )
+define SHA512_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 64 + sizeof( uint_16 ) )
+
+ifdef USEBCRYPT
+
+CVCheckSum proc __ccall uses rsi rdi rbx filename:string_t, sum:ptr byte
+
+   .new AlgHandle:BCRYPT_ALG_HANDLE = NULL
+   .new HashHandle:BCRYPT_HASH_HANDLE = NULL
+   .new Hash[128]:BYTE
+   .new HashLength:DWORD = 0
+   .new ResultLength:DWORD = 0
+   .new fp:LPFILE
+
+    .if fopen( filename, "rb" )
+
+        mov fp,rax
+        lea rdx,@CStr(BCRYPT_SHA256_ALGORITHM)
+        .switch Options.cv_checksum
+        .case SH_SHA512
+            lea rdx,@CStr(BCRYPT_SHA512_ALGORITHM)
+           .endc
+        .case SH_SHA384
+            lea rdx,@CStr(BCRYPT_SHA384_ALGORITHM)
+           .endc
+        .case SH_MD5
+            lea rdx,@CStr(BCRYPT_MD5_ALGORITHM)
+           .endc
+        .endsw
+        .ifsd ( BCryptOpenAlgorithmProvider(&AlgHandle, rdx, NULL, BCRYPT_HASH_REUSABLE_FLAG) >= 0 )
+            .ifsd ( BCryptGetProperty(AlgHandle, BCRYPT_HASH_LENGTH, &HashLength, sizeof(HashLength), &ResultLength, 0) >= 0 )
+                .ifsd ( BCryptCreateHash(AlgHandle, &HashHandle, NULL, 0, NULL, 0, 0) >= 0 )
+                    mov rbx,MemAlloc( MD5BUFSIZ )
+                    .while fread( rbx, 1, MD5BUFSIZ, fp )
+                        BCryptHashData(HashHandle, rbx, eax, 0)
+                    .endw
+                    MemFree( rbx )
+                    BCryptFinishHash(HashHandle, &Hash, HashLength, 0)
+                    BCryptDestroyHash(HashHandle)
+                    mov rdi,sum
+                    lea rsi,Hash
+                    mov ecx,HashLength
+                    rep movsb
+                .endif
+            .endif
+            BCryptCloseAlgorithmProvider(AlgHandle, 0)
+        .endif
+        fclose( fp )
+    .endif
+    ret
+    endp
+
+else
+
 .template MD5_CTX
     state   dd 4 dup(?)     ; state (ABCD)
     count   dd 2 dup(?)     ; number of bits, modulo 2^64 (lsb first)
     buffer  db 64 dup(?)    ; input buffer
     digest  dq 16 dup(?)    ; added: used in MD5Final(ntdll.dll)
    .ends
-
-define MD5BUFSIZ 1024*4
-define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 16 + sizeof( uint_16 ) )
 
 ifdef _WIN64
 define __icall <fastcall>
@@ -2128,6 +2204,7 @@ calc_md5 proc __ccall uses rsi rdi rbx filename:string_t, sum:ptr byte
    .new ctx:MD5_CTX
    .new fp:ptr FILE = fopen( filename, "rb" )
    .return .if ( rax == NULL )
+
     mov rbx,MemAlloc( MD5BUFSIZ )
     mov ctx.state[0x00],0x67452301
     mov ctx.state[0x04],0xefcdab89
@@ -2147,6 +2224,8 @@ calc_md5 proc __ccall uses rsi rdi rbx filename:string_t, sum:ptr byte
     rep movsd
    .return( true )
     endp
+
+endif
 
 else
 
@@ -2190,6 +2269,8 @@ cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:asym_t, types:asym_t
   local objname:string_t
   local cv:dbgcv
   local lineTable:int_t
+  local checksum_type:int_t
+  local checksum_length:int_t
 
     mov cv.lpVtbl,&vtable
     ldr rsi,symbols
@@ -2291,25 +2372,53 @@ endif
         ;; source file info
 
         mov rbx,cv.flush_section( 0x000000F4, 0 )
+ifdef USEMD5
+        movzx eax,Options.cv_checksum
+        mov checksum_type,SHA256_TYPE
+        mov checksum_length,SHA256_LENGTH
+        .switch eax
+        .case SH_SHA512
+            mov checksum_type,SHA512_TYPE
+            mov checksum_length,SHA512_LENGTH
+           .endc
+        .case SH_SHA384
+            mov checksum_type,SHA384_TYPE
+            mov checksum_length,SHA384_LENGTH
+           .endc
+        .case SH_MD5
+            mov checksum_type,MD5_TYPE
+            mov checksum_length,MD5_LENGTH
+           .endc
+        .endsw
+else
+        mov checksum_type,MD5_TYPE
+        mov checksum_length,MD5_LENGTH
+endif
 
         .for ( rsi = cv.files, i = 0: i < MODULE.cnt_fnames: i++, rsi += cvfile )
 
-            mov rdi,cv.flushps( MD5_LENGTH )
+            mov rdi,cv.flushps( checksum_length )
             mov eax,[rsi].cvfile.offs
             stosd
             mov [rsi].cvfile.offs,[rbx].cvsection.length
 ifdef USEMD5
-            mov eax,0x0110
+            mov eax,checksum_type
             stosw
+ifdef USEBCRYPT
+            CVCheckSum( [rsi].cvfile.name, rdi )
+else
             calc_md5( [rsi].cvfile.name, rdi )
-            add rdi,16
+endif
+            mov eax,checksum_length
+            sub eax,8
+            add rdi,rax
             xor eax,eax
             stosw
 else
             xor eax,eax
             stosd
 endif
-            add [rbx].cvsection.length,MD5_LENGTH
+            add [rbx].cvsection.length,checksum_length
             mov cv.ps,rdi
         .endf
 

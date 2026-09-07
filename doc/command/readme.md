@@ -110,6 +110,10 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-zf0</b></td><td>JWasm compatible FASTCALL type: MS (Use -Gr).</td></tr>
 <tr><td><b>-zf1</b></td><td>JWasm compatible FASTCALL type: OW (Use -Gw).</td></tr>
 <tr><td><b>-Zg</b></td><td>Generate code to <a href="option-zg.md">match Masm</a>.</td></tr>
+<tr><td><b>-ZH:MD5</b></td><td>Use MD5 for checksum in debug info.</td></tr>
+<tr><td><b>-ZH:SHA_256</b></td><td>Use SHA256 for checksum in debug info (default).</td></tr>
+<tr><td><b>-ZH:SHA384</b></td><td>Use SHA384 for checksum in debug info.</td></tr>
+<tr><td><b>-ZH:SHA512</b></td><td>Use SHA512 for checksum in debug info.</td></tr>
 <tr><td><b>-Zi</b></td><td>Add symbolic <a href="option-zi.md">debugging information</a>.</td></tr>
 <tr><td><b>-zlc</b></td><td>No OMF records of data in code. Not available in ASMC64.</td></tr>
 <tr><td><b>-zld</b></td><td>No OMF records of far call. Not available in ASMC64.</td></tr>

@@ -48,7 +48,8 @@ Options global_options {
         3,                      ; .pe_subsystem
         0,                      ; .win64_flags
         0,                      ; .arch
-        0 }                     ; .iddc
+        0,                      ; .iddc
+        0 }                     ; .cv_checksum
 
     align size_t
 
@@ -988,11 +989,29 @@ endif
         .return set_option_n_name(OPTN_MODULE_NAME, rdi)
     .case 'tn'          ; -nt<name>
         .return set_option_n_name(OPTN_TEXT_SEG, rdi)
+    .case 'HZ'          ; -ZH:<type>
+        .if ( byte ptr [rdi] == ':' )
+            mov eax,[rdi+1]
+            .switch eax
+            .case '5AHS'
+                mov Options.cv_checksum,SH_SHA512
+               .return
+            .case '3AHS'
+                mov Options.cv_checksum,SH_SHA384
+               .return
+            .case '_AHS'
+                mov Options.cv_checksum,SH_SHA_256
+               .return
+            .case '5DM'
+                mov Options.cv_checksum,SH_MD5
+               .return
+            .endsw
+        .endif
     .endsw
     mov [rsi],GetNameToken( rdi, &[rbx+2], 256, '@' )
     .if ( j == 'lF' )           ; -Fl[file]
         mov Options.write_listing,1
-        .return get_fname(OPTN_LST_FN, rdi)
+       .return get_fname(OPTN_LST_FN, rdi)
     .endif
     .if getfilearg(cmdline, &[rbx+2])
         mov [rsi],GetNameToken( rdi, rax, 256, '@' )

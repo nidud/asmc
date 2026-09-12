@@ -73,7 +73,7 @@ CreateProject proc uses rsi rdi rbx path:string_t, name:ptr string_t, Unicode:in
         "  <PropertyGroup Label=\"Configuration\">\n"
         "    <ConfigurationType>Application</ConfigurationType>\n"
         "    <UseDebugLibraries>true</UseDebugLibraries>\n"
-        "    <PlatformToolset>v143</PlatformToolset>\n"
+        "    <PlatformToolset>v145</PlatformToolset>\n"
         "  </PropertyGroup>\n"
         "  <Import Project=\"$(VCTargetsPath)\Microsoft.Cpp.props\" />\n"
         "  <ImportGroup Label=\"ExtensionSettings\">\n"

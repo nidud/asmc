@@ -48,6 +48,14 @@ define H_EXPMASK   ((1 shl H_EXPBITS) - 1)
 define H_EXPBIAS   (H_EXPMASK shr 1)
 define H_EXPMAX	   (H_EXPMASK - H_EXPBIAS)
 
+; Brain Float16 - bfloat16 -- BF16
+
+define BF_SIGBITS  8
+define BF_EXPBITS  8
+define BF_EXPMASK  ((1 shl BF_EXPBITS) - 1)
+define BF_EXPBIAS  (BF_EXPMASK shr 1)
+define BF_EXPMAX   (BF_EXPMASK - BF_EXPBIAS)
+
 ; Single precision - binary32 -- REAL4 (float)
 
 define F_SIGBITS   24

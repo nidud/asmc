@@ -99,6 +99,8 @@ endif
  char_t "-Z7 Add full symbolic debug info          -zcw No decoration for C symbols",10
  char_t "-Zd Add line number debug info            -Zf Make all symbols public",10
  char_t "-zf<0|1> Set FASTCALL type: MS-OW         -Zg Generate code to match Masm",10
+ char_t "-ZH:MD5 Use MD5 checksum for debug info   -ZH:SHA_256 Use SHA256 (default)",10
+ char_t "-ZH:SHA384 Use SHA384                     -ZH:SHA512 Use SHA512",10
  char_t "-Zi Add symbolic debug info               -Zne Disable non Masm extensions",10
  char_t "-zl<f|p|s> Suppress items in COFF         -Zp[n] Set structure alignment",10
  char_t "-Zs Perform syntax check only             -zt<0|1|2> Set STDCALL decoration",10

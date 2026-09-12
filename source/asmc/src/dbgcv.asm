@@ -1891,16 +1891,15 @@ define SHA512_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 64 + sizeof( uint
 
 ifdef USEBCRYPT
 
-CVCheckSum proc __ccall uses rsi rdi rbx filename:string_t, sum:ptr byte
+CVCheckSum proc __ccall uses rbx filename:string_t, sum:ptr byte
 
-   .new AlgHandle:BCRYPT_ALG_HANDLE = NULL
-   .new HashHandle:BCRYPT_HASH_HANDLE = NULL
-   .new Hash[128]:BYTE
-   .new HashLength:DWORD = 0
-   .new ResultLength:DWORD = 0
-   .new fp:LPFILE
+    .new AlgHandle:BCRYPT_ALG_HANDLE = NULL
+    .new HashHandle:BCRYPT_HASH_HANDLE = NULL
+    .new HashLength:DWORD = 0
+    .new ResultLength:DWORD = 0
+    .new fp:LPFILE
 
-    .if fopen( filename, "rb" )
+    .if fopen( ldr(filename), "rb" )
 
         mov fp,rax
         lea rdx,@CStr(BCRYPT_SHA256_ALGORITHM)
@@ -1923,12 +1922,8 @@ CVCheckSum proc __ccall uses rsi rdi rbx filename:string_t, sum:ptr byte
                         BCryptHashData(HashHandle, rbx, eax, 0)
                     .endw
                     MemFree( rbx )
-                    BCryptFinishHash(HashHandle, &Hash, HashLength, 0)
+                    BCryptFinishHash(HashHandle, sum, HashLength, 0)
                     BCryptDestroyHash(HashHandle)
-                    mov rdi,sum
-                    lea rsi,Hash
-                    mov ecx,HashLength
-                    rep movsb
                 .endif
             .endif
             BCryptCloseAlgorithmProvider(AlgHandle, 0)
@@ -2372,7 +2367,7 @@ endif
         ;; source file info
 
         mov rbx,cv.flush_section( 0x000000F4, 0 )
-ifdef USEMD5
+ifdef USEBCRYPT
         movzx eax,Options.cv_checksum
         mov checksum_type,SHA256_TYPE
         mov checksum_length,SHA256_LENGTH

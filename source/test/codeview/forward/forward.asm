@@ -1,5 +1,5 @@
 
-includelib libc.lib
+includelib libcmt.lib
 
 ; forward declaration
 

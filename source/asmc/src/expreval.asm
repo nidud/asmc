@@ -73,17 +73,18 @@ ConstError proc fastcall opnd1:expr_t, opnd2:expr_t
     endp
 
 
-TokenAssign proc fastcall uses rsi rdi opnd1:expr_t, opnd2:expr_t
+TokenAssign proc fastcall opnd1:expr_t, opnd2:expr_t
 
     ; note that offsetof() is used. This means, don't change position
     ; of field <type> in expr!
 
-    mov rsi,rdx
+    xchg rsi,rdx
+    mov rax,rdi
     mov rdi,rcx
-    mov rax,rcx
     mov ecx,offsetof( expr, type ) / 4
     rep movsd
-    mov rcx,rax
+    mov rdi,rax
+    mov rsi,rdx
     ret
     endp
 

@@ -6,6 +6,3 @@ include immintrin.inc
 include tchar.inc
 
 option float:8
-
-W = 400
-I = 10000

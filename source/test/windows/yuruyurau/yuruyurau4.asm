@@ -8,7 +8,6 @@
 
 include stdafx.inc
 
-D = 15
 T proto {
   _mm_move_sd(t, _mm_add_sd(_mm_move_sd(xmm0, t), M_PI/60.0))
   }

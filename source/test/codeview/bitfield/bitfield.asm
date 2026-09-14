@@ -1,7 +1,7 @@
 
 ; -- handle C-type RECORD fields
 
-includelib libc.lib
+includelib libcmt.lib
 
 option casemap:none, win64:3
 

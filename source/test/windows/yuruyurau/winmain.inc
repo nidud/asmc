@@ -1,3 +1,12 @@
+ifndef D
+define D 15
+endif
+ifndef W
+define W 400
+endif
+ifndef I
+define I 10000
+endif
 
 ; This is modified from @bitRAKE's implementation for FASM
 

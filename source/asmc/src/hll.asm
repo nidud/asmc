@@ -1150,6 +1150,16 @@ fill_paramid proc __ccall private uses rsi rdi rbx dst:string_t, id:int_t, token
     ret
     endp
 
+;
+; StripSource() - strip a function call from the source line and replace it with
+; the return value of the function. This is used to evaluate expressions like
+; "foo(1, bar(...), ...)" where "bar(...)" is a function call that needs to be
+; evaluated first.
+; The result of "bar(...)" will be used as an argument for "foo(...)" and the
+; entire expression will be replaced with the type of "foo::paralist[1]".
+; Some special cases are handled, like inline functions with macro return
+; directive RETM and function assignments using SIMD instructions.
+;
 
 StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:token_t
 
@@ -1159,6 +1169,7 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:t
    .new parg_id:int_t = 0 ; foo.paralist[1] = return type[al|ax|eax|[rdx::eax|rax|xmm0]]
    .new opnd:expr
    .new bracket:int_t = 0
+   .new sqbracket:int_t = 0
    .new reg2:int_t = 0
    .new size:int_t
    .new b[MAX_LINE_LEN]:char_t
@@ -1172,10 +1183,16 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:t
             .switch [rbx].token
             .case T_CL_BRACKET
                 dec bracket
-                .endc
+               .endc
             .case T_OP_BRACKET
                 inc bracket
-                .endc
+               .endc
+            .case T_CL_SQ_BRACKET
+                dec sqbracket
+               .endc
+            .case T_OP_SQ_BRACKET
+                inc sqbracket
+               .endc
             .case T_COMMA
                 .if proc_id
                     inc parg_id
@@ -1199,16 +1216,17 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:t
         jmp macro_args
     .endif
     mov rax,proc_id
-    .if ( rax > tokenarray && [rax-asm_tok].asm_tok.token == T_OP_SQ_BRACKET )
+    .if ( rax > rdi && sqbracket )
+        ;( sqbracket || [rax-asm_tok].asm_tok.token == T_OP_SQ_BRACKET ) )
         xor eax,eax
     .endif
     .if ( rax )
-        sub rax,tokenarray
+        sub rax,rdi
         mov ecx,asm_tok
         xor edx,edx
         div ecx
         mov ecx,eax
-        .if GetProc( ecx, tokenarray, &opnd )
+        .if GetProc( ecx, rdi, &opnd )
             .if ( [rax].asym.mem_type == MT_TYPE )
                 mov rax,[rax].asym.type
                 .if ( [rax].asym.mem_type == MT_PTR && [rax].asym.is_ptr )
@@ -1287,6 +1305,7 @@ else
 endif
         mov eax,i
         .if ( !proc_id && eax > 1 )
+
             imul eax,eax,asm_tok
             lea rbx,[rdi+rax-(asm_tok*2)]
             .if ( [rbx+asm_tok].token == T_COMMA && [rbx].token != T_CL_SQ_BRACKET )
@@ -1374,6 +1393,13 @@ size_from_ptr:
                 .endsw
             .elseif ( [rbx+asm_tok].token == T_COMMA && [rbx].token == T_CL_SQ_BRACKET )
                 jmp size_from_ptr
+            .endif
+        .elseif ( !proc_id && eax == 1 && [rbx-asm_tok].token == T_INSTRUCTION )
+            ;
+            ; <op> <proc>[, ...]
+            ;
+            .ifd ( GetCpuExtensions([GetInstrTable([rbx-asm_tok].tokval)].Instruction.cpu) >= P_SSE1 )
+                mov esi,T_XMM0
             .endif
         .endif
     .endif

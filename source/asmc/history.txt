@@ -6,6 +6,7 @@ Changes in 2.40 - xx xxx 2026
 - added SHA-256 as default for PDB source hashing
 - added option -ZH:[MD5|SHA_256|SHA384|SHA512]
 - added AVX10.2-BF16 instructions
+- fixed bug in return type from invoke
 - fixed encoding for ENQCMD, ENQCMDS, and MOVDIR64B
 - fixed bug in elf64 - regression from v2.37.65
 - fixed bug in handling of const values (v2.38)

@@ -610,6 +610,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
    .new retval:         int_t
    .new Unicode:        byte
    .new mem_alloc:      uchar_t = 0
+   .new rsrc:           byte = 0 ; v2.39.12: @CStr() in .rsrc segment
 
     ldr rbx,tokenarray
     mov edi,MaxLineLength
@@ -760,6 +761,11 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                 mov rbx,MODULE.currseg
                 .if rbx
                     .ifd tstricmp( [rbx].name, "_DATA" )
+                        .ifd !tstricmp( [rbx].name, ".rsrc" )
+                            inc rsrc
+                        .endif
+                    .endif
+                    .if ( eax )
                         inc esi
                         AddLineQueue( ".data" )
                     .endif
@@ -768,7 +774,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                     mov esi,2
                     AddLineQueue( ".const" )
                 .endif
-                .if Unicode
+                .if ( Unicode && !rsrc )
                     AddLineQueue( "align 2" )
                 .endif
                 AddLineQueue( cursrc )

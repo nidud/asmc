@@ -1418,6 +1418,7 @@ SegmentInit proc fastcall uses rsi rdi rbx pass:int_t
         mov buffer_size,eax
         mov CV8Label,rax
         mov MODULE.FixupHeap,rax
+        mov ImageBase,al
     .else
         ;
         ; v2.19: release fixups to heap

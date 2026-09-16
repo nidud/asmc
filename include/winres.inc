@@ -4,6 +4,7 @@ endif
 .pragma list(push, 0)
 
 IDC_STATIC  equ -1
+IDC_SYSLINK equ 15990
 
 LANGID_DE   equ 0x0407
 LANGID_US   equ 0x0409
@@ -106,6 +107,15 @@ DLGBEGIN macro flags,items,x,y,w,h,exflags:=<0>,menu:=<0>,CodePage:=<0>
     endif
     endm
 
+DIALOGEX macro flags,items,x,y,w,h,exflags:=<0>,menu:=<0>,CodePage:=<0>
+    RCENUM3 = 1
+    RCDIALOG CodePage
+    dd 0xFFFF0001, 0x00000000
+    dd exflags, flags
+    dw items,x,y,w,h
+    dd 0
+    endm
+
 CAPTION macro name
     dw name,0
     endm
@@ -146,10 +156,15 @@ DLGITEM macro x,y,w,h,idc,name,flags,exflags:=<0>,class:=<RC_BUTTON>
     endif
     dw x,y,w,h,idc
     if RCENUM3
-     dw 0,-1,class,name,0
-    else
-     dw -1,class,name,0,0
+     dw 0
     endif
+    dw -1,class
+    ifidn @SubStr(name,1,1),<">
+     @CStr(name)
+    else
+     dw name,0
+    endif
+    dw 0
     endm
 
 PUSHBUTTON macro name,idc,x,y,w,h,flags:=<0>

@@ -1,5 +1,4 @@
 define _USE_MATH_DEFINES
-define WIN32_LEAN_AND_MEAN
 
 .pragma list(push, 0)
 
@@ -8,18 +7,20 @@ include DirectX/d2d1.inc
 include stdio.inc
 include math.inc
 include immintrin.inc
+include commctrl.inc
+include winres.inc
 include tchar.inc
 
 .pragma list(pop)
 
-define CLASS_NAME <"MainWindowClass">
-define WINDOW_NAME <"https://x.com/yuruyurau/status/2091536763152142373">
-
-define WINDOWSTYLES WS_OVERLAPPEDWINDOW
+define X_LINK       <"https://x.com/yuruyurau/status/2091536763152142373">
+define CLASS_NAME   <"MainWindowClass">
+define WINDOWSTYLES WS_VISIBLE or WS_POPUP
 define ID_TIMER     1
-define MAXOBJ 10000
-define STEPDIV 240
-define TIMER 30
+define MAXOBJ       10000
+define STEPDIV      240
+define TIMER        30
+define IDD_HELP     129
 
 .class CApplication
 
@@ -151,7 +152,10 @@ CApplication::OnSize proc width:UINT, height:UINT
         sub m_rc.bottom,100
     .endif
     .if ( CreateDeviceResources() )
-        .return ErrorMessage(eax, "CreateDeviceResources()" )
+        .if ( eax != 0x80070578 )
+            ErrorMessage(eax, "CreateDeviceResources()" )
+        .endif
+        .return
     .endif
 
     .if ( m_pRT )
@@ -189,6 +193,45 @@ CApplication::OnRender proc
         .endif
     .endif
     .return hr
+    endp
+
+
+OnClose proc hWnd:HWND
+    EndDialog(ldr(hWnd), 0)
+    ret
+    endp
+
+
+SysLinkDlgProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+    .switch ldr(message)
+    .case WM_INITDIALOG
+        .new ic:INITCOMMONCONTROLSEX = { INITCOMMONCONTROLSEX, ICC_LINK_CLASS }
+        .ifd !InitCommonControlsEx(&ic)
+            .return( FALSE )
+        .endif
+        CreateWindowEx(0, WC_LINK, "Source: <a href=\"" X_LINK "\">x.com/yuruyurau</A>",
+            WS_VISIBLE or WS_CHILD, 20, 180, 180, 20,
+            hWnd, IDC_SYSLINK, HINST_THISCOMPONENT, NULL)
+        .return( TRUE )
+    .case WM_COMMAND
+    .case WM_CLOSE
+        EndDialog(ldr(hWnd), 0)
+       .return( TRUE )
+    .case WM_NOTIFY
+        ldr rdx,wParam
+        ldr rcx,lParam
+        .if ( edx != IDC_SYSLINK )
+            .return( FALSE )
+        .endif
+        .switch [rcx].NMHDR.code
+        .case NM_CLICK
+        .case NM_RETURN
+            .if ( [rcx].NMLINK.item.iLink == 0 )
+                ShellExecute(NULL, L"open", &[rcx].NMLINK.item.szUrl, NULL, NULL, SW_SHOW)
+            .endif
+        .endsw
+    .endsw
+    .return( 0 )
     endp
 
 
@@ -260,15 +303,7 @@ CApplication::OnKeyDown proc wParam:WPARAM
         .endif
         .endc
     .case VK_F1
-        MessageBox(
-            NULL,
-            "F11\t\tToggle full screen\n"
-            "Enter\t\tDefault\n"
-            "Up/Down\t\tSpeed\n"
-            "Left/Right\t\tIntensity\n"
-            "Home/End\tPoint size\n"
-            "PgUp/PgDn\tPoint Count\n",
-            "Function Keys", MB_OK)
+        DialogBox(m_hInstance, MAKEINTRESOURCE(IDD_HELP), NULL, &SysLinkDlgProc)
     .endsw
     .return 0
     endp
@@ -483,8 +518,15 @@ WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         movzx eax,word ptr lParam[2]
         app.OnSize(edx, eax)
         .endc
+    .case WM_LBUTTONDOWN
+        ReleaseCapture()
+        SendMessageW(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0)
+       .return(0)
     .case WM_KEYDOWN
         app.OnKeyDown(wParam)
+       .endc
+    .case WM_RBUTTONDOWN
+        app.OnKeyDown(VK_F1)
        .endc
     .case WM_CLOSE
         app.OnClose()
@@ -531,7 +573,7 @@ CApplication::CreateApplicationWindow proc uses rdi
             sizeof(LONG_PTR),               ; .cbWndExtra
             m_hInstance,                    ; .hInstance
             NULL,                           ; .hIcon
-            LoadCursor(NULL, IDC_ARROW),    ; .hCursor
+            LoadCursor(NULL, IDC_HAND),     ; .hCursor
             GetStockObject(BLACK_BRUSH),    ; .hbrBackground
             NULL,                           ; .lpszMenuName
             CLASS_NAME,                     ; .lpszClassName
@@ -575,7 +617,7 @@ CApplication::CreateApplicationWindow proc uses rdi
        .new rc:RECT = { 100, 100, ecx, edx }
         AdjustWindowRect(&rc, WINDOWSTYLES, FALSE)
         mov hr,E_UNEXPECTED
-        .if CreateWindowEx(0, CLASS_NAME, WINDOW_NAME, WINDOWSTYLES,
+        .if CreateWindowEx(0, CLASS_NAME, X_LINK, WINDOWSTYLES,
                 rc.left, rc.top, rc.right, rc.bottom, NULL, NULL, m_hInstance, rbx)
             mov m_hwnd,rax
             mov hr,S_OK
@@ -586,11 +628,9 @@ CApplication::CreateApplicationWindow proc uses rdi
 
 
 CApplication::ErrorMessage proc hr:HRESULT, format:LPTSTR
-
   local message[512]:wchar_t
   local buffer[16]:wchar_t
   local szMessage:LPTSTR
-
     ldr edx,hr
     .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
         mov hr,HRESULT_CODE(edx)
@@ -612,7 +652,6 @@ CApplication::Release proc
     ret
     endp
 
-; Provides the entry point to the application
 
 CApplication::CApplication proc hInstance:HINSTANCE
     .if @ComAlloc(CApplication)
@@ -630,10 +669,6 @@ CApplication::CApplication proc hInstance:HINSTANCE
 
 
 _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
-
-    ; Ignore the return value because we want to continue running even in the
-    ; unlikely event that HeapSetInformation fails.
-
     HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
     .new hr:HRESULT = CoInitialize(NULL)
     .if (SUCCEEDED(hr))
@@ -644,5 +679,22 @@ _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:L
     .endif
     .return hr
     endp
+
+RCBEGIN
+    RCTYPES 1
+    RCENTRY RT_DIALOG
+    RCENUMN 1
+    RCENUMX IDD_HELP
+    RCLANGX LANGID_US
+    STYLE equ DS_SETFONT or DS_MODALFRAME or DS_FIXEDSYS or WS_POPUP or WS_CAPTION or WS_SYSMENU
+    DIALOGEX STYLE, 4, 100, 100, 160, 130
+    CAPTION "Windows samples"
+    FONT 12, "MS Shell Dlg", 400, 0, 1
+    LTEXT "Funcion Keys",IDC_STATIC,10,10,50,12
+    LTEXT "Enter\nUp/Down\nLeft/Right\nPgUp/PgDn\nHome/End\nF11",IDC_STATIC,15,20,40,60
+    LTEXT "Default\nSpeed\nIntensity\nPoint Count\nPoint size\nToggle full screen",IDC_STATIC,70,20,60,60
+    DEFPUSHBUTTON "OK",IDOK,60,100,39,12
+    DLGEND
+    RCEND
 
     end _tstart

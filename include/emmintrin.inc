@@ -42,9 +42,6 @@ _MM_SHUFFLE2 macro x,y
 ifndef _mmopab
 _mmopab macro o, a, b
     o a,b
-    ifidn typeid(a),<near>
-	retm<xmm0>
-    endif
     retm <a>
     endm
 endif

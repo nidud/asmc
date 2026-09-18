@@ -15,6 +15,7 @@ include expreval.inc
 include qfloat.inc
 include tokenize.inc
 include lqueue.inc
+include macro.inc
 
     .data
      ofss   db T_SI,    T_DI,    T_CX,    T_CX
@@ -382,6 +383,7 @@ immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
     .endif
     Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
     mov TokenCount,eax
+    ExpandLine( CurrSource, rdi ) ; v2.39.13: added
     .for ( i = 0, rdi = result : count : count--, i++ )
         .break .ifd EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR
         .if opnd.mem_type & MT_FLOAT

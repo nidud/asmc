@@ -4714,6 +4714,7 @@ endif
         HandleStringInstructions( &CodeInfo, &opndx )
 
     .else
+
         .if ( ebx > 1 )
 
             ; v1.96: check if a third argument is ok
@@ -4734,6 +4735,9 @@ endif
                 .endw
                 mov CodeInfo.pinstr,rdx
             .endif
+
+            assume rbx:nothing, rsi:nothing
+
             ;
             ; v2.06: moved here from process_const()
             ;
@@ -4779,25 +4783,16 @@ endif
             ; for some instructions, the "wide" flag has to be removed selectively.
             ; this is to be improved - by a new flag in struct instr_item.
 
-            ; added v2.31.32
-
             mov eax,CodeInfo.token
-            .if ( eax < VEX_START && eax >= T_ADDPD && j > 1 && opndx[expr].kind == EXPR_CONST )
-                mov rdx,opndx[expr].quoted_string
-                .if rdx
-                    .if ( [rdx].asm_tok.token == T_STRING && [rdx].asm_tok.dirtype == '{' )
-                        mov eax,T_MOVAPS
-                    .endif
-                .endif
-            .endif
-
-            mov ecx,4
             .switch eax
+            .case T_MOV
+                ;; don't use the Wide bit for moves to/from special regs
+                .endc .if !( CodeInfo.opnd[OPND1].type & OP_RSPEC || CodeInfo.opnd[OPNI2].type & OP_RSPEC )
             .case T_PUSH
             .case T_POP
                 ;; v2.06: REX.W prefix is always 0, because size is either 2 or 8
-                and CodeInfo.Rex,0x7
-               .endc
+                ;;  and CodeInfo.Rex,0x7
+                ;; .endc
             .case T_CALL
             .case T_JMP
             .case T_VMREAD
@@ -4805,94 +4800,18 @@ endif
                 ;; v2.02: previously rex-prefix was cleared entirely,
                 ;; but bits 0-2 are needed to make "call rax" and "call r8"
                 ;; distinguishable!
-
                 and CodeInfo.Rex,0x7
                .endc
-                ;; v2.31.32: immediate operand to XMM { 1.0, 2.0 }
-            .case T_MOVAPS
-                ;; v2.31.24: immediate operand to XMM
-                add ecx,8
-            .case T_MOVQ
-            .case T_MOVSD
-            .case T_ADDSD
-            .case T_SUBSD
-            .case T_MULSD
-            .case T_DIVSD
-            .case T_COMISD
-            .case T_UCOMISD
-                add ecx,4
-            .case T_MAXSS
-            .case T_MINSS
-            .case T_ADDSS
-            .case T_SUBSS
-            .case T_MULSS
-            .case T_DIVSS
-            .case T_COMISS
-            .case T_UCOMISS
-            .case T_MOVD
-            .case T_MOVSS
-                .endc .if ( MODULE.masm_compat_gencode != 0 )
-                .endc .if ( CodeInfo.opnd[OPND1].type != OP_XMM )
-                .endc .if !( CodeInfo.opnd[OPNI2].type & OP_I_ANY )
-                .return imm2xmm( tokenarray, &opndx[expr], ecx )
-            .case T_MOV:
-                ;; don't use the Wide bit for moves to/from special regs
-                .if ( CodeInfo.opnd[OPND1].type & OP_RSPEC || CodeInfo.opnd[OPNI2].type & OP_RSPEC )
-                    and CodeInfo.Rex,0x7
-                .endif
-                .endc
             .endsw
         .endif
 
-        assume rbx:nothing, rsi:nothing
-
-        mov eax,CodeInfo.token
-        mov ecx,CodeInfo.opnd[OPND1].type
-        mov edx,CodeInfo.opnd[OPNI2].type
-
-        .if ( ( ecx & OP_M_ANY ) || ( edx & OP_M_ANY ) )
-
-            mov rbx,opndx[expr].mbr
-            .if ( ecx & OP_M_ANY )
-                mov rbx,opndx.mbr
-            .endif
-            .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.mem_type == MT_BITS )
-
-                ; v2.36.44 - Handle Masm RECORD fields errors
-
-                .if ( !MODULE.masm_compat_gencode && [rbx].asym.crecord )
-
-                    ; v2.36.39 - Handle C-type RECORD fields
-
-                    .switch eax
-                    .case T_OR
-                    .case T_AND
-                    .case T_XOR
-                    .case T_TEST
-                    .case T_CMP
-                        .if ( edx & OP_IS )
-                            xor ebx,ebx
-                        .endif
-                        .endc
-                    .case T_MOV
-                    .case T_MOVZX
-                        .if ( ecx & OP_R )
-                            xor ebx,ebx
-                        .elseif ( edx & ( OP_IS or OP_R ) )
-                            xor ebx,ebx
-                        .endif
-                    .endsw
-                .endif
-                .if ( rbx == 0 )
-                    mov ecx,eax
-                   .return( CRecordField(ecx, &opndx, &opndx[expr]) )
-                .elseif !( ecx & OP_MS && edx & OP_MS )
-                    .return( asmerr( 2166 ) )
-                .endif
-            .endif
-        .endif
-
         .if ( !MODULE.masm_compat_gencode )
+
+            ; added v2.31.32
+
+            mov eax,CodeInfo.token
+            mov ecx,CodeInfo.opnd[OPND1].type
+            mov edx,CodeInfo.opnd[OPNI2].type
 
             .if ( ( ecx & OP_M_ANY ) && ( edx & OP_M_ANY ) )
 
@@ -4913,48 +4832,98 @@ endif
                 .case T_COMISD
                     .return mem2mem( ecx, edx, tokenarray, &opndx )
                 .endsw
-            .endif
-            xor ebx,ebx
-            .if ( eax == T_COMISS && ecx == OP_M32 && ( edx & OP_I_ANY ) )
-                inc ebx
-                mov ecx,4
-            .elseif ( eax == T_COMISD && ecx == OP_M64 && ( edx & OP_I_ANY ) )
-                inc ebx
-                mov ecx,8
-            .elseif ( ( ecx == OP_XMM ) && ( edx & OP_I_ANY ) )
 
-                mov ecx,4
-                .switch eax
+            .elseif ( ( edx & OP_I_ANY ) && eax < VEX_START && eax >= T_ADDPD &&
+                j > 1 && opndx[expr].kind == EXPR_CONST )
 
-                    ;; v2.31.24: immediate operand to XMM
-                    ;; v2.31.32: immediate operand to XMM { 1.0, 2.0 }
+                mov rdx,opndx[expr].quoted_string
+                .if rdx
+                    .if ( [rdx].asm_tok.token == T_STRING && [rdx].asm_tok.dirtype == '{' )
+                        mov eax,T_MOVAPS
+                    .endif
+                .endif
+                xor ebx,ebx
 
-                .case T_MOVAPS
-                    add ecx,8
-                .case T_MOVQ
-                .case T_MOVSD
-                .case T_ADDSD
-                .case T_SUBSD
-                .case T_MULSD
-                .case T_DIVSD
-                .case T_COMISD
-                .case T_UCOMISD
-                    add ecx,4
-                .case T_ADDSS
-                .case T_SUBSS
-                .case T_MAXSS
-                .case T_MINSS
-                .case T_MULSS
-                .case T_DIVSS
-                .case T_COMISS
-                .case T_UCOMISS
-                .case T_MOVD
-                .case T_MOVSS
+                .if ( ecx == OP_XMM )
+
+                    mov ecx,4
+                    .switch eax
+                        ;; v2.31.32: immediate operand to XMM { 1.0, 2.0 }
+                    .case T_MOVAPS
+                        ;; v2.31.24: immediate operand to XMM
+                        add ecx,8
+                    .case T_MOVQ
+                    .case T_MOVSD
+                    .case T_ADDSD
+                    .case T_SUBSD
+                    .case T_MULSD
+                    .case T_DIVSD
+                    .case T_COMISD
+                    .case T_UCOMISD
+                        add ecx,4
+                    .case T_MAXSS
+                    .case T_MINSS
+                    .case T_ADDSS
+                    .case T_SUBSS
+                    .case T_MULSS
+                    .case T_DIVSS
+                    .case T_COMISS
+                    .case T_UCOMISS
+                    .case T_MOVD
+                    .case T_MOVSS
+                        inc ebx
+                    .endsw
+                .elseif ( eax == T_COMISS && ecx == OP_M32 )
                     inc ebx
-                .endsw
-            .endif
-            .if ( ebx )
-                .return imm2xmm( tokenarray, &opndx[expr], ecx )
+                    mov ecx,4
+                .elseif ( eax == T_COMISD && ecx == OP_M64 )
+                    inc ebx
+                    mov ecx,8
+                .endif
+                .if ( ebx )
+                    .return imm2xmm( tokenarray, &opndx[expr], ecx )
+                .endif
+
+            .elseif ( ( ecx & OP_M_ANY ) || ( edx & OP_M_ANY ) )
+
+                mov rbx,opndx[expr].mbr
+                .if ( ecx & OP_M_ANY )
+                    mov rbx,opndx.mbr
+                .endif
+                .if ( rbx && [rbx].asym.state == SYM_STRUCT_FIELD && [rbx].asym.mem_type == MT_BITS )
+
+                    ; v2.36.44 - Handle Masm RECORD fields errors
+
+                    .if ( [rbx].asym.crecord )
+
+                        ; v2.36.39 - Handle C-type RECORD fields
+
+                        .switch eax
+                        .case T_OR
+                        .case T_AND
+                        .case T_XOR
+                        .case T_TEST
+                        .case T_CMP
+                            .if ( edx & OP_IS )
+                                xor ebx,ebx
+                            .endif
+                            .endc
+                        .case T_MOV
+                        .case T_MOVZX
+                            .if ( ecx & OP_R )
+                                xor ebx,ebx
+                            .elseif ( edx & ( OP_IS or OP_R ) )
+                                xor ebx,ebx
+                            .endif
+                        .endsw
+                    .endif
+                    .if ( rbx == 0 )
+                        mov ecx,eax
+                       .return( CRecordField(ecx, &opndx, &opndx[expr]) )
+                    .elseif !( ecx & OP_MS && edx & OP_MS )
+                        .return( asmerr( 2166 ) )
+                    .endif
+                .endif
             .endif
         .endif
     .endif

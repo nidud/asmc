@@ -7,27 +7,43 @@
 
 include stdafx.inc
 
-T proto {
-  _mm_move_sd(t, _mm_add_sd(_mm_move_sd(xmm0, t), M_PI/20.0))
-  }
+define TIMER   30
+define STEPDIV 20
+define MAXOBJ  10000
 
-A proto {
-  _mm_move_sd(i, _mm_cvtsi32_sd(xmm0, ebx))
-  mov eax,ebx
-  and eax,15
-  imul eax,eax,13
-  _mm_move_sd(m, _mm_cvtsi32_sd(xmm1, eax))
-  _mm_move_sd(k, _mm_sin_sd(xmm0))
-  _mm_move_sd(k, _mm_mul_sd(_mm_mul_sd(_mm_cos_sd(_mm_mul_sd(_mm_move_sd(xmm0, i), 5.0)), 9.0), k))
-  _mm_move_sd(e, _mm_cos_sd(_mm_add_sd(_mm_move_sd(xmm0, i), xmm0)))
-  _mm_move_sd(e, _mm_mul_sd(_mm_mul_sd(_mm_cos_sd(_mm_mul_sd(_mm_move_sd(xmm0, i), 3.0)), e), 9.0))
-  _mm_move_sd(d, _mm_add_sd(_mm_div_sd(_mm_pow_sd(_mm_mag_sd(xmm0, _mm_move_sd(xmm1, k)), 3), 1999.0), 1.5))
-  _mm_div_sd(_mm_pow_sd(_mm_sin_sd(_mm_add_sd(_mm_mul_sd(_mm_move_sd(xmm0, t), 0.5), m)), 3), 3.0)
-  _mm_move_sd(d, _mm_sub_sd(_mm_move_sd(xmm1, d), xmm0))
-  _mm_move_sd(c, _mm_add_sd(_mm_sub_sd(_mm_div_sd(xmm1, 16.0), _mm_div_sd(_mm_move_sd(xmm0, t), 48.0)), m))
-  movsd p,pow(d, _mm_sin_sd(_mm_add_sd(_mm_sub_sd(_mm_mul_sd(_mm_move_sd(xmm0, d), xmm0), t), m)))
-  _mm_move_sd(x, _mm_add_sd(_mm_add_sd(_mm_mul_sd(_mm_sin_sd(c), 99.0), 200.0), _mm_mul_sd(_mm_move_sd(xmm1, k), p)))
-  _mm_move_sd(y, _mm_add_sd(_mm_add_sd(_mm_mul_sd(_mm_sin_sd(_mm_mul_sd(_mm_move_sd(xmm0, c), 4.0)), 99.0), 200.0), _mm_mul_sd(_mm_move_sd(xmm1, e), p)))
-  }
+define X_LINK  <"https://x.com/yuruyurau/status/2090832898488459699">
+
+CApplication::Point proc id:UINT
+
+   .new m:real4, e, d
+
+    ldr edx,id
+    mov eax,edx
+    and eax,15
+    imul eax,eax,13
+
+    _mm_move_ss(m, _mm_cvt_si2ss(xmm0, eax))
+    _mm_move_ss(xmm6, _mm_sin_ss(_mm_cvt_si2ss(xmm7, edx)))
+    _mm_cos_ss(_mm_mul_ss(_mm_move_sd(xmm0, xmm7), 5.0))
+    _mm_move_ss(xmm6, _mm_mul_ss(_mm_mul_ss(xmm0, 9.0), xmm6))
+    _mm_move_ss(e, _mm_cos_ss(_mm_add_ss(_mm_move_ss(xmm0, xmm7), xmm0)))
+    _mm_cos_ss(_mm_mul_ss(_mm_move_ss(xmm0, xmm7), 3.0))
+    _mm_move_ss(e, _mm_mul_ss(_mm_mul_ss(xmm0, e), 9.0))
+    _mm_pow_ss(_mm_mag_ss(xmm0, _mm_move_ss(xmm1, xmm6)), 3)
+    _mm_move_ss(d, _mm_add_ss(_mm_div_ss(xmm0, 1999.0), 1.5))
+    _mm_sin_ss(_mm_add_ss(_mm_mul_ss(_mm_move_ss(xmm0, m_time), 0.5), m))
+    _mm_div_ss(_mm_pow_ss(xmm0, 3), 3.0)
+    _mm_move_ss(d, _mm_sub_ss(_mm_move_ss(xmm1, d), xmm0))
+    _mm_div_ss(_mm_move_ss(xmm0, m_time), 48.0)
+    _mm_move_ss(xmm7, _mm_add_ss(_mm_sub_ss(_mm_div_ss(xmm1, 16.0), xmm0), m))
+    movss d,powf(d, _mm_sin_ss(_mm_add_ss(_mm_sub_ss(_mm_mul_ss(_mm_move_ss(xmm0, d), xmm0), m_time), m)))
+    _mm_add_ss(_mm_mul_ss(_mm_sin_ss(xmm7), 99.0), 200.0)
+    _mm_move_ss(m, _mm_add_ss(xmm0, _mm_mul_ss(_mm_move_ss(xmm1, xmm6), d)))
+    _mm_add_ss(_mm_mul_ss(_mm_sin_ss(_mm_mul_ss(_mm_move_ss(xmm0, xmm7), 4.0)), 99.0), 200.0)
+    _mm_add_ss(xmm0, _mm_mul_ss(_mm_move_ss(xmm1, e), d))
+    _mm_move_ss(xmm1, xmm0)
+    _mm_move_ss(xmm0, m)
+    ret
+    endp
 
 include winmain.inc

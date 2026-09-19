@@ -874,7 +874,7 @@ ParseParams proc __ccall private uses rsi rdi rbx p:asym_t, i:int_t, tokenarray:
             ; arguments aren't "pushed".
             ;
             ; asmc: Win64 is right to left.
-            
+
             .if !( flags & _P_LEFT )
 
                 mov [rdi].asym.nextparam,[rsi].paralist
@@ -2129,14 +2129,18 @@ EndpDir proc __ccall uses rbx i:int_t, tokenarray:token_t
     endp
 
 ;
-; handles win64 directives
-; .allocstack
-; .endprolog
-; .pushframe
-; .pushreg
-; .savereg
-; .savexmm128
-; .setframe
+; handles win64 --  /unwindv3 directives
+;
+;                   .beginepilog
+;  .allocstack      .freestack
+;  .endprolog       .endepilog
+;  .pushframe       .popframe
+;  .pushreg         .popreg
+;  .savereg         .restorereg
+;  .savexmm128      .restorexmm128
+;  .setframe        .unsetframe
+;                   .push2reg
+;                   .pop2reg
 ;
 
 ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
@@ -2393,6 +2397,18 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
            .endc
         .endsw
         .endc
+ifdef _UNWINDV3
+        .case T_DOT_BEGINEPILOG
+        .case T_DOT_ENDEPILOG
+        .case T_DOT_FREESTACK
+        .case T_DOT_POP2REG
+        .case T_DOT_POPFRAME
+        .case T_DOT_POPREG
+        .case T_DOT_PUSH2REG
+        .case T_DOT_RESTOREREG
+        .case T_DOT_RESTOREXMM128
+        .case T_DOT_UNSETFRAME
+endif
     .endsw
     .if ( [rbx].token != T_FINAL )
         .return( asmerr( 2008, [rbx].string_ptr ) )

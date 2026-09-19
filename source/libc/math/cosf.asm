@@ -5,20 +5,60 @@
 ;
 
 include math.inc
+ifdef _WIN64
+include intrin.inc
+include fltintrn.inc
+endif
 
     .code
 
-cosf proc _x:float
+cosf proc x:float
 ifdef _WIN64
-   .new x:float = xmm0
+    _mm_store_ps(xmm1, xmm0)
+    _mm_mul_ps(xmm0, { 0.159154943, 0.159154943, 0.159154943, 0.159154943 })
+    _mm_round_ps(xmm0, _MM_FROUND_TO_NEAREST_INT or _MM_FROUND_NO_EXC)
+    _mm_mul_ps(xmm0, { M_TWOPI, M_TWOPI, M_TWOPI, M_TWOPI })
+    _mm_sub_ps(xmm1, xmm0)
+    _mm_store_ps(xmm0, xmm1)
+
+    _mm_and_ps(xmm1, { -0.0, -0.0, -0.0, -0.0 })
+    _mm_store_ps(xmm2, xmm1)
+    _mm_or_ps(xmm2, { M_PI, M_PI, M_PI, M_PI })
+    _mm_store_ps(xmm3, xmm1)
+    _mm_andnot_ps(xmm3, xmm0)
+    _mm_sub_ps(xmm2, xmm0)
+    _mm_cmple_ps(xmm3, { M_PI_2, M_PI_2, M_PI_2, M_PI_2 })
+    _mm_store_ps(xmm4, xmm3)
+    _mm_and_ps(xmm0, xmm3)
+    _mm_andnot_ps(xmm3, xmm2)
+    _mm_or_ps(xmm0, xmm3)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_mul_ps(xmm1, xmm0)
+    _mm_store_ps(xmm0, xmm4)
+    _mm_and_ps(xmm0, { 1.0, 1.0, 1.0, 1.0 })
+    _mm_andnot_ps(xmm4, { -1.0, -1.0, -1.0, -1.0 })
+    _mm_or_ps(xmm0, xmm4)
+
+    _mm_store_ps(xmm3, { -2.6051615e-07, -0.49992746, 0.041493919, -0.0012712436 })
+    _mm_store_ps(xmm2, _mm_shuffle_ps(xmm3, xmm3, _MM_SHUFFLE(0,0,0,0)))
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_store_ps(xmm3, { -0.5, +0.041666638, -0.0013888378, +2.4760495e-05 })
+    _mm_store_ps(xmm4, xmm3)
+    _mm_add_ps(xmm2, _mm_shuffle_ps(xmm4, xmm4, _MM_SHUFFLE(3,3,3,3)))
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_store_ps(xmm4, xmm3)
+    _mm_add_ps(xmm2, _mm_shuffle_ps(xmm4, xmm4, _MM_SHUFFLE(2,2,2,2)))
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_store_ps(xmm4, xmm3)
+    _mm_add_ps(xmm2, _mm_shuffle_ps(xmm4, xmm4, _MM_SHUFFLE(1,1,1,1)))
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_add_ps(xmm2, _mm_shuffle_ps(xmm3, xmm3, _MM_SHUFFLE(0,0,0,0)))
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_add_ps(xmm2, { 1.0, 1.0, 1.0, 1.0 })
+    _mm_mul_ps(xmm0, xmm2)
 else
-    define x _x
-endif
-    fld     x
+    fld x
     fcos
-ifdef _WIN64
-    fstp    x
-    movss   xmm0,x
 endif
     ret
     endp

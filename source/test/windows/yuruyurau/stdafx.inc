@@ -111,7 +111,7 @@ Sine proc vectorcall x:float
 
     VectorModAngles(xmm0)
 
-    _mm_and_ps(xmm1, { -0x0, -0x0, -0x0, -0x0 })
+    _mm_and_ps(xmm1, { -0.0, -0.0, -0.0, -0.0 })
     _mm_store_ps(xmm2, xmm1)
     _mm_or_ps(xmm2, { M_PI, M_PI, M_PI, M_PI })
     _mm_store_ps(xmm3, xmm1)
@@ -148,7 +148,7 @@ Cosine proc vectorcall x:float
 
     VectorModAngles(xmm0)
 
-    _mm_and_ps(xmm1, { -0x0, -0x0, -0x0, -0x0 })
+    _mm_and_ps(xmm1, { -0.0, -0.0, -0.0, -0.0 })
     _mm_store_ps(xmm2, xmm1)
     _mm_or_ps(xmm2, { M_PI, M_PI, M_PI, M_PI })
     _mm_store_ps(xmm3, xmm1)

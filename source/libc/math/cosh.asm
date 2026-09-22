@@ -12,8 +12,10 @@ include intrin.inc
 cosh proc x:double
 ifdef _WIN64
     exp(_mm_and_pd(xmm0, { 0x7FFFFFFFFFFFFFFF, 0 }))
-    _mm_div_sd(_mm_move_sd(xmm1, 1.0), xmm0)
-    _mm_div_sd(_mm_add_sd(xmm0, xmm1), 2.0)
+    _mm_move_sd(xmm1, 1.0)
+    _mm_div_sd(xmm1, xmm0)
+    _mm_add_sd(xmm0, xmm1)
+    _mm_div_sd(xmm0, 2.0)
 else
     and byte ptr x[7],0x7F
     exp(x)

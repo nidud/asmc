@@ -217,30 +217,4 @@ define NAN             (0.0 / 0.0)
 endif
 endif
 
-_mm_mag_sd macro a, b
-    mulsd a,a
-    mulsd b,b
-    addsd a,b
-    sqrtsd a,a
-    retm<a>
-    endm
-
-_mm_cos_sd macro x
-    cos(x)
-    retm<xmm0>
-    endm
-
-_mm_sin_sd macro x
-    sin(x)
-    retm<xmm0>
-    endm
-
-_mm_pow_sd macro x, i
-    movsd xmm1,xmm0
-    repeat i-1
-      mulsd xmm0,xmm1
-    endm
-    retm<xmm0>
-    endm
-
 .pragma list(pop)

@@ -78,16 +78,6 @@ _mm_mag_ss macro a, b
     retm<a>
     endm
 
-_mm_sin_ss macro x
-    Sine(x)
-    retm<xmm0>
-    endm
-
-_mm_cos_ss macro x
-    Cosine(x)
-    retm<xmm0>
-    endm
-
 _mm_pow_ss macro x, i
     movss xmm1,x
     repeat i-1
@@ -96,6 +86,10 @@ _mm_pow_ss macro x, i
     retm<x>
     endm
 
+ifdef _WIN64
+define Sine <sinf>
+define Cosine <cosf>
+else
 
 VectorModAngles proto vectorcall :real16 {
     _mm_store_ps(xmm1, xmm0)
@@ -185,6 +179,17 @@ Cosine proc vectorcall x:float
     _mm_mul_ps(xmm0, xmm2)
     ret
     endp
+endif
+
+_mm_sin_ss macro x
+    Sine(x)
+    retm<xmm0>
+    endm
+
+_mm_cos_ss macro x
+    Cosine(x)
+    retm<xmm0>
+    endm
 
  assume class:rbx
 

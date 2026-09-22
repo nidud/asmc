@@ -340,8 +340,8 @@ _mm_cvtss_sd macro a:=<xmm0>, b
 _mm_cvtsd_si32 macro a:=<xmm0>
     exitm<_mmopab(cvtsd2si, eax, a)>
     endm
-_mm_cvttsd_si32 macro a:=<xmm0>
-    exitm<_mmopab(cvttsd2si, eax, a)>
+_mm_cvttsd_si32 macro a:=<xmm0>, reg:=<eax>
+    exitm<_mmopab(cvttsd2si, reg, a)>
     endm
 
 _mm_cvtsi32_sd macro a, b
@@ -655,9 +655,9 @@ _mm_cvtsi32_si128 macro x, d
 	retm<xmm0>
     endif
     endm
-_mm_cvtsi128_si32 macro a:=<xmm0>
-    movd eax,a
-    retm<eax>
+_mm_cvtsi128_si32 macro a:=<xmm0>, reg:=<eax>
+    movd reg,a
+    retm<reg>
     endm
 
 _mm_packs_epi16 macro a:=<xmm0>, b:=<xmm1>
@@ -897,16 +897,7 @@ _mm_cvttsd_si64 macro x:=<xmm0>
     exitm<_mmopab(cvttsd2si, rax, x)>
     endm
 _mm_cvtsi64_sd macro x:=<xmm0>, reg:=<rax>
-    if (opattr(reg)) eq 48
-	cvtsi2sd x,reg
-    else
-	if (TYPEOF reg) eq 4 and not ((opattr(reg)) eq 48)
-	    mov eax,reg
-	else
-	    mov rax,reg
-	endif
-	cvtsi2sd x,rax
-    endif
+    cvtsi2sd x,reg
     retm<x>
     endm
 _mm_cvtsi64_si128 macro x, q

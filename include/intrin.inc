@@ -17,7 +17,7 @@ include mm3dnow.inc
 endif
 
 _serialize proto { ; SERIALIZE - serialize Instruction Execution
-    db 0x0F, 0x01, 0xE8
+    serialize
     }
 
 ;
@@ -974,19 +974,15 @@ __vmx_vmwrite proto watcall :ptr, :ptr {
 endif
 
 ifdef __MACHINEX86_X64
-
 __vmx_vmptrst proto watcall :ptr {
     vmptrst qword ptr [rax]
     }
-
 endif
 
 ifdef __MACHINEX86_X64
-
 __wbinvd proto :abs {
     wbinvd
     }
-
 endif
 
 ifdef __MACHINEX86
@@ -1110,7 +1106,6 @@ _subborrow_u32 proto :byte, :dword, :dword, :ptr {
 endif
 
 ifdef __MACHINEX64
-
 _addcarry_u64 proto :byte, :qword, :qword, :ptr {
     add     cl,-1
     adc     rdx,r8
@@ -1118,7 +1113,6 @@ _addcarry_u64 proto :byte, :qword, :qword, :ptr {
     setb    al
     movzx   eax,al
     }
-
 _subborrow_u64 proto :byte, :qword, :qword, :ptr {
     add     cl,-1
     sbb     rdx,r8
@@ -1126,7 +1120,6 @@ _subborrow_u64 proto :byte, :qword, :qword, :ptr {
     setb    al
     movzx   eax,al
     }
-
 endif
 
 endif

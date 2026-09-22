@@ -1031,9 +1031,17 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
         .case T_MOVQ
         .case T_COMISD
         .case T_UCOMISD
+        .case T_CMPEQSD
+        .case T_CMPLTSD
+        .case T_CMPLESD
+        .case T_CMPUNORDSD
+        .case T_CMPNEQSD
+        .case T_CMPNLTSD
+        .case T_CMPNLESD
+        .case T_CMPORDSD
             mov eax,8
             mov size,8
-            .endc
+           .endc
         .case T_MOV
             .if edx == OPND2
                 .if [rsi].Ofssize == USE64 && ( [rsi].opnd[OPND1].type & OP_R64 )
@@ -4860,6 +4868,14 @@ endif
                     .case T_DIVSD
                     .case T_COMISD
                     .case T_UCOMISD
+                    .case T_CMPEQSD
+                    .case T_CMPLTSD
+                    .case T_CMPLESD
+                    .case T_CMPUNORDSD
+                    .case T_CMPNEQSD
+                    .case T_CMPNLTSD
+                    .case T_CMPNLESD
+                    .case T_CMPORDSD
                         add ecx,4
                     .case T_MAXSS
                     .case T_MINSS
@@ -4869,6 +4885,14 @@ endif
                     .case T_DIVSS
                     .case T_COMISS
                     .case T_UCOMISS
+                    .case T_CMPEQSS
+                    .case T_CMPLTSS
+                    .case T_CMPLESS
+                    .case T_CMPUNORDSS
+                    .case T_CMPNEQSS
+                    .case T_CMPNLTSS
+                    .case T_CMPNLESS
+                    .case T_CMPORDSS
                     .case T_MOVD
                     .case T_MOVSS
                         inc ebx

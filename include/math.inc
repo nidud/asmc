@@ -113,6 +113,7 @@ _y1     proto __cdecl _X:double
 _yn     proto __cdecl _X:int_t, _Y:double
 
 round   proto __cdecl _X:double
+trunc   proto __cdecl _X:double
 
 ifdef _M_IX86
 
@@ -182,6 +183,7 @@ sqrtf   proto __cdecl _X:float
 ceilf   proto __cdecl _X:float
 floorf  proto __cdecl _X:float
 fmodf   proto __cdecl _X:float, _Y:float
+truncf  proto __cdecl _X:float
 
 _hypotf proto __cdecl _X:float, _Y:float
 

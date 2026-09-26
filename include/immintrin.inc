@@ -1847,11 +1847,13 @@ __vdecl_logf4	proto __vdecl :XVECTOR
 __vdecl_log2f4	proto __vdecl :XVECTOR
 __vdecl_sinhf4	proto __vdecl :XVECTOR
 __vdecl_tanhf4	proto __vdecl :XVECTOR
+__vdecl_truncf4 proto __vdecl :XVECTOR
 
 __vdecl_cosh2	proto __vdecl :XVECTOR
 __vdecl_exp2	proto __vdecl :XVECTOR
 __vdecl_exp22	proto __vdecl :XVECTOR
 __vdecl_fmod2	proto __vdecl :XVECTOR, :XVECTOR
+__vdecl_trunc2	proto __vdecl :XVECTOR
 
 __vdecl_srlf4	proto __vdecl :XVECTOR, :XVECTOR
 __vdecl_sllf4	proto __vdecl :XVECTOR, :XVECTOR
@@ -1862,27 +1864,40 @@ _mm_cos_ss macro x:=<xmm0>
     cosf(x)
     retm<xmm0>
     endm
-
+_mm_cos_ps macro x:=<xmm0>
+    __vdecl_cosf4(x)
+    retm<xmm0>
+    endm
 _mm_cos_sd macro x:=<xmm0>
     cos(x)
     retm<xmm0>
     endm
 
-_mm_cos_ps macro x:=<xmm0>
-    __vdecl_cosf4(x)
+_mm_acos_ss macro x:=<xmm0>
+    acosf(x)
     retm<xmm0>
     endm
-
 _mm_acos_ps macro x:=<xmm0>
     __vdecl_acosf4(x)
     retm<xmm0>
     endm
+_mm_acos_sd macro x:=<xmm0>
+    acos(x)
+    retm<xmm0>
+    endm
 
+_mm_cosh_ss macro x:=<xmm0>
+    coshf(x)
+    retm<xmm0>
+    endm
 _mm_cosh_ps macro x:=<xmm0>
     __vdecl_coshf4(x)
     retm<xmm0>
     endm
-
+_mm_cosh_sd macro x:=<xmm0>
+    cosh(x)
+    retm<xmm0>
+    endm
 _mm_cosh_pd macro x:=<xmm0>
     __vdecl_cosh2(x)
     retm<xmm0>
@@ -1892,22 +1907,28 @@ _mm_sin_ss macro x:=<xmm0>
     sinf(x)
     retm<xmm0>
     endm
-
+_mm_sin_ps macro x:=<xmm0>
+    __vdecl_sinf4(x)
+    retm<xmm0>
+    endm
 _mm_sin_sd macro x:=<xmm0>
     sin(x)
     retm<xmm0>
     endm
 
-_mm_sin_ps macro x:=<xmm0>
-    __vdecl_sinf4(x)
+_mm_sinh_ss macro x:=<xmm0>
+    sinhf(x)
     retm<xmm0>
     endm
-
 _mm_sinh_ps macro x:=<xmm0>
     __vdecl_sinhf4(x)
     retm<xmm0>
     endm
 
+_mm_asin_ss macro x:=<xmm0>
+    asinf(x)
+    retm<xmm0>
+    endm
 _mm_asin_ps macro x:=<xmm0>
     __vdecl_asinf4(x)
     retm<xmm0>
@@ -1917,17 +1938,19 @@ _mm_tan_ss macro x:=<xmm0>
     tanf(x)
     retm<xmm0>
     endm
-
+_mm_tan_ps macro x:=<xmm0>
+    __vdecl_tanf4(x)
+    retm<xmm0>
+    endm
 _mm_tan_sd macro x:=<xmm0>
     tan(x)
     retm<xmm0>
     endm
 
-_mm_tan_ps macro x:=<xmm0>
-    __vdecl_tanf4(x)
+_mm_tanh_ss macro x:=<xmm0>
+    tanhf(x)
     retm<xmm0>
     endm
-
 _mm_tanh_ps macro x:=<xmm0>
     __vdecl_tanhf4(x)
     retm<xmm0>
@@ -1988,7 +2011,6 @@ endif
     __vdecl_exp2f4(_mm_mul_ps(xmm0, g_X4FLOG2E))
     retm<xmm0>
     endm
-
 _mm_exp_pd macro x:=<xmm0>
 ifdif <x>,<xmm0>
     movapd xmm0,x
@@ -2001,19 +2023,26 @@ _mm_exp2_ps macro x:=<xmm0>
     __vdecl_exp2f4(x)
     retm<xmm0>
     endm
-
 _mm_exp2_pd macro x:=<xmm0>
     __vdecl_exp22(x)
     retm<xmm0>
     endm
 
-_mm_trunc_ps macro x:=<xmm0>
-    _mm_round_ps(x, _MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC)
+_mm_trunc_ss macro x:=<xmm0>
+    _mm_round_ss(x, _MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC)
     retm<x>
     endm
-_mm_trunc_pd macro x:=<xmm0>
-    _mm_round_pd(x, _MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC)
+_mm_trunc_sd macro x:=<xmm0>
+    _mm_round_sd(x, _MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC)
     retm<x>
+    endm
+_mm_trunc_ps macro x:=<xmm0>
+    __vdecl_truncf4(x)
+    retm<xmm0>
+    endm
+_mm_trunc_pd macro x:=<xmm0>
+    __vdecl_trunc2(x)
+    retm<xmm0>
     endm
 
 include zmmintrin.inc

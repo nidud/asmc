@@ -6,24 +6,20 @@
 
 include math.inc
 
-    .code
+.code
 
-asin proc _x:double
-ifdef _WIN64
-   .new x:double = xmm0
-else
-    define x _x
-endif
-    fld     x
-    fld     st(0)
-    fmul    st(1),st(0)
+asin proc x:double
+
+    fld x
+    fld st(0)
+    fmul st(1),st(0)
     fld1
     fsubr
     fsqrt
     fpatan
 ifdef _WIN64
-    fstp    x
-    movsd   xmm0,x
+    fstp x
+    movsd xmm0,x
 endif
     ret
     endp

@@ -3308,10 +3308,12 @@ endif
                 add i,16
             .endif
         .endf
+        mov rsi,info ; v2.39.15: ...
     .endif
 runqueue:
 
     ; v2.33.26 - Use proc language
+
     mov rdi,CurrProc
     .if ( [rsi].is_systemv && [rsi].auto_stack )
         .if ( resstack && argstack )

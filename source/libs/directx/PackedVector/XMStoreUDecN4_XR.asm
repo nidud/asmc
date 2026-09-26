@@ -13,8 +13,8 @@ XMStoreUDecN4_XR proc XM_CALLCONV pDestination:ptr XMUDECN4, V:FXMVECTOR
     ldr rcx,pDestination
     ldr xmm0,V
 
-    XMVectorMultiplyAdd( xmm0, _mm_get_epi32(510.0, 510.0, 510.0, 3.0), _mm_get_epi32(384.0, 384.0, 384.0, 0.0) )
-    XMVectorClamp( xmm0, g_XMZero, _mm_get_epi32(1023.0, 1023.0, 1023.0, 3.0) )
+    XMVectorMultiplyAdd( xmm0, _mm_setr_epi32(xmm1, 510.0, 510.0, 510.0, 3.0), _mm_setr_epi32(xmm2, 384.0, 384.0, 384.0, 0.0) )
+    XMVectorClamp( xmm0, g_XMZero, _mm_setr_epi32(xmm2, 1023.0, 1023.0, 1023.0, 3.0) )
     _mm_extract_epi16(xmm0, 0)
     and eax,0x3FF
     mov edx,eax

@@ -7,12 +7,8 @@ include math.inc
 
     .code
 
-tan proc _x:double
-ifdef _WIN64
-   .new x:double = xmm0
-else
-    define x _x
-endif
+tan proc x:double
+
     fld     x
     fptan
     fstp    st(0)

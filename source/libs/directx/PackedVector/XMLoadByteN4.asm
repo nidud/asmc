@@ -34,7 +34,7 @@ XMLoadByteN4 proc XM_CALLCONV pSource:ptr XMBYTEN4
 
     ;; Fix y, z and w because they are too large
 
-    _mm_mul_ps(xmm0, _mm_get_epi32(1.0/127.0, 1.0/(127.0*256.0), 1.0/(127.0*65536.0), 1.0/(127.0*65536.0*256.0)))
+    _mm_mul_ps(xmm0, { 1.0/127.0, 1.0/(127.0*256.0), 1.0/(127.0*65536.0), 1.0/(127.0*65536.0*256.0) } )
 
     ;; Clamp result (for case of -128)
 

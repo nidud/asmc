@@ -4,18 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 include math.inc
+include intrin.inc
 
     .code
 
 floorf proc x:float
 ifdef _WIN64
-    movss       xmm1,1.0
-    movss       xmm2,xmm0
-    cvttps2dq   xmm0,xmm0
-    cvtdq2ps    xmm0,xmm0
-    cmpltps     xmm2,xmm0
-    andps       xmm2,xmm1
-    subss       xmm0,xmm2
+    _mm_floor_ps(xmm0)
 else
   local w:word, n:word
     fld     x

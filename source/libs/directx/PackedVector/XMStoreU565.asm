@@ -16,7 +16,7 @@ XMStoreU565 proc XM_CALLCONV pDestination:ptr XMU565, V:FXMVECTOR
     ;; Bounds check
 
     _mm_max_ps(xmm0, g_XMZero)
-    _mm_min_ps(xmm0, _mm_get_epi32(31.0, 63.0, 31.0, 0.0))
+    _mm_min_ps(xmm0, { 31.0, 63.0, 31.0, 0.0 })
 
     ;; Convert to int with rounding
 

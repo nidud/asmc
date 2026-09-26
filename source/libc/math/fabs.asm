@@ -5,16 +5,17 @@
 ;
 
 include math.inc
+ifdef _WIN64
+include intrin.inc
+endif
 
-    .code
+.code
 
 _fabs proc x:double
 ifdef _WIN64
-    pcmpeqw xmm1,xmm1
-    psrlq   xmm1,1
-    andpd   xmm0,xmm1
+    andpd xmm0,g_X2IABSMASK
 else
-    fld     x
+    fld x
     fabs
 endif
     ret

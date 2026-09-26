@@ -31,11 +31,11 @@ XMLoadShortN2 proc XM_CALLCONV pSource:ptr XMSHORTN2
 
     ;; y + 0x8000 to undo the signed order.
 
-    _mm_add_ps(xmm0, _mm_get_epi32(0.0, 32768.0 * 65536.0, 0.0, 0.0))
+    _mm_add_ps(xmm0, { 0.0, 32768.0 * 65536.0, 0.0, 0.0 } )
 
     ;; Y is 65536 times too large
 
-    _mm_mul_ps(xmm0, _mm_get_epi32(1.0 / 65535.0, 1.0 / (65535.0 * 65536.0), 0.0, 0.0))
+    _mm_mul_ps(xmm0, { 1.0 / 65535.0, 1.0 / (65535.0 * 65536.0), 0.0, 0.0 } )
     ret
     endp
 

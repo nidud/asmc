@@ -6,22 +6,15 @@
 
 include math.inc
 
-    .code
+.code
 
-atan2 proc _y:double, _x:double
-ifdef _WIN64
-   .new x:double = xmm1
-   .new y:double = xmm0
-else
-    define x _x
-    define y _y
-endif
-    fld     y
-    fld     x
+atan2 proc y:double, x:double
+    fld y
+    fld x
     fpatan
 ifdef _WIN64
-    fstp    x
-    movsd   xmm0,x
+    fstp x
+    movsd xmm0,x
 endif
     ret
     endp

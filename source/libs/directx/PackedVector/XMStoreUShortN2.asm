@@ -17,7 +17,7 @@ XMStoreUShortN2 proc XM_CALLCONV pDestination:ptr XMUSHORTN2, V:FXMVECTOR
 
     _mm_max_ps(xmm0, g_XMZero)
     _mm_min_ps(xmm0, g_XMOne)
-    _mm_mul_ps(xmm0, _mm_get_epi32(65535.0, 65535.0, 65535.0, 65535.0))
+    _mm_mul_ps(xmm0, { 65535.0, 65535.0, 65535.0, 65535.0 })
 
     ;; Convert to int with rounding
 

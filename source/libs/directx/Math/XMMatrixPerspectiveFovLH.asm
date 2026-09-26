@@ -23,7 +23,7 @@ XMMatrixPerspectiveFovLH proc XM_CALLCONV uses xmm6 FovAngleY:float, AspectRatio
     _mm_store_ps(xmm0, xmm3)
     _mm_div_ss(xmm0, xmm5)
     _mm_store_ps(xmm1, xmm6)
-    _mm_xor_ps(xmm1, _mm_get_epi32(0x80000000, 0, 0, 0))
+    _mm_xor_ps(xmm1, { 0x80000000, 0, 0, 0 })
     _mm_mul_ss(xmm1, xmm4)
     _mm_unpacklo_ps(xmm6, xmm1)
     _mm_setzero_ps(xmm1)

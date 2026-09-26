@@ -14,7 +14,7 @@ XMStoreUByteN2 proc XM_CALLCONV pDestination:ptr XMUBYTEN2, V:FXMVECTOR
     ldr xmm0,V
 
     XMVectorSaturate(xmm0)
-    XMVectorMultiplyAdd(xmm0, _mm_get_epi32(255.0, 255.0, 255.0, 255.0), g_XMOneHalf)
+    XMVectorMultiplyAdd(xmm0, _mm_set_epi32(xmm1, 255.0, 255.0, 255.0, 255.0), g_XMOneHalf)
     XMVectorTruncate(xmm0)
     _mm_cvtps_epi32(xmm0)
     movq rdx,xmm0

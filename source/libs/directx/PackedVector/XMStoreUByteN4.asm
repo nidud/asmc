@@ -20,7 +20,7 @@ XMStoreUByteN4 proc XM_CALLCONV pDestination:ptr XMUBYTEN4, V:FXMVECTOR
 
     ;; Scale by multiplication
 
-    _mm_mul_ps(xmm1, _mm_get_epi32(255.0, 255.0*256.0*0.5, 255.0*256.0*256.0, 255.0*256.0*256.0*256.0*0.5))
+    _mm_mul_ps(xmm1, { 255.0, 255.0*256.0*0.5, 255.0*256.0*256.0, 255.0*256.0*256.0*256.0*0.5 })
 
     ;; Convert to int
 
@@ -28,7 +28,7 @@ XMStoreUByteN4 proc XM_CALLCONV pDestination:ptr XMUBYTEN4, V:FXMVECTOR
 
     ;; Mask off any fraction
 
-    _mm_and_si128(xmm1, _mm_get_epi32(0xFF, 0xFF shl (8-1), 0xFF shl 16, 0xFF shl (24-1)))
+    _mm_and_si128(xmm1, { 0xFF, 0xFF shl (8-1), 0xFF shl 16, 0xFF shl (24-1) })
 
     ;; Do a horizontal or of 4 entries
 

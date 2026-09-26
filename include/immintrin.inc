@@ -10,6 +10,10 @@ ifndef _M_X64
 .err <This header is specific to X86 and X64 targets>
 endif
 endif
+ifndef _MATH_DEFINES_DEFINED
+include math_defines.inc
+endif
+
 include wmmintrin.inc
 
 __m256		union
@@ -298,10 +302,14 @@ _mm256_permute_ps macro y:=<ymm0>, imm:=<0>
     retm<y>
     endm
 ifdef _XM_NO_INTRINSICS_
-_mm_permute_ps		proto __cdecl :oword, :sdword
+_mm_permute_ps	proto __cdecl :oword, :sdword
 else
-_mm_permute_ps macro x:=<xmm0>, imm:req
+_mm_permute_ps macro x:=<xmm0>, imm:=<0>
+ifdef __AVX__
     vpermilps x,x,imm
+else
+    shufps x,x,imm
+endif
     retm<x>
     endm
 endif
@@ -1706,6 +1714,307 @@ _mm256_extract_epi32	proto __cdecl :yword, :sdword
 ifdef _M_X64
 _mm256_extract_epi64	proto __cdecl :yword, :sdword
 endif
+
+; Math functions
+
+ifndef XVECTOR
+XVECTOR typedef REAL16
+endif
+
+.template XVEC4F
+    f1	REAL4 ?
+    f2	REAL4 ?
+    f3	REAL4 ?
+    f4	REAL4 ?
+   .ends
+
+.template XVEC4I
+    i1	SDWORD ?
+    i2	SDWORD ?
+    i3	SDWORD ?
+    i4	SDWORD ?
+   .ends
+
+.template XVEC2F
+    f1	REAL8 ?
+    f2	REAL8 ?
+   .ends
+
+.template XVEC2I
+    i1	SQWORD ?
+    i2	SQWORD ?
+   .ends
+
+ifdef __PE__
+define g_X4FZERO		<{ 0.0, 0.0, 0.0, 0.0 }>
+define g_X4FONE			<{ 1.0, 1.0, 1.0, 1.0 }>
+define g_X4FNEGZERO		<{ -0.0, -0.0, -0.0, -0.0 }>
+define g_X4FNEGONE		<{ -1.0, -1.0, -1.0, -1.0 }>
+define g_X4INAN			<{ 0xFFC00000, 0xFFC00000, 0xFFC00000, 0xFFC00000 }>
+define g_X4IQNAN		<{ 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 }>
+define g_X4IQNANTEST		<{ 0x007FFFFF, 0x007FFFFF, 0x007FFFFF, 0x007FFFFF }>
+define g_X4IINFINITY		<{ 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 }>
+define g_X4INEGINF		<{ 0xFF800000, 0xFF800000, 0xFF800000, 0xFF800000 }>
+
+define g_X4FLOG2E		<{ M_LOG2E, M_LOG2E, M_LOG2E, M_LOG2E }>
+define g_X4FPI			<{ M_PI, M_PI, M_PI, M_PI }>
+define g_X4FPI_2		<{ M_PI_2, M_PI_2, M_PI_2, M_PI_2 }>
+define g_X4FTWOPI		<{ M_TWOPI, M_TWOPI, M_TWOPI, M_TWOPI }>
+
+define g_X4FRECIPROCALTWOPI	<{ 0.159154943, 0.159154943, 0.159154943, 0.159154943 }>
+
+define g_X4FLOGEST0		<{ +1.442693, +1.442693, +1.442693, +1.442693 }>
+define g_X4FLOGEST1		<{ -0.721242, -0.721242, -0.721242, -0.721242 }>
+define g_X4FLOGEST2		<{ +0.479384, +0.479384, +0.479384, +0.479384 }>
+define g_X4FLOGEST3		<{ -0.350295, -0.350295, -0.350295, -0.350295 }>
+define g_X4FLOGEST4		<{ +0.248590, +0.248590, +0.248590, +0.248590 }>
+define g_X4FLOGEST5		<{ -0.145700, -0.145700, -0.145700, -0.145700 }>
+define g_X4FLOGEST6		<{ +0.057148, +0.057148, +0.057148, +0.057148 }>
+define g_X4FLOGEST7		<{ -0.010578, -0.010578, -0.010578, -0.010578 }>
+
+define g_X4I23			<{ 23, 23, 23, 23 }>
+
+define g_X4IEXPBIAS		<{ 127, 127, 127, 127 }>
+define g_X4ISUBNEXP		<{ -126, -126, -126, -126 }>
+define g_X4FARCCOEFFICIENTS0	<{ +1.5707963050, -0.2145988016, +0.0889789874, -0.0501743046 }>
+define g_X4FARCCOEFFICIENTS1	<{ +0.0308918810, -0.0170881256, +0.0066700901, -0.0012624911 }>
+
+define g_X4IMASKX		<{ 0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000 }>
+
+define g_X4IABSMASK		<{ 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF }>
+
+define g_X2FLOG2E		<{ M_LOG2E, M_LOG2E }>
+define g_X2FONE			<{ 1.0, 1.0 }>
+define g_X2IABSMASK		<{ 0x7FFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF }>
+else
+externdef g_X4FZERO:		XVEC4F
+externdef g_X4FONE:		XVEC4F
+externdef g_X4FNEGZERO:		XVEC4F
+externdef g_X4FNEGONE:		XVEC4F
+externdef g_X4INAN:		XVEC4I
+externdef g_X4IQNAN:		XVEC4I
+externdef g_X4IQNANTEST:	XVEC4I
+externdef g_X4IINFINITY:	XVEC4I
+externdef g_X4INEGINF:		XVEC4I
+externdef g_X4FLOG2E:		XVEC4F
+externdef g_X4FPI:		XVEC4F
+externdef g_X4FPI_2:		XVEC4F
+externdef g_X4FTWOPI:		XVEC4F
+externdef g_X4FRECIPROCALTWOPI: XVEC4F
+
+externdef g_X4FLOGEST0:		XVEC4F
+externdef g_X4FLOGEST1:		XVEC4F
+externdef g_X4FLOGEST2:		XVEC4F
+externdef g_X4FLOGEST3:		XVEC4F
+externdef g_X4FLOGEST4:		XVEC4F
+externdef g_X4FLOGEST5:		XVEC4F
+externdef g_X4FLOGEST6:		XVEC4F
+externdef g_X4FLOGEST7:		XVEC4F
+
+externdef g_X4I23:		XVEC4I
+externdef g_X4IEXPBIAS:		XVEC4I
+externdef g_X4ISUBNEXP:		XVEC4I
+externdef g_X4FARCCOEFFICIENTS0:XVEC4F
+externdef g_X4FARCCOEFFICIENTS1:XVEC4F
+externdef g_X4IABSMASK:		XVEC4I
+externdef g_X4IMASKX:		XVEC4I
+
+externdef g_X2FLOG2E:		XVEC2F
+externdef g_X2FONE:		XVEC2F
+externdef g_X2IABSMASK:		XVEC2I
+endif
+
+ifndef __vdecl
+ifdef _WIN64
+define __vdecl <>
+else
+define __vdecl <vectorcall>
+endif
+endif
+
+__vdecl_cosf4	proto __vdecl :XVECTOR
+__vdecl_coshf4	proto __vdecl :XVECTOR
+__vdecl_sinf4	proto __vdecl :XVECTOR
+__vdecl_tanf4	proto __vdecl :XVECTOR
+__vdecl_expf4	proto __vdecl :XVECTOR
+__vdecl_exp2f4	proto __vdecl :XVECTOR
+__vdecl_fmodf4	proto __vdecl :XVECTOR, :XVECTOR
+__vdecl_acosf4	proto __vdecl :XVECTOR
+__vdecl_asinf4	proto __vdecl :XVECTOR
+__vdecl_atanf4	proto __vdecl :XVECTOR
+__vdecl_atan2f4 proto __vdecl :XVECTOR, :XVECTOR
+__vdecl_logf4	proto __vdecl :XVECTOR
+__vdecl_log2f4	proto __vdecl :XVECTOR
+__vdecl_sinhf4	proto __vdecl :XVECTOR
+__vdecl_tanhf4	proto __vdecl :XVECTOR
+
+__vdecl_cosh2	proto __vdecl :XVECTOR
+__vdecl_exp2	proto __vdecl :XVECTOR
+__vdecl_exp22	proto __vdecl :XVECTOR
+__vdecl_fmod2	proto __vdecl :XVECTOR, :XVECTOR
+
+__vdecl_srlf4	proto __vdecl :XVECTOR, :XVECTOR
+__vdecl_sllf4	proto __vdecl :XVECTOR, :XVECTOR
+__vdecl_lbitf4	proto __vdecl :XVECTOR
+
+
+_mm_cos_ss macro x:=<xmm0>
+    cosf(x)
+    retm<xmm0>
+    endm
+
+_mm_cos_sd macro x:=<xmm0>
+    cos(x)
+    retm<xmm0>
+    endm
+
+_mm_cos_ps macro x:=<xmm0>
+    __vdecl_cosf4(x)
+    retm<xmm0>
+    endm
+
+_mm_acos_ps macro x:=<xmm0>
+    __vdecl_acosf4(x)
+    retm<xmm0>
+    endm
+
+_mm_cosh_ps macro x:=<xmm0>
+    __vdecl_coshf4(x)
+    retm<xmm0>
+    endm
+
+_mm_cosh_pd macro x:=<xmm0>
+    __vdecl_cosh2(x)
+    retm<xmm0>
+    endm
+
+_mm_sin_ss macro x:=<xmm0>
+    sinf(x)
+    retm<xmm0>
+    endm
+
+_mm_sin_sd macro x:=<xmm0>
+    sin(x)
+    retm<xmm0>
+    endm
+
+_mm_sin_ps macro x:=<xmm0>
+    __vdecl_sinf4(x)
+    retm<xmm0>
+    endm
+
+_mm_sinh_ps macro x:=<xmm0>
+    __vdecl_sinhf4(x)
+    retm<xmm0>
+    endm
+
+_mm_asin_ps macro x:=<xmm0>
+    __vdecl_asinf4(x)
+    retm<xmm0>
+    endm
+
+_mm_tan_ss macro x:=<xmm0>
+    tanf(x)
+    retm<xmm0>
+    endm
+
+_mm_tan_sd macro x:=<xmm0>
+    tan(x)
+    retm<xmm0>
+    endm
+
+_mm_tan_ps macro x:=<xmm0>
+    __vdecl_tanf4(x)
+    retm<xmm0>
+    endm
+
+_mm_tanh_ps macro x:=<xmm0>
+    __vdecl_tanhf4(x)
+    retm<xmm0>
+    endm
+
+_mm_atan_ps macro x:=<xmm0>
+    __vdecl_atanf4(x)
+    retm<xmm0>
+    endm
+
+_mm_atan2_ps macro y:=<xmm0>, x:=<xmm1>
+    __vdecl_atan2f4(y, x)
+    retm<xmm0>
+    endm
+
+_mm_log_ps macro x:=<xmm0>
+    __vdecl_logf4(x)
+    retm<xmm0>
+    endm
+
+_mm_log2_ps macro x:=<xmm0>
+    __vdecl_log2f4(x)
+    retm<xmm0>
+    endm
+
+_mm_fmod_ss proto fastcall :real4, :real4 {
+    movaps	xmm2,xmm0
+    divps	xmm2,xmm1
+    roundps	xmm2,xmm2,_MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC
+    mulps	xmm2,xmm1
+    subps	xmm0,xmm2
+    retm	<xmm0>
+    }
+
+_mm_fmod_sd proto fastcall :real8, :real8 {
+    movapd	xmm2,xmm0
+    divpd	xmm2,xmm1
+    roundpd	xmm2,xmm2,_MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC
+    mulpd	xmm2,xmm1
+    subpd	xmm0,xmm2
+    retm	<xmm0>
+    }
+
+_mm_fmod_ps macro x:=<xmm0>, y:=<xmm1>
+    __vdecl_fmodf4(x, y)
+    retm<xmm0>
+    endm
+
+_mm_fmod_pd macro x:=<xmm0>, y:=<xmm1>
+    __vdecl_fmod2(x, y)
+    retm<xmm0>
+    endm
+
+_mm_exp_ps macro x:=<xmm0>
+ifdif <x>,<xmm0>
+    movaps xmm0,x
+endif
+    __vdecl_exp2f4(_mm_mul_ps(xmm0, g_X4FLOG2E))
+    retm<xmm0>
+    endm
+
+_mm_exp_pd macro x:=<xmm0>
+ifdif <x>,<xmm0>
+    movapd xmm0,x
+endif
+    __vdecl_exp22(_mm_mul_pd(xmm0, g_X2FLOG2E))
+    retm<xmm0>
+    endm
+
+_mm_exp2_ps macro x:=<xmm0>
+    __vdecl_exp2f4(x)
+    retm<xmm0>
+    endm
+
+_mm_exp2_pd macro x:=<xmm0>
+    __vdecl_exp22(x)
+    retm<xmm0>
+    endm
+
+_mm_trunc_ps macro x:=<xmm0>
+    _mm_round_ps(x, _MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC)
+    retm<x>
+    endm
+_mm_trunc_pd macro x:=<xmm0>
+    _mm_round_pd(x, _MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC)
+    retm<x>
+    endm
 
 include zmmintrin.inc
 

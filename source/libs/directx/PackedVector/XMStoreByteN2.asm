@@ -14,7 +14,7 @@ XMStoreByteN2 proc XM_CALLCONV pDestination:ptr XMBYTEN2, V:FXMVECTOR
     ldr xmm0,V
 
     XMVectorClamp(xmm0, g_XMNegativeOne, g_XMOne)
-    XMVectorMultiply(xmm0, _mm_get_epi32(127.0, 127.0, 127.0, 127.0))
+    XMVectorMultiply(xmm0, _mm_set_epi32(xmm1, 127.0, 127.0, 127.0, 127.0))
     XMVectorRound(xmm0)
     cvtps2dq xmm0,xmm0
     movq rdx,xmm0

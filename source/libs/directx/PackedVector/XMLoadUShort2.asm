@@ -35,7 +35,7 @@ XMLoadUShort2 proc XM_CALLCONV pSource:ptr XMUSHORT2
 
     ;; y + 0x8000 to undo the signed order.
 
-    _mm_add_ps(xmm0, _mm_get_epi32(0.0, 32768.0, 0.0, 0.0))
+    _mm_add_ps(xmm0, { 0.0, 32768.0, 0.0, 0.0 })
     ret
     endp
 

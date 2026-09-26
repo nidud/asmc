@@ -640,6 +640,13 @@ endif
     exitm<_mmopab(pcmpgtd, x, a)>
     endm
 
+_mm_cmplt_epi64 macro x, a, b
+ifdif <x>,<b>
+    movapd x,b
+endif
+    exitm<_mmopab(pcmpgtq, x, a)>
+    endm
+
 _mm_cvtsi32_si128 macro x, d
     ifnb <d>
 	if (TYPEOF d) eq 4 and (opattr d) eq 48
@@ -738,57 +745,30 @@ _mm_loadl_epi64 macro x, p
     exitm<_mmopab(movq, xmm0, x)>
     endm
 
-_mm_get_epi32 macro args:vararg
-    local v
-.data
-    align 16
-    v label oword
-    dd &args
-.code
-    exitm<v>
+_mm_set_epi64x macro x, _1, _2
+    movdqa x,{ _2, _1 }
+    retm<x>
     endm
-
-_mm_set_epix macro xmm, op, args:vararg
-.data
-    align 16
-    @@ label oword
-    op &args
-.code
-    movaps xmm,@B
-    retm<xmm>
-    endm
-
-_mm_set_epi64x macro x, Q1, Q2
-    exitm<_mm_set_epix(x, dq, Q1, Q2)>
-    endm
-
-_mm_set_epi32 macro x, D1, D2, D3, D4
-    ifnb <D4>
-	exitm<_mm_set_epix(x, dd, D4, D3, D2, D1)>
-    endif
-    exitm<_mm_set_epix(xmm0, dd, D3, D2, D1, x)>
+_mm_set_epi32 macro x, _1, _2, _3, _4
+    movdqa x,{ _4, _3, _2, _1 }
+    retm<x>
     endm
 _mm_set_epi16 macro x, _1, _2, _3, _4, _5, _6, _7, _8
-    exitm<_mm_set_epi32(x, ((_1 shl 16) or _2), ((_3 shl 16) or _4),
-	((_5 shl 16) or _6), ((_7 shl 16) or _8))>
+    movdqa x,{ _8, _7, _6, _5, _4, _3, _2, _1 }
+    retm<x>
     endm
 _mm_set_epi8 macro x, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16
-    exitm<_mm_set_epi16(x, ((_1 shl 8) or _2), ((_3 shl 8) or _4), ((_5 shl 8) or _6),
-	((_7 shl 8) or _8), ((_9 shl 8) or _10), ((_11 shl 8) or _12),
-	((_13 shl 8) or _14), ((_15 shl 8) or _16))>
+    movdqa x,{ _16, _15, _14, _13, _12, _11, _10, _9, _8, _7, _6, _5, _4, _3, _2, _1 }
+    retm<x>
     endm
 
-_mm_set1_epi64x macro xmm, imm
-    mov	     rax,imm
-    movq     xmm,rax
-    unpcklpd xmm,xmm
-    retm    <xmm>
+_mm_set1_epi64x macro x, i
+    movapd x,{ i, i }
+    retm<x>
     endm
-_mm_set1_epi32 macro xmm, imm
-    mov	     eax,imm
-    movd     xmm,eax
-    shufps   xmm,xmm,0
-    retm    <xmm>
+_mm_set1_epi32 macro x, i
+    movaps x,{ i, i, i, i }
+    retm<x>
     endm
 _mm_set1_epi16 macro xmm, imm
     exitm<_mm_set1_epi32(xmm, ((imm shl 16) or imm))>
@@ -802,14 +782,17 @@ _mm_set1_epi64 macro a:=<xmm0>
     endm
 endif
 
-_mm_setr_epi32 macro D1, D2, D3, D4
-    exitm<_mm_set_epi32(xmm0, D1, D2, D3, D4)>
+_mm_setr_epi32 macro x, args:vararg
+    movaps x,{ args }
+    retm<x>
     endm
-_mm_setr_epi16 macro _1, _2, _3, _4, _5, _6, _7, _8
-    exitm<_mm_set_epi16(xmm0, _1, _2, _3, _4, _5, _6, _7, _8)>
+_mm_setr_epi16 macro x, args:vararg
+    movaps x,{ args }
+    retm<x>
     endm
-_mm_setr_epi8 macro _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16
-    exitm<_mm_set_epix(xmm0, db, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16)>
+_mm_setr_epi8 macro x, args:vararg
+    movaps x,{ args }
+    retm<x>
     endm
 _mm_setzero_si128 macro x:=<xmm0>
     exitm<_mmopab(xorps, x, x)>

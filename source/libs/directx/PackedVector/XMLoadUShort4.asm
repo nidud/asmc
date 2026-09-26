@@ -34,7 +34,7 @@ XMLoadUShort4 proc XM_CALLCONV pSource:ptr XMUSHORT4
 
     ;; y and w + 0x8000 to complete the conversion
 
-    _mm_add_ps(xmm0, _mm_get_epi32(0.0, 0.0, 32768.0, 32768.0))
+    _mm_add_ps(xmm0, { 0.0, 0.0, 32768.0, 32768.0 })
 
     ;; Very important! The entries are x,z,y,w, flip it to x,y,z,w
 

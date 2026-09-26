@@ -6,14 +6,12 @@
 
 include math.inc
 
-    .code
+.code
 
-ceilf proc _x:float
+ceilf proc x:float
 ifdef _WIN64
-   .new x:float = xmm0
+    roundps xmm0,xmm0,2
 else
-    define x _x
-endif
    .new w:word
    .new n:word
     fld     x
@@ -24,9 +22,6 @@ endif
     frndint             ; round to integer
     fclex
     fldcw   w
-ifdef _WIN64
-    fstp    x
-    movss   xmm0,x
 endif
     ret
     endp

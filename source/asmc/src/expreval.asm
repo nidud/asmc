@@ -957,23 +957,32 @@ GetTypeSize proc fastcall mem_type:byte, ofssize:int_t
 
     assume rdx:nothing
 
-
-; added v2.31.32
-
-SetEvexOpt proc fastcall tok:token_t
-    .if ( [rcx-1*asm_tok].token == T_COMMA &&
-          [rcx-2*asm_tok].token == T_REG &&
-          [rcx-3*asm_tok].token == T_INSTRUCTION )
-        mov eax,GetValueSp( [rcx-2*asm_tok].tokval )
-        .if ( eax & OP_XMM )
-            .if ( [rcx-3*asm_tok].tokval < VEX_START &&
-                  [rcx-3*asm_tok].tokval >= T_ADDPD )
+; added v2.31.32:
+; true:
+;  - if first operand: {vex}, {evex}, ..
+;  - if {modifier}: {k1}{z}, {sae}, ..
+;  - if default record {}
+; false:
+;  - if used in INVOKE: foo({ 1.0, 2.0 })
+;  - if used as vector: ADDPD xmm0,{ 1.0, 2.0 }
+;
+SetEvexOpt proc fastcall tok:token_t, tokenarray:token_t
+    .switch
+    .case ( [rdx].asm_tok.tokval == T_INVOKE )
+        .return( false )
+    .case ( rcx > rdx &&
+            [rdx].asm_tok.token == T_INSTRUCTION &&
+            [rdx+asm_tok].asm_tok.token == T_REG &&
+            [rdx+asm_tok*2].asm_tok.token == T_COMMA )
+        .if ( GetValueSp( [rdx+asm_tok].asm_tok.tokval ) & OP_XMM )
+            .if ( [rdx].asm_tok.tokval < VEX_START &&
+                  [rdx].asm_tok.tokval >= T_ADDPD )
                 .return( false )
             .endif
         .endif
-    .endif
+    .endsw
     mov [rcx].asm_tok.Modifier,1
-    .return( true )
+    ret
     endp
 
 
@@ -1029,7 +1038,7 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
                 fnasmerr( 2046 )
             .elseif [rbx].string_delim == '{'
                 mov [rdi].kind,EXPR_EMPTY
-                .if SetEvexOpt(rbx) == 0
+                .ifd ( SetEvexOpt(rbx, tokenarray ) == 0 )
                     mov [rdi].kind,EXPR_CONST
                     mov [rdi].quoted_string,rbx
                 .endif
@@ -3244,7 +3253,7 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
                 ; v2.26 - added for {k1}{z}..
 
                 .if ( dl == T_STRING && [rsi].string_delim == '{' )
-                    SetEvexOpt( rsi )
+                    SetEvexOpt( rsi, tokenarray )
                     mov rdx,i
                     inc dword ptr [rdx]
                     add rbx,asm_tok
@@ -3318,7 +3327,7 @@ evaluate proc __ccall uses rsi rdi rbx opnd1:expr_t, i:ptr int_t,
                         eax == T_BINARY_OPERATOR ) || eax == T_UNARY_OPERATOR )
                 ; v2.26 - added for {k1}{z}..
                 .if ( eax == T_STRING && [rbx].string_delim == '{' )
-                    SetEvexOpt(rbx)
+                    SetEvexOpt( rbx, tokenarray )
                     mov rdx,i
                     inc dword ptr [rdx]
                     add rbx,asm_tok

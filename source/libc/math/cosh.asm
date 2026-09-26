@@ -5,27 +5,45 @@
 ;
 
 include math.inc
+ifdef _WIN64
 include intrin.inc
+
+define g_X2FTWO <{ 2.0, 2.0 }>
+
+undef __vdecl_cosh2
+alias <__vdecl_cosh2>=<cosh>
+endif
 
 .code
 
 cosh proc x:double
 ifdef _WIN64
-    exp(_mm_and_pd(xmm0, { 0x7FFFFFFFFFFFFFFF, 0 }))
-    _mm_move_sd(xmm1, 1.0)
-    _mm_div_sd(xmm1, xmm0)
-    _mm_add_sd(xmm0, xmm1)
-    _mm_div_sd(xmm0, 2.0)
+    _mm_exp_pd(_mm_and_pd(xmm0, g_X2IABSMASK))
+    _mm_move_pd(xmm1, g_X2FONE)
+    _mm_div_pd(xmm1, xmm0)
+    _mm_add_pd(xmm0, xmm1)
+    _mm_div_pd(xmm0, g_X2FTWO)
 else
-    and byte ptr x[7],0x7F
-    exp(x)
+    fld     x
+    fldl2e
+    fmul    st(0),st(1)
+    fld     st(0)
+    frndint
+    fsub    st(1),st(0)
+    fxch    st(1)
+    f2xm1
     fld1
-    fdiv st(0),st(1)
-    faddp
+    faddp   st(1),st(0)
+    fscale
+    fst     st(1)
     fld1
+    fdivrp  st(1),st(0)
+    faddp   st(1),st(0)
     fld1
-    faddp
-    fdivp
+    fadd    st(0),st(0)
+    fdivp   st(1),st(0)
+    fxch    st(1)
+    fstp    st(0)
 endif
     ret
     endp

@@ -15,8 +15,8 @@ XMStoreShort2 proc XM_CALLCONV pDestination:ptr XMSHORT2, V:FXMVECTOR
 
     ;; Bounds check
 
-    _mm_max_ps(xmm0, _mm_get_epi32(-32767.0, -32767.0, -32767.0, -32767.0))
-    _mm_min_ps(xmm0, _mm_get_epi32(32767.0, 32767.0, 32767.0, 32767.0))
+    _mm_max_ps(xmm0, { -32767.0, -32767.0, -32767.0, -32767.0 })
+    _mm_min_ps(xmm0, {  32767.0,  32767.0,  32767.0,  32767.0 })
 
     ;; Convert to int with rounding
 

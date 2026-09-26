@@ -20,15 +20,10 @@ include math.inc
 
     option dotname
 
-pow proc _x:double, _y:double
+pow proc x:double, y:double
+
    .new z:double
-ifdef _WIN64
-   .new x:double = xmm0
-   .new y:double = xmm1
-else
-    define  x <_x>
-    define  y <_y>
-endif
+
     fld     y
     fxam
     fnstsw  ax
@@ -44,7 +39,7 @@ endif
     cmp     ah,5            ; y == inf ?
     jne     .3
     fstp    st(0)           ; pop y
-    fld     one
+    fld1
     fld     x
     fabs                    ; abs(x) : 1
     fucompp                 ; < 1, == 1, or > 1
@@ -73,7 +68,7 @@ endif
     cmp     ah,1            ; y == NaN ?
     jne     .5
     fld     x
-    fld     one
+    fld1
     fucomp  st(1)
     fnstsw  ax
     sahf
@@ -148,15 +143,17 @@ endif
     ; It's an odd integer.
     ; Raise divide-by-zero exception and get minus infinity value.
     ;
-    fld     one
-    fdiv    zero
+    fld1
+    fldz
+    fdivp
     fchs
     jmp     .o
 .9:
     fstp    st(0)
 .a:
-    fld     one
-    fdiv    zero
+    fld1
+    fldz
+    fdivp
     jmp     .o
 .b:
     cmp     ah,5
@@ -231,12 +228,13 @@ endif
     or      edx,0
     fstp    st
     jns     .h
-    fdivr   one
+    fld1
+    fdivrp
     neg     eax
     adc     edx,0
     neg     edx
 .h:
-    fld     one
+    fld1
     fxch    st(1)
 .i:
     shrd    eax,edx,1
@@ -254,7 +252,7 @@ endif
     jmp     .o
 .k:
     fxch    st(1)
-    fld     one
+    fld1
     fld     limit
     fld     st(2)
     fsub    st,st(2)
@@ -276,7 +274,8 @@ endif
     fsub    st(1),st
     fxch
     f2xm1
-    fadd    one
+    fld1
+    faddp
     fscale
     fstp    st(1)
     jmp     .o

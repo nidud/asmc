@@ -23,7 +23,7 @@ XMStoreColor proc XM_CALLCONV pDestination:ptr XMCOLOR, V:FXMVECTOR
 
     ;; Convert to 0-255
 
-    _mm_mul_ps(xmm0, _mm_get_epi32(255.0, 255.0, 255.0, 255.0))
+    _mm_mul_ps(xmm0, { 255.0, 255.0, 255.0, 255.0 })
 
     ;; Shuffle RGBA to ARGB
 

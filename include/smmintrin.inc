@@ -230,7 +230,7 @@ _mm_minpos_epu16 macro x
 	endm
 
 _mm_round_pd macro x, imm
-	roundpd x,imm
+	roundpd x,x,imm
 	retm<x>
 	endm
 _mm_round_sd macro a, b, imm

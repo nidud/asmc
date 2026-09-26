@@ -15,12 +15,12 @@ XMStoreByte4 proc XM_CALLCONV pDestination:ptr XMBYTE4, V:FXMVECTOR
 
     ;; Clamp to bounds
 
-    _mm_max_ps(xmm1, _mm_get_epi32(-127.0, -127.0, -127.0, -127.0))
-    _mm_min_ps(xmm1, _mm_get_epi32(127.0, 127.0, 127.0, 127.0))
+    _mm_max_ps(xmm1, { -127.0, -127.0, -127.0, -127.0 })
+    _mm_min_ps(xmm1, {  127.0,  127.0,  127.0,  127.0 })
 
     ;; Scale by multiplication
 
-    _mm_mul_ps(xmm1, _mm_get_epi32(1.0, 256.0, 256.0*256.0, 256.0*256.0*256.0))
+    _mm_mul_ps(xmm1, { 1.0, 256.0, 256.0*256.0, 256.0*256.0*256.0 })
 
     ;; Convert to int
 
@@ -28,7 +28,7 @@ XMStoreByte4 proc XM_CALLCONV pDestination:ptr XMBYTE4, V:FXMVECTOR
 
     ;; Mask off any fraction
 
-    _mm_and_si128(xmm1, _mm_get_epi32(0xFF, 0xFF shl 8, 0xFF shl 16, 0xFF shl 24))
+    _mm_and_si128(xmm1, { 0xFF, 0xFF shl 8, 0xFF shl 16, 0xFF shl 24 })
 
     ;; Do a horizontal or of 4 entries
 

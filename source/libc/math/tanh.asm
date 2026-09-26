@@ -8,11 +8,9 @@ include math.inc
 
 .code
 
-ifdef _WIN64
-
-option float: 8
-
 tanh proc x:double
+ifdef _WIN64
+    option float: 8
     .if ( xmm0 > 50.0 )
         movsd xmm0,1.0
     .else
@@ -30,7 +28,31 @@ tanh proc x:double
             movsd xmm0,xmm1
         .endif
     .endif
+else
+    fld     x
+    fldl2e
+    fadd    st(0),st(0)
+    fmulp   st(1),st(0)
+    fld     st(0)
+    frndint
+    fsub    st(1),st(0)
+    fxch    st(1)
+    f2xm1
+    fld1
+    faddp   st(1),st(0)
+    fscale
+    fld1
+    fsubp   st(1),st(0)
+    fxch    st(1)
+    fstp    st(0)
+    fld     st(0)
+    fld1
+    fadd    st(0),st(0)
+    faddp   st(1),st(0)
+    fdivp   st(1),st(0)
+    ret
+endif
     ret
     endp
-endif
+
     end

@@ -4,16 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 include math.inc
+include intrin.inc
 
-    .code
+.code
 
 floor proc x:double
 ifdef _WIN64
-    movq      rcx,xmm0
-    shr       rcx,63
-    cvttsd2si rax,xmm0
-    sub       rax,rcx
-    cvtsi2sd  xmm0,rax
+    _mm_floor_pd(xmm0)
 else
   local w:word, n:word
     fld     x

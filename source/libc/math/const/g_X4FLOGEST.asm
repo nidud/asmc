@@ -1,0 +1,18 @@
+; G_X4FLOGEST.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
+include immintrin.inc
+
+.data
+ g_X4FLOGEST0 XVEC4F { +1.442693, +1.442693, +1.442693, +1.442693 }
+ g_X4FLOGEST1 XVEC4F { -0.721242, -0.721242, -0.721242, -0.721242 }
+ g_X4FLOGEST2 XVEC4F { +0.479384, +0.479384, +0.479384, +0.479384 }
+ g_X4FLOGEST3 XVEC4F { -0.350295, -0.350295, -0.350295, -0.350295 }
+ g_X4FLOGEST4 XVEC4F { +0.248590, +0.248590, +0.248590, +0.248590 }
+ g_X4FLOGEST5 XVEC4F { -0.145700, -0.145700, -0.145700, -0.145700 }
+ g_X4FLOGEST6 XVEC4F { +0.057148, +0.057148, +0.057148, +0.057148 }
+ g_X4FLOGEST7 XVEC4F { -0.010578, -0.010578, -0.010578, -0.010578 }
+ end

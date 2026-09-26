@@ -6,14 +6,12 @@
 
 include math.inc
 
-    .code
+.code
 
-ceil proc _x:double
+ceil proc x:double
 ifdef _WIN64
-   .new x:double = xmm0
+    roundpd xmm0,xmm0,2
 else
-    define x _x
-endif
    .new w:word
    .new n:word
     fld     x
@@ -24,9 +22,6 @@ endif
     frndint             ; round to integer
     fclex
     fldcw   w
-ifdef _WIN64
-    fstp    x
-    movsd   xmm0,x
 endif
     ret
     endp

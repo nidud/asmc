@@ -16,7 +16,7 @@ XMStoreUNibble4 proc XM_CALLCONV pDestination:ptr XMUNIBBLE4, V:FXMVECTOR
     ;; Bounds check
 
     _mm_max_ps(xmm1, g_XMZero)
-    _mm_min_ps(xmm1, _mm_get_epi32(15.0, 15.0, 15.0, 15.0))
+    _mm_min_ps(xmm1, { 15.0, 15.0, 15.0, 15.0 })
 
     ;; Convert to int with rounding
 

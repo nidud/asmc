@@ -15,12 +15,12 @@ XMStoreXDecN4 proc XM_CALLCONV pDestination:ptr XMXDECN4, V:FXMVECTOR
 
     ; XMXDECN4
 
-    _mm_max_ps(xmm0, _mm_get_epi32(-1.0, -1.0, -1.0, 0.0))
+    _mm_max_ps(xmm0, { -1.0, -1.0, -1.0, 0.0 })
     _mm_min_ps(xmm0, g_XMOne)
 
     ;; Scale by multiplication
 
-    _mm_mul_ps(xmm0, _mm_get_epi32(511.0, 511.0*1024.0, 511.0*1048576.0, 3.0*536870912.0))
+    _mm_mul_ps(xmm0, { 511.0, 511.0*1024.0, 511.0*1048576.0, 3.0*536870912.0 })
 
     ;; Convert to int (W is unsigned)
 
@@ -28,7 +28,7 @@ XMStoreXDecN4 proc XM_CALLCONV pDestination:ptr XMXDECN4, V:FXMVECTOR
 
     ;; Mask off any fraction
 
-    _mm_and_si128(xmm0, _mm_get_epi32(0x3FF, 0x3FF shl 10, 0x3FF shl 20, 0x3 shl 29))
+    _mm_and_si128(xmm0, { 0x3FF, 0x3FF shl 10, 0x3FF shl 20, 0x3 shl 29 })
 
     ;; To fix W, add itself to shift it up to <<30 instead of <<29
 

@@ -3,32 +3,35 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; float expf(float);
+; __m128 __vdecl_expf4(__m128);
+;
 include math.inc
+ifdef _WIN64
+include intrin.inc
+undef __vdecl_expf4
+alias <__vdecl_expf4>=<expf>
+endif
 
     .code
 
-    option dotname
-
-expf proc _x:float
+expf proc x:float
 ifdef _WIN64
-   .new x:float = xmm0
+   exp2f(_mm_mul_ps(xmm0, g_X4FLOG2E))
 else
-    define x _x
-endif
     fld     x
     fxam
     fstsw   ax
     fwait
     sahf
-    jnp     .0
-    jnc     .0
+    jnp     L0
+    jnc     L0
     test    ah,2
-    jz      .1
+    jz      L1
     fstp    st
     fldz
-    jmp     .1
-.0:
+    jmp     L1
+L0:
     fldl2e
     fmul    st,st(1)
     fst     st(1)
@@ -40,10 +43,7 @@ endif
     faddp   st(1),st
     fscale
     fstp    st(1)
-.1:
-ifdef _WIN64
-    fstp    x
-    movss   xmm0,x
+L1:
 endif
     ret
     endp

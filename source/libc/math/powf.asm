@@ -6,7 +6,7 @@
 
 include math.inc
 
-    .code
+.code
 
 powf proc x:float, y:float
 ifdef _WIN64

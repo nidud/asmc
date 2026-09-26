@@ -932,6 +932,7 @@ push_const_128:
                 .if !( eax & OP_V )
                     jmp arg_error
                 .endif
+                mov rdi,paramvalue
                 mov edx,T_VMOVAPS
                 mov esi,T_XMMWORD
                 .if ( eax & OP_ZMM )
@@ -941,9 +942,17 @@ push_const_128:
                 .elseif ( ebx < T_XMM16 )
                     mov edx,T_MOVAPS
                 .endif
-                AddLineQueueX( " %r %r, %r ptr %s", edx, ebx, esi, paramvalue )
+                ;
+                ; v2.39.15: allow vector assignment
+                ;
+                mov ecx,T_PTR
+                .if ( byte ptr [rdi] == '{' )
+                    xor ecx,ecx
+                    xor esi,esi
+                .endif
+                AddLineQueueX( " %r %r, %r %r %s", edx, ebx, esi, ecx, rdi )
                 .if ( arg_flt )
-                    AddLineQueueX( " lea %r, %s", arg_flt, paramvalue )
+                    AddLineQueueX( " lea %r, %s", arg_flt, rdi )
                 .endif
                 .return
             .endif
@@ -1438,13 +1447,19 @@ handle_address:
             .endif
 
             mov ecx,T_MOVSS
-            .if ( isvararg && wordsize == 8 )
+            mov rdx,paramvalue
+            .if ( byte ptr [rdx] == '{' )
+                ;
+                ; v2.39.15: allow vector assignment
+                ;
+                mov ecx,T_MOVAPS
+            .elseif ( isvararg && wordsize == 8 )
                 mov ecx,T_CVTSS2SD
                 .if ( [rdi].kind == EXPR_FLOAT )
                     mov ecx,T_MOVSD
                 .endif
             .endif
-            AddLineQueueX( " %r %r, %s", ecx, ebx, paramvalue )
+            AddLineQueueX( " %r %r, %s", ecx, ebx, rdx )
             .if ( arg_flt )
                 AddLineQueueX( " movq %r, %r", arg_flt, ebx )
             .endif
@@ -1465,7 +1480,14 @@ handle_address:
             .endif
             .return( LQPush2M( rcx, 4 ) )
         .endif
-        AddLineQueueX( " movsd %r, %s", ebx, rcx )
+        mov edx,T_MOVSD
+        .if ( byte ptr [rcx] == '{' )
+            ;
+            ; v2.39.15: allow vector assignment
+            ;
+            mov edx,T_MOVAPS
+        .endif
+        AddLineQueueX( " %r %r, %s", edx, ebx, rcx )
         .if ( arg_flt )
             AddLineQueueX( " movq %r, %r", arg_flt, ebx )
         .endif

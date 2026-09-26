@@ -5,14 +5,10 @@
 ;
 include math.inc
 
-    .code
+.code
 
-log10f proc _x:float
-ifdef _WIN64
-   .new x:float = xmm0
-else
-    define x _x
-endif
+log10f proc x:float
+
     fld     x
     fldlg2
     fxch    st(1)

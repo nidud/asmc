@@ -34,7 +34,7 @@ XMLoadUByteN4 proc XM_CALLCONV pSource:ptr XMUBYTEN4
 
     ;; Fix y, z and w because they are too large
 
-    _mm_mul_ps(xmm0, _mm_get_epi32(1.0/255.0, 1.0/(255.0*256.0), 1.0/(255.0*65536.0), 1.0/(255.0*65536.0*256.0)))
+    _mm_mul_ps(xmm0, { 1.0/255.0, 1.0/(255.0*256.0), 1.0/(255.0*65536.0), 1.0/(255.0*65536.0*256.0)})
     ret
     endp
 

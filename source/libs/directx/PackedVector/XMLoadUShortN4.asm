@@ -30,11 +30,11 @@ XMLoadUShortN4 proc XM_CALLCONV pSource:ptr XMUSHORTN4
 
     ;; y and w + 0x8000 to complete the conversion
 
-    _mm_add_ps(xmm0, _mm_get_epi32(0.0, 0.0, 32768.0*65536.0, 32768.0*65536.0))
+    _mm_add_ps(xmm0, { 0.0, 0.0, 32768.0*65536.0, 32768.0*65536.0 })
 
     ;; Fix y and w because they are 65536 too large
 
-    _mm_mul_ps(xmm0, _mm_get_epi32(1.0/65535.0, 1.0/65535.0, 1.0/(65535.0*65536.0), 1.0/(65535.0*65536.0)))
+    _mm_mul_ps(xmm0, { 1.0/65535.0, 1.0/65535.0, 1.0/(65535.0*65536.0), 1.0/(65535.0*65536.0) })
 
     ;; Very important! The entries are x,z,y,w, flip it to x,y,z,w
 

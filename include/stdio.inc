@@ -1,5 +1,6 @@
 ifndef _STDIO_
 define _STDIO_
+.pragma list(push, 0)
 ifndef _LIBC_
 include libc.inc
 endif
@@ -244,4 +245,5 @@ _fsetmode proto watcall :LPFILE, :int_t {
     or	[rax]._iobuf._flag,edx
     }
 
+.pragma list(pop)
 endif

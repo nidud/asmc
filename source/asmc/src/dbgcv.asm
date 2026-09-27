@@ -1875,10 +1875,6 @@ dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
     assume rbx:nothing
 
 
-ifdef USEMD5
-
-define MD5BUFSIZ 1024*4
-
 define MD5_TYPE     0x0110
 define SHA256_TYPE  0x0320
 define SHA384_TYPE  0x0430
@@ -1888,6 +1884,10 @@ define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 16 + sizeof( uint_16
 define SHA256_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 32 + sizeof( uint_16 ) )
 define SHA384_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 48 + sizeof( uint_16 ) )
 define SHA512_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 64 + sizeof( uint_16 ) )
+
+ifdef USEMD5
+
+define MD5BUFSIZ 1024*4
 
 ifdef USEBCRYPT
 
@@ -2224,7 +2224,7 @@ endif
 
 else
 
-define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + sizeof( uint_16 ) )
+define MD5_LENGTH_SMALL ( sizeof( uint_32 ) + sizeof( uint_16 ) + sizeof( uint_16 ) )
 
 endif
 

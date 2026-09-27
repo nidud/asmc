@@ -29,7 +29,12 @@ include linnum.inc
 ;
 ; Additional support for source hashing is added via command line option -ZH:#.
 ;
+
+; v2.39.16: removed BCRYPT for Linux (@nomad-traveller)
+
+ifndef __UNIX__
 define USEBCRYPT
+endif
 
 ifndef __UNIX__
 ifdef USEBCRYPT
@@ -1875,19 +1880,21 @@ dbgcv::flush_section proc __ccall uses rsi rdi rbx signature:dword, ex:dword
     assume rbx:nothing
 
 
-ifdef USEMD5
-
-define MD5BUFSIZ 1024*4
+; v2.39.16: moved (@nomad-traveller)
 
 define MD5_TYPE     0x0110
 define SHA256_TYPE  0x0320
 define SHA384_TYPE  0x0430
 define SHA512_TYPE  0x0540
 
-define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 16 + sizeof( uint_16 ) )
+define MD5_LENGTH    ( sizeof( uint_32 ) + sizeof( uint_16 ) + 16 + sizeof( uint_16 ) )
 define SHA256_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 32 + sizeof( uint_16 ) )
 define SHA384_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 48 + sizeof( uint_16 ) )
 define SHA512_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 64 + sizeof( uint_16 ) )
+
+ifdef USEMD5
+
+define MD5BUFSIZ 1024*4
 
 ifdef USEBCRYPT
 
@@ -2221,10 +2228,6 @@ calc_md5 proc __ccall uses rsi rdi rbx filename:string_t, sum:ptr byte
     endp
 
 endif
-
-else
-
-define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + sizeof( uint_16 ) )
 
 endif
 

@@ -1398,7 +1398,8 @@ size_from_ptr:
             ;
             ; <op> <proc>[, ...]
             ;
-            .ifd ( GetCpuExtensions([GetInstrTable([rbx-asm_tok].tokval)].Instruction.cpu) >= P_SSE1 )
+            mov rax,GetInstrTable([rbx-asm_tok].tokval)
+            .ifd ( GetCpuExtensions([rax].Instruction.cpu) >= P_SSE1 )
                 mov esi,T_XMM0
             .endif
         .endif

@@ -6,80 +6,179 @@
 
 include math.inc
 ifdef _WIN64
-include fltintrn.inc
 include intrin.inc
-
-option float: double
+option dotname
+assume uses xmm6 xmm7
 .data
-align 16
- exp_table double \
-  3FF0000000000000r, 3FF059B0D3158540r, 3FF0B5586CF98900r, 3FF11301D0125B40r,
-  3FF172B83C7D5140r, 3FF1D4873168B980r, 3FF2387A6E756200r, 3FF29E9DF51FDEC0r,
-  3FF306FE0A31B700r, 3FF371A7373AA9C0r, 3FF3DEA64C123400r, 3FF44E0860618900r,
-  3FF4BFDAD5362A00r, 3FF5342B569D4F80r, 3FF5AB07DD485400r, 3FF6247EB03A5580r,
-  3FF6A09E667F3BC0r, 3FF71F75E8EC5F40r, 3FF7A11473EB0180r, 3FF82589994CCE00r,
-  3FF8ACE5422AA0C0r, 3FF93737B0CDC5C0r, 3FF9C49182A3F080r, 3FFA5503B23E2540r,
-  3FFAE89F995AD380r, 3FFB7F76F2FB5E40r, 3FFC199BDD855280r, 3FFCB720DCEF9040r,
-  3FFD5818DCFBA480r, 3FFDFC97337B9B40r, 3FFEA4AFA2A490C0r, 3FFF50765B6E4540r,
-  0000000000000000r, 3D0A1D73E2A475B4r, 3CEEC5317256E308r, 3CF0A4EBBF1AED93r,
-  3D0D6E6FBE462876r, 3D053C02DC0144C8r, 3D0C3360FD6D8E0Br, 3D009612E8AFAD12r,
-  3CF52DE8D5A46306r, 3CE54E28AA05E8A9r, 3D011ADA0911F09Fr, 3D068189B7A04EF8r,
-  3D038EA1CBD7F621r, 3CBDF0A83C49D86Ar, 3D04AC64980A8C8Fr, 3CD2C7C3E81BF4B7r,
-  3CE921165F626CDDr, 3D09EE91B8797785r, 3CDB5F54408FDB37r, 3CF28ACF88AFAB35r,
-  3CFB5BA7C55A192Dr, 3D027A280E1F92A0r, 3CF01C7C46B071F3r, 3CFC8B424491CAF8r,
-  3D06AF439A68BB99r, 3CDBAA9EC206AD4Fr, 3CFC2220CB12A092r, 3D048A81E5E8F4A5r,
-  3CDC976816BAD9B8r, 3CFEB968CAC39ED3r, 3CF9858F73A18F5Er, 3C99D3E12DD8A18Br
+ d_tiny  dq 0xfd19d1bd0105c611
+ d_small dq 0x3f662e42fefa39ef
+ d_large dq 0x011ff4e8de8082e3
+ d_huge  dq 0x01211d42457337d4
 endif
 
 .code
 
 exp proc x:double
 ifdef _WIN64
-    _mm_move_sd(xmm1, INFINITY)
-    .if ( xmm0 <= 0x1.62e42fefa39f0p9 )
-        _mm_setzero_pd(xmm1)
-        .if ( xmm0 > -745.5 )
-            _mm_move_sd(xmm4, -0.0)
-            _mm_and_pd(_mm_move_sd(xmm5, xmm1), xmm4)
-            _mm_cmplt_sd(xmm4, xmm0)
-            _mm_mul_sd(_mm_move_sd(xmm3, xmm0), 0x1.71547652B82FEp5)
-            _mm_add_sd(xmm3,_mm_or_pd( xmm5, { 0.5, 0.5 }))
-            _mm_cvttsd_si32(xmm3)
-            _mm_cvtsi32_sd(xmm3, eax)
-            _mm_sub_sd(xmm0, _mm_mul_sd( _mm_move_sd(xmm1, xmm3), 0x1.62E42FEF00000p-6))
-            _mm_mul_sd(xmm3, -2.32519284687887401481e-12)
-            _mm_move_sd(xmm5, xmm0)
-            _mm_add_sd(xmm0, xmm3)
-            _mm_add_sd(_mm_mul_sd(_mm_move_sd(xmm1, xmm0), 0x1.6C1728D739765p-10), 0x1.11115B7AA905Ep-7)
-            _mm_add_sd(_mm_mul_sd(xmm1, xmm0), 0x1.5555555545D4Ep-5)
-            _mm_add_sd(_mm_mul_sd(xmm1, xmm0), 0x1.5555555548F7Cp-3)
-            _mm_add_sd(_mm_mul_sd(xmm1, xmm0), 0.5)
-            _mm_mul_sd(_mm_mul_sd(xmm1, xmm0), xmm0)
-            _mm_add_sd(_mm_add_sd(xmm1, xmm3), xmm5)
-            lea rdx,exp_table
-            mov ecx,eax
-            and ecx,0x1F
-            _mm_move_sd(xmm5, [rdx+rcx*8])
-            _mm_move_sd(xmm3, [rdx+rcx*8+32*8])
-            sub eax,ecx
-            .if ( _mm_cvtsi128_si32( xmm4, edx ) )
-                add eax,0x7920
-                _mm_move_sd(xmm4, 0x1.0p+54)
-            .else
-                add eax,0x86a0
-                _mm_move_sd(xmm4, 0x1.0p-54)
-            .endif
-            _mm_cvtsi32_si128(xmm2, eax)
-            _mm_slli_epi64(xmm2, 15 + 32)
-            _mm_add_sd( _mm_move_pd(xmm0, xmm5), xmm3 )
-            _mm_mul_sd( xmm1, xmm0 )
-            _mm_add_sd( xmm1, xmm3 )
-            _mm_add_sd( xmm1, xmm5 )
-            _mm_mul_sd( xmm1, xmm4 )
-            _mm_mul_sd( xmm1, xmm2 )
-        .endif
-    .endif
-    _mm_move_sd(xmm0, xmm1)
+    movd        rax,xmm0
+    movd        rdx,xmm0
+    and         rax,g_X2IABSMASK.i1
+    sar         rdx,63
+    sub         rax,d_small
+    add         rdx,64
+    cmp         rax,d_large
+    ja          .2
+.1:
+    movapd      xmm1,xmm0
+    mulsd       xmm0,40671547652b82fer
+    cvttsd2si   rax,xmm0
+    add         rax,rdx
+    mov         rdx,rax
+    sar         rax,7
+    and         rdx,0x7f
+    sal         rdx,4
+    movapd      xmm2,xmm1
+    mulsd       xmm1,g_X2FLOG2E.f1
+    cvtsi2sd    xmm0,rax
+    movapd      xmm7,xmm1
+    subsd       xmm1,xmm0
+    movapd      xmm4,xmm2
+    movsd       xmm3,0fffffffff8000000r
+    mulsd       xmm4,03e54ae0bf85ddf44r
+    movsd       xmm5,03ff7154760000000r
+    lea         rcx,g_EXPTABLE
+    subsd       xmm1,[rcx+rdx]
+    movsd       xmm6,3f55e52272e0eaecr
+    mulsd       xmm6,xmm1
+    addsd       xmm6,3f83b2a8abda3d8fr
+    mulsd       xmm6,xmm1
+    addsd       xmm6,3fac6b08d78310b8r
+    andpd       xmm3,xmm2
+    subsd       xmm2,xmm3
+    mulsd       xmm3,xmm5
+    mulsd       xmm2,xmm5
+    subsd       xmm3,xmm7
+    addsd       xmm2,xmm3
+    addsd       xmm2,xmm4
+    addsd       xmm2,xmm1
+    movapd      xmm3,xmm2
+    mulsd       xmm6,xmm2
+    mulsd       xmm3,xmm3
+    addsd       xmm6,3fcebfbdff82bda7r
+    mulsd       xmm2,3fe62e42fefa39efr
+    mulsd       xmm3,xmm6
+    addsd       xmm2,xmm3
+    movd        xmm4,rax
+    psllq       xmm4,52
+    movsd       xmm0,[rcx+rdx+8]
+    mulsd       xmm2,xmm0
+    addsd       xmm0,xmm2
+    paddd       xmm0,xmm4
+    jmp         .9
+.2:
+    jg          .4
+    cmp         rax,d_tiny
+    jbe         .3
+    movapd      xmm1,xmm0
+    mulsd       xmm0,3f8111116e99ac77r
+    addsd       xmm0,3fa55555ca407ccbr
+    mulsd       xmm0,xmm1
+    addsd       xmm0,3fc55555555553f0r
+    mulsd       xmm0,xmm1
+    addsd       xmm0,3fdffffffffffe1fr
+    mulsd       xmm0,xmm1
+    addsd       xmm0,g_X2FONE.f1
+    mulsd       xmm0,xmm1
+    addsd       xmm0,g_X2FONE.f1
+    jmp         .9
+.3:
+    addsd       xmm0,g_X2FONE.f1
+    jmp         .9
+.4:
+    cmp         rax,d_huge
+    jg          .5
+    xorpd       xmm1,xmm1
+    comisd      xmm0,xmm1
+    jnc         .6
+    movapd      xmm1,xmm0
+    mulsd       xmm0,40671547652b82fer
+    cvttsd2si   rax,xmm0
+    add         rax,rdx
+    mov         rdx,rax
+    sar         rax,7
+    and         rdx,0x7f
+    sal         rdx,4
+    movsd       xmm6,g_X2FDBLMIN.f1
+    mulsd       xmm6,xmm6
+    movapd      xmm2,xmm1
+    mulsd       xmm1,g_X2FLOG2E.f1
+    cvtsi2sd    xmm0,rax
+    movapd      xmm7,xmm1
+    subsd       xmm1,xmm0
+    movapd      xmm4,xmm2
+    movsd       xmm3,0fffffffff8000000r
+    mulsd       xmm4,03e54ae0bf85ddf44r
+    movsd       xmm5,03ff7154760000000r
+    movsd       xmm0,g_X2FONE.f1
+    lea         rcx,g_EXPTABLE
+    subsd       xmm1,[rcx+rdx]
+    movsd       xmm6,3f55e52272e0eaecr
+    mulsd       xmm6,xmm1
+    addsd       xmm6,3f83b2a8abda3d8fr
+    mulsd       xmm6,xmm1
+    addsd       xmm6,3fac6b08d78310b8r
+    andpd       xmm3,xmm2
+    subsd       xmm2,xmm3
+    mulsd       xmm3,xmm5
+    mulsd       xmm2,xmm5
+    subsd       xmm3,xmm7
+    addsd       xmm2,xmm3
+    addsd       xmm2,xmm4
+    addsd       xmm2,xmm1
+    movapd      xmm3,xmm2
+    mulsd       xmm6,xmm2
+    mulsd       xmm3,xmm3
+    addsd       xmm6,3fcebfbdff82bda7r
+    mulsd       xmm2,3fe62e42fefa39efr
+    mulsd       xmm3,xmm6
+    addsd       xmm2,xmm3
+    add         rax,1022
+    movd        xmm4,rax
+    psllq       xmm4,52
+    movsd       xmm1,[rcx+rdx+8]
+    paddd       xmm1,xmm4
+    mulsd       xmm2,xmm1
+    movapd      xmm3,xmm1
+    addsd       xmm1,xmm0
+    movapd      xmm4,xmm1
+    subsd       xmm1,xmm0
+    subsd       xmm3,xmm1
+    addsd       xmm2,xmm3
+    addsd       xmm4,xmm2
+    xorpd       xmm0,xmm4
+    jmp         .9
+.5:
+    ucomisd     xmm0,xmm0
+    jp          .8
+    xorpd       xmm1,xmm1
+    comisd      xmm0,xmm1
+    jnc         .7
+    movsd       xmm1,g_X2INEGINF.i1
+    cmpneqsd    xmm1,xmm0
+    movsd       xmm0,g_X2FDBLMIN.f1
+    andpd       xmm1,xmm0
+    mulsd       xmm0,xmm1
+    jmp         .9
+.6:
+    movsd       xmm1,40862e42fefa39efr
+    comisd      xmm1,xmm0
+    jnc         .1
+.7:
+    mulsd       xmm0,g_X2FDBLMAX.f1
+    jmp         .9
+.8:
+    addsd       xmm0,xmm0
+.9:
 else
     fld     x
     fxam

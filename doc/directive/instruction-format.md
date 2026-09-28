@@ -57,6 +57,14 @@ The Enhanced Vector Extension (EVEX) encoding prefix will be omitted by using an
 <tr><td><b>{rz-sae}</b></td><td>Toward zero</td></tr>
 </table>
 
+### Vector assignment
+
+Vector assignment is a special form of instruction that allows you to assign multiple values to a vector register in a single instruction. Valid types for vector assignment include integers and floating-point values. The number of values assigned must match the size of the vector register being used. The syntax for vector assignment is as follows:
+```
+  addpd xmm0, { 1.0, 2.0 }            ; vector assignment of 2 double-precision floating-point values
+  movaps xmm0, { 1.0, 2.0, 3.0, 4.0 } ; vector assignment of 4 single-precision floating-point values
+```
+
 #### See Also
 
 [Directives Reference](readme.md) | [Option AVXENCODING](option-avxencoding.md)

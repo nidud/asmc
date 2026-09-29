@@ -2046,6 +2046,36 @@ _mm_trunc_pd macro x:=<xmm0>
     retm<xmm0>
     endm
 
+ipowf proto :real4, :abs {
+    movss	xmm1,xmm0
+    repeat _2-1
+    mulss	xmm0,xmm1
+    endm
+    }
+_mm_ipow_ss macro x, i
+    ipowf(x, i)
+    retm<xmm0>
+    endm
+_mm_pow_ss macro x:=<xmm0>, y:=<xmm1>
+    powf(x, y)
+    retm<xmm0>
+    endm
+_mm_pow_sd macro x:=<xmm0>, y:=<xmm1>
+    pow(x, y)
+    retm<xmm0>
+    endm
+
+magf proto :real4, :real4 {
+    mulss	xmm0,xmm0
+    mulss	xmm1,xmm1
+    addss	xmm0,xmm1
+    sqrtss	xmm0,xmm0
+    }
+_mm_mag_ss macro x:=<xmm0>, y:=<xmm1>
+    magf(x, y)
+    retm<xmm0>
+    endm
+
 include zmmintrin.inc
 
 .pragma list(pop)

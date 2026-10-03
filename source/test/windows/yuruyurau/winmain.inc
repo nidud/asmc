@@ -49,7 +49,8 @@ CApplication::OnSize proc width:UINT, height:UINT
     divss xmm1,400.0
     movss m_DeltaX,xmm0
     movss m_DeltaY,xmm1
-
+    _mm_mul_ss(_mm_hypot_ss(xmm0, xmm1), RADIUS)
+    movss m_radius,xmm0
     mov m_size.width,edx
     mov m_size.height,eax
     .if ( CreateDeviceResources() )
@@ -152,7 +153,8 @@ CApplication::OnKeyDown proc wParam:WPARAM
     .case VK_RETURN
         mov m_intensity,100
         mov m_step,STEPDIV
-        mov m_radius,1.0
+        _mm_mul_ss(_mm_hypot_ss(m_DeltaX, m_DeltaY), RADIUS)
+        movss m_radius,xmm0
         mov m_count,MAXOBJ
         SafeRelease(m_brush)
        .endc

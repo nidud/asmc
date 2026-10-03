@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    239
-define _ASMC_BUILD  16
+define _ASMC_BUILD  17
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -318,6 +318,14 @@ define FCT_VEC64    5
     LOF_SKIPPOS = 2,    ; suppress setting list_pos
     }
 
+
+.enum vector_flags {
+    VECTOR_NONE,
+    VECTOR_SS,          ; assign float
+    VECTOR_SD,          ; assign double
+    VECTOR_PS,          ; assign { vector }
+    VECTOR_PD           ; assign { vector }
+    }
 
 ; flags for win64_flags
 

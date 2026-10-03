@@ -432,6 +432,7 @@ endif
     opc_or      db ?
     rrm_ib      db ?
     vexregop    db ?        ; in based-1 format (0=empty)
+    vector_type db ?        ; SS/SD/PS/PD
     record VReg
      R_YMM      db : 1 ?    ; the reg-type in vexregop
      R_ZMM      db : 1 ?

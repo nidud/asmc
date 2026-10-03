@@ -1021,36 +1021,18 @@ idata_nofixup proc __ccall private uses rsi rdi rbx CodeInfo:ptr code_info, Curr
         and edx,MT_SIZE_MASK
         inc edx
         mov eax,4
-        mov ecx,[rsi].token
-        .switch ecx
-        .case T_ADDSD
-        .case T_SUBSD
-        .case T_MULSD
-        .case T_DIVSD
-        .case T_MOVSD
-        .case T_MOVQ
-        .case T_COMISD
-        .case T_UCOMISD
-        .case T_CMPEQSD
-        .case T_CMPLTSD
-        .case T_CMPLESD
-        .case T_CMPUNORDSD
-        .case T_CMPNEQSD
-        .case T_CMPNLTSD
-        .case T_CMPNLESD
-        .case T_CMPORDSD
+        .if ( [rsi].vector_type == VECTOR_SD )
             mov eax,8
             mov size,8
-           .endc
-        .case T_MOV
-            .if edx == OPND2
-                .if [rsi].Ofssize == USE64 && ( [rsi].opnd[OPND1].type & OP_R64 )
+        .elseif ( [rsi].token == T_MOV )
+            .if ( CurrOpnd == OPND2 )
+                .if ( [rsi].Ofssize == USE64 && ( [rsi].opnd[OPND1].type & OP_R64 ) )
                     mov eax,8
                 .elseif [rsi].opnd[OPND1].type & OP_R16
                     mov eax,2
                 .endif
             .endif
-        .endsw
+        .endif
         .if ( eax != edx && edx == 16 )
             quad_resize(rdi, eax)
         .endif
@@ -4273,9 +4255,40 @@ init_prefix:
     mov CodeInfo.pinstr,GetInstrTable(eax)
     inc i
     add rsi,asm_tok
-    mov rax,CurrSeg
-    .return asmerr(2034) .if rax == NULL
 
+    ; set the vector type if any
+
+    movzx eax,[rax].Instruction.opclsidx
+    lea rcx,opnd_clstab3
+    mov al,[rcx+rax]
+    and eax,OP3_I_SS or OP3_I_SD or OP3_I_PS or OP3_I_PD
+    .ifnz
+        .switch pascal eax
+        .case OP3_I_SS
+            mov CodeInfo.vector_type,VECTOR_SS
+        .case OP3_I_SD
+            mov CodeInfo.vector_type,VECTOR_SD
+        .case OP3_I_PS
+            mov CodeInfo.vector_type,VECTOR_PS
+        .case OP3_I_PD
+            mov CodeInfo.vector_type,VECTOR_PD
+        .endsw
+    .else
+        mov eax,CodeInfo.token
+        .switch eax
+        .case T_MOVD
+            mov CodeInfo.vector_type,VECTOR_SS
+           .endc
+        .case T_MOVSD
+        .case T_MOVQ
+            mov CodeInfo.vector_type,VECTOR_SD
+        .endsw
+    .endif
+
+    mov rax,CurrSeg
+    .if ( rax == NULL )
+        .return asmerr( 2034 )
+    .endif
     mov rax,[rax].asym.seginfo
     .if ( [rax].seg_info.segtype == SEGTYPE_UNDEF )
         mov [rax].seg_info.segtype,SEGTYPE_CODE
@@ -4732,8 +4745,10 @@ endif
                 mov rdx,CodeInfo.pinstr
                 .while 1
                     movzx eax,[rdx].Instruction.opclsidx
-                    lea rcx,opnd_clstab3
-                    .break .if ( byte ptr [rcx+rax] != OP3_NONE )
+                    lea   rcx,opnd_clstab3
+                    mov   al,[rcx+rax]
+                    and   eax,OP3_MASK
+                    .break .if ( eax != OP3_NONE )
                     add rdx,Instruction
                     .if ( [rdx].Instruction.first )
                         .for ( : [rsi].token != T_COMMA: rsi -= asm_tok )
@@ -4841,62 +4856,37 @@ endif
                     .return mem2mem( ecx, edx, tokenarray, &opndx )
                 .endsw
 
-            .elseif ( ( edx & OP_I_ANY ) && eax < VEX_START && eax >= T_ADDPD &&
-                j > 1 && opndx[expr].kind == EXPR_CONST )
+            .elseif ( ( edx & OP_I_ANY ) && CodeInfo.vector_type && j > 1 && opndx[expr].kind == EXPR_CONST )
 
-                mov rdx,opndx[expr].quoted_string
-                .if rdx
-                    .if ( [rdx].asm_tok.token == T_STRING && [rdx].asm_tok.dirtype == '{' )
-                        mov eax,T_MOVAPS
-                    .endif
+                mov rbx,opndx[expr].quoted_string
+                mov dl,CodeInfo.vector_type
+                .if ( rbx && [rbx].asm_tok.token == T_STRING && [rbx].asm_tok.dirtype == '{' )
+                    mov dl,VECTOR_PS
+                .elseif ( dl == VECTOR_PS || dl == VECTOR_PD )                    
+                    xor edx,edx
                 .endif
                 xor ebx,ebx
 
-                .if ( ecx == OP_XMM )
+                .if ( ecx == OP_XMM || ecx == OP_YMM || ecx == OP_ZMM )
 
-                    mov ecx,4
-                    .switch eax
+                    mov eax,4
+                    .switch
                         ;; v2.31.32: immediate operand to XMM { 1.0, 2.0 }
-                    .case T_MOVAPS
+                    .case ( dl == VECTOR_PS )
+                    .case ( dl == VECTOR_PD )
+                        add eax,8
                         ;; v2.31.24: immediate operand to XMM
-                        add ecx,8
-                    .case T_MOVQ
-                    .case T_MOVSD
-                    .case T_ADDSD
-                    .case T_SUBSD
-                    .case T_MULSD
-                    .case T_DIVSD
-                    .case T_COMISD
-                    .case T_UCOMISD
-                    .case T_CMPEQSD
-                    .case T_CMPLTSD
-                    .case T_CMPLESD
-                    .case T_CMPUNORDSD
-                    .case T_CMPNEQSD
-                    .case T_CMPNLTSD
-                    .case T_CMPNLESD
-                    .case T_CMPORDSD
-                        add ecx,4
-                    .case T_MAXSS
-                    .case T_MINSS
-                    .case T_ADDSS
-                    .case T_SUBSS
-                    .case T_MULSS
-                    .case T_DIVSS
-                    .case T_COMISS
-                    .case T_UCOMISS
-                    .case T_CMPEQSS
-                    .case T_CMPLTSS
-                    .case T_CMPLESS
-                    .case T_CMPUNORDSS
-                    .case T_CMPNEQSS
-                    .case T_CMPNLTSS
-                    .case T_CMPNLESS
-                    .case T_CMPORDSS
-                    .case T_MOVD
-                    .case T_MOVSS
+                    .case ( dl == VECTOR_SD )
+                        add eax,4
+                    .case ( dl == VECTOR_SS )
                         inc ebx
                     .endsw
+                    .if ( ecx == OP_YMM )
+                        add eax,eax
+                    .elseif ( ecx == OP_ZMM )
+                        shl eax,2
+                    .endif
+                    mov ecx,eax
                 .elseif ( eax == T_COMISS && ecx == OP_M32 )
                     inc ebx
                     mov ecx,4

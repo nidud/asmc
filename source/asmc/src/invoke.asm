@@ -604,9 +604,10 @@ fast_param proc __ccall private uses rsi rdi rbx \
     .endif
     mov arg_size,eax
 
-    ; check float
+    ; check float: 0x20 -> ZWORD = 0x3F, YWORD = 0x1F
 
-    .if ( [rdi].kind == EXPR_FLOAT || ( memtype != MT_EMPTY && memtype & MT_FLOAT ) )
+    .if ( [rdi].kind == EXPR_FLOAT || ( memtype != MT_EMPTY &&
+          ( memtype & MT_FLOAT || memtype == MT_YWORD ) ) )
         inc isfloat
     .endif
 
@@ -933,12 +934,14 @@ push_const_128:
                     jmp arg_error
                 .endif
                 mov rdi,paramvalue
-                mov edx,T_VMOVAPS
+                mov edx,T_VMOVAPS     ; align 16
                 mov esi,T_XMMWORD
                 .if ( eax & OP_ZMM )
                     mov esi,T_ZMMWORD
+                    mov edx,T_VMOVUPS ; align 64
                 .elseif ( eax & OP_YMM )
                     mov esi,T_YMMWORD
+                    mov edx,T_VMOVUPS ; align 32
                 .elseif ( ebx < T_XMM16 )
                     mov edx,T_MOVAPS
                 .endif

@@ -798,70 +798,64 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
     endp
 
 
-    ;option cstack:off
     assume rbx:expr_t, rsi:stritem_t
 
 CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string_t
 
-  local segm[64]:char_t
-  local opc:expr
+   .new segm[64]:char_t
+   .new opc:expr
+   .new bsize:int_t = 16
 
-    ldr ecx,size
-    ldr rbx,opnd
+    ldr edi,size
+    mov rbx,tmemcpy(&opc, ldr(opnd), expr)
 
-    mov opc.llvalue,[rbx].llvalue
-    mov opc.hlvalue,[rbx].hlvalue
     mov opc.flags,0
-    .switch ecx
+    .switch edi
     .case 4
-        .endc .if [rbx].mem_type == MT_REAL4
-        .if ( [rbx].chararray[15] & 0x80 )
+        .endc .if ( opc.mem_type == MT_REAL4 )
+        .if ( opc.chararray[15] & 0x80 )
             mov opc.negative,1
             and opc.chararray[15],0x7F
         .endif
-        __cvtq_ss(&opc, &opc)
+        __cvtq_ss(rbx, rbx)
         .if ( opc.negative )
             or opc.chararray[3],0x80
         .endif
         .endc
     .case 8
-        .endc .if [rbx].mem_type == MT_REAL8
-        .if ( [rbx].chararray[15] & 0x80 )
+        .endc .if ( opc.mem_type == MT_REAL8 )
+        .if ( opc.chararray[15] & 0x80 )
             mov opc.negative,1
             and opc.chararray[15],0x7F
         .endif
-        __cvtq_sd(&opc, &opc)
+        __cvtq_sd(rbx, rbx)
         .if ( opc.negative )
             or opc.chararray[7],0x80
         .endif
         .endc
     .case 10
-        .endc .if [rbx].mem_type == MT_REAL10
-        __cvtq_ld(&opc, &opc)
-    .case 16
+        .endc .if ( opc.mem_type == MT_REAL10 )
+        __cvtq_ld(rbx, rbx)
         .endc
+    .case 32
+    .case 64
+        mov bsize,edi
     .endsw
 
     .for ( edi = 0, rsi = MODULE.FltStack : rsi : edi++, rsi = [rsi].next )
         .if ( size == [rsi].count )
-            mov rax,[rsi].string
-            mov edx,opc.h64_l
-            mov ecx,opc.h64_h
-            .if ( edx == [rax+0x08] && ecx == [rax+0x0C] )
-                mov edx,opc.value
-                mov ecx,opc.hvalue
-                .if ( edx == [rax] && ecx == [rax+0x04] )
-                    mov eax,[rsi].index
-                    tsprintf( buffer, "F$%04X", eax )
-                   .return 1
-                .endif
+            .ifd !tmemcmp([rsi].string, rbx, bsize)
+                tsprintf( buffer, "F$%04X", [rsi].index )
+               .return( 1 )
             .endif
         .endif
     .endf
 
     tsprintf( buffer, "F$%04X", edi )
     .if ( Parse_Pass == PASS_1 )
-        LclAlloc( str_item+16 )
+        mov ecx,bsize
+        add ecx,str_item
+        LclAlloc(ecx)
         mov [rax].str_item.index,edi
         mov ecx,size
         mov [rax].str_item.count,ecx
@@ -870,27 +864,44 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
         mov MODULE.FltStack,rax
         lea rcx,[rax+str_item]
         mov [rax].str_item.string,rcx
-        tmemcpy(rcx, &opc, 16)
+        tmemcpy(rcx, rbx, bsize)
         GetCurrentSegment( &segm )
         AddLineQueue( ".data" )
         mov ecx,size
-        .if ( ecx == 10 )
+        .if ( ecx >= 10 )
             mov ecx,16
         .endif
         AddLineQueueX( "align %d", ecx )
+        assume rbx:ptr qword
         mov eax,size
         .switch eax
         .case 4
-            AddLineQueueX( "%s dd 0x%x", buffer, opc.value )
-            .endc
+            AddLineQueueX( "%s dd 0x%x", buffer, [rbx] )
+           .endc
         .case 8
-            AddLineQueueX( "%s dq 0x%lx", buffer, opc.llvalue )
-            .endc
+            AddLineQueueX( "%s dq 0x%lx", buffer, [rbx] )
+           .endc
         .case 10
         .case 16
-            AddLineQueueX( "%s label real%d", buffer, size )
-            AddLineQueueX( "oword 0x%016lX%016lX", opc.hlvalue, opc.llvalue )
-            .endc
+            AddLineQueueX(
+                "%s label real%d\n"
+                "oword 0x%016lX%016lX", buffer, size, [rbx+8], [rbx] )
+           .endc
+        .case 32
+            AddLineQueueX(
+                "%s label ymmword\n"
+                "oword 0x%016lX%016lX\n"
+                "oword 0x%016lX%016lX", buffer, [rbx+8], [rbx], [rbx+24], [rbx+16] )
+           .endc
+        .case 64
+            AddLineQueueX(
+                "%s label zmmword\n"
+                "oword 0x%016lX%016lX\n"
+                "oword 0x%016lX%016lX\n"
+                "oword 0x%016lX%016lX\n"
+                "oword 0x%016lX%016lX", buffer, [rbx+8], [rbx],
+                [rbx+24], [rbx+16], [rbx+40], [rbx+32], [rbx+56], [rbx+48] )
+           .endc
         .endsw
         AddLineQueue( "_DATA ends" )
         AddLineQueue( &segm )

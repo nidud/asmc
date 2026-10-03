@@ -970,15 +970,38 @@ SetEvexOpt proc fastcall tok:token_t, tokenarray:token_t
     .switch
     .case ( [rdx].asm_tok.tokval == T_INVOKE )
         .return( false )
-    .case ( rcx > rdx &&
-            [rdx].asm_tok.token == T_INSTRUCTION &&
-            [rdx+asm_tok].asm_tok.token == T_REG &&
-            [rdx+asm_tok*2].asm_tok.token == T_COMMA )
-        .if ( GetValueSp( [rdx+asm_tok].asm_tok.tokval ) & OP_XMM )
-            .if ( [rdx].asm_tok.tokval < VEX_START &&
-                  [rdx].asm_tok.tokval >= T_ADDPD )
+    .case ( rcx > rdx && [rdx].asm_tok.token == T_INSTRUCTION &&
+            [rdx+asm_tok].asm_tok.token == T_REG && [rdx+asm_tok*2].asm_tok.token == T_COMMA )
+        .if ( GetValueSp( [rdx+asm_tok].asm_tok.tokval ) & OP_XMM or OP_YMM or OP_ZMM )
+            .for ( rdx = [rcx].asm_tok.string_ptr :: )
+                mov eax,[rdx]
+                .switch al
+                .case 9
+                .case ' '
+                    inc rdx
+                    mov eax,[rdx]
+                   .gotosw
+                .case 'k' ; {k1}
+                    .endc .if ah < '1'
+                    .endc .if ah > '7'
+                    .endc .if eax & 0xFF0000
+                    .break
+                .case '1' ; {1to2..n}
+                    .endc .if ( ah != 't' )
+                    .break
+                .case 'z' ; {z}
+                    .break .if ( ah == 0 )
+                    .endc
+                .case 'r' ; {rn-sae} {ru-sae} {rd-sae} {rz-sae}
+                    .endc .if byte ptr [rdx+2] != '-'
+                    .endc .if byte ptr [rdx+3] != 's'
+                    .break
+                .case 's' ; {sae}
+                    .endc .if eax != 'eas'
+                    .break
+                .endsw
                 .return( false )
-            .endif
+            .endf
         .endif
     .endsw
     mov [rcx].asm_tok.Modifier,1

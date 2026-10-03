@@ -35,38 +35,38 @@ m256i_u32	dd 8 dup(?)
 m256i_u64	dq 4 dup(?)
 __m256i		ends
 
-_CMP_EQ_OQ	equ 0x00
-_CMP_LT_OS	equ 0x01
-_CMP_LE_OS	equ 0x02
-_CMP_UNORD_Q	equ 0x03
-_CMP_NEQ_UQ	equ 0x04
-_CMP_NLT_US	equ 0x05
-_CMP_NLE_US	equ 0x06
-_CMP_ORD_Q	equ 0x07
-_CMP_EQ_UQ	equ 0x08
-_CMP_NGE_US	equ 0x09
-_CMP_NGT_US	equ 0x0A
-_CMP_FALSE_OQ	equ 0x0B
-_CMP_NEQ_OQ	equ 0x0C
-_CMP_GE_OS	equ 0x0D
-_CMP_GT_OS	equ 0x0E
-_CMP_TRUE_UQ	equ 0x0F
-_CMP_EQ_OS	equ 0x10
-_CMP_LT_OQ	equ 0x11
-_CMP_LE_OQ	equ 0x12
-_CMP_UNORD_S	equ 0x13
-_CMP_NEQ_US	equ 0x14
-_CMP_NLT_UQ	equ 0x15
-_CMP_NLE_UQ	equ 0x16
-_CMP_ORD_S	equ 0x17
-_CMP_EQ_US	equ 0x18
-_CMP_NGE_UQ	equ 0x19
-_CMP_NGT_UQ	equ 0x1A
-_CMP_FALSE_OS	equ 0x1B
-_CMP_NEQ_OS	equ 0x1C
-_CMP_GE_OQ	equ 0x1D
-_CMP_GT_OQ	equ 0x1E
-_CMP_TRUE_US	equ 0x1F
+define _CMP_EQ_OQ	0x00
+define _CMP_LT_OS	0x01
+define _CMP_LE_OS	0x02
+define _CMP_UNORD_Q	0x03
+define _CMP_NEQ_UQ	0x04
+define _CMP_NLT_US	0x05
+define _CMP_NLE_US	0x06
+define _CMP_ORD_Q	0x07
+define _CMP_EQ_UQ	0x08
+define _CMP_NGE_US	0x09
+define _CMP_NGT_US	0x0A
+define _CMP_FALSE_OQ	0x0B
+define _CMP_NEQ_OQ	0x0C
+define _CMP_GE_OS	0x0D
+define _CMP_GT_OS	0x0E
+define _CMP_TRUE_UQ	0x0F
+define _CMP_EQ_OS	0x10
+define _CMP_LT_OQ	0x11
+define _CMP_LE_OQ	0x12
+define _CMP_UNORD_S	0x13
+define _CMP_NEQ_US	0x14
+define _CMP_NLT_UQ	0x15
+define _CMP_NLE_UQ	0x16
+define _CMP_ORD_S	0x17
+define _CMP_EQ_US	0x18
+define _CMP_NGE_UQ	0x19
+define _CMP_NGT_UQ	0x1A
+define _CMP_FALSE_OS	0x1B
+define _CMP_NEQ_OS	0x1C
+define _CMP_GE_OQ	0x1D
+define _CMP_GT_OQ	0x1E
+define _CMP_TRUE_US	0x1F
 
 _mm256_add_pd macro a, b
     vaddpd a,a,b
@@ -202,7 +202,6 @@ _mm256_xor_ps macro a, b
     vxorps a,a,b
     retm<a>
     endm
-
 _mm_cmp_pd macro a, b, imm
     cmppd a,b,imm
     retm<a>
@@ -301,9 +300,7 @@ _mm256_permute_ps macro y:=<ymm0>, imm:=<0>
     vpermilps y,y,imm
     retm<y>
     endm
-ifdef _XM_NO_INTRINSICS_
-_mm_permute_ps	proto __cdecl :oword, :sdword
-else
+
 _mm_permute_ps macro x:=<xmm0>, imm:=<0>
 ifdef __AVX__
     vpermilps x,x,imm
@@ -312,7 +309,6 @@ else
 endif
     retm<x>
     endm
-endif
 
 _mm256_permutevar_pd macro y:=<ymm0>, yi:=<ymm1>
     vpermilpd y,y,yi
@@ -1825,14 +1821,6 @@ externdef g_EXPTABLE:		REAL8
 
 endif
 
-ifndef __vdecl
-ifdef _WIN64
-define __vdecl <>
-else
-define __vdecl <vectorcall>
-endif
-endif
-
 __vdecl_cosf4	proto __vdecl :XVECTOR
 __vdecl_coshf4	proto __vdecl :XVECTOR
 __vdecl_sinf4	proto __vdecl :XVECTOR
@@ -1862,7 +1850,19 @@ __vdecl_lbitf4	proto __vdecl :XVECTOR
 
 
 _mm_cos_ss macro x:=<xmm0>
+if defined(__PE__) or defined(_MSVCRT)
+   .new pe:real4
+ifdif <x>,<xmm0>
+    movss xmm0,x
+endif
+    movss pe,xmm0
+    fld	  pe
+    fcos
+    fstp  pe
+    movss xmm0,pe
+else
     cosf(x)
+endif
     retm<xmm0>
     endm
 _mm_cos_ps macro x:=<xmm0>
@@ -1875,7 +1875,24 @@ _mm_cos_sd macro x:=<xmm0>
     endm
 
 _mm_acos_ss macro x:=<xmm0>
+if defined(__PE__) or defined(_MSVCRT)
+   .new pe:real4
+ifdif <x>,<xmm0>
+    movss xmm0,x
+endif
+    movss pe,xmm0
+    fld	  pe
+    fmul  st(0),st(0)
+    fld1
+    fsubrp st(1),st(0)
+    fsqrt
+    fld	  pe
+    fpatan
+    fstp  pe
+    movss xmm0,pe
+else
     acosf(x)
+endif
     retm<xmm0>
     endm
 _mm_acos_ps macro x:=<xmm0>
@@ -1905,7 +1922,19 @@ _mm_cosh_pd macro x:=<xmm0>
     endm
 
 _mm_sin_ss macro x:=<xmm0>
+if defined(__PE__) or defined(_MSVCRT)
+   .new pe:real4
+ifdif <x>,<xmm0>
+    movss xmm0,x
+endif
+    movss pe,xmm0
+    fld	  pe
+    fsin
+    fstp  pe
+    movss xmm0,pe
+else
     sinf(x)
+endif
     retm<xmm0>
     endm
 _mm_sin_ps macro x:=<xmm0>
@@ -1927,7 +1956,24 @@ _mm_sinh_ps macro x:=<xmm0>
     endm
 
 _mm_asin_ss macro x:=<xmm0>
+if defined(__PE__) or defined(_MSVCRT)
+   .new pe:real4
+ifdif <x>,<xmm0>
+    movss xmm0,x
+endif
+    movss pe,xmm0
+    fld	  pe
+    fld	  st(0)
+    fmul  st(1),st(0)
+    fld1
+    fsubr
+    fsqrt
+    fpatan
+    fstp  pe
+    movss xmm0,pe
+else
     asinf(x)
+endif
     retm<xmm0>
     endm
 _mm_asin_ps macro x:=<xmm0>
@@ -1936,7 +1982,19 @@ _mm_asin_ps macro x:=<xmm0>
     endm
 
 _mm_tan_ss macro x:=<xmm0>
+if defined(__PE__) or defined(_MSVCRT)
+   .new pe:real4
+ifdif <x>,<xmm0>
+    movss xmm0,x
+endif
+    movss pe,xmm0
+    fld	  pe
+    fptan
+    fstp  pe
+    movss xmm0,pe
+else
     tanf(x)
+endif
     retm<xmm0>
     endm
 _mm_tan_ps macro x:=<xmm0>
@@ -1957,6 +2015,27 @@ _mm_tanh_ps macro x:=<xmm0>
     retm<xmm0>
     endm
 
+_mm_atan_ss macro x:=<xmm0>
+if defined(__PE__) or defined(_MSVCRT)
+   .new pe:real4
+ifdif <x>,<xmm0>
+    movss xmm0,x
+endif
+    movss pe,xmm0
+    fld	  pe
+    fld1
+    fpatan
+    fstp  pe
+    movss xmm0,pe
+else
+    atanf(x)
+endif
+    retm<xmm0>
+    endm
+_mm_atan_sd macro x:=<xmm0>
+    atan(x)
+    retm<xmm0>
+    endm
 _mm_atan_ps macro x:=<xmm0>
     __vdecl_atanf4(x)
     retm<xmm0>
@@ -1977,7 +2056,7 @@ _mm_log2_ps macro x:=<xmm0>
     retm<xmm0>
     endm
 
-_mm_fmod_ss proto fastcall :real4, :real4 {
+_mm_fmod_ss proto __vdecl :real4, :real4 {
     movaps	xmm2,xmm0
     divps	xmm2,xmm1
     roundps	xmm2,xmm2,_MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC
@@ -1986,7 +2065,7 @@ _mm_fmod_ss proto fastcall :real4, :real4 {
     retm	<xmm0>
     }
 
-_mm_fmod_sd proto fastcall :real8, :real8 {
+_mm_fmod_sd proto __vdecl :real8, :real8 {
     movapd	xmm2,xmm0
     divpd	xmm2,xmm1
     roundpd	xmm2,xmm2,_MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC
@@ -2046,10 +2125,10 @@ _mm_trunc_pd macro x:=<xmm0>
     retm<xmm0>
     endm
 
-ipowf proto :real4, :abs {
-    movss	xmm1,xmm0
+ipowf proto __vdecl :real4, :abs {
+    movss xmm1,xmm0
     repeat _2-1
-    mulss	xmm0,xmm1
+      mulss xmm0,xmm1
     endm
     }
 _mm_ipow_ss macro x, i
@@ -2057,7 +2136,38 @@ _mm_ipow_ss macro x, i
     retm<xmm0>
     endm
 _mm_pow_ss macro x:=<xmm0>, y:=<xmm1>
+ifndef _WIN64
+   .new pe:real4
+ifdif <y>,<xmm1>
+    movss xmm1,y
+endif
+ifdif <x>,<xmm0>
+    movss xmm0,x
+endif
+    movss pe,xmm0
+    fld	  pe ; exp(log(x) * y)
+    fldln2
+    fxch  st(1)
+    fyl2x
+    movss pe,xmm1
+    fld	  pe
+    fmulp
+    fldl2e
+    fmul  st,st(1)
+    fst	  st(1)
+    frndint
+    fxch  st(1)
+    fsub  st,st(1)
+    f2xm1
+    fld1
+    faddp st(1),st
+    fscale
+    fstp  st(1)
+    fstp  pe
+    movss xmm0,pe
+else
     powf(x, y)
+endif
     retm<xmm0>
     endm
 _mm_pow_sd macro x:=<xmm0>, y:=<xmm1>
@@ -2065,14 +2175,44 @@ _mm_pow_sd macro x:=<xmm0>, y:=<xmm1>
     retm<xmm0>
     endm
 
-magf proto :real4, :real4 {
+__vdecl_hypot proto __vdecl :real8, :real8 {
+    mulsd	xmm0,xmm0
+    mulsd	xmm1,xmm1
+    addsd	xmm0,xmm1
+    sqrtsd	xmm0,xmm0
+    }
+__vdecl_hypotf proto __vdecl :real4, :real4 {
     mulss	xmm0,xmm0
     mulss	xmm1,xmm1
     addss	xmm0,xmm1
     sqrtss	xmm0,xmm0
     }
-_mm_mag_ss macro x:=<xmm0>, y:=<xmm1>
-    magf(x, y)
+__vdecl_hypot2 proto __vdecl :XVECTOR, :XVECTOR {
+    mulpd	xmm0,xmm0
+    mulpd	xmm1,xmm1
+    addpd	xmm0,xmm1
+    sqrtpd	xmm0,xmm0
+    }
+__vdecl_hypotf4 proto __vdecl :XVECTOR, :XVECTOR {
+    mulps	xmm0,xmm0
+    mulps	xmm1,xmm1
+    addps	xmm0,xmm1
+    sqrtps	xmm0,xmm0
+    }
+_mm_hypot_sd macro x:=<xmm0>, y:=<xmm1>
+    __vdecl_hypot(x, y)
+    retm<xmm0>
+    endm
+_mm_hypot_ss macro x:=<xmm0>, y:=<xmm1>
+    __vdecl_hypotf(x, y)
+    retm<xmm0>
+    endm
+_mm_hypot_pd macro x:=<xmm0>, y:=<xmm1>
+    __vdecl_hypot2(x, y)
+    retm<xmm0>
+    endm
+_mm_hypot_ps macro x:=<xmm0>, y:=<xmm1>
+    __vdecl_hypotf4(x, y)
     retm<xmm0>
     endm
 

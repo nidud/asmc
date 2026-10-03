@@ -150,6 +150,7 @@ ceilf   proto __cdecl _X:float
 fabsf   proto __cdecl _X:float
 floorf  proto __cdecl _X:float
 fmodf   proto __cdecl _X:float, _Y:float
+frexpf  proto __cdecl _X:float, _Y:ptr SINT
 
 _hypotf proto __cdecl _X:float, _Y:float
 ldexpf  proto __cdecl _X:float, _Y:int_t

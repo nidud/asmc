@@ -106,6 +106,18 @@ OP3_I8_U	equ 2		; this is also used for signed values (IMUL)
 OP3_XMM0	equ 3		; v2.01: introduced with SSE4.1
 OP3_I		equ 4		; v2.06: added to avoid the IMUL hack
 OP3_HID		equ 5		; hidden data ( CMPxxx[PD|PS|SD|SS]
+OP3_MASK	equ 7
+
+OP3_I_SS	equ 0x08	; VECTOR_SS
+OP3_I_SD	equ 0x10	; VECTOR_SD
+OP3_I_PS	equ 0x20	; VECTOR_PS
+OP3_I_PD	equ 0x40	; VECTOR_PD
+
+OP3_HSS		equ OP3_HID or OP3_I_SS
+OP3_HSD		equ OP3_HID or OP3_I_SD
+OP3_HPS		equ OP3_HID or OP3_I_PS
+OP3_HPD		equ OP3_HID or OP3_I_PD
+
 
 OP3_XMM		equ OP3_XMM0	; for VEX encoding only
 OP3_YMM		equ OP3_XMM0

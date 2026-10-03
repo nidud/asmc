@@ -10,7 +10,7 @@ The Asmc specific convention is **_expression_**( _arguments_ ).
 
 String arguments can be passed as C-style quoted strings, including (L"Unicode strings").
 
-An immediate vector expression may be passed as an argument to a procedure parameter that is passed in an XMM register. Vector arguments use braces and are limited to the 128-bit XMM registers. The vector initializer must fit in one XMM register. For example:
+An immediate vector expression may be passed as an argument to a procedure parameter that is passed in a vector register. The number of values assigned must match the size of the vector register being used. For example:
 ```
 bar proto :real4 {}
 baz proto :real8, :real8 {}

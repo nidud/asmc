@@ -46,10 +46,10 @@ ifdef _WIN64
     movsd       xmm2,[rcx+rdx+8]
     movlhps     xmm1,xmm1
     movapd      xmm3,xmm1
-    addpd       xmm1,{7.73568837260218089745241122384476,-0.538488999896042287022709624001146}
+    addpd       xmm1,{0x401EF1584AF17ECD, 0xBFE13B4D4879E55E}
     mulpd       xmm1,xmm3
-    mulsd       xmm3,0.133636821875765095445302638781823e-2
-    addpd       xmm1,{20.9994886368921956041911010330331,24.6996388387715486518175431533940}
+    addpd       xmm1,{0x4034FFDE7CC02CF4, 0x4038B31B87EB8904}
+    mulsd       xmm3,3F55E52272E0EAECr
     movhlps     xmm4,xmm1
     mulsd       xmm1,xmm2
     mulsd       xmm3,xmm4
@@ -69,14 +69,14 @@ ifdef _WIN64
     cmp         rax,d_tiny
     jbe         .4
     movapd      xmm1,xmm0
-    mulsd       xmm1,0.133335622192926517572920729812647e-2
-    addsd       xmm1,0.961813204561913206522420450734562e-2
+    mulsd       xmm1,3F55D880577EA316r
+    addsd       xmm1,3F83B2ABD4AD2546r
     mulsd       xmm1,xmm0
-    addsd       xmm1,0.555041086648186946112103135980407e-1
+    addsd       xmm1,3FAC6B08D7049F20r
     mulsd       xmm1,xmm0
-    addsd       xmm1,0.240226506959089504788316195798243
+    addsd       xmm1,3FCEBFBDFF82C3FBr
     mulsd       xmm1,xmm0
-    addsd       xmm1,0.693147180559945309420618787399210
+    addsd       xmm1,3FE62E42FEFA39EFr
     mulsd       xmm0,xmm1
     addsd       xmm0,g_X2FONE.f1
     jmp         .0
@@ -109,10 +109,10 @@ ifdef _WIN64
     movsd       xmm2,[rcx+rdx+8]
     movlhps     xmm1,xmm1
     movapd      xmm3,xmm1
-    addpd       xmm1,{7.73568837260218089745241122384476,-0.538488999896042287022709624001146}
+    addpd       xmm1,{0x401EF1584AF17ECD, 0xBFE13B4D4879E55E}
     mulpd       xmm1,xmm3
-    mulsd       xmm3,0.133636821875765095445302638781823e-2
-    addpd       xmm1,{20.9994886368921956041911010330331,24.6996388387715486518175431533940}
+    addpd       xmm1,{0x4034FFDE7CC02CF4, 0x4038B31B87EB8904}
+    mulsd       xmm3,3F55E52272E0EAECr
     movhlps     xmm4,xmm1
     mulsd       xmm3,xmm4
     add         rax,1022

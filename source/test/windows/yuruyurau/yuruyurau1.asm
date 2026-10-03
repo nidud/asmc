@@ -36,7 +36,7 @@ CApplication::Point proc uses xmm6 xmm7 id:UINT
     _mm_move_ss(e, _mm_mul_ss(_mm_mul_ss(xmm0, xmm6), 9.0))
 
     ; d = mag(k, e)^3 / 1999 + 1.5 - sin(t / 2 + m)^3 / 3
-    _mm_ipow_ss(_mm_mag_ss(k, e), 3)
+    _mm_ipow_ss(_mm_hypot_ss(k, e), 3)
     _mm_move_ss(xmm6, _mm_add_ss(_mm_div_ss(xmm0, 1999.0), 1.5))
     _mm_ipow_ss(_mm_sin_ss(_mm_add_ss(_mm_mul_ss(_mm_move_ss(xmm0, m_time), 0.5), m)), 3)
     _mm_move_ss(d, _mm_sub_ss(xmm6, _mm_div_ss(xmm0, 3.0)))

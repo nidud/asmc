@@ -353,7 +353,7 @@ mem2mem proc __ccall uses rsi rdi rbx op1:dword, op2:dword, tokenarray:token_t, 
 
     assume rdi:token_t
 
-immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
+immarray proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t, vsize:int_t
 
   local i:int_t
   local count:int_t
@@ -371,12 +371,12 @@ immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
     .endf
     inc ecx
     mov count,ecx
-    mov eax,16
+    mov eax,vsize
     cdq
     idiv ecx
     mov size,eax
     mul ecx
-    .if ( eax != 16 )
+    .if ( eax != vsize )
         asmerr( 2036, CurrSource )
         mov count,1
         mov size,4
@@ -396,7 +396,7 @@ immarray16 proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t
     tstrcpy( CurrSource, &oldtok )
     Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
     mov TokenCount,eax
-    .return( 16 )
+    .return( vsize )
     endp
 
 
@@ -407,20 +407,22 @@ imm2xmm proc __ccall uses rsi rdi rbx tokenarray:token_t, opnd:expr_t, size:uint
   local opnd2:expr
 
     ldr rdi,tokenarray
-    ldr rcx,opnd
+    ldr rdx,opnd
+
+    mov rbx,tmemcpy(&opnd2, rdx, expr)
     mov esi,[rdi].tokval
-    .if ( size == 16 && [rcx].expr.mem_type == MT_EMPTY )
-        immarray16(rdi, rcx)
+    .if ( size >= 16 && [rbx].expr.mem_type == MT_EMPTY )
+        immarray(rdi, rbx, size)
 
     ; added v2.34.73 - movxx reg,0.0
 
     .elseif ( ( esi == T_MOVSS || esi == T_MOVSD ) && [rdi+asm_tok].token == T_REG )
 
-        mov rax,[rcx]
-        or  rax,[rcx+8]
+        mov rax,[rbx]
+        or  rax,[rbx+8]
 ifndef _WIN64
-        or  eax,[ecx+4]
-        or  eax,[ecx+12]
+        or  eax,[ebx+4]
+        or  eax,[ebx+12]
 endif
         .if ( !rax )
 
@@ -430,7 +432,7 @@ endif
            .return( RetLineQueue() )
         .endif
     .endif
-    CreateFloat( size, opnd, &flabel )
+    CreateFloat( size, rbx, &flabel )
 
     .if ( [rdi+asm_tok].token == T_REG )
         AddLineQueueX( " %r %r, %s", esi, [rdi+asm_tok].tokval, &flabel )

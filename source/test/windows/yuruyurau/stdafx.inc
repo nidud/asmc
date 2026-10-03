@@ -26,6 +26,7 @@ define CLASS_NAME   <"MainWindowClass">
 define WINDOWSTYLES WS_VISIBLE or WS_POPUP
 define ID_TIMER     1
 define IDD_HELP     129
+define RADIUS       0.17
 
 .class CApplication
 

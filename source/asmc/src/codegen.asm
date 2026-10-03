@@ -1253,6 +1253,7 @@ check_3rd_operand proc
     movzx eax,[rdx].Instruction.opclsidx
     lea   rcx,opnd_clstab3
     movzx eax,byte ptr [rcx+rax]
+    and   eax,OP3_MASK
 
     .if ( eax == OP3_NONE || eax == OP3_HID )
         .return( ERROR ) .if ( [rsi].opnd[OPNI3].type != OP_NONE )
@@ -1316,7 +1317,8 @@ output_3rd_operand proc
     mov   rdx,[rsi].pinstr
     movzx eax,[rdx].Instruction.opclsidx
     lea   rcx,opnd_clstab3
-    movzx eax,byte ptr [rcx+rax]
+    mov   al,[rcx+rax]
+    and   eax,OP3_MASK
 
     .switch pascal eax
     .case OP3_I8_U
@@ -1643,8 +1645,10 @@ match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
                 .endif
 
                 movzx eax,[rdi].opclsidx
-                lea rcx,opnd_clstab3
-                .if ( byte ptr [rcx+rax] != OP3_NONE && ![rdi].Evex.vsib )
+                lea   rcx,opnd_clstab3
+                mov   al,[rcx+rax]
+                and   eax,OP3_MASK
+                .if ( eax != OP3_NONE && ![rdi].Evex.vsib )
                     output_3rd_operand()
                 .endif
                 .if [rdi].byte1_info == F_0F0F ;; output 3dNow opcode?

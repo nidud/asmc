@@ -76,10 +76,11 @@ ifndef ASMC64
  char_t "-FPi Generate 80x87 emulator encoding     -FPi87 80x87 instructions (default)",10
 endif
  char_t "-fplt Relocate function calls to PLT      -frame Auto generate unwind info",10
- char_t "-Fw<file> Set errors file name            -G<c|d|r|s|v|w|z> Calling convention",10
- char_t "-Ge Conditional stack checking            -home Copy register params to Stack",10
- char_t "-I<name> Add include path                 -idd[t] Assemble as binary [or text]",10
- char_t "-info Print assembly information          -logo Print logo string and exit",10
+ char_t "-Fw<file> Set errors file name            -G<c|d|r|s|v|o|z> Calling convention",10
+ char_t "-Ge Conditional stack checking            -Gw Move generated data to COMDAT",10
+ char_t "-home Copy register params to Stack       -I<name> Add include path",10
+ char_t "-idd[t] Assemble as binary [or text]      -info Print assembly information",10
+ char_t "-jtd Jump Table to Data segment           -logo Print logo string and exit",10
  char_t "-MD[d] Defines _MSVCRT [_DEBUG]           -MT[d] Defines _MT [_DEBUG]",10
 ifndef ASMC64
  char_t "-m<t|s|c|m|l|h|f> Set memory model        -mz Generate DOS MZ binary file",10

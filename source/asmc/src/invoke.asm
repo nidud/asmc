@@ -403,7 +403,7 @@ fast_param proc __ccall private uses rsi rdi rbx \
    .new resstack:byte = FALSE   ; use reserved stack
    .new memtype:byte            ; param type
    .new stack:byte = FALSE      ; stack param
-   .new buffer[16]:char_t       ; created float label
+   .new buffer[256]:char_t       ; created float label
    .new destroyed:byte = FALSE  ; register overwritten
    .new isvararg:byte
 

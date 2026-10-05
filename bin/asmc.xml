@@ -446,6 +446,20 @@
         Switch="/Gs" />
     </EnumProperty>
     <EnumProperty
+      Name="OptimizeGlobalData"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Optimize Global Data"
+      Description="Move assembler generated data to COMDAT sections.">
+      <EnumValue
+        Name="0"
+        DisplayName="Default" />
+      <EnumValue
+        Name="1"
+        DisplayName="Move data to COMDAT sections"
+        Switch="/Gw" />
+    </EnumProperty>
+    <EnumProperty
       Name="ErrorReporting"
       Category="Advanced"
       HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"

@@ -4381,11 +4381,21 @@ init_prefix:
                         .endif
 
                         xor ecx,ecx
-                        .switch eax
-                        .case 2:  mov ecx,MT_REAL2  : .endc
-                        .case 4:  mov ecx,MT_REAL4  : .endc
-                        .case 8:  mov ecx,MT_REAL8  : .endc
-                        .case 16: mov ecx,MT_REAL16 : .endc
+                        .switch pascal eax
+                        .case 2:  mov ecx,MT_REAL2
+                        .case 4:  mov ecx,MT_REAL4
+                        .case 8:  mov ecx,MT_REAL8
+                        .case 16: mov ecx,MT_REAL16
+                        .case 32
+                            .if ( CodeInfo.token == T_VBROADCASTSD )
+                                mov eax,8
+                                mov ecx,MT_REAL8
+                            .endif
+                        .case 64
+                            .if ( CodeInfo.token == T_VBROADCASTSS )
+                                mov eax,4
+                                mov ecx,MT_REAL4
+                            .endif
                         .endsw
 
                         .if ( ecx )
@@ -4862,7 +4872,7 @@ endif
                 mov dl,CodeInfo.vector_type
                 .if ( rbx && [rbx].asm_tok.token == T_STRING && [rbx].asm_tok.dirtype == '{' )
                     mov dl,VECTOR_PS
-                .elseif ( dl == VECTOR_PS || dl == VECTOR_PD )                    
+                .elseif ( dl == VECTOR_PS || dl == VECTOR_PD )
                     xor edx,edx
                 .endif
                 xor ebx,ebx
@@ -4881,10 +4891,13 @@ endif
                     .case ( dl == VECTOR_SS )
                         inc ebx
                     .endsw
-                    .if ( ecx == OP_YMM )
-                        add eax,eax
-                    .elseif ( ecx == OP_ZMM )
-                        shl eax,2
+                    .if ( eax == 16 && CodeInfo.token != T_VBROADCASTF32X4 &&
+                          CodeInfo.token != T_VBROADCASTF64X2 )
+                        .if ( ecx == OP_YMM )
+                            add eax,eax
+                        .elseif ( ecx == OP_ZMM )
+                            shl eax,2
+                        .endif
                     .endif
                     mov ecx,eax
                 .elseif ( eax == T_COMISS && ecx == OP_M32 )

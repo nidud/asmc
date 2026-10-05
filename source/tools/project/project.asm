@@ -326,9 +326,9 @@ CreateSource proc name:string_t, Windows:int_t
             "_tmain proc argc:int_t, argv:array_t\n"
             "\n"
             "    _tprintf(\"The %s project\\n\")\n"
-            "   .return(0)\n"
+            "    .return( 0 )\n"
             "\n"
-            "_tmain endp\n"
+            "    endp\n"
             "\n"
             "    end _tstart\n", &uname)
     .endif

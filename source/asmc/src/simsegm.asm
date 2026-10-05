@@ -103,13 +103,15 @@ close_currseg proc __ccall private
 
 SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
 
-    .new pAlign:string_t = "WORD"
-    .new pAlignSt:string_t = "PARA"
-    .new pUse:string_t = ""
-    .new calign[16]:char_t
-    .new sym:asym_t
-    .new pFmt:string_t
-    .new pClass:string_t
+   .new pAlign:string_t = "WORD"
+   .new pAlignSt:string_t = "PARA"
+   .new pUse:string_t = ""
+   .new calign[16]:char_t
+   .new sym:asym_t
+   .new pFmt:string_t
+   .new pClass:string_t
+
+    mov esi,segm
 
     ; v2.24 /Sp[n] Set segment alignment
 
@@ -136,7 +138,6 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
         .endif
         mov pAlignSt,pAlign
     .endif
-    mov esi,segm
     .if ( esi == SIM_CODE )
         mov pClass,GetCodeClass()
     .else

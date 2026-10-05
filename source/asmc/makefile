@@ -10,6 +10,7 @@ endif
 
 ifdef YACC
 link = -o $@
+del_obj = rm -f *.o
 ifdef debug
 flags += -Zd -Zf
 endif
@@ -22,6 +23,7 @@ endif
 endif
 else
 link = -out:$@.exe -stack:0x300000,0x200000
+del_obj = del *.obj
 endif
 
 ifdef x86
@@ -46,30 +48,31 @@ else
 CC = ..\..\bin\$(acc).exe
 endif
 
-all: asmc asmc64 clean
+all: asmc asmc64
+
+.PHONY: all asmc asmc64 asmcinc clean install install_asmc install_asmc64 uninstall
 
 asmc:
 ifdef YACC
 	chmod a+x $(CC)
 endif
 	$(CC) $(flags) src/*.asm -link $(link)
+	$(del_obj)
 
 asmc64:
 	$(CC) -DASMC64 $(flags) src/*.asm -link $(link)
+	$(del_obj)
 
 asmcinc:
 	$(CC) -DASMCINC $(flags) src/*.asm -link $(link)
+	$(del_obj)
 
 clean:
-ifdef YACC
-	rm *.o
-else
-	del *.obj
-endif
+	$(del_obj)
 
 ifdef YACC
 
-install: install_asmc
+install: all install_asmc install_asmc64
 	sudo rm -f -R /usr/lib/asmc
 	sudo mkdir /usr/lib/asmc
 	sudo mkdir /usr/lib/asmc/x86
@@ -81,9 +84,9 @@ install: install_asmc
 
 install_asmc:
 	sudo install ./asmc /usr/bin
+
+install_asmc64:
 	sudo install ./asmc64 /usr/bin
-	rm ./asmc
-	rm ./asmc64
 
 uninstall:
 	sudo rm -f /usr/bin/asmc
@@ -95,13 +98,13 @@ debug32:
 	make x86=1 debug=1 asmc clean
 	gdb -x ../test/dwarf/layout.gdb --args asmc -I../../include -Fe pltgot -elf -Zd -fPIC ../test/dwarf/pltgot/got.asm -fplt ../test/dwarf/pltgot/plt.asm
 #	gdb -x ../test/dwarf/layout.gdb pltgot
-	rm ./asmc
+	rm -f ./asmc
 #	rm ./pltgot
 
 debug64:
 	make debug=1 asmc64 clean
 	gdb -x ../test/dwarf/layout.gdb --args asmc64 -c -I../../include -Zd -fPIC ../test/dwarf/pltgot/got.asm
-	rm ./asmc64
+	rm -f ./asmc64
 
 build_libc:
 	make -C ../libc
@@ -111,12 +114,12 @@ build_libc:
 debugmt32:
 	make x86=1 MT=1 debug=1 asmc clean
 	gdb -x ../test/dwarf/layout.gdb --args asmc -c -elf -Zd -fPIC ../test/dwarf/pltgot/got.asm
-	rm ./asmc
+	rm -f ./asmc
 
 debugmt64:
 	make MT=1 debug=1 asmc clean
 	gdb -x ../test/dwarf/layout.gdb --args asmc -c -elf64 -Zd -fPIC ../test/dwarf/pltgot/got.asm
-	rm ./asmc
+	rm -f ./asmc
 
 else
 

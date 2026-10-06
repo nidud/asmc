@@ -102,6 +102,7 @@
       Processor="%(ASMC.Processor)"
       Architecture="%(ASMC.Architecture)"
       CallingConvention="%(ASMC.CallingConvention)"
+      OptimizeGlobalData="%(ASMC.OptimizeGlobalData)"
       ErrorReporting="%(ASMC.ErrorReporting)"
       AdditionalOptions="%(ASMC.AdditionalOptions)"
       Inputs="%(ASMC.Identity)" />

@@ -402,7 +402,7 @@ immarray proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t, vs
 
 imm2xmm proc __ccall uses rsi rdi rbx tokenarray:token_t, opnd:expr_t, size:uint_t
 
-  local flabel[16]:char_t
+  local flabel[256]:char_t
   local i:int_t
   local opnd2:expr
 

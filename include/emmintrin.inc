@@ -745,36 +745,30 @@ _mm_loadl_epi64 macro x, p
     exitm<_mmopab(movq, xmm0, x)>
     endm
 
-_mm_set_epi64x macro x, _1, _2
-    movdqa x,{ _2, _1 }
-    retm<x>
+_mm_set_epi64x macro args:vararg
+    exitm<_MM_SET(args)>
     endm
-_mm_set_epi32 macro x, _1, _2, _3, _4
-    movdqa x,{ _4, _3, _2, _1 }
-    retm<x>
+_mm_set_epi32 macro args:vararg
+    exitm<_MM_SET(args)>
     endm
-_mm_set_epi16 macro x, _1, _2, _3, _4, _5, _6, _7, _8
-    movdqa x,{ _8, _7, _6, _5, _4, _3, _2, _1 }
-    retm<x>
+_mm_set_epi16 macro args:vararg
+    exitm<_MM_SET(args)>
     endm
-_mm_set_epi8 macro x, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16
-    movdqa x,{ _16, _15, _14, _13, _12, _11, _10, _9, _8, _7, _6, _5, _4, _3, _2, _1 }
-    retm<x>
+_mm_set_epi8 macro args:vararg
+    exitm<_MM_SET(args)>
     endm
 
-_mm_set1_epi64x macro x, i
-    movapd x,{ i, i }
-    retm<x>
+_mm_set1_epi64x macro q
+    exitm<_MM_SET1(q ,2)>
     endm
-_mm_set1_epi32 macro x, i
-    movaps x,{ i, i, i, i }
-    retm<x>
+_mm_set1_epi32 macro q
+    exitm<_MM_SET1(q ,4)>
     endm
-_mm_set1_epi16 macro xmm, imm
-    exitm<_mm_set1_epi32(xmm, ((imm shl 16) or imm))>
+_mm_set1_epi16 macro q
+    exitm<_MM_SET1(q ,8)>
     endm
-_mm_set1_epi8 macro xmm, imm
-    exitm<_mm_set1_epi16(xmm, ((imm shl 8) or imm))>
+_mm_set1_epi8 macro q
+    exitm<_MM_SET1(q ,16)>
     endm
 ifdef _M_X64
 _mm_set1_epi64 macro a:=<xmm0>
@@ -782,17 +776,14 @@ _mm_set1_epi64 macro a:=<xmm0>
     endm
 endif
 
-_mm_setr_epi32 macro x, args:vararg
-    movaps x,{ args }
-    retm<x>
+_mm_setr_epi32 macro args:vararg
+    exitm<{ args }>
     endm
-_mm_setr_epi16 macro x, args:vararg
-    movaps x,{ args }
-    retm<x>
+_mm_setr_epi16 macro args:vararg
+    exitm<{ args }>
     endm
-_mm_setr_epi8 macro x, args:vararg
-    movaps x,{ args }
-    retm<x>
+_mm_setr_epi8 macro args:vararg
+    exitm<{ args }>
     endm
 _mm_setzero_si128 macro x:=<xmm0>
     exitm<_mmopab(xorps, x, x)>
@@ -932,14 +923,10 @@ _mm_sub_si64 macro m1, m2
     exitm<_mmopab(psubq, m1, m2)>
     endm
 _mm_set_epi64 macro m1, m2
-    movq2dq xmm0,m1
-    movq2dq xmm1,m2
-    exitm<_mmopab(punpcklqdq, xmm0, xmm1)>
+    exitm<{ m2, m1 }>
     endm
 _mm_setr_epi64 macro m1, m2
-    movq2dq xmm0,m2
-    movq2dq xmm1,m1
-    exitm<_mmopab(punpcklqdq, xmm0, xmm1)>
+    exitm<{ m1, m2 }>
     endm
 endif
 

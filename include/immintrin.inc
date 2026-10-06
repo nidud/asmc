@@ -641,40 +641,24 @@ _mm256_setzero_si256 macro
     retm<ymm0>
     endm
 
-_mm256_set_epix macro ymm, op, args:vararg
-.data
-    align 16
-    @@ label ymmword
-    op &args
-.code
-    vmovupd ymm,@B
-    retm<ymm>
+_mm256_set_epi64x macro args:vararg
+    exitm<_MM_SET(args)>
     endm
-
-_mm256_set_epi64x macro ymm, _1, _2, _3, _4
-ifnb <_4>
-    exitm<_mm256_set_epix(ymm,dq,_4,_3,_2,_1)>
-else
-    exitm<_mm256_set_epix(ymm0,dq,_4,_3,_2,_1)>
-endif
+_mm256_set_epi32 macro args:vararg
+    exitm<_MM_SET(args)>
     endm
-_mm256_set_epi32 macro ymm, _1,_2,_3,_4,_5,_6,_7,_8
-ifnb <_8>
-    exitm<_mm256_set_epix(ymm,dd,_8,_7,_6,_5,_4,_3,_2,_1)>
-else
-    exitm<_mm256_set_epix(ymm0,dd,_7,_6,_5,_4,_3,_2,_1,ymm)>
-endif
+_mm256_set_epi16 macro args:vararg
+    exitm<_MM_SET(args)>
     endm
-_mm256_set_epi16 macro _1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13,_14,_15,_16
-    exitm<_mm256_set_epix(ymm0,dw,_16,_15,_14,_13,_12,_11,_10,_9,_8,_7,_6,_5,_4,_3,_2,_1)>
+_mm256_set_epi8 macro args:vararg
+    exitm<_MM_SET(args)>
     endm
-_mm256_set_epi8 macro _1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13,_14,_15,_16,_17,_18,_19,_20,_21,_22,_23,_24,_25,_26,_27,_28,_29,_30,_31,_32
-    _mm256_set_epix(ymm0,db,_32,_31,_30,_29,_28,_27,_26,_25,_24,_23,_22,_21,_20,_19,_18,_17,_16,_15,_14,_13,_12,_11,_10,_9,_8,_7,_6,_5,_4,_3,_2,_1)
-    retm<ymm0>
+_mm256_set_ps macro args:vararg
+    exitm<_MM_SET(args)>
     endm
-
-_mm256_set_ps equ <_mm256_set_epi32>
-_mm256_set_pd equ <_mm256_set_epi64x>
+_mm256_set_pd macro args:vararg
+    exitm<_MM_SET(args)>
+    endm
 
 _mm256_set_m128 macro lo, hi
     exitm<_mm256_insertf128_ps(_mm256_castps128_ps256(lo), (hi), 0x1)>
@@ -687,23 +671,23 @@ _mm256_set_m128i macro lo, hi
     endm
 
 _mm256_setr_epi64x macro args:vararg
-    _mm256_set_epix(ymm0,dq,args)
-    retm<ymm0>
+    exitm<{args}>
     endm
 _mm256_setr_epi32 macro args:vararg
-    _mm256_set_epix(ymm0,dd,args)
-    retm<ymm0>
+    exitm<{args}>
     endm
 _mm256_setr_epi8 macro args:vararg
-    _mm256_set_epix(ymm0,db,args)
-    retm<ymm0>
+    exitm<{args}>
     endm
 _mm256_setr_epi16 macro args:vararg
-    _mm256_set_epix(ymm0,dw,args)
-    retm<ymm0>
+    exitm<{args}>
     endm
-_mm256_setr_ps equ <_mm256_setr_epi32>
-_mm256_setr_pd equ <_mm256_setr_epi64x>
+_mm256_setr_ps macro args:vararg
+    exitm<{args}>
+    endm
+_mm256_setr_pd macro args:vararg
+    exitm<{args}>
+    endm
 
 _mm256_setr_m128 macro lo, hi
     exitm<_mm256_set_m128((hi), (lo))>
@@ -716,20 +700,23 @@ _mm256_setr_m128i macro lo, hi
     endm
 
 _mm256_set1_epi64x macro q
-    exitm<_mm256_set_epi64x(q,q,q,q)>
+    exitm<_MM_SET1(q, 4)>
     endm
 _mm256_set1_epi32 macro q
-    exitm<_mm256_set_epi32(q,q,q,q,q,q,q,q)>
+    exitm<_MM_SET1(q, 8)>
     endm
 _mm256_set1_epi16 macro q
-    exitm<_mm256_set_epi16(q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q)>
+    exitm<_MM_SET1(q, 16)>
     endm
 _mm256_set1_epi8 macro q
-    exitm<_mm256_set_epi8(q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q)>
+    exitm<_MM_SET1(q, 32)>
     endm
-
-_mm256_set1_ps equ <_mm256_set1_epi32>
-_mm256_set1_pd equ <_mm256_set1_epi64x>
+_mm256_set1_ps macro q
+    exitm<_MM_SET1(q, 8)>
+    endm
+_mm256_set1_pd macro q
+    exitm<_MM_SET1(q, 4)>
+    endm
 
 _mm256_castpd_ps macro ymm
     exitm<ymm>

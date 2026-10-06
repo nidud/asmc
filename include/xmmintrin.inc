@@ -58,6 +58,45 @@ _MM_SHUFFLE macro fp3, fp2, fp1, fp0
     exitm<(((fp3) SHL 6) OR ((fp2) SHL 4) OR ((fp1) SHL 2) OR ((fp0)))>
     endm
 
+_MM_SAE macro mode
+if mode eq 0
+    exitm<{rn-sae}>
+elseif mode eq 1
+    exitm<{rd-sae}>
+elseif mode eq 2
+    exitm<{ru-sae}>
+elseif mode eq 3
+    exitm<{rz-sae}>
+endif
+    exitm<>
+    endm
+
+_MM_SET macro args:vararg
+local v,i
+    v textequ <>
+    i = 0
+    for arg,<args>
+      if i
+	v CatStr <arg>,<,>,v
+      else
+	v CatStr <arg>
+      endif
+	i = i + 1
+	endm
+%   exitm<{ v }>
+    endm
+
+_MM_SET1 macro arg, count
+local v,i
+    v textequ <arg>
+    i = count - 1
+    while i
+	v CatStr v,<,>,<arg>
+	i = i - 1
+	endm
+%   exitm<{ v }>
+    endm
+
 _MM_TRANSPOSE4_PS proto :XMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR
 _MM_TRANSPOSE4_PS macro row0, row1, row2, row3
     _mm_store_ps(xmm4, xmm0)
@@ -563,18 +602,11 @@ _mm_set_ps1 macro x:=<xmm0>
     shufps x,x,0
     retm<x>
     endm
-_mm_set_ps macro x0:=<xmm0>, x1:=<xmm1>, x2:=<xmm2>, x3:=<xmm3>
-    unpcklps x3,x2
-    unpcklps x1,x0
-    movaps x0,x3
-    movlhps x0,x1
-    retm<x0>
+_mm_set_ps macro args:vararg
+    exitm<_MM_SET(args)>
     endm
-_mm_setr_ps macro x0:=<xmm0>, x1:=<xmm1>, x2:=<xmm2>, x3:=<xmm3>
-    unpcklps x2,x3
-    unpcklps x0,x1
-    movlhps x0,x2
-    retm<x0>
+_mm_setr_ps macro args:vararg
+    exitm<{args}>
     endm
 _mm_setzero_ps macro x:=<xmm0>
     xorps x,x

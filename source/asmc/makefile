@@ -50,8 +50,6 @@ endif
 
 all: asmc asmc64
 
-.PHONY: all asmc asmc64 asmcinc clean install install_asmc install_asmc64 uninstall
-
 asmc:
 ifdef YACC
 	chmod a+x $(CC)
@@ -71,6 +69,7 @@ clean:
 	$(del_obj)
 
 ifdef YACC
+.PHONY: all asmc asmc64 asmcinc clean install install_asmc install_asmc64 uninstall debug32 debug64 debugmt32 debugmt64
 
 install: all install_asmc install_asmc64
 	sudo rm -f -R /usr/lib/asmc

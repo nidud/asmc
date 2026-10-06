@@ -33,6 +33,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
 
    .new hex_count:char_t
    .new Unicode:char_t
+   .new hash:dword
     ldr rsi,string
 
     ; "binary" string
@@ -259,9 +260,16 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     mov rax,pStringOffset
     mov [rax],rsi
     assume rsi:ptr str_item
-    mov rax,sbuf
-    sub rdx,rax
+    mov rcx,sbuf
+    sub rdx,rcx
     mov rbx,rdx
+
+    .for ( eax = FNVBASE, edx = 0 : edx < ebx : edx++ )
+        imul eax,eax,FNVPRIME
+        xor  al,[rcx+rdx]
+    .endf
+    mov hash,eax
+
     .for ( edi = 0, rsi = MODULE.StrStack : rsi : edi++, rsi = [rsi].next )
         mov cl,[rsi].unicode
         mov eax,[rsi].count
@@ -275,25 +283,33 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
             tmemcmp( sbuf, rdx, ebx )
             mov rdx,tmp
             .if ( eax == 0 )
-                mov eax,[rsi].index
+                mov eax,[rsi].hash
                 sub rdx,[rsi].string
+                mov ecx,'A'
+                .if Unicode
+                    mov ecx,'W'
+                    add edx,edx
+                .endif
                 .if ( edx )
-                    .if Unicode
-                        add edx,edx
-                    .endif
-                    tsprintf( lbuf, "D$%04X[%d]", eax, edx )
+                    tsprintf( lbuf, "D$%08X%c[%d]", eax, ecx, edx )
                 .else
-                    tsprintf( lbuf, "D$%04X", eax )
+                    tsprintf( lbuf, "D$%08X%c", eax, ecx )
                 .endif
                  free_line(sbuf)
                 .return 0
             .endif
         .endif
     .endf
-    tsprintf(lbuf, "D$%04X", edi)
+    mov ecx,'A'
+    .if Unicode
+        mov ecx,'W'
+    .endif
+    tsprintf(lbuf, "D$%08X%c", hash, ecx)
     LclAlloc(&[rbx+str_item+1])
     mov [rax].str_item.count,ebx
     mov [rax].str_item.index,edi
+    mov ecx,hash
+    mov [rax].str_item.hash,ecx
     mov cl,Unicode
     mov [rax].str_item.unicode,cl
     mov rcx,MODULE.StrStack
@@ -328,6 +344,67 @@ GetCurrentSegment proc __ccall private buffer:string_t
     endp
 
 
+StringComdat proc __ccall uses rsi rdi string:string_t, curseg:string_t
+
+    ldr rsi,string
+    ldr rdi,curseg
+
+    tstrcpy(rdi, "_DATA")
+    .if ( MODULE.comdata )
+        AddLineQueueX( " %s %r", rdi, T_ENDS )
+        .if ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT )
+            tsprintf(rdi, "__str@%s", &[rsi+2])
+            AddLineQueueX( "%s %r %r %r(\".rdata\") comdat(2) %r 'CONST'",
+                    rdi, T_SEGMENT, T_FLAT, T_ALIAS, T_WORD )
+       .elseif ( Options.output_format == OFORMAT_ELF )
+            tsprintf(rdi, "`.gnu.linkonce.r.%s`", &[rsi+2])
+            AddLineQueueX("%s %r %r 'CONST'", rdi, T_SEGMENT, T_WORD )
+        .endif
+        AddLineQueueX( " %r %s", T_PUBLIC, rsi )
+    .endif
+    ret
+    endp
+
+
+FloatComdat proc __ccall uses rsi rdi rbx string:string_t, curseg:string_t, size:int_t
+
+   .new prefix[16]:char_t
+
+    ldr rsi,string
+    ldr rbx,curseg
+    ldr edi,size
+
+    tstrcpy(rbx, "@CurSeg")
+    .if ( MODULE.comdata )
+        AddLineQueueX( " %s %r", rbx, T_ENDS )
+        .for ( ecx = 0 : byte ptr [rsi+rcx] != '@' : ecx++ )
+            mov al,[rsi+rcx]
+            mov prefix[rcx],al
+        .endf
+        mov prefix[rcx],ch
+        .for ( ecx = FNVBASE, rax = rsi : byte ptr [rax] : rax++ )
+            imul ecx,ecx,FNVPRIME
+            xor  cl,[rax]
+        .endf
+        .if ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT )
+            AddLineQueueX( "%s@%08X %r %r %r(%d) %r(\".rdata\") comdat(2) 'CONST'",
+                    &prefix, ecx, T_SEGMENT, T_FLAT, T_ALIGN, edi, T_ALIAS )
+        .elseif ( Options.output_format == OFORMAT_ELF )
+            tsprintf(rbx, "`.gnu.linkonce.r.%08X`", ecx)
+            AddLineQueueX( "%s %r %r(%d) 'CONST'", rbx, T_SEGMENT, T_ALIGN, edi )
+        .endif
+        AddLineQueueX( " %r %s", T_PUBLIC, rsi )
+    .else
+        .if ( edi > 16 )
+            mov edi,16
+        .endif
+        AddLineQueueX( " %r", T_DOT_CONST )
+        AddLineQueueX( " %r %d", T_ALIGN, edi )
+    .endif
+    ret
+    endp
+
+
 GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new rc:             int_t
@@ -346,6 +423,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
    .new merged:         byte
    .new lineflags:      byte
    .new mem_alloc:      uchar_t = 0
+   .new curseg[64]:     char_t
 
     xor eax,eax
     mov rc,eax
@@ -556,12 +634,13 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
             .if ( NewString )
                 GetCurrentSegment( b_seg )
-                AddLineQueue( ".data" )
+                AddLineQueueX( " %r", T_DOT_DATA )
+                StringComdat( b_label, &curseg )
                 .if Unicode
-                    AddLineQueue( "align 2" )
+                    AddLineQueueX( " %r 2", T_ALIGN )
                 .endif
                 AddLineQueue( b_data )
-                AddLineQueue( "_DATA ends" )
+                AddLineQueueX( " %s %r", &curseg, T_ENDS )
                 AddLineQueue( b_seg )
                 InsertLineQueue()
             .endif
@@ -611,6 +690,7 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
    .new Unicode:        byte
    .new mem_alloc:      uchar_t = 0
    .new rsrc:           byte = 0 ; v2.39.12: @CStr() in .rsrc segment
+   .new curseg[64]:     char_t = 0
 
     ldr rbx,tokenarray
     mov edi,MaxLineLength
@@ -689,7 +769,19 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
             .endif
             mov eax,[rdx].str_item.index
         .endif
-        tsprintf( buffer, "D$%04X", eax )
+        .for ( rdx = MODULE.StrStack : rdx : rdx = [rdx].str_item.next )
+            .break .if ( eax == [rdx].str_item.index )
+        .endf
+        .if ( rdx == NULL )
+            asmerr( 2156 )
+           .return 0
+        .endif
+        mov eax,[rdx].str_item.hash
+        mov ecx,'A'
+        .if ( [rdx].str_item.unicode )
+            mov ecx,'W'
+        .endif
+        tsprintf( buffer, "D$%08X%c", eax, ecx )
        .return 1
     .endif
 
@@ -767,25 +859,30 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                     .endif
                     .if ( eax )
                         inc esi
-                        AddLineQueue( ".data" )
+                        AddLineQueueX( " %r", T_DOT_DATA )
+                        StringComdat( dlabel, &curseg )
                     .endif
                 .endif
                 .if ( edi && !esi )
                     mov esi,2
-                    AddLineQueue( ".const" )
+                    AddLineQueueX( " %r", T_DOT_CONST )
                 .endif
                 .if ( Unicode && !rsrc )
-                    AddLineQueue( "align 2" )
+                    AddLineQueueX( " %r 2", T_ALIGN )
                 .endif
                 AddLineQueue( cursrc )
                 .if esi
-                    .ifd !tstricmp( [rbx].name, "CONST" )
-                        AddLineQueue( ".const" )
-                    .elseif ( esi == 2 )
-                        AddLineQueue( ".data" )
-                    .else
-                        AddLineQueue( ".code" )
+                    .if ( curseg )
+                        AddLineQueueX( " %s %r", &curseg, T_ENDS )
                     .endif
+                    .ifd !tstricmp( [rbx].name, "CONST" )
+                        mov ecx,T_DOT_CONST
+                    .elseif ( esi == 2 )
+                        mov ecx,T_DOT_DATA
+                    .else
+                        mov ecx,T_DOT_CODE
+                    .endif
+                    AddLineQueueX( " %r", ecx )
                 .endif
                 InsertLineQueue()
             .endif
@@ -803,110 +900,90 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
 CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string_t
 
    .new segm[64]:char_t
+   .new curseg[64]:char_t
    .new opc:expr
-   .new bsize:int_t = 16
+   .new ftype:int_t = T_XMMWORD
+   .new negative:byte = 0
 
     ldr edi,size
     mov rbx,tmemcpy(&opc, ldr(opnd), expr)
 
-    mov opc.flags,0
+    lea rsi,@CStr("__xmm@")
     .switch edi
     .case 4
+        mov ftype,T_REAL4
+        lea rsi,@CStr("__real@")
         .endc .if ( opc.mem_type == MT_REAL4 )
         .if ( opc.chararray[15] & 0x80 )
-            mov opc.negative,1
+            mov negative,1
             and opc.chararray[15],0x7F
         .endif
         __cvtq_ss(rbx, rbx)
-        .if ( opc.negative )
+        .if ( negative )
             or opc.chararray[3],0x80
         .endif
         .endc
     .case 8
+        mov ftype,T_REAL8
+        lea rsi,@CStr("__real@")
         .endc .if ( opc.mem_type == MT_REAL8 )
         .if ( opc.chararray[15] & 0x80 )
-            mov opc.negative,1
+            mov negative,1
             and opc.chararray[15],0x7F
         .endif
         __cvtq_sd(rbx, rbx)
-        .if ( opc.negative )
+        .if ( negative )
             or opc.chararray[7],0x80
         .endif
         .endc
     .case 10
-        .endc .if ( opc.mem_type == MT_REAL10 )
-        __cvtq_ld(rbx, rbx)
+        mov edi,16
+        .if ( opc.mem_type != MT_REAL10 )
+            __cvtq_ld(rbx, rbx)
+        .endif
         .endc
     .case 32
+        mov ftype,T_YMMWORD
+        lea rsi,@CStr("__ymm@")
+       .endc
     .case 64
-        mov bsize,edi
+        mov ftype,T_ZMMWORD
+        lea rsi,@CStr("__zmm@")
     .endsw
-
-    .for ( edi = 0, rsi = MODULE.FltStack : rsi : edi++, rsi = [rsi].next )
-        .if ( size == [rsi].count )
-            .ifd !tmemcmp([rsi].string, rbx, bsize)
-                tsprintf( buffer, "F$%04X", [rsi].index )
-               .return( 1 )
-            .endif
-        .endif
-    .endf
-
-    tsprintf( buffer, "F$%04X", edi )
-    .if ( Parse_Pass == PASS_1 )
-        mov ecx,bsize
-        add ecx,str_item
-        LclAlloc(ecx)
-        mov [rax].str_item.index,edi
-        mov ecx,size
-        mov [rax].str_item.count,ecx
-        mov rcx,MODULE.FltStack
-        mov [rax].str_item.next,rcx
-        mov MODULE.FltStack,rax
-        lea rcx,[rax+str_item]
-        mov [rax].str_item.string,rcx
-        tmemcpy(rcx, rbx, bsize)
-        GetCurrentSegment( &segm )
-        AddLineQueue( ".data" )
-        mov ecx,size
-        .if ( ecx >= 10 )
-            mov ecx,16
-        .endif
-        AddLineQueueX( "align %d", ecx )
-        assume rbx:ptr qword
-        mov eax,size
-        .switch eax
-        .case 4
-            AddLineQueueX( "%s dd 0x%x", buffer, [rbx] )
-           .endc
-        .case 8
-            AddLineQueueX( "%s dq 0x%lx", buffer, [rbx] )
-           .endc
-        .case 10
-        .case 16
-            AddLineQueueX(
-                "%s label real%d\n"
-                "oword 0x%016lX%016lX", buffer, size, [rbx+8], [rbx] )
-           .endc
-        .case 32
-            AddLineQueueX(
-                "%s label ymmword\n"
-                "oword 0x%016lX%016lX\n"
-                "oword 0x%016lX%016lX", buffer, [rbx+8], [rbx], [rbx+24], [rbx+16] )
-           .endc
-        .case 64
-            AddLineQueueX(
-                "%s label zmmword\n"
-                "oword 0x%016lX%016lX\n"
-                "oword 0x%016lX%016lX\n"
-                "oword 0x%016lX%016lX\n"
-                "oword 0x%016lX%016lX", buffer, [rbx+8], [rbx],
-                [rbx+24], [rbx+16], [rbx+40], [rbx+32], [rbx+56], [rbx+48] )
-           .endc
-        .endsw
-        AddLineQueue( "_DATA ends" )
-        AddLineQueue( &segm )
-        InsertLineQueue()
+    mov rsi,tstrcpy(buffer, rsi)
+    add rsi,6
+    .if ( byte ptr [rsi] )
+        inc rsi
     .endif
+    .for ( rdi = &[rbx+rdi-4] : rdi >= rbx : rdi-=4, rsi+=8 )
+        mov edx,[rdi]
+        tsprintf( rsi, "%08x", edx )
+    .endf
+    mov rsi,buffer
+    .if SymFind( rsi )
+        .return( 1 )
+    .endif
+    .if ( Parse_Pass > PASS_1 )
+        .return( 0 )
+    .endif
+    GetCurrentSegment( &segm )
+    mov edi,size
+    .if ( edi == 10 )
+        mov edi,16
+    .endif
+    FloatComdat(rsi, &curseg, edi)
+    AddLineQueueX( "%s label %r", rsi, ftype )
+    mov ecx,size
+    .if ( ecx == 10 )
+        mov ecx,16
+    .endif
+    .for ( rdi = &[rbx+rcx] : rbx < rdi : rbx += 4 )
+        mov edx,[rbx]
+        AddLineQueueX( " dd 0x%08X", edx )
+    .endf
+    AddLineQueueX( "%s %r", &curseg, T_ENDS )
+    AddLineQueue( &segm )
+    InsertLineQueue()
     .return( 0 )
     endp
 

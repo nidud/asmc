@@ -10,6 +10,7 @@ endif
 
 ifdef YACC
 link = -o $@
+del_obj = rm -f *.o
 ifdef debug
 flags += -Zd -Zf
 endif
@@ -22,6 +23,7 @@ endif
 endif
 else
 link = -out:$@.exe -stack:0x300000,0x200000
+del_obj = del *.obj
 endif
 
 ifdef x86
@@ -48,36 +50,27 @@ endif
 
 all: asmc asmc64
 
+.PHONY: all asmc asmc64 asmcinc clean install install_asmc install_asmc64 uninstall
+
 asmc:
 ifdef YACC
 	chmod a+x $(CC)
 endif
 	$(CC) $(flags) src/*.asm -link $(link)
-ifdef YACC
-	rm -f *.o
-endif
+	$(del_obj)
 
 asmc64:
 	$(CC) -DASMC64 $(flags) src/*.asm -link $(link)
-ifdef YACC
-	rm -f *.o
-endif
+	$(del_obj)
 
 asmcinc:
 	$(CC) -DASMCINC $(flags) src/*.asm -link $(link)
-ifdef YACC
-	rm -f *.o
-endif
+	$(del_obj)
 
 clean:
-ifdef YACC
-	rm -f *.o
-else
-	del *.obj
-endif
+	$(del_obj)
 
 ifdef YACC
-.PHONY: all asmc asmc64 asmcinc clean install install_asmc install_asmc64 uninstall debug32 debug64 debugmt32 debugmt64
 
 install: all install_asmc install_asmc64
 	sudo rm -f -R /usr/lib/asmc

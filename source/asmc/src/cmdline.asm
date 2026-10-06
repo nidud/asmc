@@ -637,7 +637,10 @@ endif
     .case 'vG'              ; -Gv
         mov Options.langtype,LANG_VECTORCALL
         .return
-    .case 'wG'              ; -Gw
+    .case 'wG'              ; -Gw v2.39.18: added
+        mov Options.comdata,TRUE
+       .return ;
+    .case 'oG'              ; -Go v2.39.18: changed from Gw
         mov Options.langtype,LANG_WATCALL
         .return
 ifndef ASMC64

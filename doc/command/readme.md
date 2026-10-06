@@ -59,10 +59,11 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-Gc</b></td><td>Specifies use of FORTRAN- or Pascal-style function calling and naming conventions.</td></tr>
 <tr><td><b>-Gd</b></td><td>Specifies use of C-style function calling and naming conventions.</td></tr>
 <tr><td><b>-Ge</b></td><td>Emit a conditional _chkstk() inside the prologue.</td></tr>
+<tr><td><b>-Go</b></td><td>Specifies use of WATCALL-style function calling and naming conventions.</td></tr>
 <tr><td><b>-Gr</b></td><td>Specifies use of FASTCALL-style function calling and naming conventions.</td></tr>
 <tr><td><b>-Gs</b></td><td>Specifies use of SYSCALL (System V)-style function calling and naming conventions.</td></tr>
 <tr><td><b>-Gv</b></td><td>Specifies use of VECTORCALL-style function calling and naming conventions.</td></tr>
-<tr><td><b>-Gw</b></td><td>Specifies use of WATCALL-style function calling and naming conventions.</td></tr>
+<tr><td><b>-Gw</b></td><td>Package global data in COMDAT sections for optimization.</td></tr>
 <tr><td><b>-Gz</b></td><td>Specifies use of STDCALL-style function calling and naming conventions. Defines _STDCALL_SUPPORTED.</td></tr>
 <tr><td><b>-help</b></td><td>Displays a summary of Asmc command-line syntax and options.</td></tr>
 <tr><td><b>-homeparams</b></td><td>Forces parameters passed in registers to be written to their locations on the stack upon function entry.</td></tr>
@@ -70,6 +71,7 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-idd</b></td><td>Assemble source as <a href="option-idd.md">binary data</a>.</td></tr>
 <tr><td><b>-iddt</b></td><td>Assemble source as <a href="option-idd.md">text file</a>.</td></tr>
 <tr><td><b>-info</b></td><td></a>Displays module assembly information.</td></tr>
+<tr><td><b>-jtd</b></td><td></a>Move Jump Table to Data segment.</td></tr>
 <tr><td><b>-link</b></td><td>The link options. For more information, see <a href="option-link.md">Linker options</a>.</td></tr>
 <tr><td><b>-logo</b></td><td>Print logo string and exit.</td></tr>
 <tr><td><b>-m</b>&lt;<i>model</i>&gt;</td><td>Set <a href="option-m.md">memory model</a>. Not available in ASMC64.</td></tr>

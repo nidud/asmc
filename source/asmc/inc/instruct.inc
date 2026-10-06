@@ -1499,12 +1499,12 @@ insa(UMWAIT,    umwait,   1, OpCls( R32,  NONE, NONE ), F_F20F, 0, 2, 0xAE, 0x30
 
 ; VBROADCASTSS is first VEX encoded instruction (VEX_START in parser.inc).
 
-insa(VBROADCASTSS, vbroadcastss, 1, OpCls( XMM, XMM_M32,      NONE ), F_660F38, 1, 2, 0x18, 0x00, P_AVX, 0x00, 0x08, 0x22, MR or ZR or T1S )
+insa(VBROADCASTSS, vbroadcastss, 1, OpCls( XMM, XMM_M32,      I_SS ), F_660F38, 1, 2, 0x18, 0x00, P_AVX, 0x00, 0x08, 0x22, MR or ZR or T1S )
 insa(VBROADCASTSS, 1,            0, OpCls( YMM, XMM_M32,      NONE ), F_660F38, 1, 2, 0x18, 0x00, P_AVX, 0x00, 0x00, 0x02, MR or ZR or T1S )
 insa(VBROADCASTSS, 2,            0, OpCls( ZMM, XMM_M32,      NONE ), F_660F38, 1, 2, 0x18, 0x00, P_AVX, 0x00, 0x00, 0x02, MR or ZR or T1S )
-insa(VBROADCASTSD, vbroadcastsd, 1, OpCls( YMM, XMM_M64,      NONE ), F_660F38, 1, 2, 0x19, 0x00, P_AVX, 0x00, 0x08, 0x22, W1 or MR or ZR or T1S )
+insa(VBROADCASTSD, vbroadcastsd, 1, OpCls( YMM, XMM_M64,      I_SD ), F_660F38, 1, 2, 0x19, 0x00, P_AVX, 0x00, 0x08, 0x22, W1 or MR or ZR or T1S )
 insa(VBROADCASTSD, 1,            0, OpCls( ZMM, XMM_M128_M64, NONE ), F_660F38, 1, 2, 0x19, 0x00, P_AVX, 0x00, 0x00, 0x02, W1 or MR or ZR or T1S )
-insa(VBROADCASTF128, vbroadcastf128, 1, OpCls( YMM, M128,     NONE ), F_660F38, 1 ,2, 0x1A, 0x00, P_AVX, 0x00, 0x08, 0x02, 0 )
+insa(VBROADCASTF128, vbroadcastf128, 1, OpCls( YMM, M128,     I_PS ), F_660F38, 1 ,2, 0x1A, 0x00, P_AVX, 0x00, 0x08, 0x02, 0 )
 insa(VBLENDVPD, vblendvpd,       1, OpCls( XMM, XMM_M128,     XMM  ), F_660F3A, 1, 2, 0x4B, 0x00, P_AVX, 0x00, 0x08, 0x01, 0 )
 insa(VBLENDVPS, vblendvps,       1, OpCls( XMM, XMM_M128,     XMM  ), F_660F3A, 1, 2, 0x4A, 0x00, P_AVX, 0x00, 0x08, 0x01, 0 )
 
@@ -1812,7 +1812,7 @@ insa(VSHA512RNDS2, vsha512rnds2, 1, OpCls( YMM, XMM_M128,     NONE ), F_F20F38, 
 
 ; AVX-2 - v2.26
 
-insa(VBROADCASTI128, vbroadcasti128, 1, OpCls( YMM, M128,     NONE ), F_660F38, 1, 2, 0x5A, 0x00, P_AVX2, 0x00, 0x08, 0x03, 0 )
+insa(VBROADCASTI128, vbroadcasti128, 1, OpCls( YMM, M128,     I_PS ), F_660F38, 1, 2, 0x5A, 0x00, P_AVX2, 0x00, 0x08, 0x03, 0 )
 insa(VEXTRACTI128, vextracti128, 1, OpCls( XMM, YMM,          I8_U ), F_660F3A, 0, 2, 0x39, 0x00, P_AVX2, 0x00, 0x08, 0x03, 0 )
 insa(VEXTRACTI128, 1,            0, OpCls( M128, YMM,         I8_U ), F_660F3A, 0, 2, 0x39, 0x00, P_AVX2, 0x00, 0x08, 0x00, 0 )
 insa(VINSERTI128,  vinserti128,  1, OpCls( YMM, XMM_M128,     I8_U ), F_660F3A, 1, 2, 0x38, 0x00, P_AVX2, 0x00, 0x08, 0x21, 0 )
@@ -2088,9 +2088,9 @@ avxins(VRANGESS,   VRANGESD,    vrangesd,   0x90, 0x80 )
 insa(VALIGND,         valignd,         1, OpCls( XMM, XMM_MXGT16,   I8_U ), F_660F3A, 1, 2, 0x03, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or BC or FV )
 insa(VBLENDMPS,       vblendmps,       1, OpCls( XMM, XMM_MXGT16,   NONE ), F_660F38, 1, 2, 0x65, 0x00, P_AVX512, 0x00, 0x10, 0x01, MR or ZR or BC or FV )
 insa(VBROADCASTF32X2, vbroadcastf32x2, 1, OpCls( XMM, XMM_M64,      NONE ), F_660F38, 1, 2, 0x19, 0x00, P_AVX512, 0x00, 0x10, 0x23, MR or ZR or T2 )
-insa(VBROADCASTF32X4, vbroadcastf32x4, 1, OpCls( XMM, XMM_M128,     NONE ), F_660F38, 1, 2, 0x1A, 0x00, P_AVX512, 0x00, 0x10, 0x23, MR or ZR or T4 )
+insa(VBROADCASTF32X4, vbroadcastf32x4, 1, OpCls( XMM, XMM_M128,     I_PS ), F_660F38, 1, 2, 0x1A, 0x00, P_AVX512, 0x00, 0x10, 0x23, MR or ZR or T4 )
 insa(VBROADCASTF32X8, vbroadcastf32x8, 1, OpCls( ZMM, M256_M128,    NONE ), F_660F38, 1, 2, 0x1B, 0x00, P_AVX512, 0x00, 0x10, 0x23, MR or ZR or T8 )
-insa(VBROADCASTF64X2, vbroadcastf64x2, 1, OpCls( XMM, XMM_M128,     NONE ), F_660F38, 1, 2, 0x1A, 0x00, P_AVX512, 0x00, 0x10, 0x23, W1 or MR or ZR or T2 )
+insa(VBROADCASTF64X2, vbroadcastf64x2, 1, OpCls( XMM, XMM_M128,     I_PD ), F_660F38, 1, 2, 0x1A, 0x00, P_AVX512, 0x00, 0x10, 0x23, W1 or MR or ZR or T2 )
 insa(VBROADCASTF64X4, vbroadcastf64x4, 1, OpCls( XMM, XMM_M128,     NONE ), F_660F38, 1, 2, 0x1B, 0x00, P_AVX512, 0x00, 0x10, 0xA3, W1 or MR or ZR or T4 )
 insa(VBROADCASTI32X2, vbroadcasti32x2, 1, OpCls( XMM, XMM_M128_M64, NONE ), F_660F38, 1, 2, 0x59, 0x00, P_AVX512, 0x00, 0x10, 0x23, MR or ZR or T2 )
 insa(VBROADCASTI32X4, vbroadcasti32x4, 1, OpCls( XMM, XMM_M128_M64, NONE ), F_660F38, 1, 2, 0x5A, 0x00, P_AVX512, 0x00, 0x10, 0x23, MR or ZR or T4 )

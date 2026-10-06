@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    239
-define _ASMC_BUILD  17
+define _ASMC_BUILD  18
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -452,6 +452,7 @@ endif
     next            stritem_t ?
     count           int_t ?
     index           int_t ?
+    hash            dd ?
     unicode         db ?
    .ends
 
@@ -544,6 +545,7 @@ define PE_DLL               0x04
       assert                dd: 1 ? ; -assert Generate .assert code
       assert_pushf          dd: 1 ? ; Push/Pop flags
       no_cpu                dd: 1 ? ; -fpc
+      comdata               dd: 1 ? ; -Gw
       ; ----
       mscrt                 dd: 1 ? ; pragma init/exit option
       debug_frame           dd: 1 ? ; -Z7
@@ -646,6 +648,7 @@ define PE_DLL               0x04
       assert                dd: 1 ? ; -assert Generate .assert code
       assert_pushf          dd: 1 ? ; Push/Pop flags
       no_cpu                dd: 1 ?
+      comdata               dd: 1 ? ; -Gw
       ; ----
       procs_private         dd: 1 ? ; option proc:private
       procs_export          dd: 1 ? ; option proc:export
@@ -758,7 +761,6 @@ define PE_DLL               0x04
     HllFree                 hllitem_t ?     ; v2.06: stack of free <struct hll>-items
     ComStack                ptr com_item ?  ; v2.27: .CLASSDEF, .COMDEF, .ENDS
     RetStack                hllitem_t ?     ; v2.30: .return info
-    FltStack                stritem_t ?     ; v2.31 float stack
     NspStack                ptr nsp_item ?  ; v2.33 namespace stack
     ContextStack            ptr byte ?
     ContextFree             ptr byte ?      ; v2.10: "free items" heap implemented.

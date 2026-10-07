@@ -111,8 +111,6 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
    .new pFmt:string_t
    .new pClass:string_t
 
-    mov esi,segm
-
     ; v2.24 /Sp[n] Set segment alignment
 
     .if ( Options.segmentalign != 4 )
@@ -138,6 +136,8 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
         .endif
         mov pAlignSt,pAlign
     .endif
+
+    mov esi,segm
     .if ( esi == SIM_CODE )
         mov pClass,GetCodeClass()
     .else

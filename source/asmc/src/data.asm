@@ -939,7 +939,9 @@ next_item:
 
                     .if ( Options.strict_masm_compat == 0 && ( MODULE.wstring || MODULE.LStringUsed ) &&
                             string_len > 1 && no_of_bytes == 2 )
-ifndef __UNIX__
+ifdef __UNIX__
+                        xor edi,edi
+else
                         mov ecx,string_len
                         lea ecx,[rcx+rcx+8]
                         mov rdi,alloca(ecx)

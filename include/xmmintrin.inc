@@ -67,6 +67,8 @@ elseif mode eq 2
     exitm<{ru-sae}>
 elseif mode eq 3
     exitm<{rz-sae}>
+elseif mode eq 8
+    exitm<{sae}>
 endif
     exitm<>
     endm

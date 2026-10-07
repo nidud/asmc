@@ -971,8 +971,8 @@ SetEvexOpt proc fastcall tok:token_t, tokenarray:token_t
     .case ( [rdx].asm_tok.tokval == T_INVOKE )
         .return( false )
     .case ( rcx > rdx && [rdx].asm_tok.token == T_INSTRUCTION &&
-            [rdx+asm_tok].asm_tok.token == T_REG && [rdx+asm_tok*2].asm_tok.token == T_COMMA )
-        .if ( GetValueSp( [rdx+asm_tok].asm_tok.tokval ) & OP_XMM or OP_YMM or OP_ZMM )
+            [rcx-asm_tok*2].asm_tok.token == T_REG && [rcx-asm_tok].asm_tok.token == T_COMMA )
+        .if ( GetValueSp( [rcx-asm_tok*2].asm_tok.tokval ) & OP_XMM or OP_YMM or OP_ZMM )
             .for ( rdx = [rcx].asm_tok.string_ptr :: )
                 mov eax,[rdx]
                 .switch al

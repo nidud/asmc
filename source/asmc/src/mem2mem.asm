@@ -362,7 +362,8 @@ immarray proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t, vs
   local oldtok[1024]:char_t
 
     tstrcpy( &oldtok, [rdi].tokpos )
-    tstrcpy( CurrSource, [rdi+3*asm_tok].string_ptr )
+    imul eax,TokenCount,asm_tok
+    tstrcpy( CurrSource, [rdi+rax-asm_tok].string_ptr )
     xor ecx,ecx
     .for ( : byte ptr [rax] : rax++ )
         .if ( byte ptr [rax] == ',' )
@@ -386,8 +387,10 @@ immarray proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t, vs
     ExpandLine( CurrSource, rdi ) ; v2.39.13: added
     .for ( i = 0, rdi = result : count : count--, i++ )
         .break .ifd EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR
-        .if opnd.mem_type & MT_FLOAT
-            quad_resize(&opnd, size)
+        .if ( opnd.mem_type & MT_FLOAT )
+            .if ( opnd.mem_type == MT_REAL16 && size < 16 )
+                quad_resize(&opnd, size)
+            .endif
         .endif
         lea rsi,opnd
         mov ecx,size
@@ -434,19 +437,32 @@ endif
     .endif
     CreateFloat( size, rbx, &flabel )
 
-    .if ( [rdi+asm_tok].token == T_REG )
-        AddLineQueueX( " %r %r, %s", esi, [rdi+asm_tok].tokval, &flabel )
-    .else
-        mov rbx,[rdi+asm_tok].tokpos
-        mov i,1
-        EvalOperand( &i, tokenarray, TokenCount, &opnd2, 0 )
-        imul edi,i,asm_tok
-        add rdi,tokenarray
-        mov rdi,[rdi].tokpos
-        mov byte ptr [rdi],0
-        AddLineQueueX( " %r %s, %s", esi, rbx, &flabel )
-        mov byte ptr [rdi],','
+    ; inst reg, {...}               - base, 0
+    ; inst mem, {...}               - type, 0
+    ; inst reg {k1}{z}, reg, {...}  - base, float
+
+    mov rdx,opnd
+    mov rbx,[rdx].expr.float_tok
+    mov rcx,[rdx-expr].expr.base_reg
+    mov rax,[rdx-expr].expr.label_tok
+    .switch
+    .case rbx && rcx
+        sub rbx,asm_tok
+       .endc
+    .case rax
+        mov rcx,rax
+    .case rcx
+        .for ( : [rcx].asm_tok.token != T_FINAL && [rcx].asm_tok.token != T_COMMA : rcx += asm_tok )
+        .endf
+        mov rbx,rcx
+    .endsw
+    .if ( !rbx || [rbx].asm_tok.token != T_COMMA )
+        .return( asmerr( 2049 ) )
     .endif
+    mov rbx,[rbx].asm_tok.tokpos
+    mov byte ptr [rbx],0
+    AddLineQueueX( " %s, %s", [rdi].tokpos, &flabel )
+    mov byte ptr [rbx],','
     RetLineQueue()
     ret
     endp

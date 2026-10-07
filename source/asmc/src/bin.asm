@@ -2285,7 +2285,9 @@ bin_write_module proc uses rsi rdi rbx
         .else
             asmerr( 8003 )
         .endif
-        mov [rdi].e_lfarlc,MODULE.mz_ofs_fixups
+        ; v2.39.20: Linux test-run findings
+        movzx eax,MODULE.mz_ofs_fixups
+        mov [rdi].e_lfarlc,ax
         add rax,hdrbuf
         GetSegRelocs( rax )
     .endif

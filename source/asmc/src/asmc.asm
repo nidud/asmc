@@ -489,7 +489,11 @@ else
 endif
 endif
 ifdef ASMC64
-    init_win64()
+ifdef __UNIX__
+    init_win64(0)
+else
+    init_win64(1)
+endif
 endif
 
     .if !tgetenv( "ASMC" )     ; v2.21 -- getenv() error..

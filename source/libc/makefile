@@ -45,15 +45,21 @@ endif
 
 ifdef YACC
 
-$(name).a:
+all: linux64 linux32
+
+linux64:
 	asmc $(flag) -elf64 -Zp8 -r *.asm *.s
-	ar rcs $@ *.o
-	rm *.o
-	sudo cp $@ /usr/lib/asmc
+	ar rcs $(name).a *.o
+	rm -f *.o
+	sudo cp $(name).a /usr/lib/asmc
+	rm -f $(name).a
+
+linux32:
 	asmc $(flag) $(default_cpu) -elf -Zp4 -r *.asm *.s
-	ar rcs $@ *.o
-	rm *.o
-	sudo cp $@ /usr/lib/asmc/x86
+	ar rcs $(name).a *.o
+	rm -f *.o
+	sudo cp $(name).a /usr/lib/asmc/x86
+	rm -f $(name).a
 
 else
 

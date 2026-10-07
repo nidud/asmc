@@ -106,22 +106,23 @@ set_cpu proc fastcall _cpu:int_t, pm:int_t
     endp
 
 
-init_win64 proc public
+init_win64 proc public win:int_t
     set_cpu( CPU_64, 1 )
     define_name( "_WIN64", "1" )
     mov Options.sub_format,SFORMAT_64BIT
     mov Options._model,MODEL_FLAT
     mov Options.switch_regax,1
-ifdef __UNIX__
-    define_name( "__UNIX__", "1" )
-    mov Options.output_format,OFORMAT_ELF
-    mov Options.langtype,LANG_SYSCALL
-    mov Options.fctype,FCT_ELF64
-else
-    mov Options.output_format,OFORMAT_COFF
-    mov Options.langtype,LANG_FASTCALL
-    mov Options.fctype,FCT_WIN64
-endif
+    .if ( win == 0 )
+        define_name( "__UNIX__", "1" )
+        mov Options.output_format,OFORMAT_ELF
+        mov Options.langtype,LANG_SYSCALL
+        mov Options.fctype,FCT_ELF64
+    .else
+        undef_name( "__UNIX__" )
+        mov Options.output_format,OFORMAT_COFF
+        mov Options.langtype,LANG_FASTCALL
+        mov Options.fctype,FCT_WIN64
+    .endif
     ret
     endp
 
@@ -810,8 +811,8 @@ endif
         mov Options.warning_error,1
         .return
     .case '6niw'            ; -win64
-ifndef ASMC64
-        init_win64()
+if not defined(ASMC64) or defined(__UNIX__)
+        init_win64(1)
 endif
         .return
     .case '7Z'          ; -Z7

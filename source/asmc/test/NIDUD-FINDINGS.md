@@ -5,10 +5,12 @@ Ubuntu against the Linux ELF binaries. 984 tests pass; the items below are what
 the run surfaced. All findings reproduced on freshly built 2.39.18 binaries
 (both bin/asmc and bin/asmc64 rebuilt from source, no bootstrap needed).
 
+- these issues should be fixed in v2.39.19
+
 ## 1. CRASH: SIGSEGV in GetSegRelocs on -mz (32-bit binary regression)
 
 Minimal reproducer (crashes ~50% of runs, 0-byte output, A1901):
-
+```
     .386
     .model small
     .stack 400h
@@ -17,6 +19,7 @@ s:  mov ah,4Ch
     int 21h
     push seg s          ; this line alone triggers it
     END s
+```
 
 Command:  asmc -q -mz -Fo out.exe repro.asm
 

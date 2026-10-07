@@ -2943,12 +2943,8 @@ __sqrtq proc __ccall p:ptr qfloat_t
   local t:U128
     ldr rcx,p
     assume rcx:ptr U128
-ifdef _WIN64
-    mov rax,[rcx].u64[0]
-else
-    mov eax,[ecx].u32[0]
-    or  eax,[ecx].u32[4]
-endif
+    mov eax,[rcx].u32[0]
+    or  eax,[rcx].u32[4]
     or  eax,[rcx].u32[8]
     or  ax,[rcx].u16[12]
     mov dx,[rcx].u16[14]

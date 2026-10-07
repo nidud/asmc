@@ -6,6 +6,6 @@
 ifndef _CMDLINE_
 define _CMDLINE_
 
-init_win64 proto
+init_win64 proto :int_t
 endif
 

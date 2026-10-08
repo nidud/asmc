@@ -2,6 +2,7 @@ Asmc Macro Assembler Reference
 
 # Simplified Segment
 
+- [.CDAT](dot-cdat.md)
 - [.CODE](dot-code.md)
 - [.CONST](dot-const.md)
 - [.DATA](dot-data.md)

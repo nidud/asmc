@@ -172,10 +172,10 @@ Asmc Macro Assembler Reference
 ## Simplified Segment
 
 <table>
-<tr><td><a href="dot-code.md">.CODE</a></td><td><a href="dot-const.md">.CONST</a></td><td><a href="dot-data.md">.DATA</a></td></tr>
-<tr><td><a href="dot-dataq.md">.DATA?</a></td><td><a href="dot-dosseg.md">.DOSSEG</a></td><td><a href="dot-exit.md">.EXIT</a></td></tr>
-<tr><td><a href="dot-fardata.md">.FARDATA</a></td><td><a href="dot-fardataq.md">.FARDATA?</a></td><td><a href="dot-model.md">.MODEL</a></td></tr>
-<tr><td><a href="dot-stack.md">.STACK</a></td><td><a href="dot-startup.md">.STARTUP</a></td></tr>
+<tr><td><a href="dot-cdat.md">.CDAT</a></td><td><a href="dot-code.md">.CODE</a></td><td><a href="dot-const.md">.CONST</a></td></tr>
+<tr><td><a href="dot-data.md">.DATA</a></td><td><a href="dot-dataq.md">.DATA?</a></td><td><a href="dot-dosseg.md">.DOSSEG</a></td></tr>
+<tr><td><a href="dot-exit.md">.EXIT</a></td><td><a href="dot-fardata.md">.FARDATA</a></td><td><a href="dot-fardataq.md">.FARDATA?</a></td></tr>
+<tr><td><a href="dot-model.md">.MODEL</a></td><td><a href="dot-stack.md">.STACK</a></td><td><a href="dot-startup.md">.STARTUP</a></td></tr>
 </table>
 
 ## String

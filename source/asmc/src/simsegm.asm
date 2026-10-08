@@ -31,7 +31,8 @@ SegmNamesDef string_t \
     T("_BSS"),
     T("FAR_DATA"),
     T("FAR_BSS"),
-    T("CONST")
+    T("CONST"),
+    T("_CDAT")
 
 SegmClass string_t \
     T("CODE"),
@@ -40,6 +41,7 @@ SegmClass string_t \
     T("BSS"),
     T("FAR_DATA"),
     T("FAR_BSS"),
+    T("CONST"),
     T("CONST")
 
 SegmCombine string_t \
@@ -49,7 +51,8 @@ SegmCombine string_t \
     T("PUBLIC"),
     T("PRIVATE"),
     T("PRIVATE"),
-    T("PUBLIC")
+    T("PUBLIC"),
+    T("")
 
 .code
 
@@ -92,7 +95,12 @@ AddToDgroup proc fastcall private segm:sim_seg, name:string_t
 close_currseg proc __ccall private
     mov rcx,CurrSeg
     .if ( rcx )
-        AddLineQueueX( "%s %r", [rcx].asym.name, T_ENDS )
+        mov rdx,[rcx].asym.name
+        lea rcx,T("`%s` %r")
+        .if ( byte ptr [rdx] != '.' )
+            lea rcx,T("%s %r")
+        .endif
+        AddLineQueueX( rcx, rdx, T_ENDS )
     .endif
     ret
     endp
@@ -178,6 +186,15 @@ SetSimSeg proc __ccall uses rsi rdi rbx segm:sim_seg, name:string_t
                 mov pFmt,&T("%s %r")
             .endif
         .endif
+
+    .elseif ( esi == SIM_CDAT )
+
+        lea rax,T("`.gnu.linkonce.r.%s` %r %s %s %s '%s'")
+        .if ( Options.output_format != OFORMAT_ELF )
+            lea rax,T("__cdat@%s %r %s %s %s alias(\".rdata\") comdat(2) '%s'")
+        .endif
+        mov pFmt,rax
+
     .else
         SymFind( rdi )
 
@@ -227,8 +244,9 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
  ; Handles simplified segment directives:
  ; .CODE, .STACK, .DATA, .DATA?, .FARDATA, .FARDATA?, .CONST
 
-    .new init:char_t
-    .new opndx:expr
+   .new init:char_t
+   .new opndx:expr
+
     .return( ERROR ) .if ( MODULE._model == MODEL_NONE )
 
     LstWrite( LSTTYPE_DIRECTIVE, 0, NULL )
@@ -246,7 +264,28 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .elseif( opndx.kind != EXPR_CONST )
             .return( asmerr( 2026 ) )
         .endif
+
+    .elseif ( esi == SIM_CDAT )
+
+
+        .if ( [rbx].token != T_ID )
+            .return( asmerr( 2065, "<name>[(<alignment>)]" ) )
+        .endif
+        mov rdi,[rbx].string_ptr
+        mov opndx.value,16
+        inc i
+        .if ( [rbx+asm_tok].token == T_OP_BRACKET )
+            inc i
+            .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opndx, 0 ) == ERROR )
+                .return( ERROR )
+            .endif
+            .if ( opndx.kind != EXPR_CONST )
+                .return( asmerr( 2026 ) )
+            .endif
+            inc i
+        .endif
     .else
+
         ; Masm accepts a name argument for .CODE and .FARDATA[?] only.
         ; JWasm also accepts this for .DATA[?] and .CONST unless
         ; option -Zne is set.
@@ -337,6 +376,14 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
         .endif
         .endc
+    .case SIM_CDAT    ; .cdat
+        mov bl,Options.segmentalign
+        SetSegmentAlignment(opndx.value)
+        SetSimSeg( esi, rdi )
+        mov Options.segmentalign,bl
+        AddLineQueue( "assume cs:ERROR" )
+        AddLineQueueX( "%r %s", T_PUBLIC, rdi )
+       .endc
     .case SIM_DATA    ; .data
     .case SIM_DATA_UN ; .data?
     .case SIM_CONST   ; .const

@@ -90,6 +90,23 @@ ImageBase       db 0
 
 .code
 
+SetSegmentAlignment proc __ccall Value:int_t
+
+    ldr edx,Value
+    xor ecx,ecx
+    .repeat
+        mov eax,1
+        shl eax,cl
+        inc ecx
+        .if ( eax > MAX_SEGMENT_ALIGN )
+            .return( asmerr( 4008, "-Sp" ) )
+        .endif
+    .until eax == edx
+    dec ecx
+    mov Options.segmentalign,cl
+    ret
+    endp
+
 ; find token in a string table
 
 FindToken proc __ccall uses rsi rdi token:string_t, table:ptr string_t, size:int_t

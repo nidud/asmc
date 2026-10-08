@@ -44,6 +44,7 @@ DeleteGroup		proto __ccall :asym_t
     SIM_FARDATA,
     SIM_FARDATA_UN, ; .FARDATA?
     SIM_CONST,
+    SIM_CDAT,	    ; Communal section
     SIM_LAST
     }
 
@@ -58,5 +59,6 @@ UpdateWordSize		proto fastcall :asym_t, :ptr
 UpdateCurPC		proto fastcall :asym_t, :ptr
 FindToken		proto __ccall :string_t, :ptr string_t, :int_t
 SortSegments		proto __ccall :int_t
+SetSegmentAlignment	proto __ccall :int_t
 
 endif

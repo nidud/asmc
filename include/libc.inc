@@ -82,11 +82,7 @@ define __fastcall <fastcall>
 endif
 
 ifndef __vdecl
-ifdef _WIN64
-define __vdecl <>
-else
 define __vdecl <vectorcall>
-endif
 endif
 
 ifndef __Cdecl	; vararg (...) type

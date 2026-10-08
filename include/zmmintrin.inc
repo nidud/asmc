@@ -598,13 +598,13 @@ _mm512_mask_cmp_round_ps_mask proto __vdecl :word, :abs, :abs, :abs, :abs {
     kmovw       k1,ecx
     vcmpps      k1 {k1}, _2, _3, _4 _MM_SAE(_5)
     kmovw       eax,k1
-    vzeroupper
+;   vzeroupper
     }
 _mm512_mask_cmp_round_pd_mask proto __vdecl :byte, :abs, :abs, :abs, :abs {
     kmovb       k1,ecx
     vcmppd      k1 {k1}, _2, _3, _4 _MM_SAE(_5)
     kmovb       eax,k1
-    vzeroupper
+;   vzeroupper
     }
 
 _mm512_mask_broadcast_f32x2 proto __vdecl :abs, :word, :abs {
@@ -667,42 +667,42 @@ _mm512_maskz_broadcastss_ps proto __vdecl :word, :abs {
 _mm512_mask_extractf32x4_ps proto __vdecl :abs, :byte, :abs, :abs {
     kmovb       k1,edx
     vextractf32x4 _1 {k1}, _3, _4
-    vzeroupper
+;   vzeroupper
     }
 _mm512_maskz_extractf32x4_ps proto __vdecl :byte, :abs, :abs {
     kmovb       k1,ecx
     vextractf32x4 xmm0 {k1}{z}, _2, _3
-    vzeroupper
+;   vzeroupper
     }
 _mm512_mask_extractf32x8_ps proto __vdecl :abs, :byte, :abs, :abs {
     kmovb       k1,edx
     vextractf32x8 _1 {k1}, _3, _4
-    vzeroupper
+;   vzeroupper
     }
 _mm512_maskz_extractf32x8_ps proto __vdecl :byte, :abs, :abs {
     kmovb       k1,ecx
     vextractf32x8 ymm0 {k1}{z}, _2, _3
-    vzeroupper
+;   vzeroupper
     }
 _mm512_mask_extractf64x2_pd proto __vdecl :abs, :byte, :abs, :abs {
     kmovb       k1,edx
     vextractf64x2 _1 {k1}, _3, _4
-    vzeroupper
+;   vzeroupper
     }
 _mm512_maskz_extractf64x2_pd proto __vdecl :byte, :abs, :abs {
     kmovb       k1,ecx
     vextractf64x2 xmm0 {k1}{z}, _2, _3
-    vzeroupper
+;   vzeroupper
     }
 _mm512_mask_extractf64x4_pd proto __vdecl :abs, :byte, :abs, :abs {
     kmovb       k1,edx
     vextractf64x4 _1 {k1}, _3, _4
-    vzeroupper
+;   vzeroupper
     }
 _mm512_maskz_extractf64x4_pd proto __vdecl :byte, :abs, :abs {
     kmovb       k1,ecx
     vextractf64x4 ymm0 {k1}{z}, _2, _3
-    vzeroupper
+;   vzeroupper
     }
 
 _mm512_mask_insertf32x4 proto __vdecl :abs, :word, :abs, :abs, :abs {
@@ -1564,269 +1564,529 @@ _mm512_maskz_set1_epi64 proto __vdecl :byte, :qword, :abs=<zmm0> {
     vpbroadcastq    _3 {k1}{z}, rdx
     }
 
-_mm512_mask_add_epi8    proto __vdecl :zword, :qword, :zword, :zword {
+_mm512_mask_add_epi8 proto __vdecl :abs, :qword, :abs, :abs {
+    kmovq           k1, rdx
+    vpaddb          _1 {k1}, _3, _4
     }
-_mm512_maskz_add_epi8   proto __vdecl :qword, :zword, :zword {
+_mm512_maskz_add_epi8 proto __vdecl :qword, :abs, :abs {
+    kmovq           k1, rcx
+    vpaddb          _2 {k1}{z}, _2, _3
     }
-_mm512_mask_add_epi16   proto __vdecl :zword, :dword, :zword, :zword {
+_mm512_mask_add_epi16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpaddw          _1 {k1}, _3, _4
     }
-_mm512_maskz_add_epi16  proto __vdecl :dword, :zword, :zword {
+_mm512_maskz_add_epi16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpaddw          _2 {k1}{z}, _2, _3
     }
-_mm512_mask_add_epi32   proto __vdecl :zword, :word, :zword, :zword {
+_mm512_mask_add_epi32 proto __vdecl :abs, :word, :abs, :abs {
+    kmovw           k1, edx
+    vpaddd          _1 {k1}, _3, _4
     }
-_mm512_maskz_add_epi32  proto __vdecl :word, :zword, :zword {
+_mm512_maskz_add_epi32 proto __vdecl :word, :abs, :abs {
+    kmovw           k1, ecx
+    vpaddd          _2 {k1}{z}, _2, _3
     }
-_mm512_mask_add_epi64   proto __vdecl :zword, :byte, :zword, :zword {
+_mm512_mask_add_epi64 proto __vdecl :abs, :byte, :abs, :abs {
+    kmovb           k1, edx
+    vpaddq          _1 {k1}, _3, _4
     }
-_mm512_maskz_add_epi64  proto __vdecl :byte, :zword, :zword {
+_mm512_maskz_add_epi64 proto __vdecl :byte, :abs, :abs {
+    kmovb           k1, ecx
+    vpaddq          _2 {k1}{z}, _2, _3
     }
-_mm512_mask_adds_epi8   proto __vdecl :zword, :qword, :zword, :zword {
+_mm512_mask_adds_epi8 proto __vdecl :abs, :qword, :abs, :abs {
+    kmovq           k1, rdx
+    vpaddsb         _1 {k1}, _3, _4
     }
-_mm512_maskz_adds_epi8  proto __vdecl :qword, :zword, :zword {
+_mm512_maskz_adds_epi8 proto __vdecl :qword, :abs, :abs {
+    kmovq           k1, rcx
+    vpaddsb         _2 {k1}{z}, _2, _3
     }
-_mm512_mask_adds_epi16  proto __vdecl :zword, :dword, :zword, :zword {
+_mm512_mask_adds_epi16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpaddsw         _1 {k1}, _3, _4
     }
-_mm512_maskz_adds_epi16 proto __vdecl :dword, :zword, :zword {
+_mm512_maskz_adds_epi16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpaddsw         _2 {k1}{z}, _2, _3
     }
-_mm512_mask_adds_epu8   proto __vdecl :zword, :qword, :zword, :zword {
+_mm512_mask_adds_epu8 proto __vdecl :abs, :qword, :abs, :abs {
+    kmovq           k1, rdx
+    vpaddusb        _1 {k1}, _3, _4
     }
-_mm512_maskz_adds_epu8  proto __vdecl :qword, :zword, :zword {
+_mm512_maskz_adds_epu8 proto __vdecl :qword, :abs, :abs {
+    kmovq           k1, rcx
+    vpaddusb        _2 {k1}{z}, _2, _3
     }
-_mm512_mask_adds_epu16  proto __vdecl :zword, :dword, :zword, :zword {
+_mm512_mask_adds_epu16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpaddusw        _1 {k1}, _3, _4
     }
-_mm512_maskz_adds_epu16 proto __vdecl :dword, :zword, :zword {
-    }
-
-_mm512_mask_abs_epi8    proto __vdecl :zword, :qword, :zword {
-    }
-_mm512_maskz_abs_epi8   proto __vdecl :qword, :zword {
-    }
-_mm512_mask_abs_epi16   proto __vdecl :zword, :dword, :zword {
-    }
-_mm512_maskz_abs_epi16  proto __vdecl :dword, :zword {
-    }
-_mm512_mask_abs_epi32   proto __vdecl :zword, :word, :zword {
-    }
-_mm512_maskz_abs_epi32  proto __vdecl :word, :zword {
-    }
-_mm512_mask_abs_epi64   proto __vdecl :zword, :byte, :zword {
-    }
-_mm512_maskz_abs_epi64  proto __vdecl :byte, :zword {
-    }
-
-_mm512_mask_broadcast_i32x2     proto __vdecl :zword, :word, :oword {
-    }
-_mm512_maskz_broadcast_i32x2    proto __vdecl :word, :oword {
-    }
-_mm512_mask_broadcast_i32x4     proto __vdecl :zword, :word, :oword {
-    }
-_mm512_maskz_broadcast_i32x4    proto __vdecl :word, :oword {
-    }
-_mm512_mask_broadcast_i32x8     proto __vdecl :zword, :word, :yword {
-    }
-_mm512_maskz_broadcast_i32x8    proto __vdecl :word, :yword {
-    }
-_mm512_mask_broadcast_i64x2     proto __vdecl :zword, :byte, :oword {
-    }
-_mm512_maskz_broadcast_i64x2    proto __vdecl :byte, :oword {
-    }
-_mm512_mask_broadcast_i64x4     proto __vdecl :zword, :byte, :yword {
-    }
-_mm512_maskz_broadcast_i64x4    proto __vdecl :byte, :yword {
-    }
-_mm512_mask_broadcastb_epi8     proto __vdecl :zword, :qword, :oword {
-    }
-_mm512_maskz_broadcastb_epi8    proto __vdecl :qword, :oword {
-    }
-_mm512_mask_broadcastw_epi16    proto __vdecl :zword, :dword, :oword {
-    }
-_mm512_maskz_broadcastw_epi16   proto __vdecl :dword, :oword {
-    }
-_mm512_mask_broadcastd_epi32    proto __vdecl :zword, :word, :oword {
-    }
-_mm512_maskz_broadcastd_epi32   proto __vdecl :word, :oword {
-    }
-_mm512_mask_broadcastq_epi64    proto __vdecl :zword, :byte, :oword {
-    }
-_mm512_maskz_broadcastq_epi64   proto __vdecl :byte, :oword {
-    }
-_mm512_broadcastmw_epi32        proto __vdecl :word {
-    }
-_mm512_broadcastmb_epi64        proto __vdecl :byte {
+_mm512_maskz_adds_epu16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpaddusw        _2 {k1}{z}, _2, _3
     }
 
-_mm512_mask_sub_epi8    proto __vdecl :zword, :qword, :zword, :zword {
+_mm512_mask_abs_epi8 proto __vdecl :abs, :qword, :abs {
+    kmovq           k1,rdx
+    vpabsb          _1 {k1}{z}, _3
     }
-_mm512_maskz_sub_epi8   proto __vdecl :qword, :zword, :zword {
+_mm512_maskz_abs_epi8 proto __vdecl :qword, :abs {
+    kmovq           k1,rcx
+    vpabsb          zmm0 {k1}{z}, _2
     }
-_mm512_mask_sub_epi16   proto __vdecl :zword, :dword, :zword, :zword {
+_mm512_mask_abs_epi16 proto __vdecl :abs, :dword, :abs {
+    kmovd           k1,edx
+    vpabsw          _1 {k1}{z}, _3
     }
-_mm512_maskz_sub_epi16  proto __vdecl :dword, :zword, :zword {
+_mm512_maskz_abs_epi16 proto __vdecl :dword, :abs {
+    kmovd           k1,ecx
+    vpabsw          zmm0 {k1}{z}, _2
     }
-_mm512_mask_sub_epi32   proto __vdecl :zword, :word, :zword, :zword {
+_mm512_mask_abs_epi32 proto __vdecl :abs, :word, :abs {
+    kmovw           k1,edx
+    vpabsd          _1 {k1}{z}, _3
     }
-_mm512_maskz_sub_epi32  proto __vdecl :word, :zword, :zword {
+_mm512_maskz_abs_epi32 proto __vdecl :word, :abs {
+    kmovw           k1,ecx
+    vpabsd          zmm0 {k1}{z}, _2
     }
-_mm512_mask_sub_epi64   proto __vdecl :zword, :byte, :zword, :zword {
+_mm512_mask_abs_epi64 proto __vdecl :abs, :byte, :abs {
+    kmovb           k1,edx
+    vpabsq          _1 {k1}{z}, _3
     }
-_mm512_maskz_sub_epi64  proto __vdecl :byte, :zword, :zword {
-    }
-_mm512_mask_subs_epi8   proto __vdecl :zword, :qword, :zword, :zword {
-    }
-_mm512_maskz_subs_epi8  proto __vdecl :qword, :zword, :zword {
-    }
-_mm512_mask_subs_epi16  proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_subs_epi16 proto __vdecl :dword, :zword, :zword {
-    }
-_mm512_mask_subs_epu8   proto __vdecl :zword, :qword, :zword, :zword {
-    }
-_mm512_maskz_subs_epu8  proto __vdecl :qword, :zword, :zword {
-    }
-_mm512_mask_subs_epu16  proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_subs_epu16 proto __vdecl :dword, :zword, :zword {
-    }
-
-_mm512_mask_max_epi8    proto __vdecl :zword, :qword, :zword, :zword {
-    }
-_mm512_maskz_max_epi8   proto __vdecl :qword, :zword, :zword {
-    }
-_mm512_mask_max_epi16   proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_max_epi16  proto __vdecl :dword, :zword, :zword {
-    }
-_mm512_mask_max_epi32   proto __vdecl :zword, :word, :zword, :zword {
-    }
-_mm512_maskz_max_epi32  proto __vdecl :word, :zword, :zword {
-    }
-_mm512_mask_max_epi64   proto __vdecl :zword, :byte, :zword, :zword {
-    }
-_mm512_maskz_max_epi64  proto __vdecl :byte, :zword, :zword {
-    }
-_mm512_mask_max_epu8    proto __vdecl :zword, :qword, :zword, :zword {
-    }
-_mm512_maskz_max_epu8   proto __vdecl :qword, :zword, :zword {
-    }
-_mm512_mask_max_epu16   proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_max_epu16  proto __vdecl :dword, :zword, :zword {
-    }
-_mm512_mask_max_epu32   proto __vdecl :zword, :word, :zword, :zword {
-    }
-_mm512_maskz_max_epu32  proto __vdecl :word, :zword, :zword {
-    }
-_mm512_mask_max_epu64   proto __vdecl :zword, :byte, :zword, :zword {
-    }
-_mm512_maskz_max_epu64  proto __vdecl :byte, :zword, :zword {
+_mm512_maskz_abs_epi64 proto __vdecl :byte, :abs {
+    kmovb           k1,ecx
+    vpabsq          zmm0 {k1}{z}, _2
     }
 
-_mm512_mask_min_epi8    proto __vdecl :zword, :qword, :zword, :zword {
+_mm512_mask_broadcast_i32x2 proto __vdecl :abs, :word, :abs {
+    kmovw           k1,edx
+    vbroadcasti32x2 _1 {k1}, _3
     }
-_mm512_maskz_min_epi8   proto __vdecl :qword, :zword, :zword {
+_mm512_maskz_broadcast_i32x2 proto __vdecl :word, :abs {
+    kmovw           k1,ecx
+    vbroadcasti32x2 zmm0 {k1}{z}, _2
     }
-_mm512_mask_min_epi16   proto __vdecl :zword, :dword, :zword, :zword {
+_mm512_mask_broadcast_i32x4 proto __vdecl :abs, :word, :abs {
+    kmovw           k1,edx
+    vbroadcasti32x4 _1 {k1}, _3
     }
-_mm512_maskz_min_epi16  proto __vdecl :dword, :zword, :zword {
+_mm512_maskz_broadcast_i32x4 proto __vdecl :word, :abs {
+    kmovw           k1,ecx
+    vbroadcasti32x4 zmm0 {k1}{z}, _2
     }
-_mm512_mask_min_epi32   proto __vdecl :zword, :word, :zword, :zword {
+_mm512_mask_broadcast_i32x8 proto __vdecl :abs, :word, :abs {
+    kmovw           k1,edx
+    vbroadcasti32x8 _1 {k1}, _3
     }
-_mm512_maskz_min_epi32  proto __vdecl :word, :zword, :zword {
+_mm512_maskz_broadcast_i32x8 proto __vdecl :word, :abs {
+    kmovw           k1,ecx
+    vbroadcasti32x8 zmm0 {k1}{z}, _2
     }
-_mm512_mask_min_epi64   proto __vdecl :zword, :byte, :zword, :zword {
+_mm512_mask_broadcast_i64x2 proto __vdecl :abs, :byte, :abs {
+    kmovb           k1,edx
+    vbroadcasti64x2 _1 {k1}, _3
     }
-_mm512_maskz_min_epi64  proto __vdecl :byte, :zword, :zword {
+_mm512_maskz_broadcast_i64x2 proto __vdecl :byte, :abs {
+    kmovb           k1,ecx
+    vbroadcasti64x2 zmm0 {k1}{z}, _2
     }
-_mm512_mask_min_epu8    proto __vdecl :zword, :qword, :zword, :zword {
+_mm512_mask_broadcast_i64x4 proto __vdecl :abs, :byte, :abs {
+    kmovb           k1,edx
+    vbroadcasti64x4 _1 {k1}, _3
     }
-_mm512_maskz_min_epu8   proto __vdecl :qword, :zword, :zword {
+_mm512_maskz_broadcast_i64x4 proto __vdecl :byte, :abs {
+    kmovb           k1,ecx
+    vbroadcasti64x4 zmm0 {k1}{z}, _2
     }
-_mm512_mask_min_epu16   proto __vdecl :zword, :dword, :zword, :zword {
+_mm512_mask_broadcastb_epi8 proto __vdecl :abs, :qword, :abs {
+    kmovq           k1,rcx
+    vpbroadcastb    _1 {k1}, _3
     }
-_mm512_maskz_min_epu16  proto __vdecl :dword, :zword, :zword {
+_mm512_maskz_broadcastb_epi8 proto __vdecl :qword, :abs {
+    kmovq           k1,rcx
+    vpbroadcastb    zmm0 {k1}{z}, _2
     }
-_mm512_mask_min_epu32   proto __vdecl :zword, :word, :zword, :zword {
+_mm512_mask_broadcastw_epi16 proto __vdecl :abs, :dword, :abs {
+    kmovd           k1,ecx
+    vpbroadcastw    _1 {k1}, _2
     }
-_mm512_maskz_min_epu32  proto __vdecl :word, :zword, :zword {
+_mm512_maskz_broadcastw_epi16 proto __vdecl :dword, :abs {
+    kmovd           k1,ecx
+    vpbroadcastw    zmm0 {k1}{z}, _2
     }
-_mm512_mask_min_epu64   proto __vdecl :zword, :byte, :zword, :zword {
+_mm512_mask_broadcastd_epi32 proto __vdecl :abs, :word, :abs {
+    kmovw           k1,edx
+    vpbroadcastd    _1 {k1}, _3
     }
-_mm512_maskz_min_epu64  proto __vdecl :byte, :zword, :zword {
+_mm512_maskz_broadcastd_epi32 proto __vdecl :word, :abs {
+    kmovw           k1,ecx
+    vpbroadcastd    zmm0 {k1}{z}, _2
     }
-
-_mm512_mask_mul_epi32           proto __vdecl :zword, :byte, :zword, :zword {
+_mm512_mask_broadcastq_epi64 proto __vdecl :abs, :byte, :abs {
+    kmovb           k1,edx
+    vpbroadcastq    _1 {k1}, _3
     }
-_mm512_maskz_mul_epi32          proto __vdecl :byte, :zword, :zword {
+_mm512_maskz_broadcastq_epi64 proto __vdecl :byte, :abs {
+    kmovb           k1,ecx
+    vpbroadcastq    zmm0 {k1}{z}, _2
     }
-_mm512_mask_mul_epu32           proto __vdecl :zword, :byte, :zword, :zword {
+_mm512_broadcastmw_epi32 proto __vdecl :word {
+    kmovw           k1,ecx
+    vpbroadcastmw2d zmm0,k1
     }
-_mm512_maskz_mul_epu32          proto __vdecl :byte, :zword, :zword {
-    }
-_mm512_mask_mulhi_epi16         proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_mulhi_epi16        proto __vdecl :dword, :zword, :zword {
-    }
-_mm512_mask_mulhi_epu16         proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_mulhi_epu16        proto __vdecl :dword, :zword, :zword {
-    }
-_mm512_mask_mullo_epi16         proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_mullo_epi16        proto __vdecl :dword, :zword, :zword {
-    }
-_mm512_mask_mullo_epi32         proto __vdecl :zword, :word, :zword, :zword {
-    }
-_mm512_maskz_mullo_epi32        proto __vdecl :word, :zword, :zword {
-    }
-_mm512_mask_mullo_epi64         proto __vdecl :zword, :byte, :zword, :zword {
-    }
-_mm512_maskz_mullo_epi64        proto __vdecl :byte, :zword, :zword {
-    }
-_mm512_mullox_epi64             proto __vdecl :zword, :zword {
-    }
-_mm512_mask_mullox_epi64        proto __vdecl :zword, :byte, :zword, :zword {
-    }
-_mm512_mask_mulhrs_epi16        proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_mulhrs_epi16       proto __vdecl :dword, :zword, :zword {
-    }
-
-_mm512_mask_load_epi32          proto __vdecl :zword, :word, :ptr {
-    }
-_mm512_maskz_load_epi32         proto __vdecl :word, :ptr {
-    }
-_mm512_mask_load_epi64          proto __vdecl :zword, :byte, :ptr {
-    }
-_mm512_maskz_load_epi64         proto __vdecl :byte, :ptr {
-    }
-_mm512_mask_loadu_epi8          proto __vdecl :zword, :qword, :ptr {
-    }
-_mm512_maskz_loadu_epi8         proto __vdecl :qword, :ptr {
-    }
-_mm512_mask_loadu_epi16         proto __vdecl :zword, :dword, :ptr {
-    }
-_mm512_maskz_loadu_epi16        proto __vdecl :dword, :ptr {
-    }
-_mm512_mask_loadu_epi32         proto __vdecl :zword, :word, :ptr {
-    }
-_mm512_maskz_loadu_epi32        proto __vdecl :word, :ptr {
-    }
-_mm512_mask_loadu_epi64         proto __vdecl :zword, :byte, :ptr {
-    }
-_mm512_maskz_loadu_epi64        proto __vdecl :byte, :ptr {
+_mm512_broadcastmb_epi64 proto __vdecl :byte {
+    kmovb           k1,ecx
+    vpbroadcastmb2q zmm0,k1
     }
 
-_mm512_mask_store_epi32         proto __vdecl :ptr, :word, :zword {
+_mm512_mask_sub_epi8 proto __vdecl :abs, :qword, :abs, :abs {
+    kmovq           k1, rdx
+    vpsubb          _1 {k1}, _3, _4
     }
-_mm512_mask_store_epi64         proto __vdecl :ptr, :byte, :zword {
+_mm512_maskz_sub_epi8 proto __vdecl :qword, :abs, :abs {
+    kmovq           k1, rcx
+    vpsubb          zmm0 {k1}{z}, _2, _3
     }
-_mm512_mask_storeu_epi8         proto __vdecl :ptr, :qword, :zword {
+_mm512_mask_sub_epi16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpsubw          _1 {k1}, _3, _4
     }
-_mm512_mask_storeu_epi16        proto __vdecl :ptr, :dword, :zword {
+_mm512_maskz_sub_epi16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpsubw          zmm0 {k1}{z}, _2, _3
     }
-_mm512_mask_storeu_epi32        proto __vdecl :ptr, :word, :zword {
+_mm512_mask_sub_epi32 proto __vdecl :abs, :word, :abs, :abs {
+    kmovw           k1, edx
+    vpsubd          _1 {k1}, _3, _4
     }
-_mm512_mask_storeu_epi64        proto __vdecl :ptr, :byte, :zword {
+_mm512_maskz_sub_epi32 proto __vdecl :word, :abs, :abs {
+    kmovw           k1, ecx
+    vpsubd          zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_sub_epi64 proto __vdecl :abs, :byte, :abs, :abs {
+    kmovb           k1, edx
+    vpsubq          _1 {k1}, _3, _4
+    }
+_mm512_maskz_sub_epi64 proto __vdecl :byte, :abs, :abs {
+    kmovb           k1, ecx
+    vpsubq          zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_subs_epi8 proto __vdecl :abs, :qword, :abs, :abs {
+    kmovq           k1, rdx
+    vpsubsb         _1 {k1}, _3, _4
+    }
+_mm512_maskz_subs_epi8 proto __vdecl :qword, :abs, :abs {
+    kmovq           k1, rcx
+    vpsubsb         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_subs_epi16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpsubsw         _1 {k1}, _3, _4
+    }
+_mm512_maskz_subs_epi16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpsubsw         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_subs_epu8 proto __vdecl :abs, :qword, :abs, :abs {
+    kmovq           k1, rdx
+    vpsubusb        _1 {k1}, _3, _4
+    }
+_mm512_maskz_subs_epu8 proto __vdecl :qword, :abs, :abs {
+    kmovq           k1, rcx
+    vpsubusb        zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_subs_epu16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpsubusw        _1 {k1}, _3, _4
+    }
+_mm512_maskz_subs_epu16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpsubusw        zmm0 {k1}{z}, _2, _3
+    }
+
+_mm512_mask_max_epi8 proto __vdecl :abs, :qword, :abs, :abs {
+    kmovq           k1, rdx
+    vpmaxsb         _1 {k1}, _3, _4
+    }
+_mm512_maskz_max_epi8 proto __vdecl :qword, :abs, :abs {
+    kmovq           k1, rcx
+    vpmaxsb         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_max_epi16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpmaxsw         _1 {k1}, _3, _4
+    }
+_mm512_maskz_max_epi16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpmaxsw         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_max_epi32 proto __vdecl :abs, :word, :abs, :abs {
+    kmovw           k1, edx
+    vpmaxsd         _1 {k1}, _3, _4
+    }
+_mm512_maskz_max_epi32 proto __vdecl :word, :abs, :abs {
+    kmovw           k1, ecx
+    vpmaxsd         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_max_epi64 proto __vdecl :abs, :byte, :abs, :abs {
+    kmovb           k1, edx
+    vpmaxsq         _1 {k1}, _3, _4
+    }
+_mm512_maskz_max_epi64 proto __vdecl :byte, :abs, :abs {
+    kmovb           k1, ecx
+    vpmaxsq         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_max_epu8 proto __vdecl :abs, :qword, :abs, :abs {
+    kmovq           k1, rdx
+    vpmaxub         _1 {k1}, _3, _4
+    }
+_mm512_maskz_max_epu8 proto __vdecl :qword, :abs, :abs {
+    kmovq           k1, rcx
+    vpmaxub         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_max_epu16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpmaxuw         _1 {k1}, _3, _4
+    }
+_mm512_maskz_max_epu16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpmaxuw         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_max_epu32 proto __vdecl :abs, :word, :abs, :abs {
+    kmovw           k1, edx
+    vpmaxud         _1 {k1}, _3, _4
+    }
+_mm512_maskz_max_epu32 proto __vdecl :word, :abs, :abs {
+    kmovw           k1, ecx
+    vpmaxud         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_max_epu64 proto __vdecl :abs, :byte, :abs, :abs {
+    kmovb           k1, edx
+    vpmaxuq         _1 {k1}, _3, _4
+    }
+_mm512_maskz_max_epu64 proto __vdecl :byte, :abs, :abs {
+    kmovb           k1, ecx
+    vpmaxuq         zmm0 {k1}{z}, _2, _3
+    }
+
+_mm512_mask_min_epi8 proto __vdecl :abs, :qword, :abs, :abs {
+    kmovq           k1, rdx
+    vpminsb         _1 {k1}, _3, _4
+    }
+_mm512_maskz_min_epi8 proto __vdecl :qword, :abs, :abs {
+    kmovq           k1, rcx
+    vpminsb         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_min_epi16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpminsw         _1 {k1}, _3, _4
+    }
+_mm512_maskz_min_epi16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpminsw         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_min_epi32 proto __vdecl :abs, :word, :abs, :abs {
+    kmovw           k1, edx
+    vpminsd         _1 {k1}, _3, _4
+    }
+_mm512_maskz_min_epi32 proto __vdecl :word, :abs, :abs {
+    kmovw           k1, ecx
+    vpminsd         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_min_epi64 proto __vdecl :abs, :byte, :abs, :abs {
+    kmovb           k1, edx
+    vpminsq         _1 {k1}, _3, _4
+    }
+_mm512_maskz_min_epi64 proto __vdecl :byte, :abs, :abs {
+    kmovb           k1, ecx
+    vpminsq         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_min_epu8 proto __vdecl :abs, :qword, :abs, :abs {
+    kmovq           k1, rdx
+    vpminub         _1 {k1}, _3, _4
+    }
+_mm512_maskz_min_epu8 proto __vdecl :qword, :abs, :abs {
+    kmovq           k1, rcx
+    vpminub         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_min_epu16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpminuw         _1 {k1}, _3, _4
+    }
+_mm512_maskz_min_epu16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpminuw         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_min_epu32 proto __vdecl :abs, :word, :abs, :abs {
+    kmovw           k1, edx
+    vpminud         _1 {k1}, _3, _4
+    }
+_mm512_maskz_min_epu32 proto __vdecl :word, :abs, :abs {
+    kmovw           k1, ecx
+    vpminud         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_min_epu64 proto __vdecl :abs, :byte, :abs, :abs {
+    kmovb           k1, edx
+    vpminuq         _1 {k1}, _3, _4
+    }
+_mm512_maskz_min_epu64 proto __vdecl :byte, :abs, :abs {
+    kmovb           k1, ecx
+    vpminuq         zmm0 {k1}{z}, _2, _3
+    }
+
+_mm512_mask_mul_epi32 proto __vdecl :abs, :word, :abs, :abs {
+    kmovw           k1, edx
+    vpmuldq         _1 {k1}, _3, _4
+    }
+_mm512_maskz_mul_epi32 proto __vdecl :word, :abs, :abs {
+    kmovw           k1, ecx
+    vpmuldq         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_mul_epu32 proto __vdecl :abs, :word, :abs, :abs {
+    kmovw           k1, edx
+    vpmuludq        _1 {k1}, _3, _4
+    }
+_mm512_maskz_mul_epu32 proto __vdecl :word, :abs, :abs {
+    kmovw           k1, ecx
+    vpmuludq        zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_mulhi_epi16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpmulhw         _1 {k1}, _3, _4
+    }
+_mm512_maskz_mulhi_epi16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpmulhw         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_mulhi_epu16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpmulhuw        _1 {k1}, _3, _4
+    }
+_mm512_maskz_mulhi_epu16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpmulhuw        zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_mullo_epi16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpmullw         _1 {k1}, _3, _4
+    }
+_mm512_maskz_mullo_epi16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpmullw         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_mullo_epi32 proto __vdecl :abs, :word, :abs, :abs {
+    kmovw           k1, edx
+    vpmulld         _1 {k1}, _3, _4
+    }
+_mm512_maskz_mullo_epi32 proto __vdecl :word, :abs, :abs {
+    kmovw           k1, ecx
+    vpmulld         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_mullo_epi64 proto __vdecl :abs, :byte, :abs, :abs {
+    kmovb           k1, edx
+    vpmullq         _1 {k1}, _3, _4
+    }
+_mm512_maskz_mullo_epi64 proto __vdecl :byte, :abs, :abs {
+    kmovb           k1, ecx
+    vpmullq         zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mullox_epi64 proto __vdecl :zword, :zword {
+    vpsrlq          zmm3, zmm0, 32
+    vpmuludq        zmm5, zmm0, zmm1
+    vpsrlq          zmm2, zmm1, 32
+    vpmuludq        zmm4, zmm2, zmm0
+    vpmuludq        zmm3, zmm3, zmm1
+    vpaddq          zmm0, zmm4, zmm3
+    vpsllq          zmm1, zmm0, 32
+    vpaddq          zmm0, zmm1, zmm5
+    }
+_mm512_mask_mullox_epi64 proto __vdecl :zword, :byte, :zword, :zword {
+    }
+_mm512_mask_mulhrs_epi16 proto __vdecl :abs, :dword, :abs, :abs {
+    kmovd           k1, edx
+    vpmulhrsw       _1 {k1}, _3, _4
+    }
+_mm512_maskz_mulhrs_epi16 proto __vdecl :dword, :abs, :abs {
+    kmovd           k1, ecx
+    vpmulhrsw       zmm0 {k1}{z}, _2, _3
+    }
+
+_mm512_mask_load_epi32 proto __vdecl :abs, :word, :ptr {
+    kmovw           k1, edx
+    vmovdqu32       _1 {k1},[_3]
+    }
+_mm512_maskz_load_epi32 proto __vdecl :word, :ptr {
+    kmovw           k1, ecx
+    vmovdqu32       zmm0 {k1}{z},[_2]
+    }
+_mm512_mask_load_epi64 proto __vdecl :abs, :byte, :ptr {
+    kmovb           k1, edx
+    vmovdqu64       _1 {k1},[_3]
+    }
+_mm512_maskz_load_epi64 proto __vdecl :byte, :ptr {
+    kmovb           k1, ecx
+    vmovdqu64       zmm0 {k1}{z},[_2]
+    }
+_mm512_mask_loadu_epi8 proto __vdecl :abs, :qword, :ptr {
+    kmovq           k1, rdx
+    vmovdqu8        _1 {k1},[_3]
+    }
+_mm512_maskz_loadu_epi8 proto __vdecl :qword, :ptr {
+    kmovq           k1, rcx
+    vmovdqu8        zmm0 {k1}{z},[_2]
+    }
+_mm512_mask_loadu_epi16 proto __vdecl :abs, :dword, :ptr {
+    kmovd           k1, edx
+    vmovdqu16       _1 {k1},[_3]
+    }
+_mm512_maskz_loadu_epi16 proto __vdecl :dword, :ptr {
+    kmovd           k1, ecx
+    vmovdqu16       zmm0 {k1}{z},[_2]
+    }
+_mm512_mask_loadu_epi32 proto __vdecl :abs, :word, :ptr {
+    kmovw           k1, edx
+    vmovdqu32       _1 {k1},[_3]
+    }
+_mm512_maskz_loadu_epi32 proto __vdecl :word, :ptr {
+    kmovw           k1, ecx
+    vmovdqu32       zmm0 {k1}{z},[_2]
+    }
+_mm512_mask_loadu_epi64 proto __vdecl :abs, :byte, :ptr {
+    kmovb           k1, edx
+    vmovdqu64       _1 {k1},[_3]
+    }
+_mm512_maskz_loadu_epi64 proto __vdecl :byte, :ptr {
+    kmovb           k1, ecx
+    vmovdqu64       zmm0 {k1}{z},[_2]
+    }
+
+_mm512_mask_store_epi32 proto __vdecl :ptr, :word, :abs {
+    kmovw           k1, edx
+    vmovdqu32       [_1] {k1}, _3
+    }
+_mm512_mask_store_epi64 proto __vdecl :ptr, :byte, :abs {
+    kmovb           k1, edx
+    vmovdqu64       [_1] {k1}, _3
+    }
+_mm512_mask_storeu_epi8 proto __vdecl :ptr, :qword, :abs {
+    kmovq           k1, edx
+    vmovdqu8        [_1] {k1}, _3
+    }
+_mm512_mask_storeu_epi16 proto __vdecl :ptr, :dword, :abs {
+    kmovd           k1, edx
+    vmovdqu16       [_1] {k1}, _3
+    }
+_mm512_mask_storeu_epi32 proto __vdecl :ptr, :word, :abs {
+    kmovw           k1, edx
+    vmovdqu32       [_1] {k1}, _3
+    }
+_mm512_mask_storeu_epi64 proto __vdecl :ptr, :byte, :abs {
+    kmovb           k1, edx
+    vmovdqu64       [_1] {k1}, _3
     }
 
 _mm512_mask_extracti32x4_epi32  proto __vdecl :oword, :byte, :zword, :sdword {

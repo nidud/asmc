@@ -7,6 +7,7 @@
 include asmc.inc
 include memalloc.inc
 include input.inc
+include segment.inc
 
 externdef cp_logo:sbyte
 externdef banner_printed:byte
@@ -925,18 +926,8 @@ endif
         define_name( "_UNICODE", "1" )
         .return
     .case 'pS'          ; -Sp<number>
-        xor ecx,ecx
-        .repeat
-            mov eax,1
-            shl eax,cl
-            inc ecx
-            .if ( eax > MAX_SEGMENT_ALIGN )
-                .return( asmerr( 4008, "-Sp" ) )
-            .endif
-        .until eax == OptValue
-        dec ecx
-        mov Options.segmentalign,cl
-        .return
+        SetSegmentAlignment(OptValue)
+       .return
     .case 'pZ'          ; -Zp<number>
         xor ecx,ecx
         .repeat

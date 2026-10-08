@@ -8,8 +8,8 @@ Enables and disables features of the assembler. Available options include:
 
 <table>
 <tr><td><a href="option-avxencoding.md">AVXENCODING</a></td><td><a href="option-casealign.md">CASEALIGN</a></td><td><a href="option-casemap.md">CASEMAP</a></td></tr>
-<tr><td><a href="option-codepage.md">CODEPAGE</a></td><td><a href="option-codeview.md">CODEVIEW</a></td><td><a href="option-cstack.md">CSTACK</a></td></tr>
-<tr><td><a href="option-dllimport.md">DLLIMPORT</a></td><td><a href="option-dotname.md">DOTNAME</a></td><td>DOTNAMEX (Obsolete)</td></tr>
+<tr><td><a href="option-comdat.md">COMDAT</a></td></td><td><a href="option-codepage.md">CODEPAGE</a></td><td><a href="option-codeview.md">CODEVIEW</a></td></tr>
+<tr><td><a href="option-cstack.md">CSTACK</a></td><td><a href="option-dllimport.md">DLLIMPORT</a></td><td><a href="option-dotname.md">DOTNAME</a></td></tr>
 <tr><td><a href="option-elf.md">ELF</a></td><td><a href="option-emulator.md">EMULATOR</a></td><td><a href="option-epilogue.md">EPILOGUE</a></td></tr>
 <tr><td><a href="option-expr16.md">EXPR16</a></td><td><a href="option-expr32.md">EXPR32</a></td><td><a href="option-fieldalign.md">FIELDALIGN</a></td></tr>
 <tr><td><a href="option-float.md">FLOAT</a></td><td><a href="option-floatdigits.md">FLOATDIGITS</a></td><td><a href="option-floatformat.md">FLOATFORMAT</a></td></tr>

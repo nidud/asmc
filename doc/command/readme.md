@@ -63,7 +63,7 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-Gr</b></td><td>Specifies use of FASTCALL-style function calling and naming conventions.</td></tr>
 <tr><td><b>-Gs</b></td><td>Specifies use of SYSCALL (System V)-style function calling and naming conventions.</td></tr>
 <tr><td><b>-Gv</b></td><td>Specifies use of VECTORCALL-style function calling and naming conventions.</td></tr>
-<tr><td><b>-Gw</b></td><td>Package global data in COMDAT sections for optimization.</td></tr>
+<tr><td><b>-Gw</b></td><td>Package global data in <a href="option-gw.md">COMDAT sections</a> for optimization.</td></tr>
 <tr><td><b>-Gz</b></td><td>Specifies use of STDCALL-style function calling and naming conventions. Defines _STDCALL_SUPPORTED.</td></tr>
 <tr><td><b>-help</b></td><td>Displays a summary of Asmc command-line syntax and options.</td></tr>
 <tr><td><b>-homeparams</b></td><td>Forces parameters passed in registers to be written to their locations on the stack upon function entry.</td></tr>

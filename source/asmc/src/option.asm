@@ -655,6 +655,15 @@ endif
                 .break
             .endif
             inc i
+        .case OP_COMDAT ;; ON | OFF
+            .if ( [rbx].hash1 == HASH(ON) )
+                mov MODULE.comdata,1
+            .elseif ( [rbx].hash1 == HASH(OFF) )
+                mov MODULE.comdata,0
+            .else
+                .break
+            .endif
+            inc i
         .case OP_CODEPAGE ;; <value>
             .return .ifd ( EvalOperand( &i, tokenarray, TokenCount, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )

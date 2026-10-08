@@ -1,9 +1,4 @@
 flags = -q -Gw -MT
-ifdef YACC
-flags += -fpic
-else
-#flags += -Bllink
-endif
 
 all: zmmintrin clean
 

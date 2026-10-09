@@ -127,7 +127,7 @@ GetFNamePart proc fastcall fname:string_t
 ; fixme: if the dot is at pos 0 of filename, ignore it
 
 GetExtPart proc fastcall fname:string_t
-    .for ( eax = NULL : byte ptr [rcx] : rcx++ )
+    .for ( eax = 0 : byte ptr [rcx] : rcx++ )
         .if ( byte ptr [rcx] == '.' )
             mov rax,rcx
         .elseif ISPC( byte ptr [rcx] )

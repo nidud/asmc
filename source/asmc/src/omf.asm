@@ -106,7 +106,7 @@ align size_t
 SymDebSeg asym_t DBGS_MAX dup(0)
 endif
 
-    .code
+.code
 
 
 ifndef ASMC64

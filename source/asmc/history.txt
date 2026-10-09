@@ -3,10 +3,12 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.40 - xx xxx 2026
+- added option --version
 - added simplified segment .cdat <name>[(alignment)]
 - added option comdat:<on/off>
-- added option -Gw -- add strings and floats to COMDAT sections
-- changed -Gw to -Go -- set Open Watcom calling convention
+- added option -Gw- To explicitly disable it
+- added option -Gw Add strings and floats to COMDAT sections
+- changed -Gw to -Go Set Open Watcom calling convention
 - allow vector assignment for INVOKE
 - added SHA-256 as default for PDB source hashing
 - added option -ZH:[MD5|SHA_256|SHA384|SHA512]

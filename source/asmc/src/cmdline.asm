@@ -287,64 +287,60 @@ ReadParamFile proc fastcall uses rsi rdi rbx name:string_t
 
 GetNameToken proc __ccall uses rsi rdi rbx dst:string_t, string:string_t, max:int_t, type:char_t
 
-   .new equatefound:int_t = FALSE
-
     ldr rsi,string
     ldr rdi,dst
+    ldr ecx,max
+    ldr dl,type
 
-is_quote:
-    mov al,[rsi]
-    .if al == '"'
-        inc rsi
-        .for ( : max && byte ptr [rsi]: max-- )
-            mov eax,[rsi]
-            .if al == '"'
-                inc rsi
-                .break
-            .endif
+    xor ebx,ebx
+    .repeat
+        mov al,[rsi]
+        .switch
+        .case al == '"'
+            inc rsi
+            .for ( : ecx && byte ptr [rsi] : ecx-- )
 
-            ; handle the \"" case
-
-            .if al == BSLASH && ah == '"'
-                inc rsi
-            .endif
-            movsb
-        .endf
-    .else
-
-        .for ( : max: max-- )
-
-            ; v2.10: don't stop for white spaces
-
-            mov al,[rsi]
-            .break .if ( al == 0 )
-            .break .if ( al == 13 || al == 10 )
-
-            ; v2.10: don't stop for white spaces if filename
-            ; is expected and true cmdline is parsed
-
-            .break .if ( ( al == ' ' || al == 9 ) && ( type != '@' ) )
-
-            .if type == 0
-ifdef __UNIX__
-                .break .if ( al == '-' && eax != 'leh-' )
-else
-                .break .if ( al == '-' || al == '/' )
-endif
-            .endif
-            .if ( al == '=' && type == '$' && equatefound == FALSE )
-                mov equatefound,TRUE
-                movsb
-                mov al,[rsi]
-                .if (al == '"')
-                    jmp is_quote
+                mov eax,[rsi]
+                .if al == '"'
+                    inc rsi
+                   .break
                 .endif
-            .endif
-            movsb
-        .endf
-    .endif
+
+                ; handle the \"" case
+
+                .if ( al == BSLASH && ah == '"' )
+                    inc rsi
+                .endif
+                movsb
+            .endf
+            .break
+        .default
+            .for ( : ecx : ecx-- )
+
+                mov al,[rsi]
+                .switch al
+                .case 0     ; v2.10: don't stop for white spaces
+                .case 9     ; v2.40: don't allow tabs in filename
+                .case 10    ; v2.40: don't allow "nested" options (-a-b --> -a -b)
+                .case 13    ; v2.10: don't stop for white spaces if filename
+                    .break  ; is expected and true cmdline is parsed
+                .case ' '
+                    .break .if ( dl != '@' )
+                    .endc
+                .case '='
+                    .if ( dl == '$' && bl == FALSE )
+                        mov bl,TRUE
+                        movsb
+                        mov al,[rsi]
+                       .gotosw .if ( al == '"' )
+                    .endif
+                .endsw
+                movsb
+            .endf
+        .endsw
+    .until 1
      mov byte ptr [rdi],0
-    .return(rsi)
+    .return( rsi )
     endp
 
 ifdef _EXEC_LINK
@@ -600,13 +596,8 @@ endif
         undef_name( "__PIC__" )
         mov Options.plt,1
        .return
-    .case 'onf'             ; -fno-pic, -fno-plt
-        mov rbx,[rsi]
-        mov eax,[rbx]
-        .while byte ptr [rbx]
-            inc rbx
-        .endw
-        mov [rsi],rbx
+    .case '-onf'            ; -fno-pic, -fno-plt
+        mov eax,[rdi+4]
         .if ( eax == 'cip-' )
             mov Options.pic,0
             mov Options.fPIC,0
@@ -629,35 +620,37 @@ ifndef ASMC64
 endif
     .case 'eG'              ; -Ge
         mov Options.chkstack,1
-        .return
+       .return
     .case 'rG'              ; -Gr
         mov Options.langtype,LANG_FASTCALL
-        .return
+       .return
     .case 'sG'              ; -Gs
         mov Options.langtype,LANG_SYSCALL
-        .return
+       .return
     .case 'vG'              ; -Gv
         mov Options.langtype,LANG_VECTORCALL
-        .return
+       .return
     .case 'wG'              ; -Gw v2.39.18: added
         mov Options.comdata,TRUE
-       .return ;
+      .return
+    .case '-wG'             ; -Gw- v2.39.21: added
+        mov Options.nocdata,TRUE
+      .return
     .case 'oG'              ; -Go v2.39.18: changed from Gw
         mov Options.langtype,LANG_WATCALL
-        .return
+       .return
 ifndef ASMC64
     .case 'zG'              ; -Gz
         mov Options.langtype,LANG_STDCALL
         define_name( "_STDCALL_SUPPORTED", "1" )
-        .return
+       .return
 endif
-ifdef __UNIX__
+ifndef __UNIX__
+    .case '?'               ; -?
+endif
+    .case 'h'               ; -h
+    .case 'pleh'            ; -help
     .case 'leh-'            ; --help
-else
-    .case '?'
-endif
-    .case 'pleh'
-    .case 'h'
         write_options()
         exit(0)
     .case 'emoh'            ; -homeparams
@@ -678,6 +671,7 @@ endif
     .case 'knil'            ; -link
         mov Options.link,1
         .return
+    .case 'rev-'            ; --version
     .case 'ogol'            ; -logo
         tprintf( &cp_logo, _ASMC_MAJOR, _ASMC_MINOR, _ASMC_BUILD )
         tprintf( "\n" )

@@ -378,11 +378,21 @@ SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endc
     .case SIM_CDAT    ; .cdat
         mov bl,Options.segmentalign
-        SetSegmentAlignment(opndx.value)
-        SetSimSeg( esi, rdi )
+        .if ( MODULE.nocdata )
+            SetSimSeg( SIM_CONST, NULL )
+        .else
+            SetSegmentAlignment(opndx.value)
+            SetSimSeg( esi, rdi )
+        .endif
         mov Options.segmentalign,bl
         AddLineQueue( "assume cs:ERROR" )
-        AddLineQueueX( "%r %s", T_PUBLIC, rdi )
+        .if ( MODULE.nocdata )
+            .if ( !init )
+                AddToDgroup( SIM_CONST, NULL )
+            .endif
+        .else
+            AddLineQueueX( "%r %s", T_PUBLIC, rdi )
+        .endif
        .endc
     .case SIM_DATA    ; .data
     .case SIM_DATA_UN ; .data?

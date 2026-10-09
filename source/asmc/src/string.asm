@@ -350,7 +350,7 @@ StringComdat proc __ccall uses rsi rdi string:string_t, curseg:string_t
     ldr rdi,curseg
 
     tstrcpy(rdi, "_DATA")
-    .if ( MODULE.comdata )
+    .if ( MODULE.comdata && !MODULE.nocdata )
         AddLineQueueX( " %s %r", rdi, T_ENDS )
         .if ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT )
             tsprintf(rdi, "__str@%s", &[rsi+2])
@@ -375,7 +375,7 @@ FloatComdat proc __ccall uses rsi rdi rbx string:string_t, curseg:string_t, size
     ldr edi,size
 
     tstrcpy(rbx, "@CurSeg")
-    .if ( MODULE.comdata )
+    .if ( MODULE.comdata && !MODULE.nocdata )
         AddLineQueueX( " %s %r", rbx, T_ENDS )
         .for ( ecx = 0 : byte ptr [rsi+rcx] != '@' : ecx++ )
             mov al,[rsi+rcx]

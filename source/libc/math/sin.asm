@@ -4,52 +4,50 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include fltintrn.inc
+define _USE_MATH_DEFINES
+include math.inc
 ifdef _WIN64
-.data
- cosoffs real8 0.0, -M_PI_2, 0.0, -M_PI_2
- cossign real8 1.0, -1.0, -1.0, 1.0, -0.0, -0.0
+option comdat:on
+.cdat g_COSSINTABLE(16)
+ g_COSSINTABLE real8 0.0, -M_PI_2, 0.0, -M_PI_2, 1.0, -1.0, -1.0, 1.0
 endif
+
 .code
 
 sin proc x:real8
 ifdef _WIN64
-    movaps  xmm1,xmm0
-    mulsd   xmm1,M_2_PI
-    cvttsd2si eax,xmm1
-    lea     rcx,[rax-1]
-common::
-    movaps  xmm2,xmm0
-    xorps   xmm1,xmm1
-    and     ecx,3
-    cvtsi2sd xmm1,eax
-    mulsd   xmm1,M_PI_2
-    subsd   xmm2,xmm1
-    lea     rax,cosoffs
-    addsd   xmm2,[rax+rcx*8]
-    mulsd   xmm2,xmm2
-    lea     rax,cossign
-    xorps   xmm2,[rax+4*8]
-    movaps  xmm0,xmm2
-    mulsd   xmm0,03ca6827863b97d97r
-    addsd   xmm0,03d2ae7f3e733b81fr
-    mulsd   xmm0,xmm2
-    addsd   xmm0,03da93974a8c07c9dr
-    mulsd   xmm0,xmm2
-    addsd   xmm0,03e21eed8eff8d898r
-    mulsd   xmm0,xmm2
-    addsd   xmm0,03e927e4fb7789f5cr
-    mulsd   xmm0,xmm2
-    addsd   xmm0,03efa01a01a01a01ar
-    mulsd   xmm0,xmm2
-    addsd   xmm0,03f56c16c16c16c17r
-    mulsd   xmm0,xmm2
-    addsd   xmm0,03fa5555555555555r
-    mulsd   xmm0,xmm2
-    addsd   xmm0,0.5
-    mulsd   xmm0,xmm2
-    addsd   xmm0,1.0
-    mulsd   xmm0,[rax+rcx*8]
+    movapd      xmm1,xmm0
+    mulsd       xmm1,M_2_PI
+    cvttsd2si   eax,xmm1
+    cvtsi2sd    xmm1,eax
+    mulsd       xmm1,M_PI_2
+    subsd       xmm0,xmm1
+    dec         eax
+    lea         rcx,g_COSSINTABLE
+    and         eax,3
+    addsd       xmm0,[rcx+rax*8]
+    mulsd       xmm0,xmm0
+    xorpd       xmm0,{-0.0,-0.0}
+    movsd       xmm1,xmm0
+    mulsd       xmm0,1.561920696858623E-16
+    addsd       xmm0,4.779477332387385E-14
+    mulsd       xmm0,xmm1
+    addsd       xmm0,1.147074559772972E-11
+    mulsd       xmm0,xmm1
+    addsd       xmm0,2.087675698786810E-09
+    mulsd       xmm0,xmm1
+    addsd       xmm0,2.755731922398589E-07
+    mulsd       xmm0,xmm1
+    addsd       xmm0,2.480158730158730E-05
+    mulsd       xmm0,xmm1
+    addsd       xmm0,1.388888888888889E-03
+    mulsd       xmm0,xmm1
+    addsd       xmm0,4.166666666666666E-02
+    mulsd       xmm0,xmm1
+    addsd       xmm0,0.5
+    mulsd       xmm0,xmm1
+    addsd       xmm0,1.0
+    mulsd       xmm0,[rcx+rax*8+4*8]
 else
     fld x
     fsin
@@ -57,12 +55,4 @@ endif
     ret
     endp
 
-ifdef _WIN64
-cos::
-    movaps  xmm1,xmm0
-    mulsd   xmm1,M_2_PI
-    cvttsd2si eax,xmm1
-    mov     ecx,eax
-    jmp     common
-endif
     end

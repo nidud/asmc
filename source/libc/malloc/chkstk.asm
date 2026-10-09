@@ -3,21 +3,21 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-include libc.inc
+include malloc.inc
 
-_PAGESIZE_ equ 0x1000 ; one page
+ifndef __UNIX__
+alias <___chkstk_ms>=<_chkstk>
+alias <_alloca_probe>=<_chkstk>
+endif
 
 ; Called by the compiler when you have more than one page of
 ; local variables in your function. For x86 compilers, _chkstk
 ; Routine is called when the local variables exceed 4K bytes;
 ; for x64 compilers it is 8K.
 
-    .code
+.code
 
-_chkstk::
-___chkstk_ms::
-_alloca_probe::
-
+_chkstk proc
     push    rcx
 ifdef _WIN64
     push    rax
@@ -60,5 +60,6 @@ cs20:
     jmp     cs10
 endif
     ret
+    endp
 
     end

@@ -718,6 +718,7 @@ OnePass proc __ccall private uses rsi rdi
     MacroInit(Parse_Pass)
     AssumeInit(Parse_Pass)
     CmdlParamsInit(Parse_Pass)
+    mov MODULE.StartupDirectiveFound,0
     mov MODULE.EndDirFound,0
     mov MODULE.PhaseError,0
     LinnumInit()
@@ -757,6 +758,13 @@ endif
                 ProcessFile(TokenArray)
             .endif
         .endw
+        .if ( Options.chkstack && Options.output_format == OFORMAT_COFF )
+            ;
+            ; v2.39.21: moved here..
+            ;
+            AddLineQueueX( " %r _chkstk: %r", T_EXTERN, T_NEAR )
+            RunLineQueue()
+        .endif
         ProcessFile(TokenArray)
     .endif
     LinnumFini()

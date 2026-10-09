@@ -64,7 +64,7 @@ symPC asym_t 0  ; the $ symbol
 
 ; table of predefined text macros
 
-tmtab label tmitem
+tmtab tmitem 0 dup(<>)
 
     ; @Version contains the Masm compatible version
     ; v2.06: value of @Version changed to 800
@@ -692,6 +692,11 @@ endif
     tsprintf( &szTime, "%02u:%02u:%02u", [rsi].tm.tm_hour, [rsi].tm.tm_min, [rsi].tm.tm_sec )
 endif
     lea rsi,tmtab
+if defined(_LIN64) and defined(LINKW)
+    ; LINKW fails for this relocation.
+    lea rax,MODULE.name
+    mov [rsi+tmitem*3].tmitem.value,rax
+endif
     .while ( [rsi].tmitem.name )
         SymCreate( [rsi].tmitem.name )
         mov [rax].asym.state,SYM_TMACRO

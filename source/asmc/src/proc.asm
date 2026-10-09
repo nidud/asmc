@@ -2839,6 +2839,19 @@ push_user_registers proc __ccall private uses rsi rdi rbx list:string_t, usefram
 ;
 ; write prolog code
 
+if STACKPROBE
+ProbeStack proc __ccall size:dword
+    AddLineQueueX( "%r %r, %d\n_chkstk()", T_MOV, MODULE.accumulator, ldr(size) )
+    .if ( MODULE.Ofssize != USE64 )
+        movzx eax,MODULE.Ofssize
+        lea rdx,stackreg
+        mov ecx,[rdx+rax*4]
+        AddLineQueueX( "%r %r, %r", T_ADD, ecx, MODULE.accumulator )
+    .endif
+    ret
+    endp
+endif
+
 write_default_prologue proc __ccall private uses rsi rdi rbx
 
    .new info:proc_t
@@ -2970,21 +2983,10 @@ endif
                 ;
 if STACKPROBE
                 .if ( Options.chkstack && ebx > chkstk_size )
-                    AddLineQueueX(
-                        "%r %r, %d\n"
-                        "%r _chkstk:%r\n"
-                        "%r _chkstk\n"
-                        "%r %r, %r",
-                        T_MOV, T_RAX, ebx,
-                        T_EXTERNDEF, T_PROC,
-                        T_CALL,
-                        T_SUB, T_RSP, T_RAX )
-                .else
-endif
-                    AddLineQueueX( "%r %r, %d", T_SUB, T_RSP, ebx )
-if STACKPROBE
+                    ProbeStack( ebx )
                 .endif
 endif
+                AddLineQueueX( "%r %r, %d", T_SUB, T_RSP, ebx )
                 AddLineQueueX( "%r %d", T_DOT_ALLOCSTACK, ebx )
 
                 ; save xmm registers
@@ -3185,27 +3187,16 @@ endif
             mov cntxmm,push_user_registers( regist, 0, &offs )
             mov regist,NULL
         .endif
-        mov ecx,[rsi].localsize
-        add ecx,resstack
+        mov ebx,[rsi].localsize
+        add ebx,resstack
 if STACKPROBE
-        .if ( Options.chkstack && ecx > chkstk_size )
-            AddLineQueueX(
-                "%r %r, %d\n"
-                "%r _chkstk:%r\n"
-                "%r _chkstk\n"
-                "%r %r, %r",
-                T_MOV, T_RAX, ecx,
-                T_EXTERNDEF, T_PROC,
-                T_CALL,
-                T_SUB, T_RSP, T_RAX )
-        .else
-endif
-            .if ( ecx )
-                AddLineQueueX( "%r %r, %d", T_SUB, stkreg, ecx )
-            .endif
-if STACKPROBE
+        .if ( Options.chkstack && ebx > chkstk_size )
+            ProbeStack( ebx )
         .endif
 endif
+        .if ( ebx )
+            AddLineQueueX( "%r %r, %d", T_SUB, stkreg, ebx )
+        .endif
     .elseif ( [rsi].localsize )
 
         ; using ADD and the 2-complement has one advantage:
@@ -3214,17 +3205,8 @@ endif
 
 if STACKPROBE
         .if ( Options.chkstack && [rsi].localsize > chkstk_size )
-            AddLineQueueX(
-                "%r _chkstk:%r\n"
-                "%r %r, %d\n"
-                "%r _chkstk",
-                T_EXTERNDEF, T_PROC,
-                T_MOV, T_EAX, [rsi].localsize,
-                T_CALL )
-            .if ( MODULE.Ofssize == USE64 )
-                AddLineQueueX( "%r %r, %r", T_SUB, stkreg, T_RAX )
-            .endif
-        .else
+            ProbeStack( [rsi].localsize )
+        .endif
 endif
         xor ecx,ecx
         sub ecx,[rsi].localsize
@@ -3233,9 +3215,6 @@ endif
         .else
             AddLineQueueX( "%r %r, %d", T_SUB, stkreg, [rsi].localsize )
         .endif
-if STACKPROBE
-        .endif
-endif
     .endif
 
     .if ( [rsi].loadds )

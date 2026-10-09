@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    239
-define _ASMC_BUILD  20
+define _ASMC_BUILD  21
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -546,6 +546,7 @@ define PE_DLL               0x04
       assert_pushf          dd: 1 ? ; Push/Pop flags
       no_cpu                dd: 1 ? ; -fpc
       comdata               dd: 1 ? ; -Gw
+      nocdata               dd: 1 ? ; -Gw-
       ; ----
       mscrt                 dd: 1 ? ; pragma init/exit option
       debug_frame           dd: 1 ? ; -Z7
@@ -649,6 +650,7 @@ define PE_DLL               0x04
       assert_pushf          dd: 1 ? ; Push/Pop flags
       no_cpu                dd: 1 ?
       comdata               dd: 1 ? ; -Gw
+      nocdata               dd: 1 ? ; -Gw-
       ; ----
       procs_private         dd: 1 ? ; option proc:private
       procs_export          dd: 1 ? ; option proc:export
@@ -659,8 +661,6 @@ define PE_DLL               0x04
       oldmacros             dd: 1 ? ; v2.19: option oldmacros
       setif2                dd: 1 ? ; option setif2
       cref                  dd: 1 ? ; .cref/.nocref
-      StartupDirectiveFound dd: 1 ? ;
-      EndDirFound           dd: 1 ? ;
      ends
     ends
 
@@ -780,6 +780,8 @@ define PE_DLL               0x04
     ; moved...
     hll_label               dd ?            ; hll directive label counter
     record
+     StartupDirectiveFound  db : 1 ?
+     EndDirFound            db : 1 ?
      PhaseError             db : 1 ?        ; phase error flag
      OrgOccured             db : 1 ?        ; set by BackPatch()
      LStringUsed            db : 1 ?        ; L"Unicode" used --> allow dw "string"

@@ -8,7 +8,7 @@ if not exist %~dp0bin\envars32.bat %~dp0bin\make.exe -install
 call %~dp0bin\envars32.bat
 
 echo.
-asmc -logo
+asmc --version
 echo.
 echo AsmcDir: %AsmcDir%
 

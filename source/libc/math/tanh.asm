@@ -11,6 +11,7 @@ include math.inc
 tanh proc x:double
 ifdef _WIN64
     option float: 8
+    option comdat:on
     .if ( xmm0 > 50.0 )
         movsd xmm0,1.0
     .else

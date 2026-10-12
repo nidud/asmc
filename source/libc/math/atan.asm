@@ -6,10 +6,9 @@
 
 include math.inc
 
-    .code
+.code
 
 atan proc x:double
-
     fld x
     fld1
     fpatan

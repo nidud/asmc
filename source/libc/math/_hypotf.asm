@@ -16,10 +16,10 @@ ifdef _WIN64
     sqrtss  xmm0,xmm0
 else
     fld     x
-    fld     x
+    fld     st(0)
     fmulp
     fld     y
-    fld     y
+    fld     st(0)
     fmulp
     faddp
     fsqrt

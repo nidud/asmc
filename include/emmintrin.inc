@@ -68,8 +68,12 @@ _mm_mul_pd macro a, b
 _mm_sqrt_sd macro a, b
     exitm<_mmopab(sqrtsd,a,b)>
     endm
-_mm_sqrt_pd macro a, b
-    exitm<_mmopab(sqrtpd,a,b)>
+_mm_sqrt_pd macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_mmopab(sqrtpd, a, b)>
+    else
+	exitm<_mmopab(sqrtpd, a, a)>
+    endif
     endm
 
 _mm_div_sd macro a, b
@@ -398,9 +402,15 @@ _mm_set_sd proto :real8
 _mm_set_sd macro x
     retm<xmm0>
     endm
+if 1
+_mm_set1_pd macro val
+    exitm<_MM_SET1(val, 2)>
+    endm
+else
 _mm_set1_pd macro x
     exitm<_mmopab(unpcklpd, x, x)>
     endm
+endif
 _mm_set_pd macro d0, d1
     exitm<_mmopab(unpckhpd, d0, d1)>
     endm
@@ -427,17 +437,17 @@ _mm_store_sd macro p, x
     endm
 _mm_store1_pd macro p, x
     unpcklpd x,x
-    exitm<_mmopab(movaps, p,,x)>
+    exitm<_mmopab(movapd, p,,x)>
     endm
 _mm_store_pd macro p, x
-    exitm<_mmopab(movaps, p, x)>
+    exitm<_mmopab(movapd, p, x)>
     endm
 _mm_storeu_pd macro p, x
-    exitm<_mmopab(movups, p, x)>
+    exitm<_mmopab(movupd, p, x)>
     endm
 _mm_storer_pd macro p, x
     shufpd x,x,1
-    exitm<_mmopab(movaps, p, x)>
+    exitm<_mmopab(movapd, p, x)>
     endm
 _mm_storeh_pd macro p, x
     exitm<_mmopab(movhpd, p, x)>

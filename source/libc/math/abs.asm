@@ -6,12 +6,10 @@
 
 include math.inc
 
-    .code
+.code
 
 abs proc x:int_t
-
     ldr     ecx,x
-
     mov     eax,ecx
     neg     eax
 ifdef __SSE__

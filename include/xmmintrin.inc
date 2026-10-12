@@ -99,6 +99,16 @@ local v,i
 %   exitm<{ v }>
     endm
 
+; expand macro x if any..
+_MM_INSTDUPX macro inst, x, args:vararg
+ifb <args>
+    inst x,x
+else
+    inst x,x,args
+endif
+    retm<x>
+    endm
+
 _MM_TRANSPOSE4_PS proto :XMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR
 _MM_TRANSPOSE4_PS macro row0, row1, row2, row3
     _mm_store_ps(xmm4, xmm0)
@@ -601,8 +611,7 @@ _mm_set_ss macro x:=<xmm0>
     retm<x>
     endm
 _mm_set_ps1 macro x:=<xmm0>
-    shufps x,x,0
-    retm<x>
+    exitm<_MM_INSTDUPX(shufps, x, 0)>
     endm
 _mm_set_ps macro args:vararg
     exitm<_MM_SET(args)>
@@ -611,8 +620,7 @@ _mm_setr_ps macro args:vararg
     exitm<{args}>
     endm
 _mm_setzero_ps macro x:=<xmm0>
-    xorps x,x
-    retm<x>
+    exitm<_MM_INSTDUPX(xorps, x)>
     endm
 _mm_movemm_ps macro a, b
     movaps xmm0,oword ptr b
@@ -712,6 +720,33 @@ _mm_move_ss macro a:=<xmm0>, b:=<xmm1>
     retm<a>
     endm
 
+; non standard move/store
+
+_mm_mov_ps macro p, x:=<xmm0>
+    ifdif <p>,<x>
+	movaps p,x
+    endif
+    retm<p>
+    endm
+_mm_mov_pd macro p, x:=<xmm0>
+    ifdif <p>,<x>
+	movapd p,x
+    endif
+    retm<p>
+    endm
+_mm_mov_ss macro p, x:=<xmm0>
+    ifdif <p>,<x>
+	movss p,x
+    endif
+    retm<p>
+    endm
+_mm_mov_sd macro p, x:=<xmm0>
+    ifdif <p>,<x>
+	movsd p,x
+    endif
+    retm<p>
+    endm
+
 _mm_sfence macro
     exitm<sfence>
     endm
@@ -742,7 +777,9 @@ endif
 _mm_cvtss_si32		equ <_mm_cvt_ss2si>
 _mm_cvttss_si32		equ <_mm_cvtt_ss2si>
 _mm_cvtsi32_ss		equ <_mm_cvt_si2ss>
-_mm_set1_ps		equ <_mm_set_ps1>
+_mm_set1_ps macro val
+    exitm<_MM_SET1(val, 4)>
+    endm
 _mm_load1_ps		equ <_mm_load_ps1>
 _mm_store1_ps		equ <_mm_store_ps1>
 

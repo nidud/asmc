@@ -4,13 +4,10 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 ; float coshf(float);
-; __m128 __vdecl_coshf4(__m128);
 ;
 include math.inc
 ifdef _WIN64
 include intrin.inc
-undef __vdecl_coshf4
-alias <__vdecl_coshf4>=<coshf>
 assume uses xmm6 xmm7
 endif
 
@@ -18,15 +15,16 @@ endif
 
 coshf proc x:float
 ifdef _WIN64
-    _mm_mul_ps(xmm0, g_X4FLOG2E)
-    _mm_store_ps(xmm1, xmm0)
-    _mm_store_ps(xmm3, g_X4FNEGONE)
-    _mm_add_ps(xmm0, xmm3)
-    _mm_sub_ps(xmm3, xmm1)
-    _mm_store_ps(xmm6, xmm0)
-    _mm_store_ps(xmm7, _mm_exp2_ps(xmm3))
-    _mm_exp2_ps(xmm6)
-    _mm_add_ps(xmm0, xmm7)
+    mulss xmm0,M_LOG2E
+    movss xmm1,xmm0
+    movss xmm3,-1.0
+    addss xmm0,xmm3
+    subss xmm3,xmm1
+    movss xmm6,xmm0
+    exp2f(xmm3)
+    movss xmm7,xmm0
+    exp2f(xmm6)
+    addss xmm0,xmm7
 else
     fld     x
     fldl2e

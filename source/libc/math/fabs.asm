@@ -13,7 +13,7 @@ endif
 
 _fabs proc x:double
 ifdef _WIN64
-    andpd xmm0,g_X2IABSMASK
+    andpd xmm0,_mm_set1_pd(0x7FFFFFFFFFFFFFFF)
 else
     fld x
     fabs

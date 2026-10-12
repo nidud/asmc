@@ -7,10 +7,6 @@
 include math.inc
 ifdef _WIN64
 include intrin.inc
-undef __vdecl_atanf4
-alias <__vdecl_atanf4>=<atanf>
-define g_X4FATANCOEFFICIENTS0 <{ -0.3333314528, +0.1999355085, -0.1420889944, +0.1065626393 }>
-define g_X4FATANCOEFFICIENTS1 <{ -0.0752896400, +0.0429096138, -0.0161657367, +0.0028662257 }>
 endif
 
 .code
@@ -18,11 +14,22 @@ endif
 atanf proc x:float
 ifdef _WIN64
 
-    _mm_store_ps(xmm3, g_X4FONE)
+    option comdat:on
+
+    define C1 +2.866225700E-3
+    define C2 -1.616573670E-2
+    define C3 +4.290961380E-2
+    define C4 -7.528964000E-2
+    define C5 +1.065626393E-1
+    define C6 -1.420889944E-1
+    define C7 +1.999355085E-1
+    define C8 -3.333314228E-1
+
+    _mm_store_ps(xmm3, _mm_set1_ps(1.0))
     _mm_cmpgt_ps(xmm2, xmm0, xmm3)
     _mm_store_ps(xmm1, xmm2)
     _mm_and_ps(xmm1, xmm3)
-    _mm_andnot_ps(xmm2, g_X4FNEGONE)
+    _mm_andnot_ps(xmm2, _mm_set1_ps(-1.0))
     _mm_or_ps(xmm2, xmm1)
     _mm_max_ps(_mm_sub_ps(_mm_setzero_ps(xmm5), xmm0), xmm0)
     _mm_cmple_ps(xmm5, xmm3)
@@ -33,21 +40,17 @@ ifdef _WIN64
     _mm_andnot_ps(xmm4, _mm_div_ps(xmm3, xmm0))
     _mm_or_ps(xmm1, xmm4)
     _mm_mul_ps(_mm_store_ps(xmm0, xmm1), xmm0)
-
-    _mm_store_ps(xmm3, _mm_store_ps(xmm2, g_X4FATANCOEFFICIENTS1))
-    _mm_mul_ps(_mm_permute_ps(xmm2, _MM_SHUFFLE(3, 3, 3, 3)), xmm0)
-    _mm_mul_ps(_mm_add_ps(xmm2, _mm_permute_ps(_mm_store_ps(xmm4, xmm3), _MM_SHUFFLE(2, 2, 2, 2))), xmm0)
-    _mm_mul_ps(_mm_add_ps(xmm2, _mm_permute_ps(_mm_store_ps(xmm4, xmm3), _MM_SHUFFLE(1, 1, 1, 1))), xmm0)
-    _mm_mul_ps(_mm_add_ps(xmm2, _mm_permute_ps(xmm3, _MM_SHUFFLE(0, 0, 0, 0))), xmm0)
-    _mm_store_ps(xmm3, g_X4FATANCOEFFICIENTS0)
-    _mm_mul_ps(_mm_add_ps(xmm2, _mm_permute_ps(_mm_store_ps(xmm4, xmm3), _MM_SHUFFLE(3, 3, 3, 3))), xmm0)
-    _mm_mul_ps(_mm_add_ps(xmm2, _mm_permute_ps(_mm_store_ps(xmm4, xmm3), _MM_SHUFFLE(2, 2, 2, 2))), xmm0)
-    _mm_mul_ps(_mm_add_ps(xmm2, _mm_permute_ps(_mm_store_ps(xmm4, xmm3), _MM_SHUFFLE(1, 1, 1, 1))), xmm0)
-    _mm_mul_ps(_mm_add_ps(xmm2, _mm_permute_ps(xmm3, _MM_SHUFFLE(0, 0, 0, 0))), xmm0)
-    _mm_mul_ps(_mm_add_ps(xmm2, g_X4FONE), xmm1)
+    _mm_mul_ps(_mm_mov_ps(xmm2, _mm_set1_ps(C1)), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C2)), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C3)), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C4)), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C5)), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C6)), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C7)), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C8)), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(1.0)), xmm1)
     _mm_store_ps(xmm0, xmm5)
-    _mm_sub_ps(_mm_mul_ps(xmm5, g_X4FPI_2), xmm2)
-
+    _mm_sub_ps(_mm_mul_ps(xmm5, _mm_set1_ps(M_PI_2)), xmm2)
     _mm_cmpeq_ps(xmm0, _mm_setzero_ps(xmm3))
     _mm_store_ps(xmm3, xmm0)
     _mm_and_ps(xmm0, xmm2)

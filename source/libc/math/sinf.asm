@@ -6,54 +6,44 @@
 include math.inc
 ifdef _WIN64
 include intrin.inc
-
-undef __vdecl_sinf4
-alias <__vdecl_sinf4>=<sinf>
-
-define g_X4FSINCOEFFICIENTS0    <{ -0.16666667, +0.0083333310, -0.00019840874, +2.7525562e-06 }>
-define g_X4FSINCOEFFICIENTS1    <{ -2.3889859e-08, -0.16665852, +0.0083139502, -0.00018524670 }>
 endif
 
 .code
 
 sinf proc x:float
 ifdef _WIN64
-    _mm_store_ps(xmm1, xmm0)
-    _mm_mul_ps(xmm0, g_X4FRECIPROCALTWOPI)
-    _mm_round_ps(xmm0, _MM_FROUND_TO_NEAREST_INT or _MM_FROUND_NO_EXC)
-    _mm_mul_ps(xmm0, g_X4FTWOPI)
-    _mm_sub_ps(xmm1, xmm0)
-    _mm_store_ps(xmm0, xmm1)
 
-    _mm_and_ps(xmm1, g_X4FNEGZERO)
-    _mm_store_ps(xmm2, xmm1)
-    _mm_or_ps(xmm2, g_X4FPI)
-    _mm_store_ps(xmm3, xmm1)
-    _mm_andnot_ps(xmm3, xmm0)
-    _mm_sub_ps(xmm2, xmm0)
-    _mm_cmple_ps(xmm3, g_X4FPI_2)
-    _mm_and_ps(xmm0, xmm3)
-    _mm_andnot_ps(xmm3, xmm2)
-    _mm_or_ps(xmm0, xmm3)
+    option comdat:on
+
+    define C1 -2.3889859E-08
+    define C2 +2.7525562E-06
+    define C3 -1.9840874E-04
+    define C4 +8.3333310E-03
+    define C5 -1.6666667E-01
+
     _mm_store_ps(xmm1, xmm0)
-    _mm_mul_ps(xmm1, xmm0)
-    _mm_store_ps(xmm3, g_X4FSINCOEFFICIENTS1)
-    _mm_store_ps(xmm2, _mm_shuffle_ps(xmm3, xmm3, _MM_SHUFFLE(0,0,0,0)))
-    _mm_mul_ps(xmm2, xmm1)
-    _mm_store_ps(xmm3, g_X4FSINCOEFFICIENTS0)
-    _mm_store_ps(xmm4, xmm3)
-    _mm_add_ps(xmm2, _mm_shuffle_ps(xmm4, xmm4, _MM_SHUFFLE(3,3,3,3)))
-    _mm_mul_ps(xmm2, xmm1)
-    _mm_store_ps(xmm4, xmm3)
-    _mm_add_ps(xmm2, _mm_shuffle_ps(xmm4, xmm4, _MM_SHUFFLE(2,2,2,2)))
-    _mm_mul_ps(xmm2, xmm1)
-    _mm_store_ps(xmm4, xmm3)
-    _mm_add_ps(xmm2, _mm_shuffle_ps(xmm4, xmm4, _MM_SHUFFLE(1,1,1,1)))
-    _mm_mul_ps(xmm2, xmm1)
-    _mm_add_ps(xmm2, _mm_shuffle_ps(xmm3, xmm3, _MM_SHUFFLE(0,0,0,0)))
-    _mm_mul_ps(xmm2, xmm1)
-    _mm_add_ps(xmm2, g_X4FONE)
-    _mm_mul_ps(xmm0, xmm2)
+    _mm_mul_ps(xmm0, _mm_set1_ps(M_R2PI))
+    _mm_round_ps(xmm0, _MM_FROUND_TO_NEAREST_INT or _MM_FROUND_NO_EXC)
+    _mm_mul_ps(xmm0, _mm_set1_ps(M_TWOPI))
+    _mm_sub_ps(xmm1, xmm0)
+    _mm_mov_ps(xmm2, xmm1)
+    _mm_and_ps(xmm1, _mm_set1_ps(-0.0))
+    _mm_mov_ps(xmm0, xmm1)
+    _mm_or_ps(xmm0, _mm_set1_ps(M_PI))
+    _mm_mov_ps(xmm3, xmm1)
+    _mm_andnot_ps(xmm3, xmm2)
+    _mm_sub_ps(xmm0, xmm2)
+    _mm_cmple_ps(xmm3, _mm_set1_ps(M_PI_2))
+    _mm_and_ps(xmm2, xmm3)
+    _mm_andnot_ps(xmm3, xmm0)
+    _mm_or_ps(xmm2, xmm3)
+    _mm_mul_ps(_mm_mov_ps(xmm1, xmm2), xmm2)
+    _mm_mul_ps(_mm_mov_ps(xmm0, _mm_set1_ps(C1)), xmm1)
+    _mm_mul_ps(_mm_add_ps(xmm0, _mm_set1_ps(C2)), xmm1)
+    _mm_mul_ps(_mm_add_ps(xmm0, _mm_set1_ps(C3)), xmm1)
+    _mm_mul_ps(_mm_add_ps(xmm0, _mm_set1_ps(C4)), xmm1)
+    _mm_mul_ps(_mm_add_ps(xmm0, _mm_set1_ps(C5)), xmm1)
+    _mm_mul_ps(_mm_add_ps(xmm0, _mm_set1_ps(1.0)), xmm2)
 else
     fld x
     fsin

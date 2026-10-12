@@ -7,22 +7,16 @@
 include math.inc
 ifdef _WIN64
 include intrin.inc
-
-define g_X2FTWO <{ 2.0, 2.0 }>
-
-undef __vdecl_cosh2
-alias <__vdecl_cosh2>=<cosh>
+option comdat:on
 endif
 
 .code
 
 cosh proc x:double
 ifdef _WIN64
-    _mm_exp_pd(_mm_and_pd(xmm0, g_X2IABSMASK))
-    _mm_move_pd(xmm1, g_X2FONE)
-    _mm_div_pd(xmm1, xmm0)
-    _mm_add_pd(xmm0, xmm1)
-    _mm_div_pd(xmm0, g_X2FTWO)
+    exp(_mm_and_pd(xmm0, _mm_set1_pd(0x7FFFFFFFFFFFFFFF)))
+    _mm_div_sd(_mm_move_sd(xmm1, 1.0), xmm0)
+    _mm_div_sd(_mm_add_sd(xmm0, xmm1), 2.0)
 else
     fld     x
     fldl2e

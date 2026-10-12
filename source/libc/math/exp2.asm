@@ -8,12 +8,19 @@ include math.inc
 ifdef _WIN64
 include intrin.inc
 option dotname
+option comdat:on
+externdef g_EXPTABLE:real8
 .data
  d_tiny     dq 0xfd10000000000000
  d_small    dq 0x3f70000000000000
  d_large    dq 0x011ff00000000000
  d_huge     dq 0x0120cc0000000000
  overflow   dq 0x0120000000000000
+ absmask    dq 0x7FFFFFFFFFFFFFFF
+ neginf     dq 0xFFF0000000000000
+ dblmin     dq 0x1.0p-1022
+ dblmax     dq 7FEFFFFFFFFFFFFFr
+
 endif
 
 .code
@@ -22,7 +29,7 @@ exp2 proc x:double
 ifdef _WIN64
     movd        rax,xmm0
     movd        rdx,xmm0
-    and         rax,g_X2IABSMASK.i1
+    and         rax,absmask
     sar         rdx,63
     sub         rax,d_small
     add         rdx,64
@@ -78,10 +85,10 @@ ifdef _WIN64
     mulsd       xmm1,xmm0
     addsd       xmm1,3FE62E42FEFA39EFr
     mulsd       xmm0,xmm1
-    addsd       xmm0,g_X2FONE.f1
+    addsd       xmm0,1.0
     jmp         .0
 .4:
-    addsd       xmm0,g_X2FONE.f1
+    addsd       xmm0,1.0
     jmp         .0
 .5:
     cmp         rax,d_huge
@@ -98,12 +105,12 @@ ifdef _WIN64
     cvtsi2sd    xmm0,rax
     ucomisd     xmm0,xmm1
     je          .6
-    movsd       xmm5,g_X2FDBLMIN.f1
+    movsd       xmm5,dblmin
     mulsd       xmm5,xmm5
     subsd       xmm1,xmm0
     and         rdx,0x7f
     sal         rdx,4
-    movsd       xmm0,g_X2FONE.f1
+    movsd       xmm0,1.0
     lea         rcx,g_EXPTABLE
     subsd       xmm1,[rcx+rdx]
     movsd       xmm2,[rcx+rdx+8]
@@ -143,9 +150,9 @@ ifdef _WIN64
     xorpd       xmm1,xmm1
     comisd      xmm0,xmm1
     jnc         .9
-    movsd       xmm1,g_X2INEGINF.i1
+    movsd       xmm1,neginf
     cmpneqsd    xmm1,xmm0
-    movsd       xmm0,g_X2FDBLMIN.f1
+    movsd       xmm0,dblmin
     andpd       xmm1,xmm0
     mulsd       xmm0,xmm1
     jmp         .0
@@ -153,7 +160,7 @@ ifdef _WIN64
     cmp         rax,overflow
     jb          .1
 .9:
-    mulsd       xmm0,g_X2FDBLMAX.f1
+    mulsd       xmm0,dblmax
 .0:
 else
     pow(2.0, x)

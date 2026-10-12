@@ -4,20 +4,18 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 ; float expf(float);
-; __m128 __vdecl_expf4(__m128);
 ;
 include math.inc
 ifdef _WIN64
 include intrin.inc
-undef __vdecl_expf4
-alias <__vdecl_expf4>=<expf>
 endif
 
     .code
 
 expf proc x:float
 ifdef _WIN64
-   exp2f(_mm_mul_ps(xmm0, g_X4FLOG2E))
+    mulss xmm0,M_LOG2E
+    exp2f(xmm0)
 else
     fld     x
     fxam

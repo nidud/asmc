@@ -852,6 +852,19 @@ _mm512_store_pd macro x, v
         exitm<_mm512_mask_store_pd(x, _MM_K0_REG, v)>
         endm
 
+_mm512_mov_ps macro x, v:=<zmm0>
+    ifdif <x>,<v>
+        exitm<_mm512_mask_store_pd(x, _MM_K0_REG, v)>
+    endif
+    retm<x>
+    endm
+_mm512_mov_pd macro x, v:=<zmm0>
+    ifdif <x>,<v>
+        exitm<_mm512_mask_store_pd(x, _MM_K0_REG, v)>
+    endif
+    retm<x>
+    endm
+
 _mm512_add_ps macro v1, v2
         exitm<_mm512_maskz_add_round_ps(_MM_K0_REG, v1, v2, _MM_FROUND_CUR_DIRECTION)>
         endm

@@ -13,7 +13,7 @@ endif
 
 _fabsf proc x:float
 ifdef _WIN64
-    andps xmm0,g_X4IABSMASK
+    andps xmm0,_mm_set1_ps(0x7FFFFFFF)
 else
     fld x
     fabs

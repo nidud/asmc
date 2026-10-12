@@ -8,6 +8,7 @@ include math.inc
 ifdef _WIN64
 include fltintrn.inc
 option float: double
+option comdat:on
 endif
 
 .code
@@ -20,9 +21,11 @@ ifdef _WIN64
     subsd xmm1,xmm0
     xorpd xmm0,xmm0
     .if ( xmm1 > xmm0 )
-        sqrtsd xmm1,xmm1
-        divsd xmm2,xmm1
-        atan(xmm2)
+        .if ( xmm0 != xmm2 )
+            sqrtsd xmm1,xmm1
+            divsd xmm2,xmm1
+            atan(xmm2)
+        .endif
         movsd xmm1,M_PI_2
         subsd xmm1,xmm0
         movsd xmm0,xmm1

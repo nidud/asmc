@@ -289,54 +289,44 @@ _mm256_zeroupper macro
     retm<>
     endm
 _mm256_permutevar_ps macro y:=<ymm0>, yi:=<ymm1>
-    vpermilps y,y,yi
-    retm<y>
+    exitm<_MM_INSTDUPX(vpermilps, y, yi)>
     endm
 _mm_permutevar_ps macro x:=<xmm0>, xi:=<xmm1>
-    vpermilps x,x,xi
-    retm<y>
+    exitm<_MM_INSTDUPX(vpermilps, x, xi)>
     endm
 _mm256_permute_ps macro y:=<ymm0>, imm:=<0>
-    vpermilps y,y,imm
-    retm<y>
+    exitm<_MM_INSTDUPX(vpermilps, y, imm)>
     endm
 
 _mm_permute_ps macro x:=<xmm0>, imm:=<0>
 ifdef __AVX__
-    vpermilps x,x,imm
+    exitm<_MM_INSTDUPX(vpermilps, x, imm)>
 else
-    shufps x,x,imm
+    exitm<_MM_INSTDUPX(shufps x, imm)>
 endif
-    retm<x>
     endm
 
 _mm256_permutevar_pd macro y:=<ymm0>, yi:=<ymm1>
-    vpermilpd y,y,yi
-    retm<y>
+    exitm<_MM_INSTDUPX(vpermilpd, y, yi)>
     endm
 _mm_permutevar_pd macro x:=<xmm0>, xi:=<xmm1>, xr:=<xmm0>
     vpermilpd xr,x,xi
     retm<xr>
     endm
 _mm256_permute_pd macro y:=<ymm0>, imm:=<0>
-    vpermilpd y,y,imm
-    retm<y>
+    exitm<_MM_INSTDUPX(vpermilpd, y, imm)>
     endm
 _mm_permute_pd macro x:=<xmm0>, imm:=<0>
-    vpermilpd x,x,imm
-    retm<x>
+    exitm<_MM_INSTDUPX(vpermilpd, x, imm)>
     endm
 _mm256_permute2f128_ps macro y:=<ymm0>, yi:=<ymm1>, imm:=<0>
-    vperm2f128 y,y,yi,imm
-    retm<y>
+    exitm<_MM_INSTDUPX(vperm2f128, y, yi, imm)>
     endm
 _mm256_permute2f128_pd macro y:=<ymm0>, yi:=<ymm1>, imm:=<0>
-    vperm2f128 y,y,yi,imm
-    retm<y>
+    exitm<_MM_INSTDUPX(vperm2f128, y, yi, imm)>
     endm
 _mm256_permute2f128_si256 macro y:=<ymm0>, yi:=<ymm1>, imm:=<0>
-    vperm2f128 y,y,yi,imm
-    retm<y>
+    exitm<_MM_INSTDUPX(vperm2f128, y, yi, imm)>
     endm
 
 _mm256_broadcast_ss proto watcall :ptr, :abs=<ymm0> {
@@ -356,16 +346,13 @@ _mm256_broadcast_pd proto watcall :ptr, :abs=<ymm0> {
     vbroadcastf128 _2,[_1]
     }
 _mm256_insertf128_ps macro y:=<ymm0>, x:=<xmm1>, imm:=<0>
-    vinsertf128 y,y,x,imm
-    retm<y>
+    exitm<_MM_INSTDUPX(vinsertf128, y, x, imm)>
     endm
 _mm256_insertf128_pd macro y:=<ymm0>, x:=<xmm1>, imm:=<0>
-    vinsertf128 y,y,x,imm
-    retm<y>
+    exitm<_MM_INSTDUPX(vinsertf128, y, x, imm)>
     endm
 _mm256_insertf128_si256 macro y:=<ymm0>, x:=<xmm1>, imm:=<0>
-    vinsertf128 y,y,x,imm
-    retm<y>
+    exitm<_MM_INSTDUPX(vinsertf128, y, x, imm)>
     endm
 _mm256_load_pd proto watcall :ptr, :abs=<ymm0> {
     vmovupd _2,[_1]
@@ -415,6 +402,19 @@ _mm256_storeu_si256 macro ptr_yword, yr:=<ymm0>
     retm<>
     endm
 
+_mm256_mov_ps macro p, y:=<ymm0>
+    ifdif <p>,<y>
+	vmovaps p,y
+    endif
+    retm<p>
+    endm
+_mm256_mov_pd macro p, y:=<ymm0>
+    ifdif <p>,<y>
+	vmovapd p,y
+    endif
+    retm<p>
+    endm
+
 _mm256_loadu2_m128 macro hiaddr, loaddr
     exitm<_mm256_set_m128(_mm_loadu_ps(hiaddr), _mm_loadu_ps(loaddr))>
     endm
@@ -448,8 +448,7 @@ _mm_maskstore_pd proto asmcall :ptr, :xmmword, :xmmword {
     }
 
 _mm256_maskload_ps macro ptr_real4, y:=<ymm0>
-    vmaskmovps y,y,ptr_real4
-    retm<y>
+    exitm<_MM_INSTDUPX(vmaskmovps, y, ptr_real4)>
     endm
 _mm256_maskstore_ps macro ptr_real4, mask:=<ymm0>, a:=<ymm1>
     vmaskmovps ptr_real4,mask,a
@@ -462,12 +461,10 @@ _mm_maskstore_ps proto asmcall :ptr, :xmmword, :xmmword {
     vmaskmovps [_1],_2,_3
     }
 _mm256_movehdup_ps macro y:=<ymm0>
-    vmovshdup y,y
-    retm<y>
+    exitm<_MM_INSTDUPX(vmovshdup, y)>
     endm
 _mm256_moveldup_ps macro y:=<ymm0>
-    vmovsldup y,y
-    retm<y>
+    exitm<_MM_INSTDUPX(vmovsldup, y)>
     endm
 _mm256_movedup_pd macro y:=<ymm0>
     vunpcklpd y,y,y
@@ -490,59 +487,49 @@ _mm256_stream_ps macro ptr_real4, y:=<ymm0>
     retm<>
     endm
 _mm256_rcp_ps macro y:=<ymm0>
-    vrcpps y,y
-    retm<y>
+    exitm<_MM_INSTDUPX(vrcpps, y)>
     endm
 _mm256_rsqrt_ps macro y:=<ymm0>
-    vrsqrtps y,y
-    retm<y>
+    exitm<_MM_INSTDUPX(vrsqrtps, y)>
     endm
 _mm256_sqrt_pd macro y:=<ymm0>
-    vsqrtpd y,y
-    retm<y>
+    exitm<_MM_INSTDUPX(vsqrtpd, y)>
     endm
 _mm256_sqrt_ps macro y:=<ymm0>
-    vsqrtps y,y
-    retm<y>
+    exitm<_MM_INSTDUPX(vsqrtps, y)>
     endm
 _mm256_round_pd macro y, imm
-    vroundpd y,y,imm
-    retm<y>
+    exitm<_MM_INSTDUPX(vroundpd, y, imm)>
     endm
 
 _mm256_ceil_pd macro val
-    exitm<_mm256_round_pd((val), _MM_FROUND_CEIL)>
+    exitm<_mm256_round_pd(val, _MM_FROUND_CEIL)>
     endm
 _mm256_floor_pd macro val
-    exitm<_mm256_round_pd((val), _MM_FROUND_FLOOR)>
+    exitm<_mm256_round_pd(val, _MM_FROUND_FLOOR)>
     endm
 
 _mm256_round_ps macro y, imm
-    vroundps y,y,imm
-    retm<y>
+    exitm<_MM_INSTDUPX(vroundps, y, imm)>
     endm
 _mm256_ceil_ps macro val
-    exitm<_mm256_round_ps((val), _MM_FROUND_CEIL)>
+    exitm<_mm256_round_ps(val, _MM_FROUND_CEIL)>
     endm
 _mm256_floor_ps macro val
-    exitm<_mm256_round_ps((val), _MM_FROUND_FLOOR)>
+    exitm<_mm256_round_ps(val, _MM_FROUND_FLOOR)>
     endm
 
 _mm256_unpackhi_pd macro y:=<ymm0>, yi:=<ymm1>
-    vunpckhpd y,y,yi
-    retm<y>
+    exitm<_MM_INSTDUPX(vunpckhpd, y, yi)>
     endm
 _mm256_unpackhi_ps macro y:=<ymm0>, yi:=<ymm1>
-    vunpckhps y,y,yi
-    retm<y>
+    exitm<_MM_INSTDUPX(vunpckhps, y, yi)>
     endm
 _mm256_unpacklo_pd macro y:=<ymm0>, yi:=<ymm1>
-    vunpcklpd y,y,yi
-    retm<y>
+    exitm<_MM_INSTDUPX(vunpcklpd, y, yi)>
     endm
 _mm256_unpacklo_ps macro y:=<ymm0>, yi:=<ymm1>
-    vunpcklps y,y,yi
-    retm<y>
+    exitm<_MM_INSTDUPX(vunpcklps, y, yi)>
     endm
 _mm256_testz_si256 macro y, yi
     vptest y,yi
@@ -1704,110 +1691,6 @@ ifndef XVECTOR
 XVECTOR typedef REAL16
 endif
 
-.template XVEC4F
-    f1	REAL4 ?
-    f2	REAL4 ?
-    f3	REAL4 ?
-    f4	REAL4 ?
-   .ends
-
-.template XVEC4I
-    i1	SDWORD ?
-    i2	SDWORD ?
-    i3	SDWORD ?
-    i4	SDWORD ?
-   .ends
-
-.template XVEC2F
-    f1	REAL8 ?
-    f2	REAL8 ?
-   .ends
-
-.template XVEC2I
-    i1	SQWORD ?
-    i2	SQWORD ?
-   .ends
-
-ifdef __PE__
-define g_X4FZERO		<{ 0.0, 0.0, 0.0, 0.0 }>
-define g_X4FONE			<{ 1.0, 1.0, 1.0, 1.0 }>
-define g_X4FNEGZERO		<{ -0.0, -0.0, -0.0, -0.0 }>
-define g_X4FNEGONE		<{ -1.0, -1.0, -1.0, -1.0 }>
-define g_X4INAN			<{ 0xFFC00000, 0xFFC00000, 0xFFC00000, 0xFFC00000 }>
-define g_X4IQNAN		<{ 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 }>
-define g_X4IQNANTEST		<{ 0x007FFFFF, 0x007FFFFF, 0x007FFFFF, 0x007FFFFF }>
-define g_X4IINFINITY		<{ 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 }>
-define g_X4INEGINF		<{ 0xFF800000, 0xFF800000, 0xFF800000, 0xFF800000 }>
-define g_X4FLOG2E		<{ M_LOG2E, M_LOG2E, M_LOG2E, M_LOG2E }>
-define g_X4FPI			<{ M_PI, M_PI, M_PI, M_PI }>
-define g_X4FPI_2		<{ M_PI_2, M_PI_2, M_PI_2, M_PI_2 }>
-define g_X4FTWOPI		<{ M_TWOPI, M_TWOPI, M_TWOPI, M_TWOPI }>
-define g_X4FRECIPROCALTWOPI	<{ 0.159154943, 0.159154943, 0.159154943, 0.159154943 }>
-define g_X4FLOGEST0		<{ +1.442693, +1.442693, +1.442693, +1.442693 }>
-define g_X4FLOGEST1		<{ -0.721242, -0.721242, -0.721242, -0.721242 }>
-define g_X4FLOGEST2		<{ +0.479384, +0.479384, +0.479384, +0.479384 }>
-define g_X4FLOGEST3		<{ -0.350295, -0.350295, -0.350295, -0.350295 }>
-define g_X4FLOGEST4		<{ +0.248590, +0.248590, +0.248590, +0.248590 }>
-define g_X4FLOGEST5		<{ -0.145700, -0.145700, -0.145700, -0.145700 }>
-define g_X4FLOGEST6		<{ +0.057148, +0.057148, +0.057148, +0.057148 }>
-define g_X4FLOGEST7		<{ -0.010578, -0.010578, -0.010578, -0.010578 }>
-define g_X4I23			<{ 23, 23, 23, 23 }>
-define g_X4IEXPBIAS		<{ 127, 127, 127, 127 }>
-define g_X4ISUBNEXP		<{ -126, -126, -126, -126 }>
-define g_X4FARCCOEFFICIENTS0	<{ +1.5707963050, -0.2145988016, +0.0889789874, -0.0501743046 }>
-define g_X4FARCCOEFFICIENTS1	<{ +0.0308918810, -0.0170881256, +0.0066700901, -0.0012624911 }>
-define g_X4IMASKX		<{ 0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000 }>
-define g_X4IABSMASK		<{ 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF }>
-
-define g_X2FLOG2E		<{ M_LOG2E, M_LOG2E }>
-define g_X2FONE			<{ 1.0, 1.0 }>
-define g_X2IABSMASK		<{ 0x7FFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF }>
-define g_X2INEGINF		<{ 0xFFF0000000000000, 0xFFF0000000000000 }>
-else
-externdef g_X4FZERO:		XVEC4F
-externdef g_X4FONE:		XVEC4F
-externdef g_X4FNEGZERO:		XVEC4F
-externdef g_X4FNEGONE:		XVEC4F
-externdef g_X4INAN:		XVEC4I
-externdef g_X4IQNAN:		XVEC4I
-externdef g_X4IQNANTEST:	XVEC4I
-externdef g_X4IINFINITY:	XVEC4I
-externdef g_X4INEGINF:		XVEC4I
-externdef g_X4FLOG2E:		XVEC4F
-externdef g_X4FPI:		XVEC4F
-externdef g_X4FPI_2:		XVEC4F
-externdef g_X4FTWOPI:		XVEC4F
-externdef g_X4FRECIPROCALTWOPI: XVEC4F
-
-externdef g_X4FLOGEST0:		XVEC4F
-externdef g_X4FLOGEST1:		XVEC4F
-externdef g_X4FLOGEST2:		XVEC4F
-externdef g_X4FLOGEST3:		XVEC4F
-externdef g_X4FLOGEST4:		XVEC4F
-externdef g_X4FLOGEST5:		XVEC4F
-externdef g_X4FLOGEST6:		XVEC4F
-externdef g_X4FLOGEST7:		XVEC4F
-
-externdef g_X4I23:		XVEC4I
-externdef g_X4IEXPBIAS:		XVEC4I
-externdef g_X4ISUBNEXP:		XVEC4I
-externdef g_X4FARCCOEFFICIENTS0:XVEC4F
-externdef g_X4FARCCOEFFICIENTS1:XVEC4F
-externdef g_X4IABSMASK:		XVEC4I
-externdef g_X4IMASKX:		XVEC4I
-
-externdef g_X2FLOG2E:		XVEC2F
-externdef g_X2FONE:		XVEC2F
-externdef g_X2IABSMASK:		XVEC2I
-externdef g_X2IINFINITY:	XVEC2I
-externdef g_X2INEGINF:		XVEC2I
-externdef g_X2FDBLMIN:		XVEC2F
-externdef g_X2FDBLMAX:		XVEC2F
-
-externdef g_EXPTABLE:		REAL8
-
-endif
-
 __vdecl_cosf4	proto __vdecl :XVECTOR
 __vdecl_coshf4	proto __vdecl :XVECTOR
 __vdecl_sinf4	proto __vdecl :XVECTOR
@@ -1824,13 +1707,17 @@ __vdecl_log2f4	proto __vdecl :XVECTOR
 __vdecl_sinhf4	proto __vdecl :XVECTOR
 __vdecl_tanhf4	proto __vdecl :XVECTOR
 __vdecl_truncf4 proto __vdecl :XVECTOR
-
+__vdecl_hypotf4 proto __vdecl :XVECTOR, :XVECTOR
+__vdecl_cos2	proto __vdecl :XVECTOR
 __vdecl_cosh2	proto __vdecl :XVECTOR
 __vdecl_exp2	proto __vdecl :XVECTOR
 __vdecl_exp22	proto __vdecl :XVECTOR
 __vdecl_fmod2	proto __vdecl :XVECTOR, :XVECTOR
+__vdecl_sin2	proto __vdecl :XVECTOR
+__vdecl_asin2	proto __vdecl :XVECTOR
+__vdecl_atan2	proto __vdecl :XVECTOR
 __vdecl_trunc2	proto __vdecl :XVECTOR
-
+__vdecl_hypot2	proto __vdecl :XVECTOR, :XVECTOR
 __vdecl_srlf4	proto __vdecl :XVECTOR, :XVECTOR
 __vdecl_sllf4	proto __vdecl :XVECTOR, :XVECTOR
 __vdecl_lbitf4	proto __vdecl :XVECTOR
@@ -2075,14 +1962,14 @@ _mm_exp_ps macro x:=<xmm0>
 ifdif <x>,<xmm0>
     movaps xmm0,x
 endif
-    __vdecl_exp2f4(_mm_mul_ps(xmm0, g_X4FLOG2E))
+    __vdecl_exp2f4(_mm_mul_ps(xmm0, _mm_set1_ps(M_LOG2E)))
     retm<xmm0>
     endm
 _mm_exp_pd macro x:=<xmm0>
 ifdif <x>,<xmm0>
     movapd xmm0,x
 endif
-    __vdecl_exp22(_mm_mul_pd(xmm0, g_X2FLOG2E))
+    __vdecl_exp22(_mm_mul_pd(xmm0, _mm_set1_pd(M_LOG2E)))
     retm<xmm0>
     endm
 
@@ -2162,44 +2049,32 @@ _mm_pow_sd macro x:=<xmm0>, y:=<xmm1>
     retm<xmm0>
     endm
 
-__vdecl_hypot proto __vdecl :real8, :real8 {
-    mulsd	xmm0,xmm0
-    mulsd	xmm1,xmm1
-    addsd	xmm0,xmm1
-    sqrtsd	xmm0,xmm0
-    }
-__vdecl_hypotf proto __vdecl :real4, :real4 {
-    mulss	xmm0,xmm0
-    mulss	xmm1,xmm1
-    addss	xmm0,xmm1
-    sqrtss	xmm0,xmm0
-    }
-__vdecl_hypot2 proto __vdecl :XVECTOR, :XVECTOR {
+__vdecl_hypot_pd proto __vdecl :XVECTOR, :XVECTOR {
     mulpd	xmm0,xmm0
     mulpd	xmm1,xmm1
     addpd	xmm0,xmm1
     sqrtpd	xmm0,xmm0
     }
-__vdecl_hypotf4 proto __vdecl :XVECTOR, :XVECTOR {
+__vdecl_hypot_ps proto __vdecl :XVECTOR, :XVECTOR {
     mulps	xmm0,xmm0
     mulps	xmm1,xmm1
     addps	xmm0,xmm1
     sqrtps	xmm0,xmm0
     }
 _mm_hypot_sd macro x:=<xmm0>, y:=<xmm1>
-    __vdecl_hypot(x, y)
+    __vdecl_hypot_pd(x, y)
     retm<xmm0>
     endm
 _mm_hypot_ss macro x:=<xmm0>, y:=<xmm1>
-    __vdecl_hypotf(x, y)
+    __vdecl_hypot_ps(x, y)
     retm<xmm0>
     endm
 _mm_hypot_pd macro x:=<xmm0>, y:=<xmm1>
-    __vdecl_hypot2(x, y)
+    __vdecl_hypot_pd(x, y)
     retm<xmm0>
     endm
 _mm_hypot_ps macro x:=<xmm0>, y:=<xmm1>
-    __vdecl_hypotf4(x, y)
+    __vdecl_hypot_ps(x, y)
     retm<xmm0>
     endm
 

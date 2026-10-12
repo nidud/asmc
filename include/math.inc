@@ -199,6 +199,31 @@ _fpclassf   proto __cdecl _X:float
 endif
 endif
 
+acosl   proto __cdecl :real10
+asinl   proto __cdecl :real10
+atanl   proto __cdecl :real10
+atan2l  proto __cdecl :real10, :real10
+
+ceill   proto __cdecl :real10
+cosl    proto __cdecl :real10
+coshl   proto __cdecl :real10
+expl    proto __cdecl :real10
+fabsl   proto __cdecl :real10
+floorl  proto __cdecl :real10
+fmodl   proto __cdecl :real10, :real10
+frexpl  proto __cdecl :real10, :ptr int_t
+_hypotl proto __cdecl :real10, :real10
+ldexpl  proto __cdecl :real10, :real10
+logl    proto __cdecl :real10
+log10l  proto __cdecl :real10
+modfl   proto __cdecl :real10, :real10
+powl    proto __cdecl :real10, :real10
+sinl    proto __cdecl :real10
+sinhl   proto __cdecl :real10
+sqrtl   proto __cdecl :real10
+tanl    proto __cdecl :real10
+tanhl   proto __cdecl :real10
+
 ifdef _USE_MATH_DEFINES
 ifndef _MATH_DEFINES_DEFINED
 include math_defines.inc

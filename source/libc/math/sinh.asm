@@ -3,27 +3,24 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+define _USE_MATH_DEFINES
 include math.inc
-ifdef _WIN64
-include intrin.inc
-undef __vdecl_sinh2
-alias <__vdecl_sinh2>=<sinh>
-assume uses xmm6 xmm7
-endif
 
 .code
 
 sinh proc x:double
 ifdef _WIN64
-    _mm_mul_ps(xmm0, g_X4FLOG2E)
-    _mm_store_ps(xmm1, xmm0)
-    _mm_store_ps(xmm3, g_X4FNEGONE)
-    _mm_add_ps(xmm0, xmm3)
-    _mm_sub_ps(xmm3, xmm1)
-    _mm_store_ps(xmm6, xmm0)
-    _mm_store_ps(xmm7, _mm_exp2_ps(xmm3))
-    _mm_exp2_ps(xmm6)
-    _mm_sub_ps(xmm0, xmm7)
+   .new z:double
+    option comdat:on
+    mulsd xmm0,M_LOG2E
+    movsd xmm1,xmm0
+    movsd xmm3,-1.0
+    addsd xmm0,xmm3
+    subsd xmm3,xmm1
+    movsd x,xmm0
+    movsd z,exp2(xmm3)
+    exp2(x)
+    subsd xmm0,z
 else
     fld     x
     fldl2e

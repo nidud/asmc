@@ -6,15 +6,17 @@
 include math.inc
 ifdef _WIN64
 include intrin.inc
-undef __vdecl_fmodf4
-alias <__vdecl_fmodf4>=<fmodf>
 endif
 
 .code
 
 fmodf proc x:float, y:float
 ifdef _WIN64
-    _mm_fmod_ss(xmm0, xmm1)
+    movss   xmm2,xmm0
+    divss   xmm2,xmm1
+    roundss xmm2,xmm2,_MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC
+    mulss   xmm2,xmm1
+    subss   xmm0,xmm2
 else
     fld     x
     fld     y

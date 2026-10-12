@@ -6,14 +6,12 @@
 include math.inc
 ifdef _WIN64
 include intrin.inc
-undef __vdecl_truncf4
-alias <__vdecl_truncf4>=<truncf>
 endif
 
 .code
 
 truncf proc x:float
-ifdef _WIN64
+ifdef _WIN64 ; SSE4.1
     _mm_round_ps(xmm0, _MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC)
 else
    .new w:word

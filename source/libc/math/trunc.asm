@@ -6,8 +6,6 @@
 include math.inc
 ifdef _WIN64
 include intrin.inc
-undef __vdecl_trunc2
-alias <__vdecl_trunc2>=<trunc>
 endif
 
 .code

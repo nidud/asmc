@@ -8,12 +8,18 @@ include math.inc
 ifdef _WIN64
 include intrin.inc
 option dotname
+option comdat:on
+externdef g_EXPTABLE:real8
 assume uses xmm6 xmm7
 .data
- d_tiny  dq 0xfd19d1bd0105c611
- d_small dq 0x3f662e42fefa39ef
- d_large dq 0x011ff4e8de8082e3
- d_huge  dq 0x01211d42457337d4
+ d_tiny         dq 0xfd19d1bd0105c611
+ d_small        dq 0x3f662e42fefa39ef
+ d_large        dq 0x011ff4e8de8082e3
+ d_huge         dq 0x01211d42457337d4
+ absmask        dq 0x7FFFFFFFFFFFFFFF
+ neginf         dq 0xFFF0000000000000
+ dblmin         dq 0x1.0p-1022
+ dblmax         dq 7FEFFFFFFFFFFFFFr
 endif
 
 .code
@@ -22,7 +28,7 @@ exp proc x:double
 ifdef _WIN64
     movd        rax,xmm0
     movd        rdx,xmm0
-    and         rax,g_X2IABSMASK.i1
+    and         rax,absmask
     sar         rdx,63
     sub         rax,d_small
     add         rdx,64
@@ -38,7 +44,7 @@ ifdef _WIN64
     and         rdx,0x7f
     sal         rdx,4
     movapd      xmm2,xmm1
-    mulsd       xmm1,g_X2FLOG2E.f1
+    mulsd       xmm1,M_LOG2E
     cvtsi2sd    xmm0,rax
     movapd      xmm7,xmm1
     subsd       xmm1,xmm0
@@ -87,12 +93,12 @@ ifdef _WIN64
     mulsd       xmm0,xmm1
     addsd       xmm0,3fdffffffffffe1fr
     mulsd       xmm0,xmm1
-    addsd       xmm0,g_X2FONE.f1
+    addsd       xmm0,1.0
     mulsd       xmm0,xmm1
-    addsd       xmm0,g_X2FONE.f1
+    addsd       xmm0,1.0
     jmp         .9
 .3:
-    addsd       xmm0,g_X2FONE.f1
+    addsd       xmm0,1.0
     jmp         .9
 .4:
     cmp         rax,d_huge
@@ -108,10 +114,10 @@ ifdef _WIN64
     sar         rax,7
     and         rdx,0x7f
     sal         rdx,4
-    movsd       xmm6,g_X2FDBLMIN.f1
+    movsd       xmm6,dblmin
     mulsd       xmm6,xmm6
     movapd      xmm2,xmm1
-    mulsd       xmm1,g_X2FLOG2E.f1
+    mulsd       xmm1,M_LOG2E
     cvtsi2sd    xmm0,rax
     movapd      xmm7,xmm1
     subsd       xmm1,xmm0
@@ -119,7 +125,7 @@ ifdef _WIN64
     movsd       xmm3,0fffffffff8000000r
     mulsd       xmm4,03e54ae0bf85ddf44r
     movsd       xmm5,03ff7154760000000r
-    movsd       xmm0,g_X2FONE.f1
+    movsd       xmm0,1.0
     lea         rcx,g_EXPTABLE
     subsd       xmm1,[rcx+rdx]
     movsd       xmm6,3f55e52272e0eaecr
@@ -163,9 +169,9 @@ ifdef _WIN64
     xorpd       xmm1,xmm1
     comisd      xmm0,xmm1
     jnc         .7
-    movsd       xmm1,g_X2INEGINF.i1
+    movsd       xmm1,neginf
     cmpneqsd    xmm1,xmm0
-    movsd       xmm0,g_X2FDBLMIN.f1
+    movsd       xmm0,dblmin
     andpd       xmm1,xmm0
     mulsd       xmm0,xmm1
     jmp         .9
@@ -174,7 +180,7 @@ ifdef _WIN64
     comisd      xmm1,xmm0
     jnc         .1
 .7:
-    mulsd       xmm0,g_X2FDBLMAX.f1
+    mulsd       xmm0,dblmax
     jmp         .9
 .8:
     addsd       xmm0,xmm0

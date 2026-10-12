@@ -5,10 +5,9 @@
 ;
 include math.inc
 
-    .code
+.code
 
 tan proc x:double
-
     fld     x
     fptan
     fstp    st(0)

@@ -5,26 +5,21 @@
 ;
 
 include math.inc
-ifdef _WIN64
-include intrin.inc
-undef __vdecl_tanhf4
-alias <__vdecl_tanhf4>=<tanhf>
-define Scale            <{ 2.8853900817779268, 2.8853900817779268, 2.8853900817779268, 2.8853900817779268 }>
-define g_X4FONEHALF     <{ 0.5, 0.5, 0.5, 0.5 }>
-endif
 
 .code
 
 tanhf proc x:float
 ifdef _WIN64
-    _mm_exp2_ps(_mm_mul_ps(xmm0, Scale))
-    _mm_mul_ps(xmm0, g_X4FONEHALF)
-    _mm_add_ps(xmm0, g_X4FONEHALF)
-    _mm_store_ps(xmm1, g_X4FONE)
-    _mm_store_ps(xmm2, xmm1)
-    _mm_div_ps(xmm1, xmm0)
-    _mm_sub_ps(xmm2, xmm1)
-    _mm_store_ps(xmm0, xmm2)
+    option comdat:on
+    mulss xmm0,2.8853900817779268
+    exp2f(xmm0)
+    mulss xmm0,0.5
+    addss xmm0,0.5
+    movss xmm1,1.0
+    movss xmm2,xmm1
+    divss xmm1,xmm0
+    subss xmm2,xmm1
+    movss xmm0,xmm2
 else
     fld     x
     fldl2e

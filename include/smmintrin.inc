@@ -32,43 +32,43 @@ _MM_FROUND_RINT		equ _MM_FROUND_CUR_DIRECTION OR _MM_FROUND_RAISE_EXC
 _MM_FROUND_NEARBYINT	equ _MM_FROUND_CUR_DIRECTION OR _MM_FROUND_NO_EXC
 
 _mm_ceil_pd macro val
-	exitm<_mm_round_pd((val), _MM_FROUND_CEIL)>
+	exitm<_mm_round_pd(val, _MM_FROUND_CEIL)>
 	endm
 _mm_ceil_sd macro dst, val
-	exitm<_mm_round_sd((dst), (val), _MM_FROUND_CEIL)>
+	exitm<_mm_round_sd(dst, val, _MM_FROUND_CEIL)>
 	endm
 
 _mm_floor_pd macro val
-	exitm<_mm_round_pd((val), _MM_FROUND_FLOOR)>
+	exitm<_mm_round_pd(val, _MM_FROUND_FLOOR)>
 	endm
 _mm_floor_sd macro dst, val
-	exitm<_mm_round_sd((dst), (val), _MM_FROUND_FLOOR)>
+	exitm<_mm_round_sd(dst, val, _MM_FROUND_FLOOR)>
 	endm
 
 _mm_ceil_ps macro val
-	exitm<_mm_round_ps((val), _MM_FROUND_CEIL)>
+	exitm<_mm_round_ps(val, _MM_FROUND_CEIL)>
 	endm
 _mm_ceil_ss macro dst, val
-	exitm<_mm_round_ss((dst), (val), _MM_FROUND_CEIL)>
+	exitm<_mm_round_ss(dst, val, _MM_FROUND_CEIL)>
 	endm
 
 _mm_floor_ps macro val
-	exitm<_mm_round_ps((val), _MM_FROUND_FLOOR)>
+	exitm<_mm_round_ps(val, _MM_FROUND_FLOOR)>
 	endm
 _mm_floor_ss macro dst, val
-	exitm<_mm_round_ss((dst), (val), _MM_FROUND_FLOOR)>
+	exitm<_mm_round_ss(dst, val, _MM_FROUND_FLOOR)>
 	endm
 
 _mm_test_all_zeros macro m, val
-	exitm<_mm_testz_si128((m), (val))>
+	exitm<_mm_testz_si128(m, val)>
 	endm
 
 _mm_test_all_ones macro val
-	exitm<_mm_testc_si128((val), _mm_cmpeq_epi32((val),(val)))>
+	exitm<_mm_testc_si128(val, _mm_cmpeq_epi32(val, val))>
 	endm
 
 _mm_test_mix_ones_zeros macro m, val
-	exitm<_mm_testnzc_si128((m), (val))>
+	exitm<_mm_testnzc_si128(m, val)>
 	endm
 
 _mm_blend_epi16 macro a, b, imm
@@ -185,11 +185,11 @@ _mm_extract_ps macro x, imm
 	endm
 
 _MM_EXTRACT_FLOAT macro dest, src, ndx
-	exitm<_mm_store_ps(dest, _mm_extract_ps((src), (ndx)))>
+	exitm<_mm_store_ps(dest, _mm_extract_ps(src, ndx))>
 	endm
 
 _MM_PICK_OUT_PS macro src, num
-	exitm<_mm_insert_ps(_mm_setzero_ps(), (src), _MM_MK_INSERTPS_NDX((num), 0, 0x0e))>
+	exitm<_mm_insert_ps(_mm_setzero_ps(), src, _MM_MK_INSERTPS_NDX(num, 0, 0x0e))>
 	endm
 
 _mm_insert_epi8 macro x, r, imm
@@ -225,25 +225,20 @@ _mm_extract_epi64 macro x, imm
 endif
 
 _mm_minpos_epu16 macro x
-	phminposuw x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(phminposuw, x)>
 	endm
 
 _mm_round_pd macro x, imm
-	roundpd x,x,imm
-	retm<x>
+	exitm<_MM_INSTDUPX(roundpd, x, imm)>
 	endm
-_mm_round_sd macro a, b, imm
-	roundsd a,b,imm
-	retm<a>
+_mm_round_sd macro x, imm
+	exitm<_MM_INSTDUPX(roundsd, x, imm)>
 	endm
 _mm_round_ps macro x, imm
-	roundps x,x,imm
-	retm<x>
+	exitm<_MM_INSTDUPX(roundps, x, imm)>
 	endm
-_mm_round_ss macro a, b, imm
-	roundss a,b,imm
-	retm<a>
+_mm_round_ss macro x, imm
+	exitm<_MM_INSTDUPX(roundss, x, imm)>
 	endm
 ifdef _M_X64
 _mm_cvt_roundsd_i64 macro a, r
@@ -253,53 +248,41 @@ _mm_cvt_roundsd_i64 macro a, r
 endif
 
 _mm_cvtepi8_epi32 macro x:=<xmm0>
-	pmovsxbd x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovsxbd, x)>
 	endm
 _mm_cvtepi16_epi32 macro x:=<xmm0>
-	pmovsxwd x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovsxwd, x)>
 	endm
 _mm_cvtepi8_epi64 macro x:=<xmm0>
-	pmovsxbq x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovsxbq, x)>
 	endm
 _mm_cvtepi32_epi64 macro x
-	pmovsxdq x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovsxdq, x)>
 	endm
 _mm_cvtepi16_epi64 macro x
-	pmovsxwq x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovsxwq, x)>
 	endm
 _mm_cvtepi8_epi16 macro x
-	pmovsxbw x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovsxbw, x)>
 	endm
 
 _mm_cvtepu8_epi32 macro x
-	pmovzxbd x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovzxbd, x)>
 	endm
 _mm_cvtepu16_epi32 macro x
-	pmovzxwd x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovzxwd, x)>
 	endm
 _mm_cvtepu8_epi64 macro x
-	pmovzxbq x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovzxbq, x)>
 	endm
 _mm_cvtepu32_epi64 macro x
-	pmovzxdq x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovzxdq, x)>
 	endm
 _mm_cvtepu16_epi64 macro x
-	pmovzxwq x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovzxwq, x)>
 	endm
 _mm_cvtepu8_epi16 macro x
-	pmovzxbw x,x
-	retm<x>
+	exitm<_MM_INSTDUPX(pmovzxbw, x)>
 	endm
 
 _mm_packus_epi32 macro a, b

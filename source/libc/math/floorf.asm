@@ -4,9 +4,11 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 include math.inc
+ifdef _WIN64
 include intrin.inc
+endif
 
-    .code
+.code
 
 floorf proc x:float
 ifdef _WIN64

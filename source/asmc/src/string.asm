@@ -728,18 +728,14 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
             mov rbx,tokenarray
         .endif
     .endif
+
     .if ( [rbx].token == T_OP_BRACKET &&
-          ( [rbx+asm_tok].token == T_NUM && [rbx+asm_tok*2].token == T_CL_BRACKET ) ||
-          ( [rbx+asm_tok].token == '-' && [rbx+asm_tok*2].token == T_NUM &&
-            [rbx+asm_tok*3].token == T_CL_BRACKET ) )
+          ( [rbx+asm_tok].token == T_NUM && [rbx+asm_tok*2].token == T_CL_BRACKET ) )
 
         ; return label[-value]
 
+       .new opnd:expr
         free_line(cursrc)
-        .new opnd:expr
-        .if ( [rbx+asm_tok].token == '-' )
-            add rbx,asm_tok
-        .endif
         add rbx,asm_tok
         _atoow( &opnd, [rbx].string_ptr, [rbx].numbase, [rbx].itemlen )
 
@@ -752,23 +748,18 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
         ;
         ; allow @CStr(-1) --> last index + 1
         ;
+        ; The strings are now named D$<hash><A|W>, so peeking the
+        ; next label is no longer possible
+        ;
         mov ecx,opnd.value
         mov rdx,MODULE.StrStack
-        .if ( [rbx-asm_tok].token == '-' )
-            xor eax,eax
-            .if ( rdx )
-                mov eax,[rdx].str_item.index
-            .endif
-            add eax,ecx
-        .else
-            .for ( eax = ecx : eax && rdx : eax--, rdx=[rdx].str_item.next )
-            .endf
-            .if ( rdx == NULL )
-                asmerr( 2156 )
-               .return 0
-            .endif
-            mov eax,[rdx].str_item.index
+        .for ( eax = ecx : eax && rdx : eax--, rdx=[rdx].str_item.next )
+        .endf
+        .if ( rdx == NULL )
+            asmerr( 2156 )
+           .return( 0 )
         .endif
+        mov eax,[rdx].str_item.index
         .for ( rdx = MODULE.StrStack : rdx : rdx = [rdx].str_item.next )
             .break .if ( eax == [rdx].str_item.index )
         .endf

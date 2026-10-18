@@ -53,10 +53,13 @@ wmain proc argc:int_t, argv:ptr wstring_t
             wcout << "CreateEvent Failed, error code=" << GetLastError() << endl
             mov returnValue,1
         .else
-            .new factoryGUI:GUID = {0x44A9796F,0x723E,0x4FDF,{0xA2,0x18,0x03,0x3E,0x75,0xB0,0xC0,0x84}}
-            .new inputPackageUri:HSTRING = nullptr
-            .new foundationUri:HSTRING = nullptr
-            mov hr,WindowsCreateString(RuntimeClass_Windows_Foundation_Uri, lengthof(@CStr(-1))-1, &foundationUri)
+           .new factoryGUI:GUID = {0x44A9796F,0x723E,0x4FDF,{0xA2,0x18,0x03,0x3E,0x75,0xB0,0xC0,0x84}}
+           .new inputPackageUri:HSTRING = nullptr
+           .new foundationUri:HSTRING = nullptr
+           .new uriString:LPTSTR = RuntimeClass_Windows_Foundation_Uri
+           .new uriStrLen:size_t = _tcslen(uriString)
+
+            mov hr,WindowsCreateString(uriString, uriStrLen, &foundationUri)
             .if (SUCCEEDED(hr))
                 mov hr,WindowsCreateString(inputUri, wcslen(inputUri), &inputPackageUri)
             .endif
@@ -73,8 +76,10 @@ wmain proc argc:int_t, argv:ptr wstring_t
                .new activationFactory:ptr IActivationFactory
                .new activationGUI:GUID = {0x00000035,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
                .new activationUri:HSTRING = nullptr
-                mov hr,WindowsCreateString(RuntimeClass_Windows_Management_Deployment_PackageManager,
-                        lengthof(@CStr(-1))-1, &activationUri)
+               .new uriString:LPTSTR = RuntimeClass_Windows_Management_Deployment_PackageManager
+               .new uriStrLen:size_t = _tcslen(uriString)
+
+                mov hr,WindowsCreateString(uriString, uriStrLen, &activationUri)
                 .if (SUCCEEDED(hr))
                     mov hr,RoGetActivationFactory(activationUri, &activationGUI, &activationFactory)
                 .endif

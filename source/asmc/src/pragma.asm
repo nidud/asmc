@@ -38,9 +38,21 @@ id      short_t ?
 state   char_t ?
 warning ends
 
-MAXSTACK equ 16
+define MAXSTACK 16
 
-    .data
+.template aux_data
+    regmask dd ?        ; mask bits: [xmm:16]:[gpr:16]
+    maxgpr  db ?        ; 0..8
+    maxxmm  db ?        ; 0..16
+    maxint  db ?        ; sizeof(reg::reg[::reg::reg])
+    flags   db ?
+    regs    fc_regs <>
+   .ends
+
+   .data?
+    AuxStack aux_data MAXSTACK dup(<>)
+
+   .data
 
     pragma_wtable warning \
         { 4003, 0 },
@@ -91,6 +103,7 @@ MAXSTACK equ 16
     PackCount dd 0
     CrefCount dd 0
     WarnCount dd 0
+    AuxCount  dd 0
     wstringfl dd 0
 
     PackStack db MAXSTACK dup(0)
@@ -122,21 +135,15 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         inc i
         add rbx,asm_tok
     .endif
-
-    mov rsi,[rbx].string_ptr
-    mov eax,[rsi]
-    or  eax,0x20202020
+    mov eax,[rbx].hash1
     inc i
     add rbx,asm_tok
     .if ( [rbx].token == T_OP_BRACKET || [rbx].token == T_COMMA )
         inc i
         add rbx,asm_tok
     .endif
-
-    bswap   eax
     .switch eax
-
-    .case "wstr"
+    .case HASH(wstring)
 
         ; .pragma wstring(pop)
 
@@ -192,57 +199,98 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
 
-    .case "aux "
-
-        .endc .if ( [rbx].token != T_REG )
+    .case HASH(aux)
 
         mov rdx,get_fasttype(MODULE.Ofssize, LANG_ASMCALL)
         mov rdi,[rdx].fc_info.regpack
-        xor eax,eax
-        mov ecx,fc_regs
-        rep stosb
-        mov rdi,rdx
-        mov [rdi].fc_info.maxgpr,0
-        mov [rdi].fc_info.regmask,0
-
-        .for ( esi = 0 : esi < 8 && [rbx].token == T_REG : esi++ )
-
-            inc [rdi].fc_info.maxgpr
-            get_register([rbx].tokval, 1)
-            mov rdx,[rdi].fc_info.regpack
-            mov [rdx].fc_regs.gpr_db[rsi],al
-            get_register([rbx].tokval, 2)
-            mov rdx,[rdi].fc_info.regpack
-            mov [rdx].fc_regs.gpr_dw[rsi],al
-
-            .if ( MODULE.Ofssize )
-
-                get_register([rbx].tokval, 4)
-                mov rdx,[rdi].fc_info.regpack
-                mov [rdx].fc_regs.gpr_dd[rsi],al
-            .endif
-            .if ( MODULE.Ofssize == USE64 )
-
-                get_register([rbx].tokval, 8)
-                mov rdx,[rdi].fc_info.regpack
-                mov [rdx].fc_regs.gpr_dq[rsi],al
-            .endif
-            mov cl,GetRegNo([rbx].asm_tok.tokval)
-            mov eax,1
-            shl eax,cl
-            or  [rdi].fc_info.regmask,eax
+        .if ( [rbx].tokval == T_POP )
             add rbx,asm_tok
-            .if ( [rbx].token == T_COMMA )
-                add rbx,asm_tok
+            .if ( AuxCount )
+                dec AuxCount
+                imul eax,AuxCount,aux_data
+                lea rsi,AuxStack
+                add rsi,rax
+                mov [rdx].fc_info.regmask,[rsi].aux_data.regmask
+                mov [rdx].fc_info.maxgpr,[rsi].aux_data.maxgpr
+                mov [rdx].fc_info.maxxmm,[rsi].aux_data.maxxmm
+                mov [rdx].fc_info.maxint,[rsi].aux_data.maxint
+                mov [rdx].fc_info.flags,[rsi].aux_data.flags
+                lea rsi,[rsi].aux_data.regs
+                mov ecx,fc_regs
+                rep movsb
             .endif
-        .endf
+            .endc
+        .else
+            .endc .if ( [rbx].token != T_REG )
+            .if ( AuxCount < MAXSTACK )
+                imul eax,AuxCount,aux_data
+                inc AuxCount
+                lea rsi,AuxStack
+                add rsi,rax
+                mov [rsi].aux_data.regmask,[rdx].fc_info.regmask
+                mov [rsi].aux_data.maxgpr,[rdx].fc_info.maxgpr
+                mov [rsi].aux_data.maxxmm,[rdx].fc_info.maxxmm
+                mov [rsi].aux_data.maxint,[rdx].fc_info.maxint
+                mov [rsi].aux_data.flags,[rdx].fc_info.flags
+                lea rsi,[rsi].aux_data.regs
+                mov ecx,fc_regs
+                mov rax,rdi
+                xchg rsi,rdi
+                rep movsb
+                mov rdi,rax
+            .endif
+            xor eax,eax
+            mov ecx,fc_regs
+            rep stosb
+            mov rdi,rdx
+            mov [rdi].fc_info.maxgpr,al
+            mov [rdi].fc_info.regmask,eax
+            .for ( esi = 0 : esi < 8 && [rbx].token == T_REG : esi++ )
+                inc [rdi].fc_info.maxgpr
+                get_register([rbx].tokval, 1)
+                mov rdx,[rdi].fc_info.regpack
+                mov [rdx].fc_regs.gpr_db[rsi],al
+                get_register([rbx].tokval, 2)
+                mov rdx,[rdi].fc_info.regpack
+                mov [rdx].fc_regs.gpr_dw[rsi],al
+                .if ( MODULE.Ofssize )
+                    get_register([rbx].tokval, 4)
+                    mov rdx,[rdi].fc_info.regpack
+                    mov [rdx].fc_regs.gpr_dd[rsi],al
+                .endif
+                .if ( MODULE.Ofssize == USE64 )
+                    get_register([rbx].tokval, 8)
+                    mov rdx,[rdi].fc_info.regpack
+                    mov [rdx].fc_regs.gpr_dq[rsi],al
+                .endif
+                mov rdx,GetSpecialTable([rbx].asm_tok.tokval)
+                movzx ecx,[rdx].special_item.bytval
+                mov edx,[rdx].special_item.value
+                mov eax,1
+                shl eax,cl
+                .if ( edx & OP_V )
+                    shl eax,VSHIFT_USED
+                    and eax,VMASK_USED
+                .elseif ( edx & OP_K )
+                    shl eax,KSHIFT_USED
+                   ;and eax,KMASK_USED
+                .else
+                    and eax,RMASK_USED
+                .endif
+                or  [rdi].fc_info.regmask,eax
+                add rbx,asm_tok
+                .if ( [rbx].token == T_COMMA )
+                    add rbx,asm_tok
+                .endif
+            .endf
+        .endif
         add rbx,asm_tok
         .if [rbx].token == T_CL_BRACKET
             add rbx,asm_tok
         .endif
         .endc
 
-    .case "warn"
+    .case HASH(warning)
 
         ;
         ; .pragma warning(pop)
@@ -332,19 +380,12 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
 
-    .case "comm"
+    .case HASH(comment)
 
-        mov eax,[rsi+4]
-        or  eax,0x202020
-        .endc .if eax != 'tne'
         .endc .if [rbx+asm_tok].token != T_COMMA
 
-        mov rsi,[rbx].string_ptr
-        mov eax,[rsi]
-        or  eax,0x202020
-        and eax,0xFFFFFF
-
-        .if eax == 'bil'
+        mov eax,[rbx].hash1
+        .if ( eax == HASH(lib) )
 
             add i,2
             add rbx,asm_tok*2
@@ -368,17 +409,13 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             mov rsi,[rbx].string_ptr
             tstrcpy(&stdlib, rsi)
-
             .while ( [rbx+asm_tok].token == T_DOT )
-
                 tstrcat(&stdlib, [rbx+asm_tok].string_ptr)
                 tstrcat(&stdlib, [rbx+asm_tok*2].string_ptr)
                 add i,2
                 add rbx,asm_tok*2
             .endw
-
             .if ( byte ptr [rsi] == '"' )
-
                 inc rsi
                 inc quote_s
                 .if tstrchr(tstrcpy(&stdlib, rsi), '"')
@@ -390,12 +427,9 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                 add i,2
                 add rbx,asm_tok*2
-
                 mov rsi,[rbx].string_ptr
                 tstrcpy(&dynlib, rsi)
-
                 .while ( [rbx+asm_tok].token == T_DOT )
-
                     tstrcat(&dynlib, [rbx+asm_tok].string_ptr)
                     tstrcat(&dynlib, [rbx+asm_tok*2].string_ptr)
                     add i,2
@@ -427,26 +461,19 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     mov byte ptr [rax],0
                 .endif
             .endif
-
             .if ( Options.output_format == OFORMAT_BIN )
-
                 .if ( dynlib == 0 )
                     mov rsi,rdi
                 .endif
                 AddLineQueueX(" option dllimport:<%s>", rsi)
-
             .elseif !( byte ptr [rsi] )
-
                 .if ( quote_s )
                     AddLineQueueX("includelib \"%s.lib\"", rdi)
                 .else
                     AddLineQueueX("includelib %s.lib", rdi)
                 .endif
-
             .else
-
                 .new u[256]:char_t
-
                 tstrupr( tstrcpy( &u, rsi ) )
                 .while ( tstrchr( rax, '-' ) )
                     mov byte ptr [rax],'_'
@@ -454,7 +481,6 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .if ( tstrchr( &u, '.' ) )
                     mov byte ptr [rax],0
                 .endif
-
                 AddLineQueueX(
                     "ifdef _%s\n"
                     "includelib %s.lib\n"
@@ -463,12 +489,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     "endif", &u, rsi, rdi )
             .endif
 
-        .elseif ( eax == 'nil' )
-
-            mov eax,[rsi+3]
-            or  eax,0x202020
-            and eax,0xFFFFFF
-            .endc .if eax != 'rek'
+        .elseif ( eax == HASH(linker) )
 
             ; .pragma comment(linker, "/..")
 
@@ -498,7 +519,6 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                     .endif
                     stosb
                 .until !al
-
                 sub rdi,rcx
                 add rdi,qitem
                 mov rdi,LclAlloc( edi )
@@ -510,15 +530,14 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .endw
             .endif
         .endif
-
         add rbx,asm_tok
         .if ( [rbx].token == T_CL_BRACKET )
             add rbx,asm_tok
         .endif
         .endc
 
-    .case "init"
-    .case "exit"
+    .case HASH(init)
+    .case HASH(exit)
 
         ; .pragma init(<proc>, <priority>)
         ; .pragma exit(<proc>, <priority>)
@@ -532,7 +551,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
             .endc .ifd EvalOperand(&i, tokenarray, TokenCount, &opndx, EXPF_NOUNDEF) == ERROR
             lea rsi,@CStr("`.fini_array")
-            .if edi == "init"
+            .if ( edi == HASH(init) )
                 lea rsi,@CStr("`.init_array")
             .endif
             tsprintf(&stdlib, "%s.%05d`", rsi, opndx.uvalue)
@@ -542,7 +561,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 AddLineQueueX(" %r dotname", T_OPTION)
             .endif
             lea rsi,@CStr(".CRT$XTA")
-            .if edi == "init"
+            .if ( edi == HASH(init) )
                 lea rsi,@CStr(".CRT$XIA")
             .endif
         .endif
@@ -572,7 +591,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
 
-    .case "pack"
+    .case HASH(pack)
 
         ; .pragma(pack(push, <alignment>))
         ; .pragma(pack(pop))
@@ -612,7 +631,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .endc
 
-      .case "list"
+    .case HASH(list)
 
         ; .pragma(list(push, 0|1))
         ; .pragma(list(pop))
@@ -626,7 +645,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
         .gotosw(T_PUSH)
 
-      .case "cref"
+    .case HASH(cref)
 
         ; .pragma(cref(push, 0|1))
         ; .pragma(cref(pop))
@@ -718,15 +737,29 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     endp
 
 PragmaInit proc __ccall
-    mov ListCount,0
-    mov PackCount,0
-    mov CrefCount,0
+    xor eax,eax
+    mov ListCount,eax
+    mov PackCount,eax
+    mov CrefCount,eax
+    mov AuxCount,eax
     ret
     endp
 
-PragmaCheckOpen proc __ccall
-    .if ListCount || PackCount || CrefCount
+PragmaCheckOpen proc __ccall uses rsi rdi
+    .if ( ListCount || PackCount || CrefCount )
         asmerr(1010, ".pragma-push-pop")
+    .elseif ( AuxCount )
+        mov rdx,get_fasttype(MODULE.Ofssize, LANG_ASMCALL)
+        mov rdi,[rdx].fc_info.regpack
+        lea rsi,AuxStack
+        mov [rdx].fc_info.regmask,[rsi].aux_data.regmask
+        mov [rdx].fc_info.maxgpr,[rsi].aux_data.maxgpr
+        mov [rdx].fc_info.maxxmm,[rsi].aux_data.maxxmm
+        mov [rdx].fc_info.maxint,[rsi].aux_data.maxint
+        mov [rdx].fc_info.flags,[rsi].aux_data.flags
+        lea rsi,[rsi].aux_data.regs
+        mov ecx,fc_regs
+        rep movsb
     .endif
     ret
     endp

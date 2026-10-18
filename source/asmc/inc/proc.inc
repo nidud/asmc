@@ -20,6 +20,57 @@ define _P_CSTACK	0x40	; USES register outside stack-frame (-Cs)
 
 define _P_FASTCALL	(_P_REGPARAM or _P_RESSTACK or _P_SYSTEMV)
 
+.enum reg_used_flags {
+
+    R0_USED	  = 0x01,	; register contents of AX/EAX/RAX is destroyed
+    R0_H_CLEARED  = 0x02,	; 16bit: high byte of R0 (=AH) has been set to 0
+    R0_X_CLEARED  = 0x04,	; 16bit: register R0 (=AX) has been set to 0
+    R2_USED	  = 0x08,	; contents of DX is destroyed ( via CWD ); cpu < 80386 only
+
+    ; fc_info.regmask bits: [mask:8]:[vector:12]:[gpr:12]
+
+    ; total register assignments for invoke is 8
+    ; from 10 GPR's + 8 KMASK + 12 vectors: aux(K7, R11, ..
+    ; this should be extended to APX (8:32:32)
+
+    VSHIFT_USED = 12,
+    KSHIFT_USED = 24,
+    RMASK_USED	= 0x00000FFF,
+    VMASK_USED	= 0x00FFF000,
+    KMASK_USED	= 0xFF000000,
+
+    AX_USED	= 0x00000001,	; GPR
+    CX_USED	= 0x00000002,
+    DX_USED	= 0x00000004,
+    BX_USED	= 0x00000008,
+    SP_USED	= 0x00000010,
+    BP_USED	= 0x00000020,
+    SI_USED	= 0x00000040,
+    DI_USED	= 0x00000080,
+    R8_USED	= 0x00000100,
+    R9_USED	= 0x00000200,
+    R10_USED	= 0x00000400,
+    R11_USED	= 0x00000800,
+
+    V0_USED	= 0x00001000,	; vector X|Y|ZMM
+    V1_USED	= 0x00002000,
+    V2_USED	= 0x00003000,
+    V3_USED	= 0x00004000,
+    V4_USED	= 0x00010000,
+    V5_USED	= 0x00020000,
+    V6_USED	= 0x00030000,
+    V7_USED	= 0x00040000,
+
+    K0_USED	= 0x01000000,	; mask register
+    K1_USED	= 0x02000000,
+    K2_USED	= 0x03000000,
+    K3_USED	= 0x04000000,
+    K4_USED	= 0x10000000,
+    K5_USED	= 0x20000000,
+    K6_USED	= 0x30000000,
+    K7_USED	= 0x40000000,
+    }
+
 .template fc_regs
     gpr_db	db 8 dup(?)	; General purpose registers
     gpr_dw	db 8 dup(?)
@@ -30,7 +81,7 @@ define _P_FASTCALL	(_P_REGPARAM or _P_RESSTACK or _P_SYSTEMV)
 
 .template fc_info
     regpack	fcregs_t ?
-    regmask	dd ?		; mask bits: [xmm:16]:[gpr:16]
+    regmask	dd ?		; mask bits
     maxgpr	db ?		; 0..8
     maxxmm	db ?		; 0..16
     maxint	db ?		; sizeof(reg::reg[::reg::reg])

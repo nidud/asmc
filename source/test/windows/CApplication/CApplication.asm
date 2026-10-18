@@ -650,8 +650,7 @@ CApplication::RenderTextInfo proc
         mov rc.left,50.0
         mov rc.top,10.0
         m_pRT.DrawText(
-            "Windows samples",
-            lengthof(@CStr(-1))-1,
+            "Windows samples", 15,
             m_pTextFont, &rc,
             m_pSolidColorBrush,
             D2D1_DRAW_TEXT_OPTIONS_NONE,
@@ -659,8 +658,7 @@ CApplication::RenderTextInfo proc
             )
         mov rc.top,26.0
         m_pRT.DrawText(
-            "CApplication::Direct2D",
-            lengthof(@CStr(-1))-1,
+            "CApplication::Direct2D", 22,
             m_pTextFont2, &rc,
             m_pSolidColorBrush,
             D2D1_DRAW_TEXT_OPTIONS_NONE,
@@ -668,8 +666,7 @@ CApplication::RenderTextInfo proc
             )
         mov rc.top,70.0
         m_pRT.DrawText(
-            "This sample use the CApplication class\nRandom Count, Speed, Color, and Size",
-            lengthof(@CStr(-1))-1,
+            "This sample use the CApplication class\nRandom Count, Speed, Color, and Size", 76,
             m_pTextFont, &rc,
             m_pSolidColorBrush,
             D2D1_DRAW_TEXT_OPTIONS_NONE,

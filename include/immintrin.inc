@@ -69,154 +69,119 @@ define _CMP_GT_OQ	0x1E
 define _CMP_TRUE_US	0x1F
 
 _mm256_add_pd macro a, b
-    vaddpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vaddpd, a, b)>
     endm
 _mm256_add_ps macro a, b
-    vaddps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vaddps, a, b)>
     endm
 _mm256_addsub_pd macro a, b
-    vaddsubpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vaddsubpd, a, b)>
     endm
 _mm256_addsub_ps macro a, b
-    vaddsubps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vaddsubps, a, b)>
     endm
 _mm256_and_pd macro a, b
-    vandpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vandpd, a, b)>
     endm
 _mm256_and_ps macro a, b
-    vandps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vandps, a, b)>
     endm
 _mm256_andnot_pd macro a, b
-    vandnpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vandnpd, a, b)>
     endm
 _mm256_andnot_ps macro a, b
-    vandnps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vandnps, a, b)>
     endm
 
 _mm256_blend_pd macro a, b, i
-    vblendpd a,a,b,i
-    retm<a>
+    exitm<_MM_INSTDUPX(vblendpd, a, b, i)>
     endm
 _mm256_blend_ps macro a, b, i
-    vblendps a,a,b,i
-    retm<a>
+    exitm<_MM_INSTDUPX(vblendps, a, b, i)>
     endm
 _mm256_blendv_pd macro a, b, i
-    vblendvpd a,a,b,i
-    retm<a>
+    exitm<_MM_INSTDUPX(vblendvpd, a, b, i)>
     endm
 _mm256_blendv_ps macro a, b, i
-    vblendvps a,a,b,i
-    retm<a>
+    exitm<_MM_INSTDUPX(vblendvps, a, b, i)>
     endm
 
 _mm256_div_pd macro a, b
-    vdivpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vdivpd, a, b)>
     endm
 _mm256_div_ps macro a, b
-    vdivps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vdivps, a, b)>
     endm
 _mm256_dp_ps macro a, b, i
-    vdpps a,a,b,i
-    retm<a>
+    exitm<_MM_INSTDUPX(vdpps, a, b, i)>
     endm
 _mm256_hadd_pd macro a, b
-    vhaddpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vhaddpd, a, b)>
     endm
 _mm256_hadd_ps macro a, b
-    vhaddps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vhaddps, a, b)>
     endm
 _mm256_hsub_pd macro a, b
-    vhsubpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vhsubpd, a, b)>
     endm
 _mm256_hsub_ps macro a, b
-    vhsubps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vhsubps, a, b)>
     endm
 _mm256_max_pd macro a, b
-    vmaxpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vmaxpd, a, b)>
     endm
 _mm256_max_ps macro a, b
-    vmaxps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vmaxps, a, b)>
     endm
 _mm256_min_pd macro a, b
-    vminpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vminpd, a, b)>
     endm
 _mm256_min_ps macro a, b
-    vminps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vminps, a, b)>
     endm
 _mm256_mul_pd macro a, b
-    vmulpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vmulpd, a, b)>
     endm
 _mm256_mul_ps macro a, b
-    vmulps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vmulps, a, b)>
     endm
 _mm256_or_pd macro a, b
-    vorpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vorpd, a, b)>
     endm
 _mm256_or_ps macro a, b
-    vorps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vorps, a, b)>
     endm
 _mm256_shuffle_pd macro a, b, i
-    vshufpd a,a,b,i
-    retm<a>
+    exitm<_MM_INSTDUPX(vshufpd, a, b, i)>
     endm
 _mm256_shuffle_ps macro a, b, i
-    vshufps a,a,b,i
-    retm<a>
+    exitm<_MM_INSTDUPX(vshufps, a, b, i)>
     endm
 _mm256_sub_pd macro a, b
-    vsubpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vsubpd, a, b)>
     endm
 _mm256_sub_ps macro a, b
-    vsubps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vsubps, a, b)>
     endm
 _mm256_xor_pd macro a, b
-    vxorpd a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vxorpd, a, b)>
     endm
 _mm256_xor_ps macro a, b
-    vxorps a,a,b
-    retm<a>
+    exitm<_MM_INSTDUPX(vxorps, a, b)>
     endm
 _mm_cmp_pd macro a, b, imm
     cmppd a,b,imm
     retm<a>
     endm
 _mm256_cmp_pd macro a, b, imm
-    vcmppd a,a,b,imm
-    retm<a>
+    exitm<_MM_INSTDUPX(vcmppd, a, b, imm)>
     endm
 _mm_cmp_ps macro a, b, imm
     cmpps a,b,imm
     retm<a>
     endm
 _mm256_cmp_ps macro a, b, imm
-    vcmpps a,a,b,imm
-    retm<a>
+    exitm<_MM_INSTDUPX(vcmpps, a, b, imm)>
     endm
 _mm_cmp_sd macro a, b, imm
     cmpsd a,b,imm
@@ -235,6 +200,33 @@ _mm_comi_ss macro a, b, imm
     cmpss a,b,imm
     retm<a>
     endm
+
+; Pseudo-Op for VCMP*
+
+for cm,<eq,lt,le,unord,neq,nlt,nle,ord,eq_uq,nge,ngt,false,neq_oq,ge,
+	gt,true,eq_os,lt_oq,le_oq,unord_s,neq_us,nlt_uq,nle_uq,
+	ord_s,eq_us,nge_uq,ngt_uq,false_os,neq_os,ge_oq,gt_oq,true_us>
+_mm256_cmp&cm&_ps macro a, b, dst
+ifb <dst>
+    exitm<_MM_INSTDUPX(vcmp&cm&ps, a, b)>
+endif
+    vcmp&cm&ps dst, a, b
+    retm<dst>
+    endm
+    endm
+
+for cm,<eq,lt,le,unord,neq,nlt,nle,ord,eq_uq,nge,ngt,false,neq_oq,ge,
+	gt,true,eq_os,lt_oq,le_oq,unord_s,neq_us,nlt_uq,nle_uq,
+	ord_s,eq_us,nge_uq,ngt_uq,false_os,neq_os,ge_oq,gt_oq,true_us>
+_mm256_cmp&cm&_pd macro a, b, dst
+ifb <dst>
+    exitm<_MM_INSTDUPX(vcmp&cm&pd, a, b)>
+endif
+    vcmp&cm&pd dst, a, b
+    retm<dst>
+    endm
+    endm
+
 
 _mm256_cvtepi32_pd macro x:=<xmm0>
     vcvtdq2pd ymm0,x
@@ -545,7 +537,7 @@ _mm256_testc_si256 macro y, yi
     retm<CARRY?>
     endm
 _mm256_test_all_ones macro val
-    exitm<_mm256_testc_si256((val), _mm256_cmpeq_epi32((val),(val)))>
+    exitm<_mm256_testc_si256(val, _mm256_cmpeq_epi32(val, val))>
     endm
 
 _mm256_testnzc_si256 macro y, yi
@@ -553,7 +545,7 @@ _mm256_testnzc_si256 macro y, yi
     retm<!CARRY? && !ZERO?>
     endm
 _mm256_test_mix_ones_zeros macro m, val
-    exitm<_mm256_testnzc_si256((m), (val))>
+    exitm<_mm256_testnzc_si256(m, val)>
     endm
 
 _mm256_testz_pd macro y, yi
@@ -648,13 +640,13 @@ _mm256_set_pd macro args:vararg
     endm
 
 _mm256_set_m128 macro lo, hi
-    exitm<_mm256_insertf128_ps(_mm256_castps128_ps256(lo), (hi), 0x1)>
+    exitm<_mm256_insertf128_ps(_mm256_castps128_ps256(lo), hi, 0x1)>
     endm
 _mm256_set_m128d macro lo, hi
-    exitm<_mm256_insertf128_pd(_mm256_castpd128_pd256(lo), (hi), 0x1)>
+    exitm<_mm256_insertf128_pd(_mm256_castpd128_pd256(lo), hi, 0x1)>
     endm
 _mm256_set_m128i macro lo, hi
-    exitm<_mm256_insertf128_si256(_mm256_castsi128_si256(lo), (hi), 0x1)>
+    exitm<_mm256_insertf128_si256(_mm256_castsi128_si256(lo), hi, 0x1)>
     endm
 
 _mm256_setr_epi64x macro args:vararg
@@ -677,13 +669,13 @@ _mm256_setr_pd macro args:vararg
     endm
 
 _mm256_setr_m128 macro lo, hi
-    exitm<_mm256_set_m128((hi), (lo))>
+    exitm<_mm256_set_m128(hi, lo)>
     endm
 _mm256_setr_m128d macro lo, hi
-    exitm<_mm256_set_m128d((hi), (lo))>
+    exitm<_mm256_set_m128d(hi, lo)>
     endm
 _mm256_setr_m128i macro lo, hi
-    exitm<_mm256_set_m128i((hi), (lo))>
+    exitm<_mm256_set_m128i(hi, lo)>
     endm
 
 _mm256_set1_epi64x macro q
@@ -1687,6 +1679,13 @@ endif
 
 ; Math functions
 
+RADIANS macro x
+	exitm<(x*M_PI/180.0)>
+	endm
+DEGREES macro x
+	exitm<(x*180.0/M_PI)>
+	endm
+
 ifndef XVECTOR
 XVECTOR typedef REAL16
 endif
@@ -1708,6 +1707,7 @@ __vdecl_sinhf4	proto __vdecl :XVECTOR
 __vdecl_tanhf4	proto __vdecl :XVECTOR
 __vdecl_truncf4 proto __vdecl :XVECTOR
 __vdecl_hypotf4 proto __vdecl :XVECTOR, :XVECTOR
+
 __vdecl_cos2	proto __vdecl :XVECTOR
 __vdecl_cosh2	proto __vdecl :XVECTOR
 __vdecl_exp2	proto __vdecl :XVECTOR
@@ -1722,6 +1722,8 @@ __vdecl_srlf4	proto __vdecl :XVECTOR, :XVECTOR
 __vdecl_sllf4	proto __vdecl :XVECTOR, :XVECTOR
 __vdecl_lbitf4	proto __vdecl :XVECTOR
 
+__vdecl_cosf8	proto __vdecl :yword
+__vdecl_cosf16	proto __vdecl :zword
 
 _mm_cos_ss macro x:=<xmm0>
 if defined(__PE__) or defined(_MSVCRT)

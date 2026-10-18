@@ -601,7 +601,22 @@ endif
                 mov rdx,ls.input
                 .if ( ( tok[0].token == T_INSTRUCTION || tok[0].token == T_DIRECTIVE ) &&
                       edi != '&' && byte ptr [rdx] != '&' )
-                    .break
+
+                    mov eax,tok[0].tokval ; T_INSTRUCTION --> T_BINARY_OPERATOR
+                    .switch eax
+                    .case T_OR
+                    .case T_AND
+                    .case T_XOR
+                    .case T_ROL
+                    .case T_ROR
+                    .case T_SAL
+                    .case T_SHL
+                    .case T_SHR
+                    .case T_SAR
+                        .endc
+                    .default
+                        .break
+                    .endsw
                 .endif
             .endf
             .if ( tok[0].token == T_DIRECTIVE )

@@ -242,15 +242,20 @@ OpCls( XMM_M128_M16, XMM,     NONE )
 
 ; float and { vector } assignment
 
-OpCls( XMM, XMM_M32,          I_SS )
+OpCls( XMM, XMM_M32,          I_SS ) ; xmm, flt
 OpCls( XMM, XMM_M64,          I_SD )
 OpCls( YMM, XMM_M64,          I_SD )
-OpCls( YMM, M128,             I_PS )
+OpCls( YMM, M128,             I_PS ) ; xmm, vec
 OpCls( XMM, M64,              I_SD )
 OpCls( XMM, XMM_M128_M32,     I_PS )
 OpCls( XMM, XMM_M128_M64,     I_PD )
 OpCls( XMM, XMM_M128,         I_PS )
 OpCls( XMM, XMM_M128,         I_PD )
-OpCls( XMM, XMM_M128,         HPS  )
+OpCls( XMM, XMM_M32,          I8SS ) ; xmm, flt, imm
+OpCls( XMM, XMM_M64,          I8SD )
+OpCls( XMM, XMM_M128,         I8PS ) ; xmm, vec, imm
+OpCls( XMM, XMM_M128,         I8PD )
+OpCls( XMM, XMM_M128,         HPS  ) ; Pseudo-Op
 OpCls( XMM, XMM_MXGT16,       HSD  )
 OpCls( XMM, XMM_MXGT16,       HSS  )
+OpCls( K,   XMM_MXGT16,       HPS  )

@@ -3428,16 +3428,13 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
         .case T_INSTRUCTION
             mov eax,[rbx].tokval
             .switch eax
-            .case T_MUL
-            .case T_DIV
-                mov [rbx].token,T_BINARY_OPERATOR
-                mov [rbx].precedence,8
-                .continue
             .case T_SUB
             .case T_ADD
                 mov [rbx].token,T_BINARY_OPERATOR
                 mov [rbx].precedence,7
-                .continue
+               .continue
+            .case T_MUL
+            .case T_DIV
             .case T_SAL
             .case T_SAR
             .case T_SHL
@@ -3446,22 +3443,22 @@ EvalOperand proc __ccall uses rsi rbx start_tok:ptr int_t, tokenarray:token_t, e
             .case T_ROR
                 mov [rbx].token,T_BINARY_OPERATOR
                 mov [rbx].precedence,8
-                .continue
+               .continue
             .case T_BSF
             .case T_BSR
             .case T_NOT
                 mov [rbx].token,T_UNARY_OPERATOR
                 mov [rbx].precedence,11
-                .continue
+               .continue
             .case T_AND
                 mov [rbx].token,T_BINARY_OPERATOR
                 mov [rbx].precedence,12
-                .continue
+               .continue
             .case T_OR
             .case T_XOR
                 mov [rbx].token,T_BINARY_OPERATOR
                 mov [rbx].precedence,13
-                .continue
+               .continue
             .endsw
             .break
         .case T_RES_ID

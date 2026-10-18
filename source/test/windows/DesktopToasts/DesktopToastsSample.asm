@@ -570,8 +570,9 @@ DesktopToastsApp::DisplayToast proc
     .new hshManager:HSTRING_HEADER
     .new hsManager:HSTRING = NULL
     .new toastStatics:ptr Windows::UI::Notifications::IToastNotificationManagerStatics = NULL
-    .new hr:HRESULT = WindowsCreateStringReference(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager,
-            lengthof(@CStr(-1))-1, &hshManager, &hsManager)
+    .new uriString:LPTSTR = RuntimeClass_Windows_UI_Notifications_ToastNotificationManager
+    .new uriStrLen:size_t = _tcslen(uriString)
+    .new hr:HRESULT = WindowsCreateStringReference(uriString, uriStrLen, &hshManager, &hsManager)
 
     .if (SUCCEEDED(hr))
         mov hr,RoGetActivationFactory(hsManager, &IID_IToastNotificationManagerStatics, &toastStatics)
@@ -809,12 +810,11 @@ DesktopToastsApp::CreateToast proc \
         .new hshToastNotification:HSTRING_HEADER
         .new hsToastNotification:HSTRING = NULL
         .new factory:ptr Windows::UI::Notifications::IToastNotificationFactory = NULL
+        .new uriString:LPTSTR = RuntimeClass_Windows_UI_Notifications_ToastNotification
+        .new uriStrLen:size_t = _tcslen(uriString)
 
-        mov hr,WindowsCreateStringReference(RuntimeClass_Windows_UI_Notifications_ToastNotification,
-                lengthof(@CStr(-1))-1, &hshToastNotification, &hsToastNotification)
-
+        mov hr,WindowsCreateStringReference(uriString, uriStrLen, &hshToastNotification, &hsToastNotification)
         .if (SUCCEEDED(hr))
-
             mov hr,RoGetActivationFactory(hsToastNotification, &IID_IToastNotificationFactory, &factory)
         .endif
 

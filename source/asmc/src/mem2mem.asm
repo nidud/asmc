@@ -363,7 +363,11 @@ immarray proc __ccall private uses rsi rdi tokenarray:token_t, result:expr_t, vs
 
     tstrcpy( &oldtok, [rdi].tokpos )
     imul eax,TokenCount,asm_tok
-    tstrcpy( CurrSource, [rdi+rax-asm_tok].string_ptr )
+    mov rdx,[rdi+rax-asm_tok].string_ptr
+    .if ( [rdi+rax-asm_tok].token != T_STRING )
+        mov rdx,[rdi+rax-asm_tok*3].string_ptr
+    .endif
+    tstrcpy( CurrSource, rdx )
     xor ecx,ecx
     .for ( : byte ptr [rax] : rax++ )
         .if ( byte ptr [rax] == ',' )
@@ -454,15 +458,25 @@ endif
     .case rcx
         .for ( : [rcx].asm_tok.token != T_FINAL && [rcx].asm_tok.token != T_COMMA : rcx += asm_tok )
         .endf
+        .if ( [rcx].asm_tok.token == T_COMMA && [rcx+asm_tok].asm_tok.token == T_REG )
+            add rcx,asm_tok*2
+        .endif
         mov rbx,rcx
     .endsw
     .if ( !rbx || [rbx].asm_tok.token != T_COMMA )
         .return( asmerr( 2049 ) )
     .endif
-    mov rbx,[rbx].asm_tok.tokpos
-    mov byte ptr [rbx],0
-    AddLineQueueX( " %s, %s", [rdi].tokpos, &flabel )
-    mov byte ptr [rbx],','
+    mov rsi,[rbx].asm_tok.tokpos
+    xor ecx,ecx
+    .if ( [rbx+asm_tok*2].asm_tok.token == T_COMMA )
+        ;
+        ; inst reg, reg, {...}, imm
+        ;
+        mov rcx,[rbx+asm_tok*2].asm_tok.tokpos
+    .endif
+    mov byte ptr [rsi],0
+    AddLineQueueX( " %s, %s%s", [rdi].tokpos, &flabel, rcx )
+    mov byte ptr [rsi],','
     RetLineQueue()
     ret
     endp

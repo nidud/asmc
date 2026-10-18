@@ -185,8 +185,10 @@ wmain proc
        .new activationGUI:GUID = {
                 0x00000035,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
        .new activationUri:HSTRING = nullptr
-        mov hr,WindowsCreateString(RuntimeClass_Windows_Management_Deployment_PackageManager,
-                lengthof(@CStr(-1))-1, &activationUri)
+       .new uriString:LPTSTR = RuntimeClass_Windows_Management_Deployment_PackageManager
+       .new uriStrLen:size_t = _tcslen(uriString)
+
+        mov hr,WindowsCreateString(uriString, uriStrLen, &activationUri)
         .if (SUCCEEDED(hr))
             mov hr,RoGetActivationFactory(activationUri, &activationGUI, &activationFactory)
         .endif

@@ -4279,6 +4279,7 @@ init_prefix:
         .case T_MOVD
             mov CodeInfo.vector_type,VECTOR_SS
            .endc
+        .case T_CMPSD
         .case T_MOVSD
         .case T_MOVQ
             mov CodeInfo.vector_type,VECTOR_SD
@@ -4356,7 +4357,8 @@ init_prefix:
             ;
             ; v2.06: accept float constants for PUSH
             ;
-            .if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD )
+            .if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD ||
+                ( j == OPND3 && CodeInfo.vector_type ) )
 
                 .if ( Options.strict_masm_compat == FALSE )
 
@@ -4381,21 +4383,27 @@ init_prefix:
                         .endif
 
                         xor ecx,ecx
-                        .switch pascal eax
-                        .case 2:  mov ecx,MT_REAL2
-                        .case 4:  mov ecx,MT_REAL4
-                        .case 8:  mov ecx,MT_REAL8
-                        .case 16: mov ecx,MT_REAL16
+                        .switch eax
+                        .case 2
+                            mov ecx,MT_REAL2
+                           .endc
+                        .case 4
+                            mov eax,4
+                            mov ecx,MT_REAL4
+                           .endc
+                        .case 8
+                            mov eax,8
+                            mov ecx,MT_REAL8
+                           .endc
+                        .case 16
+                           .gotosw( 4 ) .if ( CodeInfo.vector_type == VECTOR_SS )
+                           .gotosw( 8 ) .if ( CodeInfo.vector_type == VECTOR_SD )
+                            mov ecx,MT_REAL16
+                           .endc
                         .case 32
-                            .if ( CodeInfo.token == T_VBROADCASTSD )
-                                mov eax,8
-                                mov ecx,MT_REAL8
-                            .endif
                         .case 64
-                            .if ( CodeInfo.token == T_VBROADCASTSS )
-                                mov eax,4
-                                mov ecx,MT_REAL4
-                            .endif
+                           .gotosw( 4 ) .if ( CodeInfo.vector_type == VECTOR_SS )
+                           .gotosw( 8 ) .if ( CodeInfo.vector_type == VECTOR_SD )
                         .endsw
 
                         .if ( ecx )
@@ -4735,7 +4743,8 @@ endif
         ;
         ; v2.31.24: immediate operand to XMM
         ;
-        .if ( MODULE.masm_compat_gencode == 0 && CodeInfo.token == T_MOVSD )
+        .if ( MODULE.masm_compat_gencode == 0 &&
+                ( CodeInfo.token == T_CMPSD || CodeInfo.token == T_MOVSD ) )
             .if ( CodeInfo.opnd[OPND1].type == OP_XMM &&
                 ( CodeInfo.opnd[OPNI2].type & OP_I_ANY ) )
                 .return imm2xmm( tokenarray, &opndx[expr], 8 )
@@ -4877,6 +4886,18 @@ endif
                 .endif
                 xor ebx,ebx
 
+                .if ( ecx == OP_K )
+
+                    ; set the reg-type from vexregop
+
+                    mov ecx,OP_XMM
+                    .if ( CodeInfo.VReg.R_YMM )
+                        mov ecx,OP_YMM
+                    .elseif ( CodeInfo.VReg.R_ZMM || CodeInfo.Modifier.ZMMUsed )
+                        mov ecx,OP_ZMM
+                    .endif
+                .endif
+
                 .if ( ecx == OP_XMM || ecx == OP_YMM || ecx == OP_ZMM )
 
                     mov eax,4
@@ -4891,9 +4912,13 @@ endif
                     .case ( dl == VECTOR_SS )
                         inc ebx
                     .endsw
-                    .if ( eax == 16 && CodeInfo.token != T_VBROADCASTF32X4 &&
-                          CodeInfo.token != T_VBROADCASTF64X2 )
-                        .if ( ecx == OP_YMM )
+                    .if ( eax == 16 )
+                        mov edx,CodeInfo.token
+                        .if ( edx == T_VBROADCASTF128  ||
+                              edx == T_VBROADCASTI128  ||
+                              edx == T_VBROADCASTF32X4 ||
+                              edx == T_VBROADCASTF64X2 )
+                        .elseif ( ecx == OP_YMM )
                             add eax,eax
                         .elseif ( ecx == OP_ZMM )
                             shl eax,2

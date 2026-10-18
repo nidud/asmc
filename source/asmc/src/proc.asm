@@ -135,7 +135,7 @@ lang_table fc_info {
         NULL,      0x00000000, 0,  0,  0,  _P_CSTACK },{
         NULL,      0x00000000, 0,  0,  0,  0 },{ ; SYSCALL
         NULL,      0x00000000, 0,  0,  0,  _P_CSTACK },{
-        sysv_regs, 0x00FF03C6, 6,  8, 16,  _P_SYSTEMV or _P_EXTEND or _P_CSTACK },{
+        sysv_regs, 0x000FF3C6, 6,  8, 16,  _P_SYSTEMV or _P_EXTEND or _P_CSTACK },{
         NULL,      0x00000000, 0,  0,  2,  _P_CLEANUP },{ ; STDCALL
         NULL,      0x00000000, 0,  0,  0,  _P_CLEANUP or _P_CSTACK },{
         NULL,      0x00000000, 0,  0,  0,  _P_CLEANUP or _P_CSTACK },{
@@ -150,16 +150,16 @@ lang_table fc_info {
         NULL,      0x00000000, 0,  0,  0,  _P_LEFT or _P_CLEANUP },{
         watc_regs, 0x0000000D, 3,  0,  4,  _P_REGPARAM or _P_EXTEND or _P_LEFT or _P_CLEANUP },{ ; FASTCALL
         fast_regs, 0x00000006, 2,  0,  4,  _P_REGPARAM or _P_EXTEND or _P_CLEANUP },{
-        fast_regs, 0x000F0306, 4,  4,  8,  _P_RESSTACK or _P_EXTEND or _P_CSTACK },{
+        fast_regs, 0x0000F306, 4,  4,  8,  _P_RESSTACK or _P_EXTEND or _P_CSTACK },{
         watc_regs, 0x0000000D, 3,  0,  4,  _P_REGPARAM or _P_EXTEND or _P_CLEANUP },{ ; VECTORCALL
-        fast_regs, 0x003F0006, 2,  8,  4,  _P_REGPARAM or _P_EXTEND or _P_CLEANUP },{
-        fast_regs, 0x003F0306, 4,  6,  8,  _P_RESSTACK or _P_EXTEND or _P_CSTACK },{
+        fast_regs, 0x0003F006, 2,  8,  4,  _P_REGPARAM or _P_EXTEND or _P_CLEANUP },{
+        fast_regs, 0x0003F306, 4,  6,  8,  _P_RESSTACK or _P_EXTEND or _P_CSTACK },{
         watc_regs, 0x0000000F, 4,  0,  8,  _P_REGPARAM or _P_CLEANUP },{ ; WATCALL
         watc_regs, 0x0000000F, 4,  0, 16,  _P_REGPARAM or _P_EXTEND },{
-        watc_regs, 0x000F000F, 4,  4, 16,  _P_REGPARAM or _P_EXTEND },{
+        watc_regs, 0x0000F00F, 4,  4, 16,  _P_REGPARAM or _P_EXTEND },{
         user_regs, 0x00000007, 3,  0,  4,  _P_REGPARAM or _P_EXTEND },{ ; ASMCALL
-        user_regs, 0xFFFF0007, 3, 16,  8,  _P_REGPARAM or _P_EXTEND },{
-        user_regs, 0xFFFF0F07, 7, 16, 16,  _P_REGPARAM or _P_EXTEND }
+        user_regs, 0xFFFFF007, 3, 16,  8,  _P_REGPARAM or _P_EXTEND },{
+        user_regs, 0xFFFFFF07, 7, 16, 16,  _P_REGPARAM or _P_EXTEND }
 
    .code
 
@@ -194,6 +194,7 @@ fast_pcheck proc __ccall private uses rsi rdi rbx pProc:asym_t, paranode:asym_t,
 
    .new regname[32]:sbyte
    .new wordsize:int_t
+   .new paramid:dword
 
     ldr rdi,used
     ldr rsi,paranode
@@ -235,10 +236,9 @@ fast_pcheck proc __ccall private uses rsi rdi rbx pProc:asym_t, paranode:asym_t,
 
     .if ( al & MT_FLOAT || al == MT_YWORD )
 
+         movzx eax,byte ptr [rdi+1]
         .if ( [rbx].flags & _P_RESSTACK )
-            movzx eax,[rsi].param_id
-        .else
-            movzx eax,byte ptr [rdi+1]
+            mov al,[rsi].param_id
         .endif
         lea edx,[rax+T_XMM0]
         .if ( eax > 7 )
@@ -261,27 +261,20 @@ fast_pcheck proc __ccall private uses rsi rdi rbx pProc:asym_t, paranode:asym_t,
         .endif
         inc byte ptr [rdi+1]
         inc [rsi].param_regs
-
     .else
-
-        mov eax,wordsize
-        add eax,eax
+        imul eax,wordsize,2
         .if ( ecx > eax ) ; span 4 registers ?
-
             lea edx,[rax+rax]
             .if ( edx == ecx && dl <= [rbx].maxint )
-
                 mov dl,[rdi]
                 add dl,4
                 .if !( dl > [rbx].maxgpr )
-
                     add byte ptr [rdi],2
                     mov [rsi].param_regs,2
                     mov eax,ecx
                 .endif
             .endif
         .endif
-
         .if ( [rbx].flags & _P_RESSTACK )
             movzx edx,[rsi].param_id
             .if ( dl < [rdi] )
@@ -293,9 +286,15 @@ fast_pcheck proc __ccall private uses rsi rdi rbx pProc:asym_t, paranode:asym_t,
         .if ( dl >= [rbx].maxgpr )
             .return( 0 )
         .endif
-
-        .if ( eax == ecx && al <= [rbx].maxint )
-
+        mov paramid,edx
+        add rdx,[rbx].regpack
+        mov dl,[rdx]
+        .if ( dl >= T_K0 && dl <= T_K7 )
+            mov [rsi].param_reg,dl
+            inc byte ptr [rdi]
+            inc [rsi].param_regs
+        .elseif ( eax == ecx && al <= [rbx].maxint )
+            mov edx,paramid
             mov al,dl
             inc al
             .if ( al >= [rbx].maxgpr )
@@ -312,13 +311,12 @@ fast_pcheck proc __ccall private uses rsi rdi rbx pProc:asym_t, paranode:asym_t,
             add [rsi].param_regs,2
         .else
             .if ( ecx > wordsize )
-
                 .if !( [rbx].flags & _P_RESSTACK )
                     .return( 0 )
                 .endif
                 mov ecx,wordsize
             .endif
-            .for ( eax = 1 : eax < ecx : eax+=eax )
+            .for ( edx = paramid, eax = 1 : eax < ecx : eax+=eax )
                 add edx,8
             .endf
             add rdx,[rbx].regpack
@@ -327,20 +325,16 @@ fast_pcheck proc __ccall private uses rsi rdi rbx pProc:asym_t, paranode:asym_t,
             inc [rsi].param_regs
         .endif
     .endif
-
     xor eax,eax
     .if ( [rsi].is_vararg )
        .return
     .endif
-
     mov ecx,[rdi]
     mov rdx,pProc
     mov [rdx].asym.sys_rcnt,cl
     mov [rdx].asym.sys_xcnt,ch
     mov [rsi].regparam,1
-
     .if ( [rbx].flags & _P_REGPARAM )
-
         mov [rsi].state,SYM_TMACRO
         lea rdx,regname
         mov al,[rsi].param_reg

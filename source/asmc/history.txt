@@ -2,6 +2,10 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
+Changes in 2.41 - xx xxx 2026
+- added .pragma aux(pop) and KMASK - see bin-invoke.kmask.asm
+- added APX support for .XMM (32-bit: was set to AVX)
+
 Changes in 2.40 - 10 Oct 2026
 - added option --version
 - added simplified segment .cdat <name>[(alignment)]

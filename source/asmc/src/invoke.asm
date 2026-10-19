@@ -1101,33 +1101,11 @@ push_const_128:
 
                 ; Moving 64-bit to mask register
 
+                mov rdx,paramvalue
                 .if ( [rdi].kind == EXPR_CONST )
-
-                    mov esi,T_KMOVD
-                    AddLineQueueX(
-                        " mov eax, %u\n"
-                        " %r %r, eax", [rdi].value, esi, ebx )
-                    .if ( [rdi].hvalue )
-                        mov ecx,T_K0
-                        mov edx,K0_USED
-                        .if ( ecx == ebx )
-                            mov ecx,T_K1
-                            mov edx,K1_USED
-                        .endif
-                        mov rax,regs_used
-                        or  [rax],edx
-                        mov edx,T_KSHIFTLQ
-                        AddLineQueueX(
-                            " mov eax, %u\n"
-                            " %r %r, eax\n"
-                            " %r %r, %r, 32\n"
-                            " %r %r, %r, %r",
-                            [rdi].hvalue, esi, ecx, edx, ecx, ecx, T_KORQ, ebx, ebx, ecx )
-                    .endif
-                    mov rax,regs_used
-                    or  byte ptr [rax],R0_USED
+                    jmp const_to_mask_register
                 .else
-                    AddLineQueueX( " %r %r, %r ptr %s", T_KMOVQ, ebx, T_QWORD, paramvalue )
+                    AddLineQueueX( " %r %r, %r ptr %s", T_KMOVQ, ebx, T_QWORD, rdx )
                 .endif
                 .return
             .endif
@@ -1510,10 +1488,7 @@ endif
                         " mov dword ptr [%r+%u+4], high32(%s)",
                         stkreg, arg_offset, rdx, stkreg, arg_offset, rdx )
                 .elseif ( flags.ParamRegMask )
-                    AddLineQueueX( " %r %r, %s", T_MOV, T_RAX, rdx )
-                    AddLineQueueX( " %r %r, %r", T_KMOVQ, ebx, T_RAX )
-                    mov rax,regs_used
-                    or byte ptr [rax],R0_USED
+                    jmp const_to_mask_register
                 .else
                     AddLineQueueX( " mov %r, %s", ebx, rdx )
                     .if ( flags.ParamIsStack )
@@ -1575,10 +1550,76 @@ endif
             AddLineQueueX( " mov %r ptr [%r+%u], %s", ecx, stkreg, arg_offset, rdx )
 
         .elseif ( flags.ParamRegMask )
-            AddLineQueueX( " %r %r, %s", T_MOV, T_EAX, rdx )
-            AddLineQueueX( " %r %r, %r", t_mov, ebx, T_EAX )
-            mov rax,regs_used
-            or byte ptr [rax],R0_USED
+
+const_to_mask_register:
+
+            mov eax,[rdi].value
+            mov ecx,[rdi].hvalue
+            xor esi,esi
+            .if ( eax == -1 && ecx == -1 )
+                mov esi,T_KXNORQ
+            .elseif ( !ecx )
+                .if ( eax == 0xFF )
+                    mov esi,T_KXNORB
+                .elseif ( eax == 0xFFFF )
+                    mov esi,T_KXNORW
+                .elseif ( eax == 0xFFFFFFFF )
+                    mov esi,T_KXNORD
+                .endif
+            .endif
+            .if ( esi )
+                mov eax,t_mov
+                .switch pascal eax
+                .case T_KMOVB
+                    mov esi,T_KXNORB
+                .case T_KMOVW
+                    .if ( esi != T_KXNORB )
+                        mov esi,T_KXNORW
+                    .endif
+                .case T_KMOVD
+                    .if ( esi == T_KXNORQ )
+                        mov esi,T_KXNORD
+                    .endif
+                .endsw
+                AddLineQueueX( " %r %r, %r, %r", esi, ebx, ebx, ebx )
+            .else
+                mov esi,MODULE.accumulator
+                .if ( wordsize == 8 && t_mov == T_KMOVQ )
+                    AddLineQueueX( " %r %r, %s", T_MOV, esi, rdx )
+                    AddLineQueueX( " %r %r, %r", t_mov, ebx, esi )
+                .elseif ( ecx == 0 || t_mov != T_KMOVQ )
+                    mov esi,T_EAX
+                    AddLineQueueX( " %r %r, %u", T_MOV, esi, eax )
+                    mov ecx,t_mov
+                    .if ( ecx == T_KMOVQ )
+                        mov ecx,T_KMOVD
+                    .endif
+                    AddLineQueueX( " %r %r, %r", ecx, ebx, esi )
+                .else
+                    AddLineQueueX( " %r %r, %u", T_MOV, esi, eax )
+                    AddLineQueueX( " %r %r, %r", T_KMOVD, ebx, esi )
+                    mov esi,T_K0
+                    .if ( esi == ebx )
+                        mov esi,T_K1
+                        mov rax,regs_used
+                        or  dword ptr [rax],K1_USED
+                    .endif
+                    mov ecx,[rdi].hvalue
+                    .if ( ecx == -1 )
+                        AddLineQueueX( " %r %r, %r, %r", T_KXNORD, esi, esi, esi )
+                    .else
+                        AddLineQueueX(
+                            " mov eax, %u\n"
+                            " %r %r, eax", ecx, T_KMOVD, esi )
+                    .endif
+                    mov edx,T_KSHIFTLQ
+                    AddLineQueueX(
+                        " %r %r, %r, 32\n"
+                        " %r %r, %r, %r", edx, esi, esi, T_KORQ, ebx, ebx, esi )
+                .endif
+                mov rax,regs_used
+                or byte ptr [rax],R0_USED
+            .endif
         .else
             .if ( [rdi].hvalue == 0 )
                 mov ebx,extended_reg

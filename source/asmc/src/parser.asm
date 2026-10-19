@@ -1998,8 +1998,8 @@ endif
     .if ( index != EMPTY )
 
         mov eax,GetValueSp(index)
-        mov cl,[rsi].Ofssize
-        .if ( ( ( eax & OP_R32 ) && cl == USE32 ) ||
+        mov cl,[rsi].Ofssize ; v2.40.02: added for vsib in 32-bit mode with vector index register
+        .if ( ( ( eax & OP_R32 or OP_V ) && cl == USE32 ) ||
               ( ( eax & OP_R64 ) && cl == USE64 ) ||
               ( ( eax & OP_R16 ) && cl == USE16 ) )
             mov [rsi].Prefix.Asize,FALSE

@@ -996,8 +996,8 @@ push_const_128:
                 .else
                     .if ( ebx != param_reg )
                         AddLineQueueX( " %r %r, %r", t_mov, ebx, param_reg )
-                        .return .if ( t_mov != T_MOV )
                     .endif
+                    .return .if ( t_mov != T_MOV )
                     .ifd ( get_nextreg(ebx, langid) == 0 )
                         jmp arg_error
                     .endif

@@ -5679,8 +5679,11 @@ DWL_MSGRESULT		equ 0
 DWL_DLGPROC		equ 4
 DWL_USER		equ 8
 
-ifndef NOMSG
+define DWLP_MSGRESULT	0
+define DWLP_DLGPROC	(DWLP_MSGRESULT + sizeof(LRESULT))
+define DWLP_USER	(DWLP_DLGPROC + sizeof(DLGPROC))
 
+ifndef NOMSG
 IsDialogMessageA proto WINAPI :HWND, :LPMSG
 IsDialogMessageW proto WINAPI :HWND, :LPMSG
 ifdef _UNICODE
@@ -5688,7 +5691,6 @@ IsDialogMessage		equ <IsDialogMessageW>
 else
 IsDialogMessage		equ <IsDialogMessageA>
 endif
-
 endif
 
 MapDialogRect proto WINAPI :HWND, :LPRECT

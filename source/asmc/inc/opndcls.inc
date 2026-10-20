@@ -255,6 +255,7 @@ OpCls( XMM, XMM_M32,          I8SS ) ; xmm, flt, imm
 OpCls( XMM, XMM_M64,          I8SD )
 OpCls( XMM, XMM_M128,         I8PS ) ; xmm, vec, imm
 OpCls( XMM, XMM_M128,         I8PD )
+OpCls( XMM, RGT16,            I_SS ) ; vpbroadcastd
 OpCls( XMM, XMM_M128,         HPS  ) ; Pseudo-Op
 OpCls( XMM, XMM_MXGT16,       HSD  )
 OpCls( XMM, XMM_MXGT16,       HSS  )

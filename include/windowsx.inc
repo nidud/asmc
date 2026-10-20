@@ -211,41 +211,46 @@ IsMButtonDown macro
 	endm
 
 SubclassDialog macro hwndDlg, lpfn
-	exitm<SetWindowLong(hwndDlg, DWL_DLGPROC, lpfn)>
+	exitm<SetWindowLongPtr(hwndDlg, DWL_DLGPROC, lpfn)>
 	endm
 
 
 SetDlgMsgResult macro hwnd, msg, result
-	if ((msg eq WM_CTLCOLORMSGBOX) or
-	    (msg eq WM_CTLCOLOREDIT) or
-	    (msg eq WM_CTLCOLORLISTBOX) or
-	    (msg eq WM_CTLCOLORBTN) or
-	    (msg eq WM_CTLCOLORDLG) or
-	    (msg eq WM_CTLCOLORSCROLLBAR) or
-	    (msg eq WM_CTLCOLORSTATIC) or
-	    (msg eq WM_COMPAREITEM) or
-	    (msg eq WM_VKEYTOITEM) or
-	    (msg eq WM_CHARTOITEM) or
-	    (msg eq WM_QUERYDRAGICON) or
-	    (msg eq WM_INITDIALOG))
-	   exitm<result>
-	endif
-	exitm<SetWindowLong(hwnd, DWL_MSGRESULT, result, TRUE)>
+	.switch msg
+	  .case WM_CTLCOLORMSGBOX
+	  .case WM_CTLCOLOREDIT
+	  .case WM_CTLCOLORLISTBOX
+	  .case WM_CTLCOLORBTN
+	  .case WM_CTLCOLORDLG
+	  .case WM_CTLCOLORSCROLLBAR
+	  .case WM_CTLCOLORSTATIC
+	  .case WM_COMPAREITEM
+	  .case WM_VKEYTOITEM
+	  .case WM_CHARTOITEM
+	  .case WM_QUERYDRAGICON
+	  .case WM_INITDIALOG
+		mov eax,result
+		.endc
+	  .default
+		SetWindowLongPtr(hwnd, DWLP_MSGRESULT, result)
+		mov eax,TRUE
+	.endsw
+	exitm<eax>
 	endm
 
 DefDlgProcEx macro hwnd, msg, wParam, lParam, pfRecursion
-	mov [pfRecursion],TRUE
+	mov rax,pfRecursion
+	mov dword ptr [rax],TRUE
 	exitm<DefDlgProc(hwnd, msg, wParam, lParam)>
 	endm
 
-CheckDefDlgRecursion macro pfRecursion
-	mov eax,FALSE
-	.if [pfRecursion] != eax
-	    mov [pfRecursion],eax
-	    .break
+CheckDefDlgRecursion proto fastcall pfRecursion:ptr {
+	xor eax,eax
+	.if ( eax != [rcx] )
+	    mov [rcx],eax
+	   .break
 	.endif
-	exitm<>
-	endm
+	}
 
 ;;***** Message crackers ***************************************************
 

@@ -356,13 +356,18 @@ SetDlgMsgResult macro hwnd, msg, result
 	endm
 
 DefDlgProcEx macro hwnd, msg, wParam, lParam, pfRecursion
-	;exitm<*(pfRecursion) = TRUE, DefDlgProc(hwnd, msg, wParam, lParam))>
+	mov rax,pfRecursion
+	mov dword ptr [rax],TRUE
+	exitm<DefDlgProc(hwnd, msg, wParam, lParam)>
 	endm
 
-CheckDefDlgRecursion macro pfRecursion
-	;if (*(pfRecursion)) { *(pfRecursion) = FALSE; return FALSE; }
-	;exitm<>
-	endm
+CheckDefDlgRecursion proto fastcall pfRecursion:ptr {
+	xor eax,eax
+	.if ( eax != [rcx] )
+	    mov [rcx],eax
+	   .break
+	.endif
+	}
 
 
 Static_Enable macro hwndCtl, fEnable

@@ -1,3 +1,8 @@
+; ZMMINTRIN.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ifndef _ZMMINTRIN_H_INCLUDED
 define _ZMMINTRIN_H_INCLUDED
 
@@ -196,6 +201,8 @@ _mm512_load_k2w proto asmcall :word, :word {}
 _mm512_load_k2d proto asmcall :dword, :dword {}
 _mm512_load_k2q proto asmcall :qword, :qword {}
 
+.pragma aux(pop)
+
 ; Set modifiers [{k1}[{z}]] and load mask (k1)
 ; Skip if _MM_K0_REG[64] is used
 _mm512_loadk macro mk, kz, cm, m
@@ -262,7 +269,7 @@ _mm512_storeu_ps macro p, v1
     exitm<_mm512_mask_store(2, _MM_K0_REG, p, v1)>
     endm
 _mm512_storeu_pd macro p, v1
-    exitm<_mm512_mask_store(2, _MM_K0_REG, p, v1)>
+    exitm<_mm512_mask_store(1, _MM_K0_REG, p, v1)>
     endm
 
 ; Base types: <2|3>+round, <2|3>+imm, 2+imm+round
@@ -436,32 +443,6 @@ _mm512_mask_cvt_roundps_pd macro v1, m, v2, e2
     endm
 _mm512_mask_cvt_roundpd_ps macro v1, m, v2, e2
     exitm<_mm512_mask2(vcvtpd2ps, 2, v1, m, v2, e2)>
-    endm
-
-_mm512_mask_cmp_round_ps_mask macro m, v1, v2, i3, e2
-  local mask
-    _mm512_loadk mask, 0, 2, m
-ifdif <mask>,<{k1}>
-    vcmpps      k1, v1, v2, i3 _MM_SAE(e2)
-    kmovw       eax,k1
-else
-    vcmpps      k2 {k1}, v1, v2, i3 _MM_SAE(e2)
-    kmovw       eax,k2
-endif
-    retm<eax>
-    endm
-
-_mm512_mask_cmp_round_pd_mask macro m, v1, v2, i3, e2
-  local mask
-    _mm512_loadk mask, 0, 1, m
-ifdif <mask>,<{k1}>
-    vcmppd      k1, v1, v2, i3 _MM_SAE(e2)
-    kmovb       eax,k1
-else
-    vcmppd      k2 {k1}, v1, v2, i3 _MM_SAE(e2)
-    kmovb       eax,k2
-endif
-    retm<eax>
     endm
 
 for cm,<2,4,8>
@@ -1965,280 +1946,630 @@ _mm512_mask_permutevar_epi32 macro v1, m, v2, v3
     exitm<_mm512_mask(vpermd, 3, v1, m, v2, v3)>
     endm
 
-_mm512_mask_permutex_pd         proto __vdecl :zword, :byte, :zword, :sdword {
+.pragma aux(k1, k1, k1)
+
+_mm512_mask_permutex_pd proto asmcall :abs, :byte, :abs, :abs {
+    vpermpd     _1 {k1}, _3, _4
     }
-_mm512_maskz_permutex_pd        proto __vdecl :byte, :zword, :sdword {
+_mm512_maskz_permutex_pd proto asmcall :byte, :abs, :abs {
+    vpermpd     zmm0 {k1}{z}, _2, _3
     }
-_mm512_mask_permutex_epi64      proto __vdecl :zword, :byte, :zword, :sdword {
+_mm512_mask_permutex_epi64 proto asmcall :abs, :byte, :abs, :abs {
+    vpermq      _1 {k1}, _3, _4
     }
-_mm512_maskz_permutex_epi64     proto __vdecl :byte, :zword, :sdword {
+_mm512_maskz_permutex_epi64 proto asmcall :byte, :abs, :abs {
+    vpermq      zmm0 {k1}{z}, _2, _3
     }
-_mm512_mask_permutexvar_pd      proto __vdecl :zword, :byte, :zword, :zword {
+_mm512_mask_permutexvar_pd proto asmcall :abs, :byte, :abs, :abs {
+    vpermpd     _1 {k1}, _3, _4
     }
-_mm512_maskz_permutexvar_pd     proto __vdecl :byte, :zword, :zword {
+_mm512_maskz_permutexvar_pd proto asmcall :byte, :abs, :abs {
+    vpermpd     zmm0 {k1}{z}, _2, _3
     }
-_mm512_mask_permutexvar_ps      proto __vdecl :zword, :word, :zword, :zword {
+_mm512_mask_permutexvar_ps proto asmcall :abs, :word, :abs, :abs {
+    vpermps     _1 {k1}, _3, _4
     }
-_mm512_maskz_permutexvar_ps     proto __vdecl :word, :zword, :zword {
+_mm512_maskz_permutexvar_ps proto asmcall :word, :abs, :abs {
+    vpermps     zmm0 {k1}{z}, _2, _3
     }
-_mm512_mask_permutexvar_epi16   proto __vdecl :zword, :dword, :zword, :zword {
+_mm512_mask_permutexvar_epi16 proto asmcall :abs, :dword, :abs, :abs {
+    vpermw      _1 {k1}, _3, _4
     }
-_mm512_maskz_permutexvar_epi16  proto __vdecl :dword, :zword, :zword {
+_mm512_maskz_permutexvar_epi16 proto asmcall :dword, :abs, :abs {
+    vpermw      zmm0 {k1}{z}, _2, _3
     }
-_mm512_mask_permutexvar_epi32 macro v1, m, v2, v3
-    exitm<_mm512_mask(vpermd, 3, v1, m, v2, v3)>
+_mm512_mask_permutexvar_epi32 proto asmcall :abs, :word, :abs, :abs {
+    vpermd      _1 {k1}, _3, _4
+    }
+_mm512_maskz_permutexvar_epi32 proto asmcall :word, :abs, :abs {
+    vpermd      zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_permutexvar_epi64 proto asmcall :abs, :byte, :abs, :abs {
+    vpermq      _1 {k1}, _3, _4
+    }
+_mm512_maskz_permutexvar_epi64 proto asmcall :byte, :abs, :abs {
+    vpermq      zmm0 {k1}{z}, _2, _3
+    }
+
+_mm512_mask_permutex2var_pd proto asmcall :abs, :byte, :abs, :abs {
+    vpermt2pd   _1 {k1}, _3, _4
+    }
+_mm512_mask2_permutex2var_pd proto asmcall :abs, :abs, :byte, :abs {
+    vpermi2pd   _2 {k1}, _1, _4
+    }
+_mm512_maskz_permutex2var_pd proto asmcall :byte, :abs, :abs, :abs {
+    vpermt2pd   _2 {k1}{z}, _3, _4
+    }
+_mm512_mask_permutex2var_ps proto asmcall :abs, :word, :abs, :abs {
+    vpermt2ps   _1 {k1}, _3, _4
+    }
+_mm512_mask2_permutex2var_ps proto asmcall :abs, :abs, :word, :abs {
+    vpermi2ps   _2 {k1}, _1, _4
+    }
+_mm512_maskz_permutex2var_ps proto asmcall :word, :abs, :abs, :abs {
+    vpermt2ps   _2 {k1}{z}, _3, _4
+    }
+_mm512_mask_permutex2var_epi16 proto asmcall :abs, :dword, :abs, :abs {
+    vpermt2w    _1 {k1}, _3, _4
+    }
+_mm512_mask2_permutex2var_epi16 proto asmcall :abs, :abs, :dword, :abs {
+    vpermt2w    _2 {k1}, _1, _4
+    }
+_mm512_maskz_permutex2var_epi16 proto asmcall :dword, :abs, :abs, :abs {
+    vpermt2w    _2 {k1}{z}, _3, _4
+    }
+_mm512_mask_permutex2var_epi32  proto asmcall :abs, :word, :abs, :abs {
+    vpermt2d    _1 {k1}, _3, _4
+    }
+_mm512_mask2_permutex2var_epi32 proto asmcall :abs, :abs, :word, :abs {
+    vpermt2d    _2 {k1}, _1, _4
+    }
+_mm512_maskz_permutex2var_epi32 proto asmcall :word, :abs, :abs, :abs {
+    vpermt2d    _2 {k1}{z}, _3, _4
+    }
+_mm512_mask_permutex2var_epi64  proto asmcall :abs, :byte, :abs, :abs {
+    vpermt2q    _1 {k1}, _3, _4
+    }
+_mm512_mask2_permutex2var_epi64 proto asmcall :abs, :abs, :byte, :abs {
+    vpermt2q    _2 {k1}, _1, _4
+    }
+_mm512_maskz_permutex2var_epi64 proto asmcall :byte, :abs, :abs, :abs {
+    vpermt2q    _2 {k1}{z}, _3, _4
+    }
+
+_mm512_mask_compress_pd proto asmcall :abs, :byte, :abs {
+    vcompresspd _1 {k1}, _3
+    }
+_mm512_maskz_compress_pd proto asmcall :byte, :abs {
+    vcompresspd zmm0 {k1}, _2
+    }
+_mm512_mask_compress_ps proto asmcall :abs, :word, :abs {
+    vcompressps _1 {k1}, _3
+    }
+_mm512_maskz_compress_ps proto asmcall :word, :abs {
+    vcompressps zmm0 {k1}, _2
+    }
+_mm512_mask_compress_epi32 proto asmcall :abs, :word, :abs {
+    vpcompressd _1 {k1}, _3
+    }
+_mm512_maskz_compress_epi32 proto asmcall :word, :abs {
+    vpcompressd zmm0 {k1}, _2
+    }
+_mm512_mask_compress_epi64 proto asmcall :abs, :byte, :abs {
+    vpcompressq _1 {k1}, _3
+    }
+_mm512_maskz_compress_epi64 proto asmcall :byte, :abs {
+    vpcompressq zmm0 {k1}, _2
+    }
+
+.pragma aux(ax, k1)
+
+_mm512_mask_compressstoreu_pd proto asmcall :ptr, :byte, :abs {
+    vcompresspd [_1] {k1}, _3
+    }
+_mm512_mask_compressstoreu_ps proto asmcall :ptr, :word, :abs {
+    vcompressps [_1] {k1}, _3
+    }
+_mm512_mask_compressstoreu_epi32 proto asmcall :ptr, :word, :abs {
+    vpcompressd [_1] {k1}, _3
+    }
+_mm512_mask_compressstoreu_epi64 proto asmcall :ptr, :byte, :abs {
+    vpcompressq [_1] {k1}, _3
+    }
+
+.pragma aux(pop)
+
+
+_mm512_mask_expand_pd proto asmcall :abs, :byte, :abs {
+    vexpandpd   _1 {k1}, _3
+    }
+_mm512_maskz_expand_pd proto asmcall :byte, :zword {
+    vexpandpd   zmm0 {k1}{z}, _2
+    }
+_mm512_mask_expand_ps proto asmcall :abs, :word, :zword {
+    vexpandps   _1 {k1}, _3
+    }
+_mm512_maskz_expand_ps proto asmcall :word, :zword {
+    vexpandps   zmm0 {k1}{z}, _2
+    }
+_mm512_mask_expand_epi32 proto asmcall :abs, :word, :abs {
+    vpexpandd   _1 {k1}, _3
+    }
+_mm512_maskz_expand_epi32 proto asmcall :word, :abs {
+    vpexpandd   zmm0 {k1}{z}, _2
+    }
+_mm512_mask_expand_epi64 proto asmcall :abs, :byte, :abs {
+    vpexpandq   _1 {k1}, _3
+    }
+_mm512_maskz_expand_epi64 proto asmcall :byte, :abs {
+    vpexpandq   zmm0 {k1}{z}, _2
+    }
+
+.pragma aux(eax, k1, ecx)
+
+_mm512_mask_expandloadu_pd proto asmcall :abs, :byte, :ptr {
+    vexpandpd   _1 {k1}, [_3]
+    }
+_mm512_mask_expandloadu_ps proto asmcall :abs, :word, :ptr {
+    vexpandps   _1 {k1}, [_3]
+    }
+_mm512_mask_expandloadu_epi32 proto asmcall :abs, :word, :ptr {
+    vpexpandd   _1 {k1}, [_3]
+    }
+_mm512_mask_expandloadu_epi64 proto asmcall :abs, :byte, :ptr {
+    vpexpandq   _1 {k1}, [_3]
+    }
+
+.pragma aux(k1, ecx)
+
+_mm512_maskz_expandloadu_pd proto asmcall :byte, :ptr {
+    vexpandpd   zmm0 {k1}, [_2]
+    }
+_mm512_maskz_expandloadu_ps proto asmcall :word, :ptr {
+    vexpandps   zmm0 {k1}, [_2]
+    }
+_mm512_maskz_expandloadu_epi32 proto asmcall :word, :ptr {
+    vpexpandd   zmm0 {k1}, [_2]
+    }
+_mm512_maskz_expandloadu_epi64 proto asmcall :byte, :ptr {
+    vpexpandq   zmm0 {k1}, [_2]
+    }
+
+.pragma aux(pop)
+.pragma aux(pop)
+
+_mm512_mask_ternarylogic_epi32 proto asmcall :abs, :word, :abs, :abs, :abs {
+    vpternlogd  _1 {k1}, _3, _4, _5
+    }
+_mm512_maskz_ternarylogic_epi32 proto asmcall :word, :abs, :abs, :abs, :abs {
+    vpternlogd  _2 {k1}{z}, _3, _4, _5
+    }
+_mm512_mask_ternarylogic_epi64 proto asmcall :abs, :byte, :abs, :abs, :abs {
+    vpternlogq  _1 {k1}, _3, _4, _5
+    }
+_mm512_maskz_ternarylogic_epi64 proto asmcall :byte, :abs, :abs, :abs, :abs {
+    vpternlogq  _2 {k1}{z}, _3, _4, _5
+    }
+
+_mm512_mask_conflict_epi32 proto asmcall :abs, :word, :abs {
+    vpconflictd _1 {k1}, _3
+    }
+_mm512_maskz_conflict_epi32 proto asmcall :word, :abs {
+    vpconflictd zmm0 {k1}{z}, _2
+    }
+_mm512_mask_conflict_epi64 proto asmcall :abs, :byte, :abs {
+    vpconflictq _1 {k1}, _3
+    }
+_mm512_maskz_conflict_epi64 proto asmcall :byte, :abs {
+    vpconflictq zmm0 {k1}{z}, _2
+    }
+
+_mm512_mask_lzcnt_epi32 proto asmcall :abs, :word, :abs {
+    vplzcntd    _1 {k1}, _3
+    }
+_mm512_maskz_lzcnt_epi32 proto asmcall :word, :abs {
+    vplzcntd    zmm0 {k1}{z}, _2
+    }
+_mm512_mask_lzcnt_epi64 proto asmcall :abs, :byte, :abs {
+    vplzcntq    _1 {k1}, _3
+    }
+_mm512_maskz_lzcnt_epi64 proto asmcall :byte, :abs {
+    vplzcntq    zmm0 {k1}{z}, _2
+    }
+
+_mm512_mask_avg_epu8 proto asmcall :abs, :qword, :abs, :abs {
+    vpavgb      _1 {k1}, _3, _4
+    }
+_mm512_maskz_avg_epu8 proto asmcall :qword, :abs, :abs {
+    vpavgb      zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_avg_epu16 proto asmcall :abs, :dword, :abs, :abs {
+    vpavgw      _1 {k1}, _3, _4
+    }
+_mm512_maskz_avg_epu16 proto asmcall :dword, :abs, :abs {
+    vpavgw      zmm0 {k1}{z}, _2, _3
+    }
+
+_mm512_sad_epu8 proto asmcall :abs, :abs {
+    vpsadbw     _1, _1, _2
+    }
+_mm512_mask_dbsad_epu8  proto asmcall :abs, :dword, :abs, :abs, :abs {
+    vdbpsadbw   _1 {k1}, _3, _4, _5
+    }
+_mm512_maskz_dbsad_epu8 proto asmcall :dword, :abs, :abs, :abs {
+    vdbpsadbw   zmm0 {k1}, _2, _3, _4
+    }
+
+_mm512_mask_reduce_add_ps proto asmcall :word, :abs {
+    vmovups         zmm1 {k1}{z}, _2
+    vextractf32x8   ymm0, zmm1, 1
+    vaddps          ymm2, ymm0, ymm1
+    vextractf128    xmm1, ymm2, 1
+    vaddps          xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vaddps          xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vaddss          xmm0, xmm0, xmm1
+    }
+_mm512_mask_reduce_add_pd proto asmcall :byte, :abs {
+    vmovupd         zmm1 {k1}{z}, _2
+    vextractf64x4   ymm0, zmm1, 1
+    vaddpd          ymm2, ymm0, ymm1
+    vextractf64x2   xmm0, ymm2, 1
+    vaddpd          xmm1, xmm0, xmm2
+    vpsrldq         xmm0, xmm1, 8
+    vaddsd          xmm0, xmm0, xmm1
+    }
+_mm512_mask_reduce_add_epi32 proto asmcall :word, :abs {
+    vmovups         zmm1 {k1}{z}, _2
+    vextracti32x8   ymm0, zmm1, 1
+    vpaddd          ymm2, ymm0, ymm1
+    vextracti128    xmm1, ymm2, 1
+    vpaddd          xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vpaddd          xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vpaddd          xmm1, xmm0, xmm1
+    vmovd           eax, xmm1
+    }
+_mm512_mask_reduce_add_epi64 proto asmcall :byte, :abs {
+    vmovupd         zmm1 {k1}{z}, _2
+    vextracti64x4   ymm0, zmm1, 1
+    vpaddq          ymm2, ymm0, ymm1
+    vextracti64x2   xmm0, ymm2, 1
+    vpaddq          xmm1, xmm0, xmm2
+    vpsrldq         xmm0, xmm1, 8
+    vpaddq          xmm1, xmm0, xmm1
+    vmovq           rax, xmm1
+    }
+
+_mm512_mask_reduce_mul_ps proto asmcall :word, :zword {
+    vbroadcastss    zmm2, 3f800000r
+    vmovups         zmm2 {k1}, _2
+    vextractf32x8   ymm0, zmm2, 1
+    vmulps          ymm2, ymm0, ymm2
+    vextractf128    xmm1, ymm2, 1
+    vmulps          xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vmulps          xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vmulss          xmm0, xmm0, xmm1
+    }
+_mm512_mask_reduce_mul_pd proto asmcall :byte, :zword {
+    vbroadcastsd    zmm2, 3ff0000000000000r
+    vmovupd         zmm2 {k1}, _2
+    vextractf64x4   ymm0, zmm2, 1
+    vmulpd          ymm3, ymm0, ymm2
+    vextractf64x2   xmm0, ymm3, 1
+    vmulpd          xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 8
+    vmulsd          xmm0, xmm0, xmm1
+    }
+_mm512_mask_reduce_mul_epi32 proto asmcall :word, :zword {
+    vpbroadcastd    zmm2, 0000000000000001r
+    vmovups         zmm2 {k1}, _2
+    vextracti32x8   ymm0, zmm2, 1
+    vpmulld         ymm2, ymm0, ymm2
+    vextracti128    xmm1, ymm2, 1
+    vpmulld         xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vpmulld         xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vpmulld         xmm1, xmm0, xmm1
+    vmovd           eax, xmm1
+    }
+_mm512_mask_reduce_mul_epi64 proto asmcall :byte, :zword {
+    vpbroadcastd    zmm2, 0000000000000001r
+    vmovupd         zmm2 {k1}, _2
+    vextracti64x4   ymm0, zmm2, 1
+    vpmuludq        ymm3, ymm0, ymm2
+    vextracti64x2   xmm0, ymm3, 1
+    vpmuludq        xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 8
+    vpmuludq        xmm1, xmm0, xmm1
+    vmovq           rax, xmm1
+    }
+
+_mm512_mask_reduce_min_ps proto asmcall :word, :zword {
+    vbroadcastss    zmm2, 7f800000r
+    vmovups         zmm2 {k1}, _2
+    vextractf32x8   ymm0, zmm2, 1
+    vminps          ymm2, ymm0, ymm2
+    vextractf128    xmm1, ymm2, 1
+    vminps          xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vminps          xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vminss          xmm0, xmm0, xmm1
+    }
+_mm512_mask_reduce_min_pd proto asmcall :byte, :zword {
+    vbroadcastsd    zmm2, 7ff0000000000000r
+    vmovupd         zmm2 {k1}, _2
+    vextractf64x4   ymm0, zmm2, 1
+    vminpd          ymm3, ymm0, ymm2
+    vextractf64x2   xmm0, ymm3, 1
+    vminpd          xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 8
+    vminsd          xmm0, xmm0, xmm1
+    }
+_mm512_mask_reduce_min_epi32 proto asmcall :word, :zword {
+    vpbroadcastd    zmm2, 000000007fffffffr
+    vmovups         zmm2 {k1}, _2
+    vextracti32x8   ymm0, zmm2, 1
+    vpminsd         ymm2, ymm0, ymm2
+    vextracti128    xmm1, ymm2, 1
+    vpminsd         xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vpminsd         xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vpminsd         xmm1, xmm0, xmm1
+    vmovd           eax, xmm1
+    }
+_mm512_mask_reduce_min_epi64 proto asmcall :byte, :zword {
+    vpbroadcastq    zmm2, 7fffffffffffffffr
+    vmovupd         zmm2 {k1}, _2
+    vextracti64x4   ymm0, zmm2, 1
+    vpminsq         ymm3, ymm0, ymm2
+    vextracti64x2   xmm0, ymm3, 1
+    vpminsq         xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 8
+    vpminsq         xmm1, xmm0, xmm1
+    vmovq           rax, xmm1
+    }
+_mm512_mask_reduce_min_epu32 proto asmcall :word, :zword {
+    vpbroadcastd    zmm2, 00000000ffffffffr
+    vmovups         zmm2 {k1}, _2
+    vextracti32x8   ymm0, zmm2, 1
+    vpminud         ymm2, ymm0, ymm2
+    vextracti128    xmm1, ymm2, 1
+    vpminud         xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vpminud         xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vpminud         xmm1, xmm0, xmm1
+    vmovd           eax, xmm1
+    }
+_mm512_mask_reduce_min_epu64 proto asmcall :byte, :zword {
+    vpbroadcastq    zmm2, 0ffffffffffffffffr
+    vmovupd         zmm2 {k1}, _2
+    vextracti64x4   ymm0, zmm2, 1
+    vpminuq         ymm3, ymm0, ymm2
+    vextracti64x2   xmm0, ymm3, 1
+    vpminuq         xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 8
+    vpminuq         xmm1, xmm0, xmm1
+    vmovq           rax, xmm1
+    }
+
+_mm512_mask_reduce_max_ps proto asmcall :word, :zword {
+    vbroadcastss    zmm2, 0ff800000r
+    vmovups         zmm2 {k1}, _2
+    vextractf32x8   ymm0, zmm2, 1
+    vmaxps          ymm2, ymm0, ymm2
+    vextractf128    xmm1, ymm2, 1
+    vmaxps          xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vmaxps          xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vmaxss          xmm0, xmm0, xmm1
+    }
+_mm512_mask_reduce_max_pd proto asmcall :byte, :zword {
+    vbroadcastsd    zmm2, 0fff0000000000000r
+    vmovupd         zmm2 {k1}, _2
+    vextractf64x4   ymm0, zmm2, 1
+    vmaxpd          ymm3, ymm0, ymm2
+    vextractf64x2   xmm0, ymm3, 1
+    vmaxpd          xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 8
+    vmaxsd          xmm0, xmm0, xmm1
+    }
+_mm512_mask_reduce_max_epi32 proto asmcall :word, :zword {
+    vpbroadcastd    zmm2, 80000000r
+    vmovups         zmm2 {k1}, _2
+    vextracti32x8   ymm0, zmm2, 1
+    vpmaxsd         ymm2, ymm0, ymm2
+    vextracti128    xmm1, ymm2, 1
+    vpmaxsd         xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vpmaxsd         xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vpmaxsd         xmm1, xmm0, xmm1
+    vmovd           eax, xmm1
+    }
+_mm512_mask_reduce_max_epi64 proto asmcall :byte, :zword {
+    vpbroadcastq    zmm2, 8000000000000000r
+    vmovupd         zmm2 {k1}, _2
+    vextracti64x4   ymm0, zmm2, 1
+    vpmaxsq         ymm3, ymm0, ymm2
+    vextracti64x2   xmm0, ymm3, 1
+    vpmaxsq         xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 8
+    vpmaxsq         xmm1, xmm0, xmm1
+    vmovq           rax, xmm1
+    }
+_mm512_mask_reduce_max_epu32 proto asmcall :word, :zword {
+    vmovups         zmm1 {k1}{z}, _2
+    vextracti32x8   ymm0, zmm1, 1
+    vpmaxud         ymm2, ymm0, ymm1
+    vextracti128    xmm1, ymm2, 1
+    vpmaxud         xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vpmaxud         xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vpmaxud         xmm1, xmm0, xmm1
+    vmovd           eax, xmm1
+    }
+_mm512_mask_reduce_max_epu64 proto asmcall :byte, :zword {
+    vmovupd         zmm1 {k1}{z}, _2
+    vextracti64x4   ymm0, zmm1, 1
+    vpmaxuq         ymm2, ymm0, ymm1
+    vextracti64x2   xmm0, ymm2, 1
+    vpmaxuq         xmm1, xmm0, xmm2
+    vpsrldq         xmm0, xmm1, 8
+    vpmaxuq         xmm1, xmm0, xmm1
+    vmovq           rax, xmm1
+    }
+
+_mm512_mask_reduce_and_epi32 proto asmcall :word, :zword {
+    vpbroadcastd    zmm2, 0ffffffffr
+    vmovups         zmm2 {k1}, _2
+    vextracti32x8   ymm0, zmm2, 1
+    vpand           ymm2, ymm0, ymm2
+    vextracti128    xmm1, ymm2, 1
+    vpand           xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vpand           xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vpand           xmm1, xmm0, xmm1
+    vmovd           eax, xmm1
+    }
+_mm512_mask_reduce_and_epi64 proto asmcall :byte, :zword {
+    vpbroadcastq    zmm2, 0ffffffffffffffffr
+    vmovupd         zmm2 {k1}, _2
+    vextracti64x4   ymm0, zmm2, 1
+    vpandq          ymm3, ymm0, ymm2
+    vextracti64x2   xmm0, ymm3, 1
+    vpandq          xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 8
+    vpandq          xmm1, xmm0, xmm1
+    vmovq           rax, xmm1
+    }
+
+_mm512_mask_reduce_or_epi32 proto asmcall :word, :zword {
+    vmovups         zmm1 {k1}{z}, _2
+    vextracti32x8   ymm0, zmm1, 1
+    vpor            ymm2, ymm0, ymm1
+    vextracti128    xmm1, ymm2, 1
+    vpor            xmm3, xmm1, xmm2
+    vpsrldq         xmm0, xmm3, 8
+    vpor            xmm1, xmm0, xmm3
+    vpsrldq         xmm0, xmm1, 4
+    vpor            xmm1, xmm0, xmm1
+    vmovd           eax, xmm1
+    }
+_mm512_mask_reduce_or_epi64 proto asmcall :byte, :zword {
+    vmovupd         zmm1 {k1}{z}, _2
+    vextracti64x4   ymm0, zmm1, 1
+    vporq           ymm2, ymm0, ymm1
+    vextracti64x2   xmm0, ymm2, 1
+    vporq           xmm1, xmm0, xmm2
+    vpsrldq         xmm0, xmm1, 8
+    vporq           xmm1, xmm0, xmm1
+    vmovq           rax, xmm1
+    }
+
+_mm512_mask_reduce_round_ps proto asmcall :abs, :word, :abs, :abs, :abs {
+    vreduceps   _1 {k1}, _3, _4
+    }
+_mm512_maskz_reduce_round_ps proto asmcall :word, :abs, :abs, :abs {
+    vreduceps   zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_reduce_round_pd proto asmcall :abs, :byte, :abs, :abs, :abs {
+    vreducepd   _1 {k1}, _3, _4
+    }
+_mm512_maskz_reduce_round_pd proto asmcall :byte, :abs, :abs, :abs {
+    vreducepd   zmm0 {k1}{z}, _2, _3
+    }
+
+.pragma aux(pop)
+
+_mm512_reduce_add_ps macro v1
+    exitm<_mm512_mask_reduce_add_ps(_MM_K0_REG, v1)>
     endm
-_mm512_maskz_permutexvar_epi32 macro m, v1, v2
-    exitm<_mm512_maskz(vpermd, 3, m, v1, v2)>
+_mm512_reduce_add_pd macro v1
+    exitm<_mm512_mask_reduce_add_pd(_MM_K0_REG, v1)>
     endm
-_mm512_mask_permutexvar_epi64   proto __vdecl :zword, :byte, :zword, :zword {
-    }
-_mm512_maskz_permutexvar_epi64  proto __vdecl :byte, :zword, :zword {
-    }
+_mm512_reduce_add_epi32 macro v1
+    exitm<_mm512_mask_reduce_add_epi32(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_add_epi64 macro v1
+    exitm<_mm512_mask_reduce_add_epi64(_MM_K0_REG, v1)>
+    endm
 
-_mm512_mask_permutex2var_pd     proto __vdecl :zword, :byte, :zword, :zword {
-    }
-_mm512_mask2_permutex2var_pd    proto __vdecl :zword, :zword, :byte, :zword {
-    }
-_mm512_maskz_permutex2var_pd    proto __vdecl :byte, :zword, :zword, :zword {
-    }
-_mm512_mask_permutex2var_ps     proto __vdecl :zword, :word, :zword, :zword {
-    }
-_mm512_mask2_permutex2var_ps    proto __vdecl :zword, :zword, :word, :zword {
-    }
-_mm512_maskz_permutex2var_ps    proto __vdecl :word, :zword, :zword, :zword {
-    }
-_mm512_mask_permutex2var_epi16  proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_mask2_permutex2var_epi16 proto __vdecl :zword, :zword, :dword, :zword {
-    }
-_mm512_maskz_permutex2var_epi16 proto __vdecl :dword, :zword, :zword, :zword {
-    }
-_mm512_mask_permutex2var_epi32  proto __vdecl :zword, :word, :zword, :zword {
-    }
-_mm512_mask2_permutex2var_epi32 proto __vdecl :zword, :zword, :word, :zword {
-    }
-_mm512_maskz_permutex2var_epi32 proto __vdecl :word, :zword, :zword, :zword {
-    }
-_mm512_mask_permutex2var_epi64  proto __vdecl :zword, :byte, :zword, :zword {
-    }
-_mm512_mask2_permutex2var_epi64 proto __vdecl :zword, :zword, :byte, :zword {
-    }
-_mm512_maskz_permutex2var_epi64 proto __vdecl :byte, :zword, :zword, :zword {
-    }
+_mm512_reduce_mul_ps macro v1
+    exitm<_mm512_mask_reduce_mul_ps(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_mul_pd macro v1
+    exitm<_mm512_mask_reduce_mul_pd(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_mul_epi32 macro v1
+    exitm<_mm512_mask_reduce_mul_epi32(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_mul_epi64 macro v1
+    exitm<_mm512_mask_reduce_mul_epi64(_MM_K0_REG, v1)>
+    endm
 
-_mm512_mask_compress_pd         proto __vdecl :zword, :byte, :zword {
-    }
-_mm512_maskz_compress_pd        proto __vdecl :byte, :zword {
-    }
-_mm512_mask_compress_ps         proto __vdecl :zword, :word, :zword {
-    }
-_mm512_maskz_compress_ps        proto __vdecl :word, :zword {
-    }
-_mm512_mask_compress_epi32      proto __vdecl :zword, :word, :zword {
-    }
-_mm512_maskz_compress_epi32     proto __vdecl :word, :zword {
-    }
-_mm512_mask_compress_epi64      proto __vdecl :zword, :byte, :zword {
-    }
-_mm512_maskz_compress_epi64     proto __vdecl :byte, :zword {
-    }
+_mm512_reduce_min_ps macro v1
+    exitm<_mm512_mask_reduce_min_ps(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_min_pd macro v1
+    exitm<_mm512_mask_reduce_min_pd(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_min_epi32 macro v1
+    exitm<_mm512_mask_reduce_min_epi32(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_min_epi64 macro v1
+    exitm<_mm512_mask_reduce_min_epi64(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_min_epu32 macro v1
+    exitm<_mm512_mask_reduce_min_epu32(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_min_epu64 macro v1
+    exitm<_mm512_mask_reduce_min_epu64(_MM_K0_REG, v1)>
+    endm
 
-_mm512_mask_compressstoreu_pd   proto __vdecl :ptr, :byte, :zword {
-    }
-_mm512_mask_compressstoreu_ps   proto __vdecl :ptr, :word, :zword {
-    }
-_mm512_mask_compressstoreu_epi32 proto __vdecl :ptr, :word, :zword {
-    }
-_mm512_mask_compressstoreu_epi64 proto __vdecl :ptr, :byte, :zword {
-    }
+_mm512_reduce_max_ps macro v1
+    exitm<_mm512_mask_reduce_max_ps(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_max_pd macro v1
+    exitm<_mm512_mask_reduce_max_pd(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_max_epi32 macro v1
+    exitm<_mm512_mask_reduce_max_epi32(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_max_epi64 macro v1
+    exitm<_mm512_mask_reduce_max_epi64(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_max_epu32 macro v1
+    exitm<_mm512_mask_reduce_max_epu32(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_max_epu64 macro v1
+    exitm<_mm512_mask_reduce_max_epu64(_MM_K0_REG, v1)>
+    endm
 
-_mm512_mask_expand_pd           proto __vdecl :zword, :byte, :zword {
-    }
-_mm512_maskz_expand_pd          proto __vdecl :byte, :zword {
-    }
-_mm512_mask_expand_ps           proto __vdecl :zword, :word, :zword {
-    }
-_mm512_maskz_expand_ps          proto __vdecl :word, :zword {
-    }
-_mm512_mask_expand_epi32        proto __vdecl :zword, :word, :zword {
-    }
-_mm512_maskz_expand_epi32       proto __vdecl :word, :zword {
-    }
-_mm512_mask_expand_epi64        proto __vdecl :zword, :byte, :zword {
-    }
-_mm512_maskz_expand_epi64       proto __vdecl :byte, :zword {
-    }
-_mm512_mask_expandloadu_pd      proto __vdecl :zword, :byte, :ptr {
-    }
-_mm512_maskz_expandloadu_pd     proto __vdecl :byte, :ptr {
-    }
-_mm512_mask_expandloadu_ps      proto __vdecl :zword, :word, :ptr {
-    }
-_mm512_maskz_expandloadu_ps     proto __vdecl :word, :ptr {
-    }
-_mm512_mask_expandloadu_epi32   proto __vdecl :zword, :word, :ptr {
-    }
-_mm512_maskz_expandloadu_epi32  proto __vdecl :word, :ptr {
-    }
-_mm512_mask_expandloadu_epi64   proto __vdecl :zword, :byte, :ptr {
-    }
-_mm512_maskz_expandloadu_epi64  proto __vdecl :byte, :ptr {
-    }
+_mm512_reduce_and_epi32 macro v1
+    exitm<_mm512_mask_reduce_and_epi32(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_and_epi64 macro v1
+    exitm<_mm512_mask_reduce_and_epi64(_MM_K0_REG, v1)>
+    endm
 
-_mm512_mask_ternarylogic_epi32  proto __vdecl :zword, :word, :zword, :zword, :sdword {
-    }
-_mm512_maskz_ternarylogic_epi32 proto __vdecl :word, :zword, :zword, :zword, :sdword {
-    }
-_mm512_mask_ternarylogic_epi64  proto __vdecl :zword, :byte, :zword, :zword, :sdword {
-    }
-_mm512_maskz_ternarylogic_epi64 proto __vdecl :byte, :zword, :zword, :zword, :sdword {
-    }
-
-_mm512_mask_conflict_epi32      proto __vdecl :zword, :word, :zword {
-    }
-_mm512_maskz_conflict_epi32     proto __vdecl :word, :zword {
-    }
-_mm512_mask_conflict_epi64      proto __vdecl :zword, :byte, :zword {
-    }
-_mm512_maskz_conflict_epi64     proto __vdecl :byte, :zword {
-    }
-
-_mm512_mask_lzcnt_epi32         proto __vdecl :zword, :word, :zword {
-    }
-_mm512_maskz_lzcnt_epi32        proto __vdecl :word, :zword {
-    }
-_mm512_mask_lzcnt_epi64         proto __vdecl :zword, :byte, :zword {
-    }
-_mm512_maskz_lzcnt_epi64        proto __vdecl :byte, :zword {
-    }
-
-_mm512_mask_avg_epu8    proto __vdecl :zword, :qword, :zword, :zword {
-    }
-_mm512_maskz_avg_epu8   proto __vdecl :qword, :zword, :zword {
-    }
-_mm512_mask_avg_epu16   proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_avg_epu16  proto __vdecl :dword, :zword, :zword {
-    }
-
-_mm512_sad_epu8         proto __vdecl :zword, :zword {
-    }
-_mm512_mask_dbsad_epu8  proto __vdecl :zword, :dword, :zword, :zword, :sdword {
-    }
-_mm512_maskz_dbsad_epu8 proto __vdecl :dword, :zword, :zword, :sdword {
-    }
-
-_mm512_reduce_add_ps            proto __vdecl :zword {
-    }
-_mm512_mask_reduce_add_ps       proto __vdecl :word, :zword {
-    }
-_mm512_reduce_add_pd            proto __vdecl :zword {
-    }
-_mm512_mask_reduce_add_pd       proto __vdecl :byte, :zword {
-    }
-_mm512_reduce_add_epi32         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_add_epi32    proto __vdecl :word, :zword {
-    }
-_mm512_reduce_add_epi64         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_add_epi64    proto __vdecl :byte, :zword {
-    }
-
-_mm512_reduce_mul_ps            proto __vdecl :zword {
-    }
-_mm512_mask_reduce_mul_ps       proto __vdecl :word, :zword {
-    }
-_mm512_reduce_mul_pd            proto __vdecl :zword {
-    }
-_mm512_mask_reduce_mul_pd       proto __vdecl :byte, :zword {
-    }
-_mm512_reduce_mul_epi32         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_mul_epi32    proto __vdecl :word, :zword {
-    }
-_mm512_reduce_mul_epi64         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_mul_epi64    proto __vdecl :byte, :zword {
-    }
-
-_mm512_reduce_min_ps            proto __vdecl :zword {
-    }
-_mm512_mask_reduce_min_ps       proto __vdecl :word, :zword {
-    }
-_mm512_reduce_min_pd            proto __vdecl :zword {
-    }
-_mm512_mask_reduce_min_pd       proto __vdecl :byte, :zword {
-    }
-_mm512_reduce_min_epi32         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_min_epi32    proto __vdecl :word, :zword {
-    }
-_mm512_reduce_min_epi64         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_min_epi64    proto __vdecl :byte, :zword {
-    }
-_mm512_reduce_min_epu32         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_min_epu32    proto __vdecl :word, :zword {
-    }
-_mm512_reduce_min_epu64         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_min_epu64    proto __vdecl :byte, :zword {
-    }
-
-_mm512_reduce_max_ps            proto __vdecl :zword {
-    }
-_mm512_mask_reduce_max_ps       proto __vdecl :word, :zword {
-    }
-_mm512_reduce_max_pd            proto __vdecl :zword {
-    }
-_mm512_mask_reduce_max_pd       proto __vdecl :byte, :zword {
-    }
-_mm512_reduce_max_epi32         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_max_epi32    proto __vdecl :word, :zword {
-    }
-_mm512_reduce_max_epi64         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_max_epi64    proto __vdecl :byte, :zword {
-    }
-_mm512_reduce_max_epu32         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_max_epu32    proto __vdecl :word, :zword {
-    }
-_mm512_reduce_max_epu64         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_max_epu64    proto __vdecl :byte, :zword {
-    }
-
-_mm512_reduce_and_epi32         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_and_epi32    proto __vdecl :word, :zword {
-    }
-_mm512_reduce_and_epi64         proto __vdecl :zword {
-    }
-_mm512_mask_reduce_and_epi64    proto __vdecl :byte, :zword {
-    }
-
-_mm512_reduce_or_epi32          proto __vdecl :zword {
-    }
-_mm512_mask_reduce_or_epi32     proto __vdecl :word, :zword {
-    }
-_mm512_reduce_or_epi64          proto __vdecl :zword {
-    }
-_mm512_mask_reduce_or_epi64     proto __vdecl :byte, :zword {
-    }
-
-_mm512_mask_reduce_round_pd     proto __vdecl :zword, :byte, :zword, :sdword, :sdword {
-    }
-_mm512_maskz_reduce_round_pd    proto __vdecl :byte, :zword, :sdword, :sdword {
-    }
-_mm512_mask_reduce_round_ps     proto __vdecl :zword, :word, :zword, :sdword, :sdword {
-    }
-_mm512_maskz_reduce_round_ps    proto __vdecl :word, :zword, :sdword, :sdword {
-    }
+_mm512_reduce_or_epi32 macro v1
+    exitm<_mm512_mask_reduce_or_epi32(_MM_K0_REG, v1)>
+    endm
+_mm512_reduce_or_epi64 macro v1
+    exitm<_mm512_mask_reduce_or_epi64(_MM_K0_REG, v1)>
+    endm
 
 _mm512_mask_roundscale_round_pd macro v1, m, v2, i3, e4
     exitm<_mm512_mask2i(vrndscalepd, 4, v1, m, v2, i3, e4)>
@@ -2266,22 +2597,32 @@ _mm512_maskz_scalef_round_ps macro m, v1, v2, r
     exitm<_mm512_maskz(vscalefps, 3, m, v1, v2, r)>
     endm
 
-_mm512_mask_fixupimm_round_pd   proto __vdecl :zword, :byte, :zword, :zword, :sdword, :sdword {
+.pragma aux(k1, k1)
+
+_mm512_mask_fixupimm_round_pd proto asmcall :abs, :byte, :abs, :abs, :abs, :abs {
+    vfixupimmpd _1 {k1}, _3, _4, _5 _MM_SAE(_6)
     }
-_mm512_maskz_fixupimm_round_pd  proto __vdecl :byte, :zword, :zword, :zword, :sdword, :sdword {
+_mm512_maskz_fixupimm_round_pd  proto asmcall :byte, :abs, :abs, :abs, :abs, :abs {
+    vfixupimmpd _2 {k1}{z}, _3, _4, _5 _MM_SAE(_6)
     }
-_mm512_mask_fixupimm_round_ps   proto __vdecl :zword, :word, :zword, :zword, :sdword, :sdword {
+_mm512_mask_fixupimm_round_ps   proto asmcall :abs, :word, :abs, :abs, :abs, :abs {
+    vfixupimmps _1 {k1}, _3, _4, _5 _MM_SAE(_6)
     }
-_mm512_maskz_fixupimm_round_ps  proto __vdecl :word, :zword, :zword, :zword, :sdword, :sdword {
+_mm512_maskz_fixupimm_round_ps  proto asmcall :word, :abs, :abs, :abs, :abs, :abs {
+    vfixupimmps _2 {k1}{z}, _3, _4, _5 _MM_SAE(_6)
     }
 
-_mm512_stream_pd                proto __vdecl :ptr, :zword {
+_mm512_stream_pd proto __vdecl :ptr, :abs {
+    vmovntpd    [_1], _2
     }
-_mm512_stream_ps                proto __vdecl :ptr, :zword {
+_mm512_stream_ps proto __vdecl :ptr, :abs {
+    vmovntps    [_1], _2
     }
-_mm512_stream_si512             proto __vdecl :ptr, :zword {
+_mm512_stream_si512 proto __vdecl :ptr, :abs {
+    vmovntdq    [_1], _2
     }
-_mm512_stream_load_si512        proto __vdecl :ptr {
+_mm512_stream_load_si512 proto __vdecl :ptr {
+    vmovntdqa   zmm0, [_1]
     }
 
 _mm512_castpd512_pd128 macro v1
@@ -2297,119 +2638,159 @@ _mm512_castsi128_si512 macro v1
     retm<@CatStr(<zmm>,@SubStr(xmm,4))>
     endm
 
-_mm512_mask_exp2a23_round_ps    proto __vdecl :zword, :word, :zword, :sdword {
+_mm512_mask_exp2a23_round_ps proto asmcall :abs, :word, :abs, :abs {
+    vexp2ps     _1 {k1}, _3 _MM_SAE(_4)
     }
-_mm512_maskz_exp2a23_round_ps   proto __vdecl :word, :zword, :sdword {
+_mm512_maskz_exp2a23_round_ps proto asmcall :word, :abs, :abs {
+    vexp2ps     zmm0 {k1}, _2 _MM_SAE(_3)
     }
-_mm512_mask_exp2a23_round_pd    proto __vdecl :zword, :byte, :zword, :sdword {
+_mm512_mask_exp2a23_round_pd proto asmcall :abs, :byte, :abs, :abs {
+    vexp2pd     _1 {k1}, _3 _MM_SAE(_4)
     }
-_mm512_maskz_exp2a23_round_pd   proto __vdecl :byte, :zword, :sdword {
-    }
-
-_mm512_mask_fpclass_ps_mask     proto __vdecl :word, :zword, :sdword {
-    }
-_mm512_mask_fpclass_pd_mask     proto __vdecl :byte, :zword, :sdword {
-    }
-
-_mm512_mask_range_round_pd      proto __vdecl :zword, :byte, :zword, :zword, :sdword, :sdword {
-    }
-_mm512_maskz_range_round_pd     proto __vdecl :byte, :zword, :zword, :sdword, :sdword {
-    }
-_mm512_mask_range_round_ps      proto __vdecl :zword, :word, :zword, :zword, :sdword, :sdword {
-    }
-_mm512_maskz_range_round_ps     proto __vdecl :word, :zword, :zword, :sdword, :sdword {
+_mm512_maskz_exp2a23_round_pd proto asmcall :byte, :abs, :abs {
+    vexp2pd     zmm0 {k1}, _2 _MM_SAE(_3)
     }
 
-_mm512_mask_madd_epi16          proto __vdecl :zword, :word, :zword, :zword {
+_mm512_mask_fpclass_ps_mask proto asmcall :word, :abs, :abs {
+    vfpclassps  k2 {k1}, _2, _3
+    kmovw       eax,k2
     }
-_mm512_maskz_madd_epi16         proto __vdecl :word, :zword, :zword {
-    }
-_mm512_mask_maddubs_epi16       proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_maddubs_epi16      proto __vdecl :dword, :zword, :zword {
-    }
-
-_mm512_mask_packs_epi16         proto __vdecl :zword, :qword, :zword, :zword {
-    }
-_mm512_maskz_packs_epi16        proto __vdecl :qword, :zword, :zword {
-    }
-_mm512_mask_packs_epi32         proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_packs_epi32        proto __vdecl :dword, :zword, :zword {
-    }
-_mm512_mask_packus_epi16        proto __vdecl :zword, :qword, :zword, :zword {
-    }
-_mm512_maskz_packus_epi16       proto __vdecl :qword, :zword, :zword {
-    }
-_mm512_mask_packus_epi32        proto __vdecl :zword, :dword, :zword, :zword {
-    }
-_mm512_maskz_packus_epi32       proto __vdecl :dword, :zword, :zword {
+_mm512_mask_fpclass_pd_mask proto asmcall :byte, :abs, :abs {
+    vfpclasspd  k2 {k1}, _2, _3
+    kmovb       eax,k2
     }
 
-_mm512_mask_cmp_epi_mask macro inst, cm, m, v1, v2, i3
-  local mask
-    _mm512_loadk mask, 0, cm, m
-ifb <i3>
-    inst k2 mask, v1, v2
-else
-    inst k2 mask, v1, v2, i3
-endif
-if cm eq 1
-    _mm512_loadq(k2)
-else
-    @CatStr(<kmov>, @SubStr(<qdwb>, cm, 1)) eax,k2
-endif
-    retm<rax>
-    endm
-_mm512_mask_cmp_epi8_mask macro m, v1, v2, i3
-    exitm<_mm512_mask_cmp_epi_mask(vpcmpb, 1, m, v1, v2, i3)>
-    endm
-_mm512_mask_cmp_epi16_mask macro m, v1, v2, i3
-    exitm<_mm512_mask_cmp_epi_mask(vpcmpw, 2, m, v1, v2, i3)>
-    endm
-_mm512_mask_cmp_epi32_mask macro m, v1, v2, i3
-    exitm<_mm512_mask_cmp_epi_mask(vpcmpd, 3, m, v1, v2, i3)>
-    endm
-_mm512_mask_cmp_epi64_mask macro m, v1, v2, i3
-    exitm<_mm512_mask_cmp_epi_mask(vpcmpq, 4, m, v1, v2, i3)>
-    endm
-_mm512_mask_cmp_epu8_mask macro m, v1, v2, i3
-    exitm<_mm512_mask_cmp_epi_mask(vpcmpub, 1, m, v1, v2, i3)>
-    endm
-_mm512_mask_cmp_epu16_mask macro m, v1, v2, i3
-    exitm<_mm512_mask_cmp_epi_mask(vpcmpuw, 2, m, v1, v2, i3)>
-    endm
-_mm512_mask_cmp_epu32_mask macro m, v1, v2, i3
-    exitm<_mm512_mask_cmp_epi_mask(vpcmpud, 3, m, v1, v2, i3)>
-    endm
-_mm512_mask_cmp_epu64_mask macro m, v1, v2, i3
-    exitm<_mm512_mask_cmp_epi_mask(vpcmpuq, 4, m, v1, v2, i3)>
-    endm
+_mm512_mask_range_round_ps proto asmcall :abs, :word, :abs, :abs, :abs, :abs {
+    vrangeps    _1 {k1}, _3, _4, _5 _MM_SAE(_6)
+    }
+_mm512_maskz_range_round_ps proto asmcall :word, :abs, :abs, :abs, :abs {
+    vrangeps    zmm0 {k1}, _2, _3, _4 _MM_SAE(_5)
+    }
+_mm512_mask_range_round_pd proto asmcall :abs, :byte, :abs, :abs, :abs, :abs {
+    vrangepd    _1 {k1}, _3, _4, _5 _MM_SAE(_6)
+    }
+_mm512_maskz_range_round_pd proto asmcall :byte, :abs, :abs, :abs, :abs {
+    vrangepd    zmm0 {k1}, _2, _3, _4 _MM_SAE(_5)
+    }
 
-_mm512_mask_test_epi8_mask macro m, v1, v2
-    exitm<_mm512_mask_cmp_epi_mask(vptestmb, 1, m, v1, v2)>
-    endm
-_mm512_mask_test_epi16_mask macro m, v1, v2
-    exitm<_mm512_mask_cmp_epi_mask(vptestmw, 2, m, v1, v2)>
-    endm
-_mm512_mask_testn_epi8_mask macro m, v1, v2
-    exitm<_mm512_mask_cmp_epi_mask(vptestnmb, 1, m, v1, v2)>
-    endm
-_mm512_mask_testn_epi16_mask macro m, v1, v2
-    exitm<_mm512_mask_cmp_epi_mask(vptestnmw, 2, m, v1, v2)>
-    endm
-_mm512_mask_test_epi32_mask macro m, v1, v2
-    exitm<_mm512_mask_cmp_epi_mask(vptestmd, 3, m, v1, v2)>
-    endm
-_mm512_mask_test_epi64_mask macro m, v1, v2
-    exitm<_mm512_mask_cmp_epi_mask(vptestmq, 4, m, v1, v2)>
-    endm
-_mm512_mask_testn_epi32_mask macro m, v1, v2
-    exitm<_mm512_mask_cmp_epi_mask(vptestnmd, 3, m, v1, v2)>
-    endm
-_mm512_mask_testn_epi64_mask macro m, v1, v2
-    exitm<_mm512_mask_cmp_epi_mask(vptestnmq, 4, m, v1, v2)>
-    endm
+_mm512_mask_madd_epi16 proto asmcall :abs, :word, :abs, :abs {
+    vpmaddwd    _1 {k1}, _3, _4
+    }
+_mm512_maskz_madd_epi16 proto asmcall :word, :abs, :abs {
+    vpmaddwd    zmm0 {k1}{z}, _2, _3
+    }
+_mm512_mask_maddubs_epi16 proto asmcall :abs, :dword, :abs, :abs {
+    vpmaddubsw  _1 {k1}, _3, _4
+    }
+_mm512_maskz_maddubs_epi16 proto asmcall :dword, :abs, :abs {
+    vpmaddubsw  zmm0 {k1}{z}, _2, _3
+    }
+
+_mm512_mask_packs_epi16 proto asmcall :abs, :qword, :abs, :abs {
+    vpacksswb   _1 {k1}, _3, _4
+    }
+_mm512_maskz_packs_epi16 proto asmcall :qword, :abs, :abs {
+    vpacksswb   zmm0 {k1}, _2, _3
+    }
+_mm512_mask_packs_epi32 proto asmcall :abs, :dword, :abs, :abs {
+    vpackssdw   _1 {k1}, _3, _4
+    }
+_mm512_maskz_packs_epi32 proto asmcall :dword, :abs, :abs {
+    vpackssdw   zmm0 {k1}, _2, _3
+    }
+_mm512_mask_packus_epi16 proto asmcall :abs, :qword, :abs, :abs {
+    vpackuswb   _1 {k1}, _3, _4
+    }
+_mm512_maskz_packus_epi16 proto asmcall :qword, :abs, :abs {
+    vpackuswb   zmm0 {k1}, _2, _3
+    }
+_mm512_mask_packus_epi32 proto asmcall :abs, :dword, :abs, :abs {
+    vpackusdw   _1 {k1}, _3, _4
+    }
+_mm512_maskz_packus_epi32 proto asmcall :dword, :abs, :abs {
+    vpackusdw   zmm0 {k1}, _2, _3
+    }
+
+_mm512_mask_cmp_epi8_mask proto asmcall :qword, :abs, :abs, :abs {
+    vpcmpb      k2 {k1}, _2, _3, _4
+    kmovq       rax,k2
+    }
+_mm512_mask_cmp_epi16_mask proto asmcall :dword, :abs, :abs, :abs {
+    vpcmpw      k2 {k1}, _2, _3, _4
+    kmovd       eax,k2
+    }
+_mm512_mask_cmp_epi32_mask proto asmcall :word, :abs, :abs, :abs {
+    vpcmpd      k2 {k1}, _2, _3, _4
+    kmovw       eax,k2
+    }
+_mm512_mask_cmp_epi64_mask proto asmcall :byte, :abs, :abs, :abs {
+    vpcmpuq     k2 {k1}, _2, _3, _4
+    kmovb       eax,k2
+    }
+
+_mm512_mask_cmp_epu8_mask proto asmcall :qword, :abs, :abs, :abs {
+    vpcmpub     k2 {k1}, _2, _3, _4
+    kmovq       rax,k2
+    }
+_mm512_mask_cmp_epu16_mask proto asmcall :dword, :abs, :abs, :abs {
+    vpcmpuw     k2 {k1}, _2, _3, _4
+    kmovd       eax,k2
+    }
+_mm512_mask_cmp_epu32_mask proto asmcall :word, :abs, :abs, :abs {
+    vpcmpud     k2 {k1}, _2, _3, _4
+    kmovw       eax,k2
+    }
+_mm512_mask_cmp_epu64_mask proto asmcall :byte, :abs, :abs, :abs {
+    vpcmpuq     k2 {k1}, _2, _3, _4
+    kmovb       eax,k2
+    }
+
+_mm512_mask_cmp_round_ps_mask proto asmcall :word, :abs, :abs, :abs, :abs {
+    vcmpps      k2 {k1}, _2, _3, _4 _MM_SAE(_5)
+    kmovw       eax,k2
+    }
+
+_mm512_mask_cmp_round_pd_mask proto asmcall :byte, :abs, :abs, :abs, :abs {
+    vcmppd      k2 {k1}, _2, _3, _4 _MM_SAE(_5)
+    kmovb       eax,k2
+    }
+
+_mm512_mask_test_epi8_mask proto asmcall :qword, :abs, :abs {
+    vptestmb    k2 {k1}, _2, _3
+    kmovq       rax,k2
+    }
+_mm512_mask_test_epi16_mask proto asmcall :dword, :abs, :abs {
+    vptestmw    k2 {k1}, _2, _3
+    kmovd       eax,k2
+    }
+_mm512_mask_test_epi32_mask proto asmcall :word, :abs, :abs {
+    vptestmd    k2 {k1}, _2, _3
+    kmovw       eax,k2
+    }
+_mm512_mask_test_epi64_mask proto asmcall :byte, :abs, :abs {
+    vptestmq    k2 {k1}, _2, _3
+    kmovb       eax,k2
+    }
+
+_mm512_mask_testn_epi8_mask proto asmcall :qword, :abs, :abs {
+    vptestnmb   k2 {k1}, _2, _3
+    kmovq       rax,k2
+    }
+_mm512_mask_testn_epi16_mask proto asmcall :dword, :abs, :abs {
+    vptestnmw   k2 {k1}, _2, _3
+    kmovd       eax,k2
+    }
+_mm512_mask_testn_epi32_mask proto asmcall :word, :abs, :abs {
+    vptestnmd   k2 {k1}, _2, _3
+    kmovw       eax,k2
+    }
+_mm512_mask_testn_epi64_mask proto asmcall :byte, :abs, :abs {
+    vptestnmq   k2 {k1}, _2, _3
+    kmovb       eax,k2
+    }
+
+.pragma aux(pop)
+.pragma aux(k1, k2)
 
 _mm512_kunpackb proto asmcall :word, :word {
     kunpckbw    k2,k1,k2
@@ -2489,114 +2870,163 @@ _mm512_testz_nor_mask64 proto asmcall :qword, :qword {
     setb        al
     }
 
-_mm512_i32gather_ps proto __vdecl :zword, :ptr, :abs {
-    kxnorw      k1,k1,k1
-    vmovdqu32   zmm1, _1
-    vgatherdps  _1 {k1},[_2+zmm1*_3]
-    }
-_mm512_mask_i32gather_ps proto __vdecl :zword, :abs, :zword, :ptr, :abs {
-    _mm512_load_kw(_2)
+.pragma aux(pop)
+
+.pragma aux(eax, k1, ecx, edx)
+
+_mm512_mask_i32gather_ps proto asmcall :abs, :word, :abs, :ptr, :abs {
     vgatherdps  _1 {k1},[_4+_3*_5]
     }
-_mm512_i32scatter_ps proto __vdecl :ptr, :zword, :zword, :abs {
-    kxnorw      k1,k1,k1
-    vscatterdps [_1+_2*_4] {k1}, _3
+_mm512_mask_i32gather_pd proto asmcall :abs, :byte, :abs, :ptr, :abs {
+    vgatherdpd  _1 {k1},[_4+_3*_5]
     }
-_mm512_mask_i32scatter_ps proto __vdecl :ptr, :abs, :zword, :zword, :abs {
-    _mm512_load_kw(_2)
+_mm512_mask_i32gather_epi32 proto asmcall :abs, :word, :abs, :ptr, :abs {
+    vpgatherdd  _1 {k1},[_4+_3*_5]
+    }
+_mm512_mask_i32gather_epi64 proto asmcall :abs, :byte, :abs, :ptr, :abs {
+    vpgatherdq  _1 {k1},[_4+_3*_5]
+    }
+_mm512_mask_i64gather_ps proto asmcall :abs, :byte, :abs, :ptr, :abs {
+    vgatherqps  ymm0 {k1},[_4+_3*_5]
+    }
+_mm512_mask_i64gather_pd proto asmcall :abs, :byte, :abs, :ptr, :abs {
+    vgatherqpd  _1 {k1},[_4+_3*_5]
+    }
+_mm512_mask_i64gather_epi32 proto asmcall :abs, :byte, :abs, :ptr, :abs {
+    vpgatherqd  _1 {k1},[_4+_3*_5]
+    }
+_mm512_mask_i64gather_epi64 proto asmcall :abs, :byte, :abs, :ptr, :abs {
+    vpgatherqq  _1 {k1},[_4+_3*_5]
+    }
+
+_mm512_mask_i32scatter_ps proto asmcall :ptr, :word, :abs, :abs, :abs {
     vscatterdps [_1+_3*_5] {k1}, _4
     }
-_mm512_i64gather_pd proto __vdecl :zword, :ptr, :abs {
+_mm512_mask_i32scatter_pd proto asmcall :ptr, :byte, :abs, :abs, :abs {
+    vscatterdpd [_1+_3*_5] {k1}, _4
     }
-_mm512_mask_i64gather_pd proto __vdecl :zword, :abs, :zword, :ptr, :abs {
+_mm512_mask_i32scatter_epi32 proto asmcall :ptr, :word, :abs, :abs, :abs {
+    vpscatterdd [_1+_3*_5] {k1}, _4
     }
-_mm512_i64scatter_pd proto __vdecl :ptr, :zword, :zword, :abs {
+_mm512_mask_i32scatter_epi64 proto asmcall :ptr, :byte, :abs, :abs, :abs {
+    vpscatterdq [_1+_3*_5] {k1}, _4
     }
-_mm512_mask_i64scatter_pd proto __vdecl :ptr, :abs, :zword, :zword, :abs {
+_mm512_mask_i64scatter_ps proto asmcall :ptr, :byte, :abs, :abs, :abs {
+    vscatterqps [_1+_3*_5] {k1}, _4
     }
-_mm512_i32gather_pd proto __vdecl :yword, :ptr, :abs {
+_mm512_mask_i64scatter_pd proto asmcall :ptr, :byte, :abs, :abs, :abs {
+    vscatterqpd [_1+_3*_5] {k1}, _4
     }
-_mm512_mask_i32gather_pd proto __vdecl :zword, :abs, :yword, :ptr, :abs {
+_mm512_mask_i64scatter_epi32 proto asmcall :ptr, :byte, :abs, :abs, :abs {
+    vpscatterqd [_1+_3*_5] {k1}, _4
     }
-_mm512_i32scatter_pd proto __vdecl :ptr, :yword, :zword, :abs {
-    }
-_mm512_mask_i32scatter_pd proto __vdecl :ptr, :abs, :yword, :zword, :abs {
-    }
-_mm512_i32gather_epi32 proto __vdecl :zword, :ptr, :abs {
-    }
-_mm512_mask_i32gather_epi32 proto __vdecl :zword, :abs, :zword, :ptr, :abs {
-    }
-_mm512_i32scatter_epi32 proto __vdecl :ptr, :zword, :zword, :abs {
-    }
-_mm512_mask_i32scatter_epi32 proto __vdecl :ptr, :abs, :zword, :zword, :abs {
-    }
-_mm512_i32gather_epi64 proto __vdecl :yword, :ptr, :abs {
-    }
-_mm512_mask_i32gather_epi64 proto __vdecl :zword, :abs, :yword, :ptr, :abs {
-    }
-_mm512_i64gather_epi64 proto __vdecl :zword, :ptr, :abs {
-    }
-_mm512_mask_i64gather_epi64 proto __vdecl :zword, :abs, :zword, :ptr, :abs {
-    }
-_mm512_i32scatter_epi64 proto __vdecl :ptr, :yword, :zword, :abs {
-    }
-_mm512_mask_i32scatter_epi64 proto __vdecl :ptr, :abs, :yword, :zword, :abs {
-    }
-_mm512_i64scatter_epi64 proto __vdecl :ptr, :zword, :zword, :abs {
-    }
-_mm512_mask_i64scatter_epi64 proto __vdecl :ptr, :abs, :zword, :zword, :abs {
-    }
-_mm512_i64gather_ps proto __vdecl :zword, :ptr, :abs {
-    }
-_mm512_mask_i64gather_ps proto __vdecl :yword, :abs, :zword, :ptr, :abs {
-    }
-_mm512_i64scatter_ps proto __vdecl :ptr, :zword, :yword, :abs {
-    }
-_mm512_mask_i64scatter_ps proto __vdecl :ptr, :abs, :zword, :yword, :abs {
-    }
-_mm512_i64gather_epi32 proto __vdecl :zword, :ptr, :abs {
-    }
-_mm512_mask_i64gather_epi32 proto __vdecl :yword, :abs, :zword, :ptr, :abs {
-    }
-_mm512_i64scatter_epi32 proto __vdecl :ptr, :zword, :yword, :abs {
-    }
-_mm512_mask_i64scatter_epi32 proto __vdecl :ptr, :abs, :zword, :yword, :abs {
+_mm512_mask_i64scatter_epi64 proto asmcall :ptr, :byte, :abs, :abs, :abs {
+    vpscatterqq [_1+_3*_5] {k1}, _4
     }
 
-_mm512_prefetch_i32gather_pd proto __vdecl :zword, :ptr, :abs, :abs {
+_mm512_mask_prefetch_i32gather_ps proto asmcall :abs, :word, :ptr, :abs, :abs {
+    vgatherpf0dps [_3+_1*_4] {k1}
     }
-_mm512_prefetch_i32gather_ps proto __vdecl :zword, :ptr, :abs, :abs {
+_mm512_mask_prefetch_i32gather_pd proto asmcall :abs, :byte, :ptr, :abs, :abs {
+    vgatherpf0dpd [_3+_1*_4] {k1}
     }
-_mm512_prefetch_i32scatter_pd proto __vdecl :ptr, :zword, :abs, :abs {
+_mm512_mask_prefetch_i64gather_ps proto asmcall :abs, :byte, :ptr, :abs, :abs {
+    vgatherpf0qps [_3+_1*_4] {k1}
     }
-_mm512_prefetch_i32scatter_ps proto __vdecl :ptr, :zword, :abs, :abs {
+_mm512_mask_prefetch_i64gather_pd proto asmcall :abs, :byte, :ptr, :abs, :abs {
+    vgatherpf0qpd [_3+_1*_4] {k1}
     }
-_mm512_prefetch_i64gather_pd proto __vdecl :zword, :ptr, :abs, :abs {
+_mm512_mask_prefetch_i32scatter_ps proto asmcall :ptr, :word, :abs, :abs, :abs {
+    vscatterpf0dps [_1+_3*_4] {k1}
     }
-_mm512_prefetch_i64gather_ps proto __vdecl :zword, :ptr, :abs, :abs {
+_mm512_mask_prefetch_i32scatter_pd proto asmcall :ptr, :byte, :abs, :abs, :abs {
+    vscatterpf0dpd [_1+ymm2*_4] {k1}
     }
-_mm512_prefetch_i64scatter_pd proto __vdecl :ptr, :zword, :abs, :abs {
+_mm512_mask_prefetch_i64scatter_pd proto asmcall :ptr, :byte, :abs, :abs, :abs {
+    vscatterpf0qpd [_1+_3*_4] {k1}
     }
-_mm512_prefetch_i64scatter_ps proto __vdecl :ptr, :zword, :abs, :abs {
-    }
-
-_mm512_mask_prefetch_i32gather_pd proto __vdecl :zword, :abs, :ptr, :abs, :abs {
-    }
-_mm512_mask_prefetch_i32gather_ps proto __vdecl :zword, :abs, :ptr, :abs, :abs {
-    }
-_mm512_mask_prefetch_i32scatter_pd proto __vdecl :ptr, :abs, :zword, :abs, :abs {
-    }
-_mm512_mask_prefetch_i32scatter_ps proto __vdecl :ptr, :abs, :zword, :abs, :abs {
-    }
-_mm512_mask_prefetch_i64gather_pd proto __vdecl :zword, :abs, :ptr, :abs, :abs {
-    }
-_mm512_mask_prefetch_i64gather_ps proto __vdecl :zword, :abs, :ptr, :abs, :abs {
-    }
-_mm512_mask_prefetch_i64scatter_pd proto __vdecl :ptr, :abs, :zword, :abs, :abs {
-    }
-_mm512_mask_prefetch_i64scatter_ps proto __vdecl :ptr, :abs, :zword, :abs, :abs {
+_mm512_mask_prefetch_i64scatter_ps proto asmcall :ptr, :byte, :abs, :abs, :abs {
+    vscatterpf0qps [_1+_3*_4] {k1}
     }
 
+.pragma aux(pop)
+
+_mm512_i32gather_ps macro v1, p, i
+    exitm<_mm512_mask_i32gather_ps(zmm0, _MM_K0_REG, v1, p, i)>
+    endm
+_mm512_i32gather_pd macro v1, p, i
+    exitm<_mm512_mask_i32gather_pd(zmm0, _MM_K0_REG, v1, p, i)>
+    endm
+_mm512_i32gather_epi32 macro v1, p, i
+    exitm<_mm512_mask_i32gather_epi32(zmm0, _MM_K0_REG, v1, p, i)>
+    endm
+_mm512_i32gather_epi64 macro v1, p, i
+    exitm<_mm512_mask_i32gather_epi64(zmm0, _MM_K0_REG, v1, p, i)>
+    endm
+_mm512_i64gather_ps macro v1, p, i
+    exitm<_mm512_mask_i64gather_ps(zmm0, _MM_K0_REG, v1, p, i)>
+    endm
+_mm512_i64gather_pd macro v1, p, i
+    exitm<_mm512_mask_i64gather_pd(zmm0, _MM_K0_REG, v1, p, i)>
+    endm
+_mm512_i64gather_epi32 macro v1, p, i
+    exitm<_mm512_mask_i64gather_epi32(zmm0, _MM_K0_REG, v1, p, i)>
+    endm
+_mm512_i64gather_epi64 macro v1, p, i
+    exitm<_mm512_mask_i64gather_epi64(zmm0, _MM_K0_REG, v1, p, i)>
+    endm
+
+_mm512_i32scatter_ps macro p, v1, v2, i
+    exitm<_mm512_mask_i32scatter_ps(p, _MM_K0_REG, v1, v2, i)>
+    endm
+_mm512_i32scatter_pd macro p, v1, v2, i
+    exitm<_mm512_mask_i32scatter_pd(p, _MM_K0_REG, v1, v2, i)>
+    endm
+_mm512_i32scatter_epi32 macro p, v1, v2, i
+    exitm<_mm512_mask_i32scatter_epi32(p, _MM_K0_REG, v1, v2, i)>
+    endm
+_mm512_i32scatter_epi64 macro p, v1, v2, i
+    exitm<_mm512_mask_i32scatter_epi64(p, _MM_K0_REG, v1, v2, i)>
+    endm
+_mm512_i64scatter_ps macro p, v1, v2, i
+    exitm<_mm512_mask_i64scatter_ps(p, _MM_K0_REG, v1, v2, i)>
+    endm
+_mm512_i64scatter_pd macro p, v1, v2, i
+    exitm<_mm512_mask_i64scatter_pd(p, _MM_K0_REG, v1, v2, i)>
+    endm
+_mm512_i64scatter_epi32 macro p, v1, v2, i
+    exitm<_mm512_mask_i64scatter_epi32(p, _MM_K0_REG, v1, v2, i)>
+    endm
+_mm512_i64scatter_epi64 macro p, v1, v2, i
+    exitm<_mm512_mask_i64scatter_epi64(p, _MM_K0_REG, v1, v2, i)>
+    endm
+
+
+_mm512_prefetch_i32gather_ps macro v1, p, scale, hint
+    exitm<_mm512_mask_prefetch_i32gather_ps(v1, _MM_K0_REG, p, scale, hint)>
+    endm
+_mm512_prefetch_i32gather_pd macro v1, p, scale, hint
+    exitm<_mm512_mask_prefetch_i32gather_pd(v1, _MM_K0_REG, p, scale, hint)>
+    endm
+_mm512_prefetch_i64gather_ps macro v1, p, scale, hint
+    exitm<_mm512_mask_prefetch_i64gather_ps(v1, _MM_K0_REG, p, scale, hint)>
+    endm
+_mm512_prefetch_i64gather_pd macro v1, p, scale, hint
+    exitm<_mm512_mask_prefetch_i64gather_pd(v1, _MM_K0_REG, p, scale, hint)>
+    endm
+
+_mm512_prefetch_i32scatter_ps macro p, v1, scale, hint
+    exitm<_mm512_mask_prefetch_i32scatter_ps(p, _MM_K0_REG, v1, scale, hint)>
+    endm
+_mm512_prefetch_i32scatter_pd macro p, v1, scale, hint
+    exitm<_mm512_mask_prefetch_i32scatter_pd(p, _MM_K0_REG, v1, scale, hint)>
+    endm
+_mm512_prefetch_i64scatter_ps macro p, v1, scale, hint
+    exitm<_mm512_mask_prefetch_i64scatter_ps(p, _MM_K0_REG, v1, scale, hint)>
+    endm
+_mm512_prefetch_i64scatter_pd macro p, v1, scale, hint
+    exitm<_mm512_mask_prefetch_i64scatter_pd(p, _MM_K0_REG, v1, scale, hint)>
+    endm
 
 _mm512_cvtpslo_pd macro v2, v1:=<zmm0>
     exitm<_mm512_mask2(vcvtps2pd, 4, v1, _MM_K0_REG, v2)>
@@ -3841,7 +4271,11 @@ _mm512_permutex2var_epi64 macro v1, v2, v3
         exitm<_mm512_maskz_permutex2var_epi64(_MM_K0_REG, v1, v2, v3)>
         endm
 
-
+if 0
+_mm512_ternarylogic_epi32 proto __vdecl :abs, :abs, :abs, :abs {
+    vpternlogd  _1, _2, _3, _4
+    }
+endif
 _mm512_ternarylogic_epi32 macro v1, v2, v3, e1
         exitm<_mm512_maskz_ternarylogic_epi32(_MM_K0_REG, v1, v2, v3, e1)>
         endm
@@ -5300,6 +5734,6 @@ _mm512_maskz_cvttps_epu64 macro _k1, v2
         exitm<_mm512_maskz_cvtt_roundps_epu64(_k1, v2, _MM_FROUND_CUR_DIRECTION)>
         endm
 
-.pragma aux(pop)
 endif
+
 

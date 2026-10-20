@@ -10,7 +10,7 @@
 ifndef _LIBC_
 define _LIBC_
 define __STDC__
-define __LIBC__ 237
+define __LIBC__ 240
 
 option casemap:none
 
@@ -186,10 +186,13 @@ else
 size_t		typedef dword
 ssize_t		typedef sdword
 endif
-endif
-
 psize_t		typedef ptr size_t
 pssize_t	typedef ptr ssize_t
+SIZE_T		typedef size_t
+SSIZE_T		typedef ssize_t
+PSIZE_T		typedef ptr size_t
+PSSIZE_T	typedef ptr ssize_t
+endif
 
 ifndef _M_IX86_16
 int_t		typedef sdword
@@ -238,6 +241,7 @@ tuchar_t	typedef byte
 tstring_t	typedef ptr sbyte
 endif
 TCHAR		typedef tchar_t
+PTCHAR		typedef ptr tchar_t
 LPTSTR		typedef tstring_t
 endif
 

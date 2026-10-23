@@ -140,7 +140,7 @@ endif
 .endn
 .endn
 
-include Windows.UI.inc
+include windows.ui.inc
 include Windows.UI.Xaml.inc
 include Windows.UI.Xaml.Media.Media3D.inc
 include windows.foundation.collections.inc

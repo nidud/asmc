@@ -6,7 +6,7 @@ define __windows2Esystem2Euserprofile_h__
 ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
-include Windows.Globalization.inc
+include windows.globalization.inc
 include Windows.Storage.inc
 
 ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CSystem__CUserProfile__CSetAccountPictureResult_INTERFACE_DEFINED__

@@ -1,12 +1,12 @@
 ifndef _WRL_EVENT_H_
 define _WRL_EVENT_H_
 
-include wrl\def.inc
-include wrl\internal.inc
-include wrl\client.inc
-include wrl\implements.inc
-include wrl\wrappers\corewrappers.inc
-include eventtoken.inc
-include roerrorapi.inc
+include winrt/wrl/def.inc
+include winrt/wrl/internal.inc
+include winrt/wrl/client.inc
+include winrt/wrl/implements.inc
+include winrt/wrl/wrappers/corewrappers.inc
+include winrt/EventToken.inc
+include winrt/roerrorapi.inc
 
 endif

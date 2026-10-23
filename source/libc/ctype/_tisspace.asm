@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; int isspace(int);
+; int iswspace(int);
+;
 include ctype.inc
 include tchar.inc
 

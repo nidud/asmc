@@ -6,7 +6,7 @@
 ; int strtrim(char *);
 ; int _wstrtrim(wchar_t *);
 ;
-; Return EAX char count, RCX string, and edx last char
+; Return EAX char count, RCX string, and RDX last char
 ;
 include string.inc
 include ctype.inc

@@ -1,9 +1,7 @@
 ifndef _WRL_H_
 define _WRL_H_
-
-include wrl\client.inc
-include wrl\implements.inc
-include wrl\module.inc
-include wrl\event.inc
-
+include winrt/wrl/client.inc
+include winrt/wrl/implements.inc
+include winrt/wrl/module.inc
+include winrt/wrl/event.inc
 endif

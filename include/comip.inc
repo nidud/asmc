@@ -5,7 +5,7 @@ endif
 ifndef _INC_COMIP
 define _INC_COMIP
 
-include Ole2.inc
+include ole2.inc
 include comutil.inc
 include malloc.inc
 ;include type_traits

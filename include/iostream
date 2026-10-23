@@ -144,5 +144,6 @@ ifdef _UNICODE
 else
      cstream ostream { 0 }
      cout ptr ostream cstream
+     wcout equ <cout>
 endif
 endif

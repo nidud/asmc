@@ -25,9 +25,9 @@ include Windows.Graphics.inc
 include Windows.Graphics.DirectX.inc
 include Windows.Graphics.DirectX.Direct3D11.inc
 include Windows.Security.Authorization.AppCapabilityAccess.inc
-include Windows.System.inc
-include Windows.UI.inc
-include Windows.UI.Composition.inc
+include windows.system.inc
+include Windows.ui.inc
+include windows.ui.composition.inc
 
 .namespace Windows
 .namespace Graphics

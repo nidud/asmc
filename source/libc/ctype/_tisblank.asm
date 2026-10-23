@@ -3,7 +3,9 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; int isblank(int);
+; int iswblank(int);
+;
 include ctype.inc
 include tchar.inc
 

@@ -5,7 +5,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef _WININET_
-include SpecStrings.inc
+include specstrings.inc
 define _WININET_
 
 .pragma pack(push, size_t)

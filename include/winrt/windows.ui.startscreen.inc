@@ -6,7 +6,7 @@ define __windows2Eui2Estartscreen_h__
 ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
-include Windows.UI.inc
+include windows.ui.inc
 include Windows.UI.Popups.inc
 
 ifndef ____FIIterator_1_Windows__CUI__CStartScreen__CSecondaryTile_INTERFACE_DEFINED__

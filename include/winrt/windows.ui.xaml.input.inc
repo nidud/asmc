@@ -6,8 +6,8 @@ define __windows2Eui2Examl2Einput_h__
 ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
-include Windows.Devices.Input.inc
-include Windows.System.inc
+include windows.devices.input.inc
+include windows.system.inc
 
 .namespace Windows
 .namespace UI

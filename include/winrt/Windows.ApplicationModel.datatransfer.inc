@@ -23,7 +23,7 @@ endif
 include Windows.Security.EnterpriseData.inc
 include Windows.Storage.inc
 include Windows.Storage.Streams.inc
-include Windows.UI.inc
+include windows.ui.inc
 
 if WINDOWS_FOUNDATION_UNIVERSALAPICONTRACT_VERSION ge 0x70000
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CDataTransfer__CClipboardHistoryItem_INTERFACE_DEFINED__

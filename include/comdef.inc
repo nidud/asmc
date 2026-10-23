@@ -14,7 +14,7 @@ endif
 endif
 
 ifndef _COMDEF_WINAPI_FAMILY_PHONE_APP
-include Ole2.inc
+include ole2.inc
 
 include comutil.inc
 endif
@@ -27,7 +27,7 @@ include wchar.inc
 
 else
 
-include OleCtl.inc
+include olectl.inc
 
 .pragma comment(lib, user32)
 .pragma comment(lib, ole32)

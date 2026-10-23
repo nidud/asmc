@@ -8,7 +8,7 @@ include Windows.Foundation.inc
 endif
 include Windows.Security.Credentials.inc
 include Windows.Security.Cryptography.Certificates.inc
-include Windows.Web.Http.inc
+include windows.web.http.inc
 
 .namespace Windows
 .namespace Web

@@ -1,6 +1,6 @@
 
 include stdio.inc
-include directxmath.inc
+include DirectX/directxmath.inc
 
 .code
 

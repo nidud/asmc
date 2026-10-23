@@ -1,23 +1,23 @@
 ifndef _WRL_MODULE_H_
 define _WRL_MODULE_H_
 
-include roapi.inc
+include winrt/roapi.inc
 ifdef BUILD_WINDOWS
 include winrt.inc
 endif
-include activation.inc
-include WinString.inc
+include winrt/activation.inc
+include winstring.inc
 include intrin.inc
 ifndef _WINAPIFAMILY_
 include winapifamily.inc
 endif
 
-include wrl\def.inc
-include wrl\internal.inc
-include wrl\client.inc
-include wrl\implements.inc
-include wrl\ftm.inc
-include wrl\wrappers\corewrappers.inc
+include winrt/wrl/def.inc
+include winrt/wrl/internal.inc
+include winrt/wrl/client.inc
+include winrt/wrl/implements.inc
+include winrt/wrl/ftm.inc
+include winrt/wrl/wrappers/corewrappers.inc
 
 .enum ModuleType {
     InProc		     = 0x1,

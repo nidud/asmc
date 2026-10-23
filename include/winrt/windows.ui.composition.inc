@@ -32,8 +32,8 @@ include Windows.Graphics.inc
 include Windows.Graphics.DirectX.inc
 include Windows.Graphics.Effects.inc
 include Windows.System.inc
-include Windows.UI.inc
-include Windows.UI.Core.inc
+include windows.ui.inc
+include windows.ui.core.inc
 
 .namespace Windows
 .namespace UI

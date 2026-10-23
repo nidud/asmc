@@ -1,5 +1,5 @@
-include dxgitype.inc
-include dxgi1_5.inc
+include DirectX/dxgitype.inc
+include DirectX/dxgi1_5.inc
 
 if (NTDDI_VERSION GE NTDDI_WIN8)
 

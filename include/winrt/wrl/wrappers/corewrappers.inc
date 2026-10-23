@@ -4,13 +4,13 @@ define _WRL_COREWRAPPERS_H_
 include windows.inc
 include intsafe.inc
 include winstring.inc
-include roapi.inc
+include winrt/roapi.inc
 ifdef BUILD_WINDOWS
 include winrt.inc
 endif
 
-include wrl\def.inc
-include wrl\internal.inc
+include winrt/wrl/def.inc
+include winrt/wrl/internal.inc
 
 .template RoInitializeWrapper fastcall
 

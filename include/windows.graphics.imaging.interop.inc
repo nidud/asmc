@@ -5,7 +5,7 @@ endif
 ifndef __windows2Egraphics2Eimaging2Einterop_h__
 define __windows2Egraphics2Eimaging2Einterop_h__
 
-include Inspectable.inc
+include winrt/inspectable.inc
 include mfobjects.inc
 include Wincodec.inc
 ifndef _WINAPIFAMILY_

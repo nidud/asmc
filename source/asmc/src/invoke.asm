@@ -2365,10 +2365,10 @@ endif
                     .if ( rdx )
                         mov rcx,rdx
                     .endif
-                    mov eax,[rcx].asym.total_size
-                    .if ( [rcx].asym.isarray )
+                    mov eax,[rcx].asym.total_size ; v2.40.06: type 0 dup(0) -- zero array is allowed
+                    .if ( [rcx].asym.isarray && [rcx].asym.total_length )
                         mov ecx,[rcx].asym.total_length
-                        xor edx,edx
+                        cdq
                         div ecx
                     .endif
                 .endif

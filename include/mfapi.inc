@@ -115,7 +115,7 @@ MFCreateMemoryBuffer proto WINAPI :DWORD, :ptr
 MFCreateMediaBufferWrapper proto WINAPI :ptr, :DWORD, :DWORD, :ptr
 MFCreateLegacyMediaBufferOnMFMediaBuffer proto WINAPI :ptr, :ptr, :DWORD, :ptr
 
-include dxgiformat.inc
+include DirectX/dxgiformat.inc
 
 MFMapDX9FormatToDXGIFormat proto WINAPI :DWORD
 MFMapDXGIFormatToDX9Format proto WINAPI :DXGI_FORMAT

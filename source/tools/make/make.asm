@@ -4,6 +4,8 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 ; Change history:
+; 2026-10-23 - added .PHONY (ignored)
+;            - added type-based rules: test extension first
 ; 2024-03-30 - added 64-bit support
 ; 2024-01-29 - allow if/else syntax without the ! prefix
 ;            - added $(error text...)
@@ -24,7 +26,7 @@ include tchar.inc
 define LTYPE_INLINE
 include ltype.inc
 
-define __MAKE__        201
+define __MAKE__        202
 
 define LINEBREAKCH     0x5E ; '^'
 
@@ -46,6 +48,7 @@ prev            target_t ?
 next            target_t ?
 srcpath         string_t ?    ; {path}.c.obj:
 objpath         string_t ?    ; .c{path}.obj:
+suffix          string_t ?    ; .obj
 TARGET          ENDS
 
 args_t          typedef ptr ARGS
@@ -985,6 +988,7 @@ getline proc uses rsi rdi rbx
             .case !_strnicmp(rdi, ".DONE", 5)       ; target to build, after all other targets are build
             .case !_strnicmp(rdi, ".IGNORE", 7)     ; ignore all error codes during building of targets
             .case !_strnicmp(rdi, ".INIT", 5)       ; first target to build, before any target is build
+            .case !_strnicmp(rdi, ".PHONY", 6)      ; ignored...
                .continue
             .case !_strnicmp(rdi, ".SILENT", 7)
                 inc option_s        ; do not echo commands
@@ -993,21 +997,22 @@ getline proc uses rsi rdi rbx
                .continue            ; define a response file for long ( > 128) command lines
             .case !_strnicmp(rdi, ".EXTENSIONS", 11)
                 strtoken(rdi)       ; add extensions to the suffixes list
-                lea rsi,extensions
-                .while rax
-                    mov rax,[rsi]
-                    add rsi,size_t
-                .endw
                 .while strtoken(0)
                     .break .if byte ptr [rax] != '.'
-                    mov [rsi-size_t],_strdup(rax)
-                    add rsi,size_t
+                    mov rcx,_strdup(rax)
+                    lea rsi,extensions
+                    .while rax
+                        mov rax,[rsi]
+                        mov [rsi],rcx
+                        add rsi,size_t
+                        mov rcx,rax
+                    .endw
                 .endw
                 .continue
             .case !_strnicmp(rdi, ".SUFFIXES", 9)
                 strtoken(rdi)       ; the suffixes list for selecting implicit rules
                 .if !strtoken(0)
-                    mov rdx,rdi
+                    mov rdx,rdi     ; clear table
                     lea rdi,suffixes
                     xor eax,eax
                     mov ecx,32*size_t
@@ -1015,19 +1020,17 @@ getline proc uses rsi rdi rbx
                     mov rdi,rdx
                    .continue
                 .endif
-                lea rsi,suffixes
-                mov rdx,rax
-                .while rax
-                    mov rax,[rsi]
-                    add rsi,size_t
-                .endw
-                mov rax,rdx
-                .while rax
+                .repeat
                     .break .if byte ptr [rax] != '.'
-                    mov [rsi-size_t],_strdup(rax)
-                    add rsi,size_t
-                    strtoken(0)
-                .endw
+                    mov rcx,_strdup(rax)
+                    lea rsi,suffixes
+                    .while rax
+                        mov rax,[rsi]
+                        mov [rsi],rcx
+                        add rsi,size_t
+                        mov rcx,rax
+                    .endw
+                .until !strtoken(0)
                 .continue
             .endsw
             mov rax,rdi
@@ -1187,8 +1190,10 @@ addtarget proc uses rsi rdi rbx target:string_t
         .endw
         mov rsi,p
         .break .if !rax
+        mov [rbx].suffix,rax
         mov [rbx].type,T_METHOD
     .until 1
+
     assume rbx:nothing
     .if istarget(rsi)
         addtarget(rsi)
@@ -1227,24 +1232,36 @@ findtarget proc uses rsi rdi rbx target:string_t
 
 build_object proc uses rsi rdi rbx object:string_t
 
-  local srcname[_MAX_PATH]:byte
-  local srcfile[_MAX_PATH]:byte
-  local command[_MAX_PATH]:byte
+  local scrtype[_MAX_EXT]:sbyte
+  local srcname[_MAX_PATH]:sbyte
+  local srcfile[_MAX_PATH]:sbyte
+  local command[_MAX_PATH]:sbyte
   local p:string_t,q:string_t,r:string_t
 
+    ; foo.obj: not found
+
     lea rbx,srcname
+    mov scrtype,0
+    .if strext(strcpy(rbx, object))
+        mov rsi,rax
+        strtrim(strcpy(&scrtype, rax))
+        mov byte ptr [rsi],0
+    .endif
     lea rdi,srcfile
     lea rsi,extensions
-    .if strext(strcpy(rbx, object))
-        mov byte ptr [rax],0
-    .endif
     lea rbx,suffixes
+    .if ( scrtype )
+        lea rax,scrtype
+        sub rbx,size_t
+        jmp src_suffix
+    .endif
     .repeat
         mov rax,[rbx]
         .if !rax
             perror(&srcname)
             exit(1)
         .endif
+      src_suffix:
         mov p,rax
         add rbx,size_t
         lea rsi,extensions
@@ -1506,11 +1523,11 @@ make proc uses rsi rdi rbx file:string_t, target:string_t
             .if eax == T_METHOD
                 mov rbx,rcx
                 xor eax,eax
-            .else
-                mov rax,[rcx].TARGET.command
+            .elseif ( rbx || [rcx].TARGET.command )
+                inc eax
             .endif
         .endf
-        .if  !rax && !rbx
+        .if  !eax && !rbx
             perror([rdi].TARGET.target)
             exit(1)
         .endif

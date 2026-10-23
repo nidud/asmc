@@ -6,8 +6,8 @@ define __windows2Eui2Ecore_h__
 ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
-include Windows.System.inc
-include Windows.UI.Input.inc
+include windows.system.inc
+include windows.ui.input.inc
 
 ifndef ____FITypedEventHandler_2_IInspectable_Windows__CUI__CCore__CCharacterReceivedEventArgs_INTERFACE_DEFINED__
 define ____FITypedEventHandler_2_IInspectable_Windows__CUI__CCore__CCharacterReceivedEventArgs_INTERFACE_DEFINED__

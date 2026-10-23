@@ -5,13 +5,13 @@ include stddef.inc
 ifndef __unknwn_h__
 include unknwn.inc
 endif
-include weakreference.inc
-include roapi.inc
+include winrt/weakreference.inc
+include winrt/roapi.inc
 ifdef BUILD_WINDOWS
 include winrt.inc
 endif
 
-include wrl\def.inc
-include wrl\internal.inc
+include winrt/wrl/def.inc
+include winrt/wrl/internal.inc
 
 endif

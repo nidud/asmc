@@ -6,7 +6,7 @@ define __windows2Eui2Examl2Emedia2Eanimation_h__
 ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
-include Windows.UI.inc
+include windows.ui.inc
 include Windows.UI.Xaml.inc
 
 ifndef ____FIIterator_1_Windows__CUI__CXaml__CMedia__CAnimation__CColorKeyFrame_INTERFACE_DEFINED__

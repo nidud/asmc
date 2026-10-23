@@ -124,7 +124,7 @@ endif
         }
     .ends
 
-ifdef _WIN64
+ifdef __SSE__
 
 D2D1_FloatMax proto {
     ifdef FLT_MAX

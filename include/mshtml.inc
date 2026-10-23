@@ -21,7 +21,7 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-include dxgitype.inc
+include DirectX/dxgitype.inc
 ifndef _OLECTL_H_
 include olectl.inc
 endif

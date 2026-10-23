@@ -6,7 +6,7 @@ define __windows2Eui2Examl2Eautomation2Eprovider_h__
 ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
-include Windows.UI.inc
+include windows.ui.inc
 include Windows.UI.Xaml.inc
 include Windows.UI.Xaml.Automation.Text.inc
 

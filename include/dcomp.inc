@@ -1,10 +1,10 @@
 .pragma list(push, 0)
 
-include d2dbasetypes.inc
+include DirectX/d2dBaseTypes.inc
 ifndef D3DMATRIX_DEFINED
-include d3d9types.inc
+include DirectX/d3d9types.inc
 endif
-include d2d1_1.inc
+include DirectX/d2d1_1.inc
 
 .pragma comment(lib, dcomp)
 

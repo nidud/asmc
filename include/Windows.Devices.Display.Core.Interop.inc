@@ -11,7 +11,7 @@ endif
 ifndef __ocidl_h__
 include ocidl.inc
 endif
-include Inspectable.inc
+include winrt/inspectable.inc
 
 ifdef __midl
 ifndef LUID_DEFINED

@@ -8,8 +8,8 @@ ifndef __unknwn_h__
 include unknwn.inc
 endif
 include dcommon.inc
-include D2DErr.inc
-include D2DBaseTypes.inc
+include d2derr.inc
+include d2dBaseTypes.inc
 include dxgiformat.inc
 ifndef D2D_NO_INCLUDE_D3D10
 include d3d10_1.inc

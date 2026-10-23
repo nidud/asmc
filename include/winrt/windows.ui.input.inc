@@ -6,7 +6,7 @@ define __windows2Eui2Einput_h__
 ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
-include Windows.Devices.Input.inc
+include windows.devices.input.inc
 
 ifndef ____FIIterator_1_Windows__CUI__CInput__CPointerPoint_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CUI__CInput__CPointerPoint_INTERFACE_DEFINED__

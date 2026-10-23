@@ -5,7 +5,7 @@ endif
 ifndef __windows2Emedia2Ecore2Einterop_h__
 define __windows2Emedia2Ecore2Einterop_h__
 
-include Inspectable.inc
+include winrt/Inspectable.inc
 include mfobjects.inc
 
 ifndef _WINAPIFAMILY_

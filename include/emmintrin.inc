@@ -880,10 +880,9 @@ _mm_cvtsd_si64 macro x:=<xmm0>
 _mm_cvttsd_si64 macro x:=<xmm0>
     exitm<_mmopab(cvttsd2si, rax, x)>
     endm
-_mm_cvtsi64_sd macro x:=<xmm0>, reg:=<rax>
-    cvtsi2sd x,reg
-    retm<x>
-    endm
+_mm_cvtsi64_sd proto fastcall :abs=<xmm0>, :qword {
+    cvtsi2sd _1,_2
+    }
 _mm_cvtsi64_si128 macro x, q
     ifnb <q>
 	mov rax,q

@@ -3760,11 +3760,13 @@ _mm512_loadu_epi16 macro p1
         exitm<_mm512_maskz_loadu_epi16(_MM_K0_REG64, p1)>
         endm
 
-_mm512_loadu_epi32 macro p1
-        exitm<_mm512_maskz_loadu_epi32(_MM_K0_REG, p1)>
+_mm512_loadu_epi32 macro p1, v1:=<zmm0>
+        exitm<_mm512_maskz_loadu_epi32(_MM_K0_REG, p1, v1)>
         endm
 
-_mm512_loadu_si512      equ <_mm512_loadu_epi32>
+_mm512_loadu_si512 macro p1, v1:=<zmm0>
+        exitm<_mm512_maskz_loadu_epi32(_MM_K0_REG, p1, v1)>
+        endm
 _mm512_loadu_epi64 macro p1
         exitm<_mm512_maskz_loadu_epi64(_MM_K0_REG, p1)>
         endm
@@ -3772,8 +3774,9 @@ _mm512_loadu_epi64 macro p1
 _mm512_store_epi32 macro p1, v1
         exitm<_mm512_mask_store_epi32(p1, _MM_K0_REG, v1)>
         endm
-
-_mm512_store_si512      equ <_mm512_store_epi32>
+_mm512_store_si512 macro p1, v1
+        exitm<_mm512_mask_store_epi32(p1, _MM_K0_REG, v1)>
+        endm
 _mm512_store_epi64 macro p1, v1
         exitm<_mm512_mask_store_epi64(p1,_MM_K0_REG, v1)>
         endm

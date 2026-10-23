@@ -8,7 +8,7 @@ define __windows2Eui2Examl2Emedia2Edxinterop_h__
 ifndef __oaidl_h__
 include oaidl.inc
 endif
-include dxgi.inc
+include DirectX/dxgi.inc
 
 if (NTDDI_VERSION ge NTDDI_WIN8)
 

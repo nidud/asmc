@@ -1,25 +1,25 @@
 ifndef _WRL_IMPLEMENTS_H_
 define _WRL_IMPLEMENTS_H_
 
-include inspectable.inc
-include roapi.inc
+include winrt/inspectable.inc
+include winrt/roapi.inc
 ifdef BUILD_WINDOWS
 include winrt.inc
 endif
-include activation.inc
-include WinString.inc
+include winrt/activation.inc
+include winstring.inc
 
 include new.inc
-include weakreference.inc
+include winrt/weakreference.inc
 include objbase.inc
 include cguid.inc
 include intrin.inc
 
-include wrl\def.inc
-include wrl\client.inc
+include winrt/wrl/def.inc
+include winrt/wrl/client.inc
 
 if (NTDDI_VERSION GE NTDDI_WINBLUE)
-include roerrorapi.inc
+include winrt/roerrorapi.inc
 endif
 
 ifndef __WRL_NO_DEFAULT_LIB__

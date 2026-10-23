@@ -7,7 +7,7 @@ ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
 include Windows.Storage.inc
-include Windows.UI.inc
+include windows.ui.inc
 
 ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CData__CPdf__CPdfDocument_INTERFACE_DEFINED__
 define ____FIAsyncOperationCompletedHandler_1_Windows__CData__CPdf__CPdfDocument_INTERFACE_DEFINED__

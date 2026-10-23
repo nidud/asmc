@@ -6,8 +6,8 @@ define __windows2Eui2Eviewmanagement_h__
 ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
-include Windows.UI.inc
-include Windows.UI.Core.inc
+include windows.ui.inc
+include windows.ui.core.inc
 
 ifndef ____FITypedEventHandler_2_Windows__CUI__CViewManagement__CAccessibilitySettings_IInspectable_INTERFACE_DEFINED__
 define ____FITypedEventHandler_2_Windows__CUI__CViewManagement__CAccessibilitySettings_IInspectable_INTERFACE_DEFINED__

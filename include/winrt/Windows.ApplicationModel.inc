@@ -7,7 +7,7 @@ ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
 include Windows.Storage.inc
-include Windows.System.inc
+include windows.system.inc
 
 ifndef ____FIIterator_1_Windows__CApplicationModel__CPackage_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CPackage_INTERFACE_DEFINED__

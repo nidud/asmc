@@ -1,0 +1,15 @@
+include stdio.inc
+include time.inc
+include tchar.inc
+
+.code
+_tmain proc
+   .new newtime:ptr tm
+   .new ltime:time_t
+    _time( &ltime )
+    mov newtime,gmtime( &ltime )
+    _tprintf( "Coordinated universal time is %s\n", asctime(newtime) )
+   .return( 0 )
+    endp
+
+    end _tstart

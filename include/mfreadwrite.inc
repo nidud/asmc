@@ -6,7 +6,7 @@ ifndef __mfreadwrite_h__
 define __mfreadwrite_h__
 
 include mfobjects.inc
-include MFTransform.inc
+include mftransform.inc
 
 .pragma comment(lib, mfreadwrite)
 

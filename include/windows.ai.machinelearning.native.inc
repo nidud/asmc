@@ -11,7 +11,7 @@ endif
 ifndef __ocidl_h__
 include ocidl.inc
 endif
-include d3d12.inc
+include DirectX/d3d12.inc
 
 ifndef _WINAPIFAMILY_
 include winapifamily.inc

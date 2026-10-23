@@ -7,8 +7,8 @@ define __windows2Edata2Epdf2Einterop_h__
 ifndef __oaidl_h__
 include oaidl.inc
 endif
-include dxgi.inc
-include d2dbasetypes.inc
+include DirectX/dxgi.inc
+include DirectX/d2dbasetypes.inc
 
 if (NTDDI_VERSION ge NTDDI_WINBLUE)
 

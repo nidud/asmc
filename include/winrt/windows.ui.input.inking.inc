@@ -7,7 +7,7 @@ ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
 include Windows.Storage.Streams.inc
-include Windows.UI.inc
+include windows.ui.inc
 include Windows.UI.Input.inc
 
 ifndef ____FIIterator_1_Windows__CUI__CInput__CInking__CInkRecognitionResult_INTERFACE_DEFINED__

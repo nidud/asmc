@@ -9,7 +9,7 @@ include objidl.inc
 include oleidl.inc
 include ocidl.inc
 include shtypes.inc
-include StructuredQueryCondition.inc
+include structuredquerycondition.inc
 
 ifndef _WINAPIFAMILY_
 include winapifamily.inc

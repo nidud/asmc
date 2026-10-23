@@ -2,8 +2,8 @@ ifndef _WINAPIFAMILY_
 include winapifamily.inc
 endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-include inspectable.inc
-include dxgi.inc
+include winrt/inspectable.inc
+include DirectX/dxgi.inc
 CreateDirect3D11DeviceFromDXGIDevice proto WINAPI :ptr, :ptr ptr
 CreateDirect3D11SurfaceFromDXGISurface proto WINAPI :ptr, :ptr ptr
 endif

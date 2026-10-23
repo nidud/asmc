@@ -6,7 +6,7 @@ define __windows2Enetworking2Esockets_h__
 ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
-include Windows.ApplicationModel.Background.inc
+include Windows.ApplicationModel.background.inc
 include Windows.Networking.inc
 include Windows.Security.Credentials.inc
 include Windows.Security.Cryptography.Certificates.inc

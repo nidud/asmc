@@ -306,7 +306,7 @@ include Windows.UI.Xaml.inc
 include Windows.UI.Xaml.Documents.inc
 include Windows.UI.Xaml.Navigation.inc
 include Windows.Web.inc
-include Windows.Web.Http.inc
+include windows.web.http.inc
 ifndef __windows2Eui2Examl2Einput_h__
  include windows.ui.xaml.input.inc
 endif

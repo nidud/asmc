@@ -5,8 +5,8 @@ endif
 ifndef __windows2Egraphics2Eholographic2Einterop_h__
 define __windows2Egraphics2Eholographic2Einterop_h__
 
-include inspectable.inc
-include d3d12.inc
+include winrt/inspectable.inc
+include DirectX/d3d12.inc
 ifndef _WINAPIFAMILY_
 include winapifamily.inc
 endif

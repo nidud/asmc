@@ -1739,13 +1739,12 @@ ifndef _STDLIB_
 include stdlib.inc
 endif
 
-	.data
-	 _startup	_startupinfo { 0 }
-	 __argc		int_t 0,0
-	 __targv	tarray_t 0
-	 _tenviron	tarray_t 0
-
-	.code
+.data
+ _startup	_startupinfo { 0 }
+ __argc		int_t 0,0
+ __targv	tarray_t 0
+ _tenviron	tarray_t 0
+.code
 
 mainCRTStartup proc
 

@@ -16,13 +16,13 @@ endif
 
 ifdef __UNIX__
 ifdef _WIN64
-__get_errno_ptr::
+ALIAS <__get_errno_ptr>=<_errno>
 else
-__errno_location::
+ALIAS <__errno_location>=<_errno>
 endif
 else
-__get_errno_ptr::
-__errno_location::
+ALIAS <__get_errno_ptr>=<_errno>
+ALIAS <__errno_location>=<_errno>
 endif
 
 _errno proc

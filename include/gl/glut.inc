@@ -1,7 +1,7 @@
 ifndef __glut_h__
 define __glut_h__
 ifndef _CRT_TERMINATE_DEFINED
- include stdlib.inc
+include stdlib.inc
 endif
 
 include gl/gl.inc
@@ -24,48 +24,38 @@ endif ;; _WIN32
 
 
 ifdef _GLPE
-
-    option win64:3
-
-    .data
-    __argc    int_t 0,0
-  ifdef _UNICODE
-    __argv    warray_t 0
-    __environ warray_t 0
-  else
-    __argv    array_t 0
-    __environ array_t 0
-  endif
-    _startup  db 128 dup(0)
-
-    .code
+.data
+ _startup   _startupinfo { 0 }
+ __argc     int_t 0,0
+ __argv     array_t 0
+ _environ   array_t 0
+.code
 
 glutStartup proc
-    .if !__getmainargs( addr __argc, addr __argv, addr __environ, 0, addr _startup )
+    .if !__getmainargs( addr __argc, addr __argv, addr _environ, 0, addr _startup )
         mov ecx,__argc
 ifdef _WIN64
         mov rdx,__argv
-        mov r8,__environ
+        mov r8,_environ
 else
-        mov edx,__argv
-        mov ebx,__environ
-        push    ebx
-        push    edx
-        push    ecx
+        mov  edx,__argv
+        mov  ebx,_environ
+        push ebx
+        push edx
+        push ecx
 endif
         main()
     .endif
     ret
-
-glutStartup endp
+    endp
 
 glutExit proc retval:int_t
-
     exit(retval)
-
-glutExit endp
+    endp
 
 _tstart equ <glutStartup>
+else
+_tstart equ <>
 endif ; _GLPE
 
 ifndef GLUT_API_VERSION

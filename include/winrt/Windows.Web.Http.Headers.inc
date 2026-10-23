@@ -6,10 +6,10 @@ define __windows2Eweb2Ehttp2Eheaders_h__
 ifndef __windows2Efoundation_h__
 include Windows.Foundation.inc
 endif
-include Windows.Globalization.inc
+include windows.globalization.inc
 include Windows.Networking.inc
 include Windows.Storage.Streams.inc
-include Windows.Web.Http.inc
+include windows.web.http.inc
 
 ifndef ____FIIterator_1_Windows__CWeb__CHttp__CHeaders__CHttpChallengeHeaderValue_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CWeb__CHttp__CHeaders__CHttpChallengeHeaderValue_INTERFACE_DEFINED__

@@ -7,7 +7,7 @@ define __windows2Efoundation_h__
 include inspectable.inc
 include AsyncInfo.inc
 include EventToken.inc
-include IVectorChangedEventArgs.inc
+include ivectorchangedeventargs.inc
 include windows.foundation.collections.inc
 
 ifndef ____FIIterator_1_byte_INTERFACE_DEFINED__

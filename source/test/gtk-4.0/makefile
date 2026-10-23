@@ -24,7 +24,7 @@ OBJS =	hello-world.o \
 	window-default.o
 
 .asm.o:
-	asmc64 -c -q -Zp8 -Cs -fpic $<
+	asmc64 -c -q -Zp8 -Cs -flt $<
 	gcc -o $* $*.o `pkg-config --cflags --libs gtk4`
 
 targets: $(OBJS)

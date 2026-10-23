@@ -547,15 +547,18 @@ endif
     CmdlineFini()
     .if !numArgs
         write_usage()
-    .elseif !numFiles
+       .return( 0 )
+    .endif
+    .if !numFiles
         asmerr(1017)
+    .endif
 
 ifdef _EXEC_LINK
-
+    .if ( rc != 1 || Options.no_linking )
 ifdef __UNIX__
-    .elseif ( rc == 1 && !Options.no_linking && Options.output_format == OFORMAT_ELF )
+    .elseif ( Options.output_format == OFORMAT_ELF )
 else
-    .elseif ( rc == 1 && !Options.no_linking && ( Options.link_linker || Options.link_exename ||
+    .elseif ( ( Options.link_linker || Options.link_exename ||
         Options.link_options || Options.output_format == OFORMAT_ELF ||
         ( Options.output_format == OFORMAT_COFF && MODULE._model == MODEL_FLAT ) ) )
 endif

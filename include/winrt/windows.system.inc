@@ -8,7 +8,7 @@ include Windows.Foundation.inc
 endif
 include Windows.Storage.inc
 include Windows.UI.Popups.inc
-include Windows.UI.ViewManagement.inc
+include windows.ui.viewmanagement.inc
 
 .namespace Windows
 .namespace System

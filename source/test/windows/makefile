@@ -35,7 +35,8 @@ win64 = CpuUsage.exe \
 	yuruyurau3.exe \
 	yuruyurau4.exe \
 	yuruyurau5.exe \
-	yuruyurau6.exe
+	yuruyurau6.exe \
+	Zoom.exe
 endif
 
 common= BouncingBalls.exe \

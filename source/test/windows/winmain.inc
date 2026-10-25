@@ -400,7 +400,7 @@ WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
 ; Creates the application window
 
-CApplication::CreateApplicationWindow proc uses rdi
+CApplication::CreateApplicationWindow proc
 
     .new hr:HRESULT = D2D1CreateFactory(
             D2D1_FACTORY_TYPE_SINGLE_THREADED,
@@ -426,7 +426,7 @@ CApplication::CreateApplicationWindow proc uses rdi
             NULL                            ; .hIconSm
             }
 
-        mov edi,RegisterClassEx(&wc)
+        RegisterClassEx(&wc)
 
         ;
         ; Create the application window.

@@ -25,6 +25,7 @@ win64 = CpuUsage.exe \
 	Fireworks.exe \
 	GeometryRealizationSample.exe \
 	ListViewSample.exe \
+	MTGestures.eax \
 	SimplePathAnimationSample.exe \
 	TimerCoalescence.exe \
 	WicViewerGdiPlus.exe \
@@ -58,7 +59,6 @@ common= BouncingBalls.exe \
 	IdentifyInputSource.exe \
 	IPicture.exe \
 	MagnifierSample.exe \
-	MTGestures.eax \
 	SimpleDirect2dApplication.exe \
 	TaskDialog.exe \
 	WicAnimatedGif.exe

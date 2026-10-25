@@ -676,7 +676,7 @@ CApplication::CreateTranslateTransform proc offsetX:float, offsetY:float,
 
 ;; Creates Translate transform with animation
 
-CApplication::CreateTranslateTransform2 proc vectorcall beginOffsetX:float, beginOffsetY:float,
+CApplication::CreateTranslateTransform2 proc beginOffsetX:float, beginOffsetY:float,
         beginOffsetZ:float, endOffsetX:float, endOffsetY:float, endOffsetZ:float,
         beginTime:float, endTime:float, translateTransform:ptr ptr IDCompositionTranslateTransform3D
 

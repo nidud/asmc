@@ -2063,12 +2063,24 @@ __vdecl_hypot_ps proto __vdecl :XVECTOR, :XVECTOR {
     addps	xmm0,xmm1
     sqrtps	xmm0,xmm0
     }
+__vdecl_hypot_sd proto __vdecl :real8, :real8 {
+    mulpd	xmm0,xmm0
+    mulpd	xmm1,xmm1
+    addpd	xmm0,xmm1
+    sqrtpd	xmm0,xmm0
+    }
+__vdecl_hypot_ss proto __vdecl :real4, :real4 {
+    mulss	xmm0,xmm0
+    mulss	xmm1,xmm1
+    addss	xmm0,xmm1
+    sqrtss	xmm0,xmm0
+    }
 _mm_hypot_sd macro x:=<xmm0>, y:=<xmm1>
-    __vdecl_hypot_pd(x, y)
+    __vdecl_hypot_sd(x, y)
     retm<xmm0>
     endm
 _mm_hypot_ss macro x:=<xmm0>, y:=<xmm1>
-    __vdecl_hypot_ps(x, y)
+    __vdecl_hypot_ss(x, y)
     retm<xmm0>
     endm
 _mm_hypot_pd macro x:=<xmm0>, y:=<xmm1>

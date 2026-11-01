@@ -6,13 +6,12 @@
 ;
 include windows.inc
 include magnification.inc
-include winres.inc
 include stdio.inc
 include tchar.inc
 
 option dllimport:none
 
-define IDD_WINZOOM      101
+define IDD_WINZOOM      100
 define IDC_CLOSE        1001
 
 define MAGZOOM_MIN      1.0
@@ -173,21 +172,14 @@ _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LP
     .return 0
     endp
 
-    RCBEGIN
-    RCTYPES 1
-    RCENTRY RT_DIALOG
-    RCENUMN 1
-    RCENUMX IDD_WINZOOM
-    RCLANGX LANGID_US
-    STYLE equ DS_SETFONT or DS_MODALFRAME or DS_FIXEDSYS or WS_POPUP or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX
-    DIALOGEX STYLE, 4, 100, 100, 160, 130
-     CAPTION "Windows Zoom"
-     FONT 8, "MS Shell Dlg", 400, 0, 1
-      LTEXT "Windows Zoom Version 1.0 Beta",IDC_STATIC,10,10,140,12
-      LTEXT "Windows Magnifier with a point of interest",IDC_STATIC,10,22,110,24
-      LTEXT "Usage:\nHide the dialog and choose a place of interest using the mouse. Hold Shift while scrolling to zoom or pan.",IDC_STATIC,10,50,140,60
-      DEFPUSHBUTTON "&Close",IDC_CLOSE,60,100,39,12
-    DLGEND
-    RCEND
-
+.resource
+ DIALOGEX 100, 100, 160, 130,
+ STYLE DS_SETFONT or DS_MODALFRAME or DS_FIXEDSYS or WS_POPUP or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
+ FONT 8, "MS Shell Dlg", 400, 0, 1,
+ CAPTION "Windows Zoom" {
+    LTEXT "Windows Zoom Version 1.0 Beta",IDC_STATIC,10,10,140,12,
+    LTEXT "Windows Magnifier with a point of interest",IDC_STATIC,10,22,110,24,
+    LTEXT "Usage:\nHide the dialog and choose a place of interest using the mouse. Hold Shift while scrolling to zoom or pan.",IDC_STATIC,10,50,140,60,
+    DEFPUSHBUTTON "&Close",IDC_CLOSE,60,100,39,12
+    }
     end _tstart

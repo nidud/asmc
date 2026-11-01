@@ -28,32 +28,16 @@ externdef list_pos:DWORD
     W equ <word ptr>
     D equ <dword ptr>
 
-ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_t, string:string_t,
-        pStringOffset:string_t, pUnicode:ptr byte
+ExpandCString proc __ccall uses rsi rdi rbx data:string_t, binary:string_t, string:string_t
 
    .new hex_count:char_t
-   .new Unicode:char_t
-   .new hash:dword
-    ldr rsi,string
 
-    ; "binary" string
-   .new sbuf:string_t = alloc_line()
-    mov rdi,buffer
-    mov rdx,rax
+    ldr rsi,string
+    ldr rdi,data
+    ldr rdx,binary
+
     xor ebx,ebx
     mov [rdx],rbx
-    xor eax,eax
-    .if ( MODULE.wstring )
-        mov eax,1
-    .endif
-    .if ( W[rsi] == '"L' )
-        mov MODULE.LStringUsed,1
-        mov eax,1
-        add rsi,1
-    .endif
-    mov rcx,pUnicode
-    mov [rcx],al
-    mov Unicode,al
     movsb
 
     .while B[rsi]
@@ -105,7 +89,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                 mov B[rdx],0x3F
                 mov eax,33362C22h   ; <",63>
                case_format:
-                mov rcx,buffer
+                mov rcx,data
                 add rcx,1
                 .if ( ( rcx == rdi && al == [rdi-1] ) || ( al == [rdi-1] && ah == [rdi-2] ) )
                     shr eax,16
@@ -161,7 +145,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
               .case '0'
                 .if ( !isldigit( [rsi+1] ) )
                     lea rax,[rdi-1]
-                    .if rax == buffer
+                    .if rax == data
                         dec rdi
                         mov eax,',0'
                         stosw
@@ -205,7 +189,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
                .endc
               .case '"'         ; <",'"',">
                 mov ah,','
-                mov rcx,buffer
+                mov rcx,data
                 add rcx,1
                 ; db '"',xx",'"',0
                 .if ( ( rcx == rdi && al == [rdi-1] ) || ( al == [rdi-1] && ah == [rdi-2] ) )
@@ -250,26 +234,53 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
             add rsi,1
         .endif
     .endw
-
+    mov ecx,0x22222C
     xor eax,eax
     mov [rdi],al
     mov [rdx],al
-    .if ( D[rdi-3] == 0x22222C )
-        mov B[rdi-3],0
+    .if ( ecx == [rdi-3] )
+        mov [rdi-3],al
     .endif
-    mov rax,pStringOffset
-    mov [rax],rsi
-    assume rsi:ptr str_item
-    mov rcx,sbuf
+    mov rax,rsi
+    mov rcx,binary
     sub rdx,rcx
-    mov rbx,rdx
+    ret
+    endp
 
+
+ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_t, string:string_t,
+        pStringOffset:string_t, pUnicode:ptr byte
+
+   .new Unicode:char_t
+   .new hash:dword
+    ldr rsi,string
+
+    ; "binary" string
+   .new sbuf:string_t = alloc_line()
+    mov rdi,buffer
+    mov rdx,rax
+    xor eax,eax
+    .if ( MODULE.wstring )
+        mov eax,1
+    .endif
+    .if ( W[rsi] == '"L' )
+        mov MODULE.LStringUsed,1
+        mov eax,1
+        add rsi,1
+    .endif
+    mov rcx,pUnicode
+    mov [rcx],al
+    mov Unicode,al
+    ExpandCString(rdi, rdx, rsi)
+    mov rsi,pStringOffset
+    mov [rsi],rax
+    mov rbx,rdx
     .for ( eax = FNVBASE, edx = 0 : edx < ebx : edx++ )
         imul eax,eax,FNVPRIME
         xor  al,[rcx+rdx]
     .endf
     mov hash,eax
-
+    assume rsi:ptr str_item
     .for ( edi = 0, rsi = MODULE.StrStack : rsi : edi++, rsi = [rsi].next )
         mov cl,[rsi].unicode
         mov eax,[rsi].count

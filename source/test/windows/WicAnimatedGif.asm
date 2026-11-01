@@ -17,10 +17,9 @@ include windows.inc
 include wincodec.inc
 include commdlg.inc
 include DirectX/d2d1.inc
-include winres.inc
 include tchar.inc
 
-define IDR_WICANIMATEDGIF   103
+define IDR_WICANIMATEDGIF   100
 define IDM_EXIT             105
 define IDM_FILE             106
 
@@ -1499,21 +1498,11 @@ _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:L
     .return( 0 )
     endp
 
-
-RCBEGIN
-
-    RCTYPES 1
-    RCENTRY RT_MENU
-    RCENUMN 1
-    RCENUMX IDR_WICANIMATEDGIF
-    RCLANGX LANGID_US
-
-    MENUBEGIN
-      MENUNAME "&File", MF_END
-        MENUITEM IDM_FILE, "&Open..."
-        MENUITEM IDM_EXIT, "E&xit", MF_END
-    MENUEND
-
-RCEND
-
+.resource
+  MENU {
+    POPUP "&File" {
+        MENUITEM "&Open...", IDM_FILE,
+        MENUITEM "E&xit", IDM_EXIT
+        }
+    }
     end _tstart

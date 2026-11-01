@@ -768,6 +768,11 @@ EndsDir proc __ccall uses rbx i:int_t, tokenarray:token_t
         imul ecx,i,asm_tok
         .return( asmerr( 2008, [rbx+rcx].string_ptr ) )
     .endif
+ifdef USE_RESOURCE
+    .if ( MODULE.ResourceParsing )
+        WriteResource()
+    .endif
+endif
     .if ( Parse_Pass != PASS_1 )
         .if ( MODULE.list )
             LstWrite( LSTTYPE_LABEL, 0, NULL )

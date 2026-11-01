@@ -524,21 +524,14 @@ _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:L
     .return( hr )
     endp
 
-    RCBEGIN
-    RCTYPES 1
-    RCENTRY RT_DIALOG
-    RCENUMN 1
-    RCENUMX IDD_HELP
-    RCLANGX LANGID_US
-    STYLE equ DS_SETFONT or DS_MODALFRAME or DS_FIXEDSYS or WS_POPUP or WS_CAPTION or WS_SYSMENU
-    DIALOGEX STYLE, 4, 100, 100, 160, 130
-    CAPTION "Windows samples"
-    FONT 12, "MS Shell Dlg", 400, 0, 1
-    LTEXT "Funcion Keys",IDC_STATIC,10,10,50,12
-    LTEXT "Enter\nUp/Down\nLeft/Right\nPgUp/PgDn\nHome/End\nF11",IDC_STATIC,15,20,40,60
-    LTEXT "Default\nSpeed\nIntensity\nPoint Count\nPoint size\nToggle full screen",IDC_STATIC,70,20,60,60
+.resource
+ DIALOGEX 100, 100, 160, 130,
+ STYLE DS_SETFONT or DS_MODALFRAME or DS_FIXEDSYS or WS_POPUP or WS_CAPTION or WS_SYSMENU,
+ CAPTION "Windows samples",
+ FONT 12, "MS Shell Dlg", 400, 0, 1 {
+    LTEXT "Funcion Keys",IDC_STATIC,10,10,50,12,
+    LTEXT "Enter\nUp/Down\nLeft/Right\nPgUp/PgDn\nHome/End\nF11",IDC_STATIC,15,20,40,60,
+    LTEXT "Default\nSpeed\nIntensity\nPoint Count\nPoint size\nToggle full screen",IDC_STATIC,70,20,60,60,
     DEFPUSHBUTTON "OK",IDOK,60,100,39,12
-    DLGEND
-    RCEND
-
+    }
     end _tstart

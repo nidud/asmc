@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.41 - xx xxx 2026
+- added simplistic resource compiler for Windows
+- added .resource segment and parsing
 - fixed VSib addressing in 32-bit
 - added .pragma aux(pop) and KMASK - see bin-invoke.kmask.asm
 - added APX support for .XMM (32-bit: was set to AVX)

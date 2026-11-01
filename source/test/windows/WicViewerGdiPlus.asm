@@ -16,10 +16,9 @@ include windows.inc
 include wincodec.inc
 include commdlg.inc
 include gdiplus.inc
-include winres.inc
 include tchar.inc
 
-IDR_MAINMENU            equ 104
+IDR_MAINMENU            equ 100
 IDM_EXIT                equ 106
 IDM_FILE                equ 107
 
@@ -554,17 +553,11 @@ wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LP
     ret
     endp
 
-    RCBEGIN
-    RCTYPES 1
-    RCENTRY RT_MENU
-    RCENUMN 1
-    RCENUMX IDR_MAINMENU
-    RCLANGX LANGID_US
-    MENUBEGIN
-      MENUNAME "&File", MF_END
-        MENUITEM IDM_FILE, "&Open..."
-        MENUITEM IDM_EXIT, "E&xit", MF_END
-    MENUEND
-    RCEND
-
+.resource
+  MENU {
+    POPUP "&File" {
+        MENUITEM "&Open...", IDM_FILE,
+        MENUITEM "E&xit", IDM_EXIT
+        }
+    }
     end _tstart

@@ -3738,8 +3738,18 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
 
     ldr rbx,tokenarray
     .if ( CurrEnum && [rbx].token == T_ID )
-        .return EnumDirective( 0, rbx )
+        ; v2.40.07: possible macro expansion: ID = macro(...)
+        mov rax,[rbx].string_ptr
+        movzx eax,word ptr [rax]
+        .if ( eax != '??' )
+            .return EnumDirective( 0, rbx )
+        .endif
     .endif
+ifdef USE_RESOURCE
+    .if ( MODULE.ResourceParsing )
+        .return ParseResource(rbx)
+    .endif
+endif
     mov i,0
 
     .if ( [rbx].token == T_ID && TokenCount > 2 &&

@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    240
-define _ASMC_BUILD  6
+define _ASMC_BUILD  7
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -65,6 +65,8 @@ include tstring.inc
 
 define USE_COMALLOC
 define USE_INDIRECTION
+define USE_RESOURCE
+
 define DWARF_SUPP 1         ; v2.21: dwarf debug info added - just line numbers (-Zd) for now
 
 define OLDKEYWORDS          ; NAME, SIZE, ..
@@ -513,6 +515,21 @@ endif
     sym             asym_t ?  ; set by StructDirective()
    .ends
 
+ifdef USE_RESOURCE
+resource_t typedef ptr res_item
+.template res_item
+    next    resource_t ?
+    line    string_t ?      ;
+    hash    dd ?            ; hash value of token
+    type    dd ?            ; RT_ type
+    name    dd ?            ; nameID
+    icon    dw 2 dup(?)     ; ICON/CURSOR ids { count, start }
+   .ends
+
+ParseResource proto __ccall :ptr asm_tok
+WriteResource proto
+endif
+
 define PE_SUBSYSTEM_NATIVE  0x01
 define PE_SUBSYSTEM_GUI     0x02
 define PE_SUBSYSTEM_CUI     0x03
@@ -762,6 +779,9 @@ define PE_DLL               0x04
     ComStack                ptr com_item ?  ; v2.27: .CLASSDEF, .COMDEF, .ENDS
     RetStack                hllitem_t ?     ; v2.30: .return info
     NspStack                ptr nsp_item ?  ; v2.33 namespace stack
+ifdef USE_RESOURCE
+    ResStack                ptr res_item ?  ; v2.41 resource stack
+endif
     ContextStack            ptr byte ?
     ContextFree             ptr byte ?      ; v2.10: "free items" heap implemented.
     SavedContexts           ptr byte ?
@@ -785,6 +805,9 @@ define PE_DLL               0x04
      PhaseError             db : 1 ?        ; phase error flag
      OrgOccured             db : 1 ?        ; set by BackPatch()
      LStringUsed            db : 1 ?        ; L"Unicode" used --> allow dw "string"
+ifdef USE_RESOURCE
+     ResourceParsing        db : 1 ?
+endif
     ends
    .ends
 

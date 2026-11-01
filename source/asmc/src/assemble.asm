@@ -430,6 +430,9 @@ ModulePassInit proc __ccall private uses rsi rdi rbx
     ;
     ; set default values not affected by the masm 5.1 compat switch
     ;
+ifdef USE_RESOURCE
+    mov MODULE.ResourceParsing,0
+endif
     mov MODULE.procs_private,0
     mov MODULE.procs_export,0
     mov MODULE.offsettype,OT_GROUP

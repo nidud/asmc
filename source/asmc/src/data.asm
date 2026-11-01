@@ -939,28 +939,73 @@ next_item:
 
                     .if ( Options.strict_masm_compat == 0 && ( MODULE.wstring || MODULE.LStringUsed ) &&
                             string_len > 1 && no_of_bytes == 2 )
-ifdef __UNIX__
                         xor edi,edi
-else
-                        mov ecx,string_len
-                        lea ecx,[rcx+rcx+8]
-                        mov rdi,alloca(ecx)
-                        ;; v2.24 - Unicode CodePage
-                        .if ( MultiByteToWideChar( MODULE.codepage, 0,
-                                rsi, string_len, rdi, string_len ) )
-                            add eax,eax
-                            OutputBytes( rdi, eax, NULL )
-                        .else
-                            xor edi,edi
+ifndef __UNIX__
+                        ;; v2.41 - default to UTF8
+                        .if ( MODULE.codepage && MODULE.codepage != 65001 ) ; CP_UTF8
+                            mov ecx,string_len
+                            lea ecx,[rcx+rcx+8]
+                            mov rdi,alloca(ecx)
+                            ;; v2.24 - Unicode CodePage
+                            .if ( MultiByteToWideChar( MODULE.codepage, 0,
+                                    rsi, string_len, rdi, string_len ) )
+                                add eax,eax
+                                OutputBytes( rdi, eax, NULL )
+                            .else
+                                xor edi,edi
+                            .endif
                         .endif
 endif
                         .if ( rdi == NULL )
                             mov edi,string_len
-                            .while ( edi )
-                                OutputBytes( rsi, 1, NULL )
-                                FillDataBytes( 0, 1 )
-                                inc rsi
-                                dec edi
+                            .whiles ( edi > 0 )
+                                movzx eax,byte ptr [rsi]
+                                .if ( eax > 0xBF && eax < 0xF8 )
+                                    .if ( eax < 0xE0 )
+                                        and     eax,0x1F ; C0 and C1
+                                        shl     eax,6
+                                        movzx   edx,byte ptr [rsi+1]
+                                        and     edx,0x3F
+                                        or      eax,edx
+                                        mov     ecx,2
+                                    .elseif ( eax < 0xF0 )
+                                        and     eax,0x0F
+                                        shl     eax,12
+                                        movzx   ecx,byte ptr [rsi+1]
+                                        and     ecx,0x3F
+                                        shl     ecx,6
+                                        or      eax,ecx
+                                        movzx   edx,byte ptr [rsi+2]
+                                        and     edx,0x3F
+                                        or      eax,edx
+                                        mov     ecx,3
+                                    .else
+                                        and     eax,0x07 ; F5 to F7
+                                        shl     eax,18
+                                        movzx   ecx,byte ptr [rsi+1]
+                                        and     ecx,0x3F
+                                        shl     ecx,12
+                                        or      eax,ecx
+                                        movzx   ecx,byte ptr [rsi+2]
+                                        and     ecx,0x3F
+                                        shl     ecx,6
+                                        or      eax,ecx
+                                        movzx   ecx,byte ptr [rsi+3]
+                                        and     ecx,0x3F
+                                        or      eax,ecx
+                                        mov     ecx,4
+                                    .endif
+                                .else
+                                    and eax,0x7F ; F8 to FF
+                                    mov ecx,1
+                                .endif
+                                add rsi,rcx
+                                sub edi,ecx
+                                mov tmp,ah
+                                movzx ecx,al
+                                FillDataBytes( cl, 1 )
+                                movzx ecx,tmp
+                                FillDataBytes( cl, 1 )
                             .endw
                         .endif
                     .else

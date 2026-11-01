@@ -68,8 +68,8 @@ define __TOKEN_INC
      itemlen        dd ?        ; T_NUM: size
      lastidx        dd ?        ; T_FINAL: last index (used in RunMacro())
     ends
-    hash1           dd ?
-    hash2           dd ?
+    hash1           dd ?        ; tolower
+    hash2           dd ?        ; case sensitive
     string_ptr      string_t ?
     tokpos          string_t ?  ; points to item in CurrSource
    .ends

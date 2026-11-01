@@ -142,6 +142,7 @@
     <ASMC Include="src\preproc.asm" />
     <ASMC Include="src\proc.asm" />
     <ASMC Include="src\qfloat.asm" />
+    <ASMC Include="src\resource.asm" />
     <ASMC Include="src\reswords.asm" />
     <ASMC Include="src\return.asm" />
     <ASMC Include="src\safeseh.asm" />

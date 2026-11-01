@@ -6,7 +6,6 @@ include stdio.inc
 include math.inc
 include immintrin.inc
 include commctrl.inc
-include winres.inc
 include tchar.inc
 
 .pragma list(pop)
@@ -25,7 +24,7 @@ include tchar.inc
 define CLASS_NAME   <"MainWindowClass">
 define WINDOWSTYLES WS_VISIBLE or WS_POPUP
 define ID_TIMER     1
-define IDD_HELP     129
+define IDD_HELP     100
 define RADIUS       0.17
 
 .class CApplication

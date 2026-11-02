@@ -942,7 +942,7 @@ next_item:
                         xor edi,edi
 ifndef __UNIX__
                         ;; v2.41 - default to UTF8
-                        .if ( MODULE.codepage && MODULE.codepage != 65001 ) ; CP_UTF8
+                        .if ( MODULE.codepage != 65001 ) ; CP_UTF8
                             mov ecx,string_len
                             lea ecx,[rcx+rcx+8]
                             mov rdi,alloca(ecx)

@@ -7,6 +7,7 @@ Asmc Macro Assembler Reference
 - [COMMENT](comment.md)
 - [ECHO](echo.md)
 - [END](end.md)
+- [INCBIN](incbin.md)
 - [INCLUDE](include.md)
 - [INCLUDELIB](includelib.md)
 - [MMWORD](mmword.md)

@@ -129,10 +129,10 @@ Asmc Macro Assembler Reference
 
 <table>
 <tr><td><a href="alias.md">ALIAS</a></td><td><a href="assume.md">ASSUME</a></td><td><a href="comment.md">COMMENT</a></td></tr>
-<tr><td><a href="echo.md">ECHO</a></td><td><a href="end.md">END</a></td><td><a href="include.md">INCLUDE</a></td></tr>
-<tr><td><a href="includelib.md">INCLUDELIB</a></td><td><a href="option.md">OPTION</a></td><td><a href="popcontext.md">POPCONTEXT</a></td></tr>
-<tr><td><a href="pushcontext.md">PUSHCONTEXT</a></td><td><a href="dot-radix.md">.RADIX</a></td><td><a href="dot-safeseh.md">.SAFESEH</a></td></tr>
-<tr><td><a href="dot-pragma.md">.PRAGMA</a></td></tr>
+<tr><td><a href="echo.md">ECHO</a></td><td><a href="end.md">END</a></td><td><a href="incbin.md">INCBIN</a></td></tr>
+<tr><td><a href="include.md">INCLUDE</a></td><td><a href="includelib.md">INCLUDELIB</a></td><td><a href="option.md">OPTION</a></td></tr>
+<tr><td><a href="popcontext.md">POPCONTEXT</a></td><td><a href="pushcontext.md">PUSHCONTEXT</a></td><td><a href="dot-radix.md">.RADIX</a></td></tr>
+<tr><td><a href="dot-safeseh.md">.SAFESEH</a></td><td><a href="dot-pragma.md">.PRAGMA</a></td></tr>
 </table>
 
 ## Procedures
@@ -175,7 +175,8 @@ Asmc Macro Assembler Reference
 <tr><td><a href="dot-cdat.md">.CDAT</a></td><td><a href="dot-code.md">.CODE</a></td><td><a href="dot-const.md">.CONST</a></td></tr>
 <tr><td><a href="dot-data.md">.DATA</a></td><td><a href="dot-dataq.md">.DATA?</a></td><td><a href="dot-dosseg.md">.DOSSEG</a></td></tr>
 <tr><td><a href="dot-exit.md">.EXIT</a></td><td><a href="dot-fardata.md">.FARDATA</a></td><td><a href="dot-fardataq.md">.FARDATA?</a></td></tr>
-<tr><td><a href="dot-model.md">.MODEL</a></td><td><a href="dot-stack.md">.STACK</a></td><td><a href="dot-startup.md">.STARTUP</a></td></tr>
+<tr><td><a href="dot-model.md">.MODEL</a></td><td><a href="dot-resource.md">.RESOURCE</a></td><td><a href="dot-stack.md">.STACK</a></td></tr>
+<tr><td><a href="dot-startup.md">.STARTUP</a></td></tr>
 </table>
 
 ## String

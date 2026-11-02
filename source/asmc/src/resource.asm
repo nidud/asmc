@@ -18,12 +18,19 @@ include lqueue.inc
 include fastpass.inc
 include resource.inc
 
+define RESID        100 ; First ID
+define STRID        384 ; First string ID
+
+define RCMAXTYPES   16  ; Max RC_ types
+define RCMAXRESID   256 ; Max ID
+
 ; Labels for resource data
 
-define R0LABEL  <"R$0%03X">
-define R1LABEL  <"R$1%03X">
-define R2LABEL  <"R$2%03X">
-define R3LABEL  <"R$3%03X">
+define R0LABEL      <"R$0%03X">
+define R1LABEL      <"R$1%03X">
+define R2LABEL      <"R$2%03X">
+define R3LABEL      <"R$3%03X">
+
 
 ; Hashing for resource keywords
 
@@ -369,7 +376,7 @@ WriteIcon proc __ccall file:string_t, resource:resource_t
     movzx eax,[rdi].res_item.icon[2]
     mov entry_id,eax
     mov eax,[rdi].res_item.name
-    add eax,100
+    add eax,RESID
     mov res_id,eax
     mov rax,iconbuf
     .if ( [rax].ICONDIR.idType == 2 )
@@ -510,7 +517,7 @@ GetValidOption proc __ccall tokenarray:token_t, i:pint_t, count:int_t, array:pby
     endp
 
 
-; ACCELERATORS [optional-statements] {event, idvalue, [type] [options]... }
+; ACCELERATORS {event, idvalue, [type] [options]... }
 
 WriteAccelerators proc __ccall tokenarray:token_t
 
@@ -592,11 +599,10 @@ error:
     endp
 
 
-; STRINGTABLE  {string  ...} -- 64..79
+; STRINGTABLE  {string  ...} -- 384..n
 
 WriteStringTable proc __ccall tokenarray:token_t
 
-   .new i:int_t, id, flags, key
    .new oldstat:input_status
    .new buffer[4096]:char_t
 
@@ -604,7 +610,6 @@ WriteStringTable proc __ccall tokenarray:token_t
     PushInputStatus( &oldstat )
     tstrcpy( CurrSource, [rbx+asm_tok].string_ptr )
     mov TokenCount,Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
-
     .for ( esi = 0, edi = 0 : edi < TokenCount : esi++ )
         .if ( [rbx].token != T_STRING )
             jmp error
@@ -1077,7 +1082,7 @@ WriteEntry proc __ccall resource:resource_t, tokenarray:token_t
     ldr rsi,resource
     ldr rbx,tokenarray
     mov edi,[rsi].name
-    add edi,100
+    add edi,RESID
 
     mov dialogex,0
     AddLineQueueX( " %r 4", T_ALIGN )
@@ -1132,12 +1137,11 @@ WriteEntry proc __ccall resource:resource_t, tokenarray:token_t
     ret
     endp
 
-define RCMAXTYPES 16
-define RCMAXRESID 256
 
 WriteResource proc public
 
    .new ResIdCount:int_t
+   .new StrCounter:int_t = STRID
    .new types[RCMAXTYPES]:byte = {0}
    .new names[RCMAXRESID]:byte
    .new typei[RCMAXRESID]:byte
@@ -1159,11 +1163,11 @@ WriteResource proc public
             .if ( eax == RT_ICON || eax == RT_CURSOR )
                 movzx edx,[rsi].icon[2]
                 .for ( ecx = 0 : cx < [rsi].icon[0] : ecx++, edx++, edi++ )
-                    sub edx,100
+                    sub edx,RESID
                     mov names[rdi],dl
                     mov typei[rdi],al
                     inc types[rax]
-                    add edx,100
+                    add edx,RESID
                 .endf
                 .if ( eax == RT_ICON )
                     inc types[RT_GROUP_ICON]
@@ -1215,10 +1219,13 @@ WriteResource proc public
             .if ( bl == typei[rdi] )
                 mov typei[rdi],0
                 movsx edx,names[rdi]
-                add edx,100
+                add edx,RESID
                 mov ecx,edx
                 .if ( bl == RT_STRING )
-                    mov ecx,(64 shr 4) + 1
+                    mov ecx,StrCounter
+                    add StrCounter,16
+                    shr ecx,4
+                    inc ecx
                 .endif
                 AddLineQueueX( " %r %d, %r " R1LABEL " + 0x80000000", T_DD, ecx, T_SECTIONREL, edx )
             .endif
@@ -1229,7 +1236,7 @@ WriteResource proc public
 
     .for ( edi = 0 : edi < ResIdCount : edi++ )
         movsx ebx,names[rdi]
-        add ebx,100
+        add ebx,RESID
         AddLineQueueX( R1LABEL " %r 0,0,0,0x10000", ebx, T_DD )
         AddLineQueueX( " %r %d, %r " R2LABEL, T_DD, language, T_SECTIONREL, ebx )
     .endf

@@ -31,4 +31,5 @@ Asmc Macro Assembler Reference
 - [Directives Reference](doc/directive/readme.md)
 - [Symbols Reference](doc/symbol/readme.md)
 - [Operators Reference](doc/operator/readme.md)
+- [Asmc Resource Compiler Reference](doc/resource/readme.md)
 - [Asmc Build Tools Reference](doc/tools/readme.md)

@@ -12,6 +12,7 @@ Asmc Macro Assembler Reference
 - [.FARDATA](dot-fardata.md)
 - [.FARDATA?](dot-fardataq.md)
 - [.MODEL](dot-model.md)
+- [.RESOURCE](dot-resource.md)
 - [.STACK](dot-stack.md)
 - [.STARTUP](dot-startup.md)
 

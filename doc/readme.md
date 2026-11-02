@@ -12,6 +12,7 @@ The latest version of this document may be obtained by visiting https://github.c
 - [Directives Reference](directive/readme.md) Provides links to topics discussing the use of directives in Asmc.
 - [Symbols Reference](symbol/readme.md) Provides links to topics discussing the use of symbols in Asmc.
 - [Operators Reference](operator/readme.md) Provides links to topics discussing the use of operators in Asmc.
+- [Asmc Resource Compiler Reference](resource/readme.md) Provides links to topics discussing the use of the Asmc Resource Compiler.
 - [Asmc Build Tools Reference](tools/readme.md) Provides links to topics discussing the build tools in Asmc.
 
 Copyright (C) The Asmc [Contributors](contributors.md). All Rights Reserved.

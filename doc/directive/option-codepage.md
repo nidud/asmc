@@ -4,7 +4,7 @@ Asmc Macro Assembler Reference
 
 **OPTION CODEPAGE**:_value_
 
-This controls Unicode creation. Value is the first argument to MultiByteToWideChar(). The default value is 0.
+This controls Unicode creation. Value is the first argument to MultiByteToWideChar() if value differ from CP\_UTF8. The default value is CP\_UTF8 (65001).
 
 The switch /ws is also extended to /ws[_value_].
 

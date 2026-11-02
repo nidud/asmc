@@ -31,7 +31,7 @@ Options global_options {
         LANG_NONE,              ; .langtype
         MODEL_NONE,             ; ._model
         FCT_MSC,                ; .fctype
-        0,                      ; .codepage
+        65001,                  ; .codepage = UTF8
         1,                      ; .floatdigits
         {{0,0,0,0}},            ; .cpu
         0,                      ; .frame_auto

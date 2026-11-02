@@ -2,8 +2,8 @@
 #define _UNICODE
 #include <windows.h>
 
-#define IDS_HELLO    64
-#define IDS_GOODBYE  65
+#define IDS_HELLO    384
+#define IDS_GOODBYE  385
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {

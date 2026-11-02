@@ -54,6 +54,7 @@ output_opc proc __ccall uses rdi rbx
 
    .new m_opid:dword
    .new m_type:dword
+   .new m_class:dword
    .new v_type:dword
    .new m_size:byte
    .new v_size:byte
@@ -617,6 +618,7 @@ output_opc proc __ccall uses rdi rbx
                 lea rdx,opnd_clstab
                 lea rdx,[rdx+rax*8]
                 mov eax,[rdx].opnd_class.opnd_type[rcx]
+                mov m_class,eax
                 .if ( [rsi].Vex.HALF && ecx )
                     or eax,[rdx].opnd_class.opnd_type[0]
                 .endif
@@ -737,6 +739,12 @@ output_opc proc __ccall uses rdi rbx
                     .case T_VPCOMPRESSW
                         mov cl,2
                     .endsw
+
+                    ; Use the declared scalar memory width, not an inferred
+                    ; vector or destination width, for an implicit word operand.
+                    .if ( m_class & OP_M16 && !( m_class & ( OP_M32 or OP_M64 ) ) )
+                        mov cl,2
+                    .endif
 
                     mov al,w_size
                     .if ( cl == 1 || cl == 2 )

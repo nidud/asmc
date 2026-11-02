@@ -616,10 +616,12 @@ output_opc proc __ccall uses rdi rbx
                 movzx eax,[rdi].opclsidx
                 lea rdx,opnd_clstab
                 lea rdx,[rdx+rax*8]
-                mov eax,[rdx].opnd_class.opnd_type[rcx]
+                xor eax,eax
                 .if ( [rsi].Vex.HALF && ecx )
                     or eax,[rdx].opnd_class.opnd_type[0]
                 .endif
+                mov ecx,[rdx].opnd_class.opnd_type[rcx]
+                or  eax,ecx
                 mov edx,m_opid
                 or  eax,[rsi].opnd[rdx].type
                 .if ( [rsi].Vex.L )
@@ -635,7 +637,6 @@ output_opc proc __ccall uses rdi rbx
                     or eax,OP_YMM
                 .endif
                 mov m_type,eax
-
                 xor eax,eax
                 .if ( [rsi].Modifier.Broadcast )
                     mov cl,[rsi].Modifier.BCShift
@@ -648,13 +649,18 @@ output_opc proc __ccall uses rdi rbx
 
                 xor eax,eax ; get memory size
                 mov cl,[rsi].mem_type
-                .if ( cl == MT_ZWORD )
+                .switch pascal
+                .case cl == MT_EMPTY
+                    mov eax,OP_M16 ; v2.40.09: added for FP16 (agourakis82)
+                    and eax,ecx
+                    shr eax,8
+                .case cl == MT_ZWORD
                     mov al,64
-                .elseif !( cl & MT_SPECIAL )
+                .case !( cl & MT_SPECIAL )
                     and cl,MT_SIZE_MASK
                     inc cl
                     mov al,cl
-                .endif
+                .endsw
                 mov m_size,al
                 .if ( al == 64 )
                     or m_type,OP_M512

@@ -238,7 +238,9 @@ OpCls( R32,     XMM_M16,      NONE )
 OpCls( R64,     XMM_M16,      NONE )
 OpCls( XMM,     XMM_M128_M16, I8_U )
 OpCls( K,       XMM_M128_M16, I8_U )
-OpCls( XMM_M128_M16, XMM,     NONE )
+OpCls( XMM,     XMM_M16,      I8_U )
+OpCls( K,       XMM_M16,      I8_U )
+OpCls( XMM_M16, XMM,          NONE )
 
 ; float and { vector } assignment
 

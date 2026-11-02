@@ -4,6 +4,7 @@ Asmc Macro Assembler Reference
 
 These people contributed to Asmc (additions, bugfixes, bug reports):
 
+- agourakis82
 - Alex Xu
 - Andre Tampubolon
 - Andrea Pappacoda

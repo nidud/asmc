@@ -40,4 +40,4 @@ Asmc Macro Assembler Reference
 
 #### See Also
 
-[Directives Reference](readme.md) | [Code Labels](code-labels.md)
+[Directives Reference](readme.md) | [Code Labels](code-labels.md) | [String Literals](string-literals.md)

@@ -24,13 +24,18 @@ externdef list_pos:DWORD
 
    .code
 
-    B equ <byte ptr>
-    W equ <word ptr>
-    D equ <dword ptr>
+define HEXOFFS ('A'-'9'-1)
 
-ExpandCString proc __ccall uses rsi rdi rbx data:string_t, binary:string_t, string:string_t
+; Returns end-pointer of string: "( "ab\x0102" )" = " )"
+; - binary is bytes: "ab\x0102" =  4 bytes -> string stack
+; - data is text: <"ab",0x0101> = 11 bytes -> code to emit
+
+ExpandCString proc __ccall uses rsi rdi rbx data:string_t, binary:string_t, string:string_t, Unicode:int_t
 
    .new hex_count:char_t
+   .new digits:char_t
+   .new inside_quote:char_t = 1
+   .new char_count:int_t = 1
 
     ldr rsi,string
     ldr rdi,data
@@ -40,82 +45,134 @@ ExpandCString proc __ccall uses rsi rdi rbx data:string_t, binary:string_t, stri
     mov [rdx],rbx
     movsb
 
-    .while B[rsi]
+    .while byte ptr [rsi]
         mov al,[rsi]
         .if ( al == BSLASH )
 
             ; escape char \\
 
             inc rsi
-            movzx eax,B[rsi]
+            movzx eax,byte ptr [rsi]
             .switch eax
-              .case 'a'             ; Alert (Beep, Bell)
-                mov B[rdx],0x07
-                mov eax,20372C22h   ; <",7 >
+            .case 'a'             ; Alert (Beep, Bell)
+                mov al,0x07
                 jmp case_format
-              .case 'b'             ; Backspace
-                mov B[rdx],0x08
-                mov eax,20382C22h   ; <",8 >
+            .case 'b'             ; Backspace
+                mov al,0x08
                 jmp case_format
-              .case 'e'             ; Escape character
-                mov B[rdx],0x1B
-                mov eax,37322C22h   ; <",27>
+            .case 'e'             ; Escape character
+                mov al,0x1B
                 jmp case_format
-              .case 'f'             ; Formfeed Page Break
-                mov B[rdx],0x0C
-                mov eax,32312C22h   ; <",12>
+            .case 'f'             ; Formfeed Page Break
+                mov al,0x0C
                 jmp case_format
-              .case 'n'             ; Newline (Line Feed)
-                mov B[rdx],0x0A
-                mov eax,30312C22h   ; <",10>
+            .case 'n'             ; Newline (Line Feed)
+                mov al,0x0A
                 jmp case_format
-              .case 'r'             ; Carriage Return
-                mov B[rdx],0x0D
-                mov eax,33312C22h   ; <",13>
+            .case 'r'             ; Carriage Return
+                mov al,0x0D
                 jmp case_format
-              .case 't'             ; Horizontal Tab
-                mov B[rdx],0x09
-                mov eax,20392C22h   ; <",9 >
+            .case 't'             ; Horizontal Tab
+                mov al,0x09
                 jmp case_format
-              .case 'v'             ; Vertical Tab
-                mov B[rdx],0x0B
-                mov eax,31312C22h   ; <",11>
+            .case 'v'             ; Vertical Tab
+                mov al,0x0B
                 jmp case_format
-              .case 27h             ; Apostrophe or single quotation mark
-                mov B[rdx],0x27
-                mov eax,39332C22h   ; <",39>
+            .case 27h             ; Apostrophe or single quotation mark
+                mov al,0x27
                 jmp case_format
-              .case '?'             ; Question mark (used to avoid trigraphs)
-                mov B[rdx],0x3F
-                mov eax,33362C22h   ; <",63>
-               case_format:
-                mov rcx,data
-                add rcx,1
-                .if ( ( rcx == rdi && al == [rdi-1] ) || ( al == [rdi-1] && ah == [rdi-2] ) )
-                    shr eax,16
-                    sub rdi,1
-                    stosw
-                .else
-                    stosd
+            .case '?'             ; Question mark (used to avoid trigraphs)
+                mov al,0x3F
+             case_format:
+                mov [rdx],al
+                inc rdx
+                mov cl,al
+                .if ( inside_quote )
+                    mov inside_quote,0
+                    .if ( char_count == 1 )
+                        dec rdi
+                        mov char_count,0
+                    .else
+                        mov al,'"'
+                        stosb
+                        inc char_count
+                    .endif
                 .endif
-                mov eax,222Ch
-                .if ( B[rdi-1] == ' ' )
-                    sub rdi,1
+                .if ( char_count )
+                    mov al,','
+                    stosb
+                    inc char_count
+                .endif
+                mov eax,'x0'
+                stosw
+                mov al,cl
+                shr al,4
+                add al,'0'
+                .if ( al > '9' )
+                    add al,HEXOFFS
                 .endif
                 stosb
-                mov [rdi],ah
+                mov al,cl
+                and al,0x0F
+                add al,'0'
+                .if ( al > '9' )
+                    add al,HEXOFFS
+                .endif
+                stosb
+                add char_count,4
                .endc
-              .case 'U'
+            .case 'U'
                 mov hex_count,8 ; takes 8 hexadecimal digits
                 jmp common_hex
-              .case 'u'
+            .case 'u'
                 mov hex_count,4
                 jmp common_hex
-              .case 'x'
+            .case 'x'
                 mov hex_count,2
-                common_hex:
+                .if ( Unicode )
+                    mov hex_count,4
+                .endif
+             common_hex:
                 .if ( islxdigit( [rsi+1] ) )
+                    .if ( inside_quote )
+                        mov inside_quote,0
+                        .if ( char_count == 1 )
+                            dec rdi
+                            mov char_count,0
+                        .else
+                            mov al,'"'
+                            stosb
+                            inc char_count
+                        .endif
+                    .endif
+                    .if ( char_count )
+                        mov al,','
+                        stosb
+                        inc char_count
+                    .endif
+                    mov eax,'x0'
+                    stosw
+                    .if ( hex_count == 8 )
+                        mov eax,[rsi+1+4]
+                        stosd
+                        mov al,','
+                        stosb
+                        mov eax,'x0'
+                        stosw
+                        add char_count,7
+                    .endif
+                    mov eax,[rsi+1]
+                    .if ( hex_count > 2 )
+                        stosd
+                        add char_count,6
+                    .else
+                        stosw
+                        add char_count,4
+                    .endif
                     xor ecx,ecx
+                    mov al,hex_count
+                    shr al,1
+                    mov digits,al
                     .while ( islxdigit( [rsi+1] ) && hex_count )
                         inc rsi
                         shl ecx,4
@@ -127,120 +184,177 @@ ExpandCString proc __ccall uses rsi rdi rbx data:string_t, binary:string_t, stri
                         add ecx,eax
                         dec hex_count
                     .endw
-                    mov [rdi],cl
                     mov [rdx],cl
+                    inc rdx
+                    dec digits
                     shr ecx,8
-                    .while ecx ; zero allowed..?
-                        inc rdi
-                        inc rdx
-                        mov [rdi],cl
+                    .while digits ; zero allowed..?
                         mov [rdx],cl
+                        inc rdx
                         shr ecx,8
+                        dec digits
                     .endw
                 .else
-                    mov B[rdi],'x'
-                    mov B[rdx],'x'
+                    mov eax,'x'
+                    stosb
+                    mov [rdx],al
+                    inc rdx
+                    inc char_count
                 .endif
                 .endc
-              .case '0'
+            .case '0'
                 .if ( !isldigit( [rsi+1] ) )
-                    lea rax,[rdi-1]
-                    .if rax == data
-                        dec rdi
-                        mov eax,',0'
-                        stosw
-                    .else
-                        mov eax,',0,"'
-                        stosd
+                    xor eax,eax
+                    mov [rdx],al
+                    inc rdx
+                    .if ( inside_quote )
+                        mov inside_quote,0
+                        .if ( char_count == 1 )
+                            dec rdi
+                            mov char_count,0
+                        .else
+                            mov al,'"'
+                            stosb
+                            inc char_count
+                        .endif
                     .endif
-                    mov B[rdi],'"'
-                    mov B[rdx],0
-                    .endc
+                    .if ( char_count )
+                        mov al,','
+                        stosb
+                        inc char_count
+                    .endif
+                    mov al,'0'
+                    stosb
+                    inc char_count
+                   .endc
                 .endif
                 mov eax,'0'
 
                 ; added v2.34.25 -- Octal escape sequence
 
-              .case '1'
-              .case '2'
-              .case '3'
-              .case '4'
-              .case '5'
-              .case '6'
-              .case '7'
-              .case '8'
-              .case '9'
+            .case '1' ; \000 to \172
                 sub eax,'0'
                 mov ecx,eax
-                .if ( isldigit( [rsi+1] ) )
-                    inc  rsi
-                    sub  eax,'0'
-                    imul ecx,ecx,8
-                    add  ecx,eax
-                    .if ( isldigit( [rsi+1] ) )
-                        inc  rsi
-                        sub  eax,'0'
-                        imul ecx,ecx,8
-                        add  ecx,eax
+                .if ( inside_quote )
+                    mov inside_quote,0
+                    .if ( char_count == 1 )
+                        dec rdi
+                        mov char_count,0
+                    .else
+                        mov al,'"'
+                        stosb
+                        inc char_count
                     .endif
                 .endif
-                mov [rdi],cl
-                mov [rdx],cl
-               .endc
-              .case '"'         ; <",'"',">
-                mov ah,','
-                mov rcx,data
-                add rcx,1
-                ; db '"',xx",'"',0
-                .if ( ( rcx == rdi && al == [rdi-1] ) || ( al == [rdi-1] && ah == [rdi-2] ) )
-                    sub rdi,1
-                .else
-                    stosw
+                .if ( char_count )
+                    mov al,','
+                    stosb
+                    inc char_count
                 .endif
-                mov eax,0x2C272227
+                mov eax,'x0'
+                stosw
+                mov digits,0
+                .while ( isldigit( [rsi+1] ) && digits < 3 )
+                    inc rsi
+                    sub eax,'0'
+                    shl ecx,3
+                    add ecx,eax
+                    inc digits
+                .endw
+                mov al,cl
+                shr al,4
+                add al,'0'
+                .if ( al > '9' )
+                    add al,HEXOFFS
+                .endif
+                stosb
+                mov al,cl
+                and al,0x0F
+                add al,'0'
+                .if ( al > '9' )
+                    add al,HEXOFFS
+                .endif
+                stosb
+                add char_count,4
+                mov [rdx],cl
+                inc rdx
+               .endc
+            .case '"'         ; <",'"',">
+                .if ( inside_quote )
+                    mov inside_quote,0
+                    .if ( char_count == 1 )
+                        dec rdi
+                        mov char_count,0
+                    .else
+                        mov al,'"'
+                        stosb
+                        inc char_count
+                    .endif
+                .endif
+                .if ( char_count )
+                    mov al,','
+                    stosb
+                    inc char_count
+                .endif
+                mov eax,'22x0'
                 stosd
-                mov al,'"'
-              .default
-                mov [rdi],al
+                add char_count,4
+                mov al,0x22
                 mov [rdx],al
+                inc rdx
+               .endc
+            .default
+                .if ( !inside_quote )
+                    inc inside_quote
+                    mov ecx,'",'
+                    mov [rdi],cx
+                    add rdi,2
+                    add char_count,2
+                .endif
+                stosb
+                mov [rdx],al
+                inc rdx
+                inc char_count
                .endc
             .endsw
-
         .elseif ( al == '"' )
-
             add rsi,1
             .for ( rcx = rsi, al = [rcx] : al == ' ' || al == 9 : rcx++, al = [rcx] )
             .endf
-            .if ( al == 'L' && B[rcx+1] == '"' )
+            .if ( al == 'L' && byte ptr [rcx+1] == '"' )
                 inc rcx
                 mov al,'"'
             .endif
             .if ( al == '"' ) ; "string1" "string2"
                 mov rsi,rcx
-                dec rdi
-                dec rdx
             .else
-                mov eax,'"'
-                stosb
-               .break
+                .if ( inside_quote )
+                    mov eax,'"'
+                    stosb
+                    inc char_count
+                .endif
+                .break
             .endif
         .else
-            mov [rdi],al
+            .if ( !inside_quote )
+                inc inside_quote
+                mov ecx,'",'
+                mov [rdi],cx
+                add rdi,2
+                add char_count,2
+            .endif
+            stosb
             mov [rdx],al
+            inc rdx
+            inc char_count
         .endif
-        add rdi,1
-        add rdx,1
-        .if ( B[rsi] )
-            add rsi,1
+        .if ( byte ptr [rsi] )
+            inc rsi
         .endif
     .endw
-    mov ecx,0x22222C
     xor eax,eax
     mov [rdi],al
     mov [rdx],al
-    .if ( ecx == [rdi-3] )
-        mov [rdi-3],al
-    .endif
     mov rax,rsi
     mov rcx,binary
     sub rdx,rcx
@@ -263,7 +377,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     .if ( MODULE.wstring )
         mov eax,1
     .endif
-    .if ( W[rsi] == '"L' )
+    .if ( word ptr [rsi] == '"L' )
         mov MODULE.LStringUsed,1
         mov eax,1
         add rsi,1
@@ -271,7 +385,7 @@ ParseCString proc __ccall private uses rsi rdi rbx lbuf:string_t, buffer:string_
     mov rcx,pUnicode
     mov [rcx],al
     mov Unicode,al
-    ExpandCString(rdi, rdx, rsi)
+    ExpandCString(rdi, rdx, rsi, eax)
     mov rsi,pStringOffset
     mov [rsi],rax
     mov rbx,rdx
@@ -455,7 +569,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     ;
     .while ( [rbx].asm_tok.token != T_FINAL )
         mov rcx,[rbx].asm_tok.string_ptr
-        movzx ecx,W[rcx]
+        movzx ecx,word ptr [rcx]
         .switch cl
         .case 'L'
             .endc .if ch != '"'
@@ -507,7 +621,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     add rdi,LineStoreCurr
     tstrcpy( b_line, rdi )
     .if ( Parse_Pass == PASS_1 )
-        mov B[rdi],';'
+        mov byte ptr [rdi],';'
         tstrcmp( rax, [rsi].asm_tok.tokpos )
     .else
         xor eax,eax
@@ -526,10 +640,8 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             ; v2.28 -- token behind may be 'L'
             ;
             .if ( [rbx-asm_tok].asm_tok.token == T_ID )
-
                 mov rax,[rbx-asm_tok].asm_tok.string_ptr
                 mov eax,[rax]
-
                 .if ( ax == 'L' )
                     sub q,asm_tok
                     dec rsi
@@ -550,7 +662,7 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov size,ecx
                 tmemcpy( b_data, rdi, ecx )
                 mov ecx,size
-                mov B[rax+rcx],0
+                mov byte ptr [rax+rcx],0
                 ;
                 ; if the string is split the compare will fail..
                 ;
@@ -558,21 +670,14 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 ; so the string will be ("1""2""3") --> ("123")
                 ;
                 .if ( !merged )
-
                     inc merged
-
                     .if tstrchr(b_line, '"')
-
                         mov esi,1
                         lea rdi,[rax+1]
-
                         .while 1
-
                             mov al,[rdi]
                             .break .if !al
-
                             .if ( al == '"' )
-
                                 .if ( byte ptr [rdi-1] == BSLASH )
                                 .elseif ( esi == 0 )
                                     inc esi
@@ -611,26 +716,20 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov rdx,buffer
                 mov eax,[rdx]
                 and eax,0x00FFFFFF
-                .if eax != '""'
-                    .if Unicode
-                        lea rcx,@CStr(" %s dw %s,0")
-                    .else
-                        lea rcx,@CStr(" %s sbyte %s,0")
-                    .endif
-                    tsprintf( b_data, rcx, b_label, rdx )
+                mov ecx,T_SBYTE
+                .if Unicode
+                    mov ecx,T_DW
+                .endif
+                .if ( eax != '""' )
+                    tsprintf( b_data, " %s %r %s,0", b_label, ecx, rdx )
                 .else
-                    .if Unicode
-                        lea rcx,@CStr(" %s dw 0")
-                    .else
-                        lea rcx,@CStr(" %s sbyte 0")
-                    .endif
-                    tsprintf(b_data, rcx, b_label)
+                    tsprintf(b_data, " %s %r 0", b_label, ecx)
                 .endif
             .endif
             mov rax,q
             mov rax,[rax].asm_tok.tokpos
             mov di,[rax]
-            mov B[rax],0
+            mov byte ptr [rax],0
             mov rax,tokenarray
             tstrcat( tstrcat( tstrcpy( buffer, [rax].asm_tok.tokpos ), "addr " ), b_label )
             mov rax,q
@@ -806,11 +905,11 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                 .endif
                 .return( 0 )
             .endif
-            .if ( B[rax] == '"' || W[rax] == '"L' )
+            .if ( byte ptr [rax] == '"' || word ptr [rax] == '"L' )
                 mov rsi,rax
             .endif
         .endif
-        .if ( B[rsi] == '"' || W[rsi] == '"L' )
+        .if ( byte ptr [rsi] == '"' || word ptr [rsi] == '"L' )
             ParseCString( dlabel, string, rsi, &StringOffset, &Unicode )
             mov esi,eax
             .if edi
@@ -823,26 +922,20 @@ CString proc __ccall private uses rsi rdi rbx buffer:string_t, tokenarray:token_
                 ; v2.24 skip return value if @CStr is first token
                 ;
                 mov rax,dlabel
-                mov W[rax],' '
+                mov word ptr [rax],' '
             .endif
             .if ( esi )
                 mov rax,string
                 mov eax,[rax]
                 and eax,0x00FFFFFF
+                mov ecx,T_SBYTE
+                .if Unicode
+                    mov ecx,T_DW
+                .endif
                 .if ( eax != '""' )
-                    .if Unicode
-                        lea rdx,@CStr(" %s dw %s,0")
-                    .else
-                        lea rdx,@CStr(" %s sbyte %s,0")
-                    .endif
-                    tsprintf( cursrc, rdx, dlabel, string )
+                    tsprintf( cursrc, " %s %r %s,0", dlabel, ecx, string )
                 .else
-                    .if Unicode
-                        lea rdx,@CStr(" %s dw 0")
-                    .else
-                        lea rdx,@CStr(" %s sbyte 0")
-                    .endif
-                    tsprintf( cursrc, rdx, dlabel )
+                    tsprintf( cursrc, " %s %r 0", dlabel, ecx )
                 .endif
 
                 ; v2.24 skip .data/.code if already in .data segment
@@ -995,7 +1088,7 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
 TextItemError proc __ccall uses rbx item:token_t
     ldr rbx,item
     mov rax,[rbx].string_ptr
-    .if ( [rbx].token == T_STRING && B[rax] == '<' )
+    .if ( [rbx].token == T_STRING && byte ptr [rax] == '<' )
         .return( asmerr( 2045 ) )
     .endif
     .if ( [rbx].token == T_ID )
@@ -1094,7 +1187,7 @@ CatStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov rsi,[rbx].string_ptr
         rep movsb
     .endf
-    mov B[rdi],0
+    mov byte ptr [rdi],0
     .if ( MODULE.list )
         LstWrite( LSTTYPE_TMACRO, 0, sym )
     .endif
@@ -1164,7 +1257,7 @@ SetTextMacro proc __ccall uses rsi rdi rbx tokenarray:token_t, sym:asym_t, name:
     .endif
     tmemcpy( [rdi].asym.string_ptr, value, esi )
     mov rdx,[rdi].asym.string_ptr
-    mov B[rdx+rsi],0
+    mov byte ptr [rdx+rsi],0
     .return( rdi )
     endp
 
@@ -1332,7 +1425,7 @@ SubStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
     .endif
     dec edi
     tmemcpy( [rsi].asym.string_ptr, p, edi )
-    mov B[rax+rdi],0
+    mov byte ptr [rax+rdi],0
     LstWrite( LSTTYPE_TMACRO, 0, rsi )
     .return( NOT_ERROR )
     endp
@@ -1471,7 +1564,7 @@ CatStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:s
         add buffer,rbx
     .endf
     mov rdx,buffer
-    mov B[rdx],0
+    mov byte ptr [rdx],0
     .return( NOT_ERROR )
     endp
 
@@ -1628,7 +1721,7 @@ InStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance,
 
     ; v2.08: if() added, empty searchstr is to return 0
     mov rdx,[rsi+size_t*2]
-    .if ( B[rdx] != 0 )
+    .if ( byte ptr [rdx] != 0 )
         mov ecx,pos
         add rcx,rbx
         dec rcx
@@ -1712,7 +1805,7 @@ SubStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:s
     add rax,[rsi]
     lea rsi,[rax-1]
     rep movsb
-    mov B[rdi],0
+    mov byte ptr [rdi],0
     .return( NOT_ERROR )
     endp
 

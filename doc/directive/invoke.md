@@ -8,7 +8,7 @@ Calls the procedure at the address given by expression, passing the arguments on
 
 The Asmc specific convention is **_expression_**( _arguments_ ).
 
-String arguments can be passed as C-style quoted strings, including (L"Unicode strings").
+String arguments can be passed as [String Literals](string-literals.md).
 
 An immediate vector expression may be passed as an argument to a procedure parameter that is passed in a vector register. The number of values assigned must match the size of the vector register being used. For example:
 ```

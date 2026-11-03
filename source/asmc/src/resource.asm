@@ -266,7 +266,7 @@ AddControl proc __ccall helpID:int_t, extended_style:int_t, style:int_t, name:st
     mov rcx,name
     mov eax,0xFFFF
     .if ( rcx > rax )
-        ExpandCString(&buffer, StringBufferEnd, rcx)
+        ExpandCString(&buffer, StringBufferEnd, rcx, 1)
         AddLineQueueX( " %r %s, 0", T_DW, &buffer )
     .else
         AddLineQueueX( " %r %u, 0", T_DW, ecx )
@@ -601,7 +601,7 @@ error:
 
 ; STRINGTABLE  {string  ...} -- 384..n
 
-WriteStringTable proc __ccall tokenarray:token_t
+WriteStringTable proc __ccall tokenarray:token_t, id:int_t
 
    .new oldstat:input_status
    .new buffer[4096]:char_t
@@ -614,8 +614,12 @@ WriteStringTable proc __ccall tokenarray:token_t
         .if ( [rbx].token != T_STRING )
             jmp error
         .endif
-        ExpandCString(&buffer, StringBufferEnd, [rbx].string_ptr)
-        AddLineQueueX( " %r %u, %s", T_DW, edx, &buffer )
+        ExpandCString(&buffer, StringBufferEnd, [rbx].string_ptr, 1)
+        ; v2.40.10: calculate char-count of string from buffer
+        ; - the return value is byte-count: "ab\x0102" = 4
+        AddLineQueueX( " %r " R3LABEL "%uCC", T_DW, id, esi )
+        AddLineQueueX( R3LABEL "%u %r %s", id, esi, T_DW, &buffer )
+        AddLineQueueX( R3LABEL "%uCC %r (($ - " R3LABEL "%u) / 2)", id, esi, T_EQU, id, esi )
         inc edi
         add rbx,asm_tok
         .if ( [rbx].token == T_COMMA )
@@ -1124,7 +1128,7 @@ WriteEntry proc __ccall resource:resource_t, tokenarray:token_t
         xor ecx,ecx
        .endc
     .case T_STRINGTABLE
-        WriteStringTable(rbx)
+        WriteStringTable(rbx, edi)
         mov ecx,1
        .endc
     .case T_ACCELERATORS

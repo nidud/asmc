@@ -217,6 +217,6 @@ GRPICONDIR      ends
 
 ; string.asm
 
-ExpandCString proto __ccall :string_t, :string_t, :string_t
+ExpandCString proto __ccall :string_t, :string_t, :string_t, :int_t
 
 endif

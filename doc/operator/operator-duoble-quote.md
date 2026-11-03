@@ -8,4 +8,4 @@ Treats "text" as a string.
 
 #### See Also
 
-[Miscellaneous](miscellaneous.md) | [Operators Reference](readme.md)
+[Miscellaneous](miscellaneous.md) | [Operators Reference](readme.md) | [String Literals](../directive/string-literals.md)

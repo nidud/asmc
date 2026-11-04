@@ -280,16 +280,15 @@ AddControl proc __ccall helpID:int_t, extended_style:int_t, style:int_t, name:st
 
 ParseResource proc __ccall public tokenarray:token_t
    .new dir:ICONDIR
+   .new fp:LPFILE
+   .new rp:resource_t
 
     ldr rbx,tokenarray
-
     .ifd ( GetStatement([rbx].hash2) == 0 )
         WriteResource()
        .return ParseLine( rbx )
     .endif
-
     FStoreLine(0)
-
     mov rsi,LclAlloc( res_item )
     mov rcx,MODULE.ResStack
     .if !rcx
@@ -303,15 +302,17 @@ ParseResource proc __ccall public tokenarray:token_t
 
     mov [rsi].hash,[rbx].hash2
     .if ( eax == T_ICON || eax == T_CURSOR )
+        mov rp,rsi
         .if ( fopen( [rbx+asm_tok].tokpos, "rb" ) == NULL )
             asmerr( 1000, [rbx+asm_tok].string_ptr )
         .endif
-        mov rdi,rax
-        fread( &dir, 1, ICONDIR, rdi )
-        fclose(rdi)
+        mov fp,rax
+        fread( &dir, 1, ICONDIR, rax )
+        fclose(fp)
         movzx eax,dir.idCount
         mov ecx,idcounter
         add idcounter,eax
+        mov rsi,rp
         mov [rsi].icon[0],ax
         mov [rsi].icon[2],cx
     .endif
@@ -352,11 +353,9 @@ WriteIcon proc __ccall file:string_t, resource:resource_t
    .new i:int_t, entry_count, entry_id, res_id
    .new is_cursor:byte = 0
 
-    ldr rsi,file
-    ldr rdi,resource
-
-    .if ( fopen( rsi, "rb" ) == NULL )
-        asmerr( 1000, rsi )
+    ldr rbx,file
+    .if ( fopen( rbx, "rb" ) == NULL )
+        asmerr( 1000, rbx )
     .endif
     mov rbx,rax
     .if ( fseek( rbx, 0, SEEK_END ) == 0 )
@@ -371,6 +370,7 @@ WriteIcon proc __ccall file:string_t, resource:resource_t
     .if ( filesize < ICONDIR + ICONDIRENTRY )
         .return ERROR
     .endif
+    mov rdi,resource
     movzx eax,[rdi].res_item.icon[0]
     mov entry_count,eax
     movzx eax,[rdi].res_item.icon[2]

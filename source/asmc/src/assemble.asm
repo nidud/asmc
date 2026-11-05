@@ -985,6 +985,9 @@ GetDefaultFileExtension proc fastcall private ftype:int_t
         mov edx,'jbo.'
         .if ( Options.output_format == OFORMAT_BIN )
             mov edx,'nib.'
+            .if ( Options.resource )
+                mov edx,'ser.'
+            .endif
             .if ( Options.sub_format == SFORMAT_MZ ||
                   Options.sub_format == SFORMAT_PE ||
                   Options.sub_format == SFORMAT_64BIT )
@@ -1025,7 +1028,7 @@ SetFilenames proc __ccall private uses rsi rdi rbx fn:string_t
     mov rsi,GetFNamePart( rax )
     mov edi,ASM+1
     lea rbx,path
-    .while ( rdi < NUM_FILE_TYPES )
+    .while ( edi < NUM_FILE_TYPES )
         lea rax,Options
         mov rax,[rax].global_options.names[rdi*string_t]
         .if !rax

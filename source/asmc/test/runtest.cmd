@@ -31,6 +31,7 @@ for %%f in (src\x64-cerr-*.asm) do call :x64-cerr %%f
 for %%f in (src\x86-perr-*.asm) do call :x86-perr %%f
 for %%f in (src\x64-dwarf*.asm) do call :x64-dwarf %%f
 for %%f in (src\x86-cv-*.asm)   do call :x86-cv %%f
+for %%f in (src\x64-coff-res-*.asm) do call :x64-res %%f
 
 exit
 
@@ -270,6 +271,14 @@ if not exist exp\%~n1.o %ASMX% -c -q -elf64 -Zd -Fo exp\%~n1.o %1
 fcmp %~n1.o exp\%~n1.o
 if errorlevel 1 goto end
 del %~n1.o
+goto end
+
+:x64-res
+if not exist exp\%~n1.res %ASMX% -q -win64 -res -Fo exp\%~n1.res %1
+%ASMX% -q -win64 -res %1
+fcmp %~n1.res exp\%~n1.res
+if errorlevel 1 goto end
+del %~n1.res
 goto end
 
 :end

@@ -85,6 +85,7 @@ for f in src/x86-coff-*.asm; do [[ -e $f ]] && do_test 8 "$f" .obj -c -coff; don
 for f in src/x86-cv-*.asm;   do [[ -e $f ]] && do_test 8 "$f" .obj -c -coff -Zi4; done
 for f in src/x86-pe-*.asm;   do [[ -e $f ]] && do_test 115 "$f" .exe -pe; done
 for f in src/x64-pe-*.asm;   do [[ -e $f ]] && do_test 115 "$f" .exe -win64 -pe; done
+for f in src/x64-coff-res-*.asm; do [[ -e $f ]] && do_test 0 "$f" .res -win64 -res; done
 
 err_test() { # src flags-that-produce-expected...
     local src=$1; shift

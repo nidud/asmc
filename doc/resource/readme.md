@@ -10,7 +10,7 @@ Asmc Macro Assembler Reference
 
 ### About Asmc Resource Compiler
 
-Converts resource-definition statements into a binary resource that can be used by the Asmc internal linker or MS Windows linker. The resource-definition statements are similar to those used by the Microsoft Resource Compiler (RC). The Asmc Resource Compiler supports a subset of the RC syntax, and is not compatible with all RC resource-definition statements.
+Converts resource-definition statements into a binary resource file. Supported output formats include COFF and the standard Windows resource file format. The resource-definition statements are similar to those used by the Microsoft Resource Compiler (RC). The Asmc Resource Compiler supports a subset of the RC syntax, and is not compatible with all RC resource-definition statements.
 
 ### Parsing Resource-Definition Statements
 

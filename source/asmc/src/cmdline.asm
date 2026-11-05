@@ -503,6 +503,8 @@ endif
     .case 'olon'            ; -nologo
         mov banner_printed,1
         .return
+    .case 'ser'             ; -res
+        mov Options.resource,1
     .case 'nib'             ; -bin
         mov Options.no_linking,1
         mov Options.output_format,OFORMAT_BIN

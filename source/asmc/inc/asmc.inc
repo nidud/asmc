@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    240
-define _ASMC_BUILD  11
+define _ASMC_BUILD  12
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -564,6 +564,7 @@ define PE_DLL               0x04
       no_cpu                dd: 1 ? ; -fpc
       comdata               dd: 1 ? ; -Gw
       nocdata               dd: 1 ? ; -Gw-
+      resource              dd: 1 ? ; -res
       ; ----
       mscrt                 dd: 1 ? ; pragma init/exit option
       debug_frame           dd: 1 ? ; -Z7
@@ -668,6 +669,7 @@ define PE_DLL               0x04
       no_cpu                dd: 1 ?
       comdata               dd: 1 ? ; -Gw
       nocdata               dd: 1 ? ; -Gw-
+      resource              dd: 1 ? ; -res
       ; ----
       procs_private         dd: 1 ? ; option proc:private
       procs_export          dd: 1 ? ; option proc:export

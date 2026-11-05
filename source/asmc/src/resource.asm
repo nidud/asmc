@@ -218,6 +218,7 @@ GetStatement proc fastcall token:StatementTokens
     .case T_SCROLLBAR
         inc eax
     .case T_ACCELERATORS
+    .case T_BITMAP
     .case T_CURSOR
     .case T_DIALOG
     .case T_DIALOGEX
@@ -625,6 +626,19 @@ WriteResourceHeader proc __ccall index:int_t, name:int_t, type:int_t, os:ptr opt
     endp
 
 
+; BITMAP <file>
+
+WriteBitmap proc __ccall tokenarray:token_t, index:int_t
+   .new os:optional_statements = {0}
+    ldr rbx,tokenarray
+    ldr edi,index
+    WriteResourceHeader( edi, edi, RT_BITMAP, &os )
+    AddLineQueueX( " %r <%s>, 14", T_INCBIN, [rbx+asm_tok].tokpos )
+    AddLineQueueX( " size_" R2LABEL " %r $ - " R3LABEL, edi, T_EQU, edi )
+    ret
+    endp
+
+
 ; ACCELERATORS [optional-statements] {event, idvalue, [type] [options]... }
 
 WriteAccelerators proc __ccall tokenarray:token_t, index:int_t
@@ -710,7 +724,6 @@ error:
     asmerr( 2008, [rbx].string_ptr )
     jmp toend
     endp
-
 
 ; STRINGTABLE [optional-statements] {string  ...} -- 384..n
 
@@ -1356,6 +1369,9 @@ WriteResource proc public
             mov TokenCount,Tokenize( [rsi].line, 0, rbx, TOK_DEFAULT )
             mov eax,[rsi].hash
             .switch eax
+            .case T_BITMAP
+                WriteBitmap(rbx, edi)
+               .endc
             .case T_DIALOGEX
                 inc dialogex
             .case T_DIALOG

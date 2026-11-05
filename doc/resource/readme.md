@@ -48,6 +48,7 @@ The following table describes the resource-definition statements that define res
 <table>
 <tr><td>Resource</td><td>Description</td></tr>
 <tr><td><a href="accelerators.md">ACCELERATORS</a></td><td>Defines keyboard shortcuts for menu items.</td></tr>
+<tr><td><a href="bitmap.md">BITMAP</a></td><td>Defines a bitmap by specifying the name of the file that contains it.</td></tr>
 <tr><td><a href="cursor.md">CURSOR</a></td><td>Defines a cursor by specifying the name of the file that contains it.</td></tr>
 <tr><td><a href="dialog.md">DIALOG</a></td><td>Defines a dialog box.</td></tr>
 <tr><td><a href="dialogex.md">DIALOGEX</a></td><td>Defines an extended dialog box.</td></tr>

@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.41 - xx xxx 2026
+- fixed numeric escape sequences for \x, \u, and \U
 - added option -res Generate binary resource file
 - added simplistic resource compiler for Windows
 - added .resource segment and parsing

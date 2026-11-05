@@ -90,22 +90,23 @@ endif
  char_t "-nolib Ignore INCLUDELIB directive        -nologo Suppress copyright message",10
  char_t "-nt<name> Set name of text segment        -pe[c|g|d] Generate PE binary file",10
  char_t "-q Operate quietly                        -r Recurse subdirectories",10
- char_t "-Sa Maximize source listing               -safeseh Assert exception handlers",10
- char_t "-Sf Generate first pass listing           -Sg Display generated code in listing",10
- char_t "-Sn Suppress symbol-table listing         -Sp[n] Set segment alignment",10
- char_t "-stackalign Align locals to 16-byte       -Sx List false conditionals",10
- char_t "-w Same as -W0 -WX                        -W<number> Set warning level",10
- char_t "-win64 Generate 64-bit COFF object        -ws Store quoted strings as unicode",10
- char_t "-WX Treat all warnings as errors          -X Ignore INCLUDE environment path",10
- char_t "-Z7 Add full symbolic debug info          -zcw No decoration for C symbols",10
- char_t "-Zd Add line number debug info            -Zf Make all symbols public",10
- char_t "-zf<0|1> Set FASTCALL type: MS-OW         -Zg Generate code to match Masm",10
- char_t "-ZH:MD5 Use MD5 checksum for debug info   -ZH:SHA_256 Use SHA256 (default)",10
- char_t "-ZH:SHA384 Use SHA384                     -ZH:SHA512 Use SHA512",10
- char_t "-Zi Add symbolic debug info               -Zne Disable non Masm extensions",10
- char_t "-zl<f|p|s> Suppress items in COFF         -Zp[n] Set structure alignment",10
- char_t "-Zs Perform syntax check only             -zt<0|1|2> Set STDCALL decoration",10
- char_t "-zze No export symbol decoration          -zzs Store name of start address",10
+ char_t "-res Generate binary resource file        -Sa Maximize source listing",10
+ char_t "-safeseh Assert exception handlers        -Sf Generate first pass listing",10
+ char_t "-Sg Display generated code in listing     -Sn Suppress symbol-table listing",10
+ char_t "-Sp[n] Set segment alignment              -stackalign Align locals to 16-byte",10
+ char_t "-Sx List false conditionals               -w Same as -W0 -WX",10
+ char_t "-W<number> Set warning level              -win64 Generate 64-bit COFF object",10
+ char_t "-ws Store quoted strings as unicode       -WX Treat all warnings as errors",10
+ char_t "-X Ignore INCLUDE environment path        -Z7 Add full symbolic debug info",10
+ char_t "-zcw No decoration for C symbols          -Zd Add line number debug info",10
+ char_t "-Zf Make all symbols public               -zf<0|1> Set FASTCALL type: MS-OW",10
+ char_t "-Zg Generate code to match Masm           -ZH:MD5 Use MD5 checksum for debug info",10
+ char_t "-ZH:SHA_256 Use SHA256 (default)          -ZH:SHA384 Use SHA384",10
+ char_t "-ZH:SHA512 Use SHA512                     -Zi Add symbolic debug info",10
+ char_t "-Zne Disable non Masm extensions          -zl<f|p|s> Suppress items in COFF",10
+ char_t "-Zp[n] Set structure alignment            -Zs Perform syntax check only",10
+ char_t "-zt<0|1|2> Set STDCALL decoration         -zze No export symbol decoration",10
+ char_t "-zzs Store name of start address",10
 ifndef ASMC64
  char_t "-zlc No OMF records of data in code       -zld No OMF records of far call",10
  char_t "-Zm Enable MASM 5.10 compatibility        -Zv8 Enable Masm v8+ PROC visibility",10

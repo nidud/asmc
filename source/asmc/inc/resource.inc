@@ -214,65 +214,6 @@ idCount         dw ?
 idEntries       GRPICONDIRENTRY 0 dup(<?>)
 GRPICONDIR      ends
 
-RESOURCEHEADER  struct
-DataSize        dd ?
-HeaderSize      dd ?
-Type            dw ?
-Name            dw ?
-DataVersion     dd ?
-MemoryFlags     dw ?
-LanguageId      dw ?
-Version         dd ?
-Characteristics dd ?
-RESOURCEHEADER  ends
-
-IMAGE_RESOURCE_DIRECTORY STRUC
-Characteristics dd ?
-TimeDateStamp   dd ?
-MajorVersion    dw ?
-MinorVersion    dw ?
-NumberOfNamedEntries dw ?
-NumberOfIdEntries dw ?
-IMAGE_RESOURCE_DIRECTORY ENDS
-
-define IMAGE_RESOURCE_NAME_IS_STRING    0x80000000
-define IMAGE_RESOURCE_DATA_IS_DIRECTORY 0x80000000
-
-IMAGE_RESOURCE_DIRECTORY_ENTRY STRUC
-UNION
- Name           dd ?
- Id             dw ?
- RECORD
-  NameOffset    dd : 31 ?
-  NameIsString  dd :  1 ?
- ENDS
-ENDS
-UNION
- OffsetToData   dd ?
- RECORD
-  OffsetToDirectory dd : 31 ?
-  DataIsDirectory dd :  1 ?
- ENDS
-ENDS
-IMAGE_RESOURCE_DIRECTORY_ENTRY  ENDS
-
-IMAGE_RESOURCE_DIRECTORY_STRING STRUC
-Length          dw ?
-NameString      db ?
-IMAGE_RESOURCE_DIRECTORY_STRING ENDS
-
-IMAGE_RESOURCE_DIR_STRING_U STRUC
-Length          dw ?
-NameString      dw ?
-IMAGE_RESOURCE_DIR_STRING_U ENDS
-
-IMAGE_RESOURCE_DATA_ENTRY STRUC
-OffsetToData    dd ?
-Size            dd ?
-CodePage        dd ?
-Reserved        dd ?
-IMAGE_RESOURCE_DATA_ENTRY ENDS
-
 .pragma pack(pop)
 
 ; string.asm

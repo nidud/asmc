@@ -7,6 +7,9 @@
 ;
 ; This is a work in progress and is not complete.
 ;
+; Change history:
+; 2026-11-04 - added resource output (-res)
+;
 include asmc.inc
 include memalloc.inc
 include segment.inc
@@ -31,6 +34,8 @@ define R1LABEL      <"R$1%03X">
 define R2LABEL      <"R$2%03X">
 define R3LABEL      <"R$3%03X">
 
+define R_LANGUAGE   0x0409
+define R_SUBLANG    0
 
 ; Hashing for resource keywords
 
@@ -102,13 +107,21 @@ RHASH macro string
     T_SHIFT             = RHASH(SHIFT),
     }
 
+.template optional_statements
+    characteristics dd ?
+    language        dd ?
+    sublanguage     dd ?
+    version         dd ?
+   .ends
+
 
 ifdef USE_RESOURCE
+
 .data?
- language       dd ?
  idcounter      dd ?
  dialogex       dd ?
  dotname        dd ?
+ g_language     dd ?
 .data
  ValidMenuOption dd \
     T_CHECKED,
@@ -141,6 +154,10 @@ ifdef USE_RESOURCE
     T_SHIFT,
     T_NOINVERT,
     T_CONTROL
+ ValidOptionalStatements dd \
+    T_CHARACTERISTICS,
+    T_LANGUAGE,
+    T_VERSION
 
 endif
 
@@ -151,17 +168,21 @@ ifdef USE_RESOURCE
 ; ResourceDir -- create a resource directory
 
 ResourceDir proc __ccall i:int_t, tokenarray:token_t
+   .new lpRead:string_t = "read"
     mov eax,MODULE.dotname
     mov dotname,eax
     mov MODULE.dotname,1
-    mov language,0
     mov idcounter,1
+    mov g_language,R_LANGUAGE
+    .if ( MODULE.resource )
+        mov lpRead,NULL
+    .endif
     mov rcx,CurrSeg
     .if ( rcx )
         mov rdx,[rcx].asym.name
         AddLineQueueX( "%s %r", rdx, T_ENDS )
     .endif
-    AddLineQueueX( ".rsrc %r read %r %r 'RSRC'", T_SEGMENT, T_DWORD, T_FLAT, T_PUBLIC )
+    AddLineQueueX( ".rsrc %r %s %r %r 'RSRC'", T_SEGMENT, lpRead, T_DWORD, T_FLAT, T_PUBLIC )
     AddLineQueueX( "%r wstring(%r, 1)", T_DOT_PRAGMA, T_PUSH )
     RunLineQueue()
     mov MODULE.ResourceParsing,1
@@ -299,12 +320,11 @@ ParseResource proc __ccall public tokenarray:token_t
         .endw
         mov [rcx].res_item.next,rsi
     .endif
-
     mov [rsi].hash,[rbx].hash2
     .if ( eax == T_ICON || eax == T_CURSOR )
         mov rp,rsi
         .if ( fopen( [rbx+asm_tok].tokpos, "rb" ) == NULL )
-            asmerr( 1000, [rbx+asm_tok].string_ptr )
+            asmerr( 1000, [rbx+asm_tok].tokpos )
         .endif
         mov fp,rax
         fread( &dir, 1, ICONDIR, rax )
@@ -325,10 +345,10 @@ ParseResource proc __ccall public tokenarray:token_t
 
     assume rsi:nothing
 
-;
+
 ; LANGUAGE language, sublang
-;
-SetLanguage proc __ccall resource:resource_t
+
+SetLanguage proc __ccall resource:resource_t, language:pint_t, sublang:pint_t
    .new oldstat:input_status
    .new opnd:expr
    .new i:int_t = 1
@@ -337,20 +357,31 @@ SetLanguage proc __ccall resource:resource_t
     tstrcpy( CurrSource, [rsi].res_item.line )
     mov TokenCount,Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
     .ifd ( EvalOperand( &i, rbx, TokenCount, &opnd, 0 ) != ERROR )
-        mov language,opnd.value
+        mov rdx,language
+        mov eax,opnd.value
+        mov [rdx],eax
+    .endif
+    imul ecx,i,asm_tok
+    .if ( [rbx+rcx].token == T_COMMA )
+        inc i
+        .ifd ( EvalOperand( &i, rbx, TokenCount, &opnd, 0 ) != ERROR )
+            mov rdx,sublang
+            mov eax,opnd.value
+            mov [rdx],eax
+        .endif
     .endif
     PopInputStatus( &oldstat )
     ret
     endp
 
-;
+
 ; <ICON|CURSOR> <file>
-;
+
 WriteIcon proc __ccall file:string_t, resource:resource_t
 
    .new iconbuf:ptr ICONDIR
    .new filesize:int_t = 0
-   .new i:int_t, entry_count, entry_id, res_id
+   .new i:int_t, entry_count, entry_id, res_id, res_type, j
    .new is_cursor:byte = 0
 
     ldr rbx,file
@@ -378,31 +409,42 @@ WriteIcon proc __ccall file:string_t, resource:resource_t
     mov eax,[rdi].res_item.name
     add eax,RESID
     mov res_id,eax
+    mov res_type,[rdi].res_item.type
     mov rax,iconbuf
     .if ( [rax].ICONDIR.idType == 2 )
         inc is_cursor
     .endif
     lea rsi,[rax].ICONDIR.idEntries
     assume rsi:ptr ICONDIRENTRY
-    .for ( ebx = entry_id, edi = 0 : edi < entry_count : ebx++, edi++, rsi += ICONDIRENTRY )
-        mov eax,[rsi].dwBytesInRes
-        .if ( is_cursor )
-            add eax,4
-        .endif
-        AddLineQueueX( R2LABEL " %r %r " R3LABEL ", %u, 0, 0", ebx, T_DD, T_IMAGEREL, ebx, eax )
-    .endf
-    imul ecx,entry_count,GRPICONDIRENTRY
-    add ecx,GRPICONDIR
-    AddLineQueueX( R2LABEL " %r %r " R3LABEL ", %u, 0, 0", res_id, T_DD, T_IMAGEREL, res_id, ecx )
-
+    .if ( MODULE.resource == 0 )
+        .for ( ebx = entry_id, edi = 0 : edi < entry_count : ebx++, edi++, rsi += ICONDIRENTRY )
+            mov eax,[rsi].dwBytesInRes
+            .if ( is_cursor )
+                add eax,4
+            .endif
+            AddLineQueueX( R2LABEL " %r %r " R3LABEL ", %u, 0, 0", ebx, T_DD, T_IMAGEREL, ebx, eax )
+        .endf
+        imul ecx,entry_count,GRPICONDIRENTRY
+        add ecx,GRPICONDIR
+        AddLineQueueX( R2LABEL " %r %r " R3LABEL ", %u, 0, 0", res_id, T_DD, T_IMAGEREL, res_id, ecx )
+    .endif
     imul eax,entry_count,ICONDIRENTRY
     mov rcx,iconbuf
     lea rsi,[rcx].ICONDIR.idEntries
     lea rdi,[rcx+rax+ICONDIR]
     .for ( i = 0 : i < entry_count : i++, rsi += ICONDIRENTRY )
-        mov ecx,entry_id
-        add ecx,i
-        AddLineQueueX( R3LABEL " %r %r", ecx, T_LABEL, T_BYTE )
+        mov ebx,entry_id
+        add ebx,i
+        .if ( MODULE.resource )
+            mov ecx,[rsi].dwBytesInRes
+            .if ( is_cursor )
+                add ecx,4
+            .endif
+            AddLineQueueX( " %r %u, 32, 0x%XFFFF, 0x%XFFFF", T_DD, ecx, res_type, ebx )
+            AddLineQueueX( " %r 0, 0, 0x%X, 0x%X", T_DW, 0x1010, g_language )
+            AddLineQueueX( " %r 0, 0", T_DD )
+        .endif
+        AddLineQueueX( R3LABEL " %r %r", ebx, T_LABEL, T_BYTE )
         .if ( is_cursor )
             AddLineQueueX( " %r 0x%02X, 0x%02X", T_DW, [rsi].wPlanes, [rsi].wBitCount )
         .endif
@@ -425,6 +467,17 @@ WriteIcon proc __ccall file:string_t, resource:resource_t
             .endif
         .endf
     .endf
+    .if ( MODULE.resource )
+        imul ecx,entry_count,GRPICONDIRENTRY
+        add ecx,GRPICONDIR
+        mov edx,RT_GROUP_CURSOR
+        .if ( !is_cursor )
+            mov edx,RT_GROUP_ICON
+        .endif
+        AddLineQueueX( " %r %u, 32, 0x%XFFFF, 0x%XFFFF", T_DD, ecx, edx, res_id )
+        AddLineQueueX( " %r 0, 0, 0x%X, 0x%X", T_DW, 0x1030, g_language )
+        AddLineQueueX( " %r 0, 0", T_DD )
+    .endif
     AddLineQueueX( R3LABEL " %r %r", res_id, T_LABEL, T_BYTE )
     mov rsi,iconbuf
     assume rsi:ptr ICONDIR
@@ -438,6 +491,8 @@ WriteIcon proc __ccall file:string_t, resource:resource_t
             mov [rsi].wPlanes,1         ; moved to data
             mov [rsi].wBitCount,1       ; moved to data
             add [rsi].dwBytesInRes,4    ; + wPlanes and wBitCount
+        .elseif ( MODULE.resource && [rsi].wPlanes == 0 )
+            inc [rsi].wPlanes
         .endif
         AddLineQueueX( " %r %u, %u, %u, 0", T_DB, [rsi].bWidth, [rsi].bHeight, [rsi].bColorCount )
         AddLineQueueX( " %r %u, %u", T_DW, [rsi].wPlanes, [rsi].wBitCount )
@@ -446,10 +501,14 @@ WriteIcon proc __ccall file:string_t, resource:resource_t
         add ecx,ebx
         AddLineQueueX( " %r %u", T_DW, ecx )
     .endf
+    .if ( MODULE.resource && !( ebx & 3 ) )
+        AddLineQueueX( " %r 0", T_DW )
+    .endif
     MemFree(iconbuf)
     ret
     endp
 
+    assume rsi:nothing
 
 ; Read an array of integer values.
 ; - the list may end with a string: x, y, width, height {...}
@@ -517,20 +576,73 @@ GetValidOption proc __ccall tokenarray:token_t, i:pint_t, count:int_t, array:pby
     endp
 
 
-; ACCELERATORS {event, idvalue, [type] [options]... }
+GetValidOptionalStatements proc __ccall tokenarray:token_t, i:pint_t, os:ptr optional_statements
+    ldr rbx,tokenarray
+    ldr rsi,i
+    ldr rdi,os
+    xor eax,eax
+    mov [rdi].optional_statements.characteristics,eax
+    mov [rdi].optional_statements.language,R_LANGUAGE
+    mov [rdi].optional_statements.sublanguage,eax
+    mov [rdi].optional_statements.version,eax
+    inc eax
+    mov [rsi],eax
+    .whiled GetValidOption(rbx, rsi, lengthof(ValidOptionalStatements), &ValidOptionalStatements)
+        xor edx,edx
+        .switch pascal eax
+        .case T_CHARACTERISTICS
+            lea rcx,[rdi].optional_statements.characteristics
+            inc edx
+        .case T_LANGUAGE
+            lea rcx,[rdi].optional_statements.language
+            mov edx,2
+        .case T_VERSION
+            lea rcx,[rdi].optional_statements.version
+            inc edx
+        .endsw
+        .if ( edx )
+            .ifd ( GetIntParams(rbx, rsi, edx, rcx) == ERROR )
+                .return
+            .endif
+        .endif
+    .endw
+    .return( NOT_ERROR )
+    endp
 
-WriteAccelerators proc __ccall tokenarray:token_t
+WriteResourceHeader proc __ccall index:int_t, name:int_t, type:int_t, os:ptr optional_statements
+    ldr edi,index
+    ldr ebx,name
+    ldr rsi,os
+    .if ( MODULE.resource )
+        AddLineQueueX( " %r size_" R2LABEL ", 32, 0x%XFFFF, 0x%XFFFF", T_DD, edi, type, ebx )
+        AddLineQueueX( " %r 0, 0, 0x%X, 0x%X", T_DW, 0x1030, [rsi].optional_statements.language )
+        AddLineQueueX( " %r 0x%X, 0x%X", T_DD, [rsi].optional_statements.version, [rsi].optional_statements.characteristics )
+    .else
+        AddLineQueueX( R2LABEL " %r %r " R3LABEL ", size_" R2LABEL ", 0,0", edi, T_DD, T_IMAGEREL, edi, edi )
+    .endif
+    AddLineQueueX( R3LABEL " %r %r", edi, T_LABEL, T_DWORD )
+    ret
+    endp
 
+
+; ACCELERATORS [optional-statements] {event, idvalue, [type] [options]... }
+
+WriteAccelerators proc __ccall tokenarray:token_t, index:int_t
+
+   .new ops:optional_statements
    .new i:int_t, id, flags, key
    .new oldstat:input_status
 
     ldr rbx,tokenarray
+    ldr edi,index
+
+    GetValidOptionalStatements(rbx, &i, &ops)
     PushInputStatus( &oldstat )
-    tstrcpy( CurrSource, [rbx+asm_tok].string_ptr )
+    imul ecx,i,asm_tok
+    tstrcpy( CurrSource, [rbx+rcx].asm_tok.string_ptr )
     mov TokenCount,Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
-
+    WriteResourceHeader( edi, edi, RT_ACCELERATOR, &ops )
     .for ( rsi = rbx, edi = 0 : edi < TokenCount : )
-
         imul ebx,edi,asm_tok
         add rbx,rsi
         .if ( [rbx].token == T_COMMA )
@@ -590,6 +702,7 @@ WriteAccelerators proc __ccall tokenarray:token_t
          .endif
          AddLineQueueX( " %r 0x%02X, 0x%02X, %d, 0", T_DW, ebx, key, id )
     .endf
+    AddLineQueueX( " size_" R2LABEL " %r $ - " R3LABEL, index, T_EQU, index )
 toend:
     PopInputStatus( &oldstat )
     ret
@@ -599,24 +712,34 @@ error:
     endp
 
 
-; STRINGTABLE  {string  ...} -- 384..n
+; STRINGTABLE [optional-statements] {string  ...} -- 384..n
 
-WriteStringTable proc __ccall tokenarray:token_t, id:int_t
+WriteStringTable proc __ccall tokenarray:token_t, id:int_t, table:int_t
 
+   .new ops:optional_statements
    .new oldstat:input_status
+   .new i:int_t
    .new buffer[4096]:char_t
 
     ldr rbx,tokenarray
+    ldr edi,id
+    ldr esi,table
+
+    GetValidOptionalStatements(rbx, &i, &ops)
     PushInputStatus( &oldstat )
-    tstrcpy( CurrSource, [rbx+asm_tok].string_ptr )
+    imul ecx,i,asm_tok
+    tstrcpy( CurrSource, [rbx+rcx].string_ptr )
     mov TokenCount,Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
+    WriteResourceHeader( edi, esi, RT_STRING, &ops )
     .for ( esi = 0, edi = 0 : edi < TokenCount : esi++ )
         .if ( [rbx].token != T_STRING )
             jmp error
         .endif
         ExpandCString(&buffer, StringBufferEnd, [rbx].string_ptr, 1)
+        ;
         ; v2.40.10: calculate char-count of string from buffer
         ; - the return value is byte-count: "ab\x0102" = 4
+        ;
         AddLineQueueX( " %r " R3LABEL "%uCC", T_DW, id, esi )
         AddLineQueueX( R3LABEL "%u %r %s", id, esi, T_DW, &buffer )
         AddLineQueueX( R3LABEL "%uCC %r (($ - " R3LABEL "%u) / 2)", id, esi, T_EQU, id, esi )
@@ -630,6 +753,7 @@ WriteStringTable proc __ccall tokenarray:token_t, id:int_t
     .for ( : esi < 16 : esi++ )
         AddLineQueueX( " %r 0", T_DW )
     .endf
+    AddLineQueueX( " size_" R2LABEL " %r $ - " R3LABEL, id, T_EQU, id )
 toend:
     PopInputStatus( &oldstat )
     ret
@@ -641,15 +765,29 @@ error:
 
 ; MENU {...} or (recursive) POPUP {...}
 
-WriteMenu proc __ccall tokenarray:token_t
+WriteMenu proc __ccall tokenarray:token_t, index:int_t
 
-   .new i:int_t, result
+   .new ops:optional_statements
+   .new i:int_t = 1
+   .new result:int_t
    .new text:string_t
    .new oldstat:input_status
 
     ldr rbx,tokenarray
+    ldr edi,index
+
+    .if ( edi )
+        GetValidOptionalStatements(rbx, &i, &ops)
+        .if ( dialogex )
+            inc ops.version
+            GetOptionalNumber(rbx, &i, &ops.characteristics)
+        .endif
+        WriteResourceHeader( edi, edi, RT_MENU, &ops )
+        AddLineQueueX( " %r 0", T_DD )
+    .endif
     PushInputStatus( &oldstat )
-    tstrcpy( CurrSource, [rbx+asm_tok].string_ptr )
+    imul ecx,i,asm_tok
+    tstrcpy( CurrSource, [rbx+rcx].string_ptr )
     mov TokenCount,Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
 
     .for ( rsi = rbx, edi = 0 : edi < TokenCount : )
@@ -664,10 +802,10 @@ WriteMenu proc __ccall tokenarray:token_t
         add rbx,asm_tok
         .switch pascal eax
         .case T_MENUITEM
-            ;
+
             ; MENUITEM text, result, [optionlist]
             ; MENUITEM SEPARATOR
-            ;
+
             .if ( [rbx].token == T_ID )
                 .ifd ( [rbx].hash2 == T_SEPARATOR )
                     add edi,2
@@ -711,9 +849,9 @@ WriteMenu proc __ccall tokenarray:token_t
             .endif
             AddLineQueueX( " %r %u,%u,%s,0", T_DW, ebx, result, text )
         .case T_POPUP
-            ;
+
             ; POPUP <name> [, optionlist] {item-definitions ...}
-            ;
+
             .if ( [rbx].token != T_STRING )
                 jmp error
             .endif
@@ -751,13 +889,16 @@ WriteMenu proc __ccall tokenarray:token_t
                 or edx,MF_END
             .endif
             AddLineQueueX( " %r %u,%s,0", T_DW, edx, text )
-            WriteMenu( rbx )
+            WriteMenu( rbx, 0 )
             mov TokenCount,Tokenize( CurrSource, 0, rsi, TOK_DEFAULT )
         .default
          error:
             .return asmerr( 2008, [rbx].string_ptr )
         .endsw
     .endf
+    .if ( index )
+        AddLineQueueX( " size_" R2LABEL " %r $ - " R3LABEL, index, T_EQU, index )
+    .endif
     PopInputStatus( &oldstat )
     ret
     endp
@@ -828,26 +969,23 @@ WriteControl proto asmcall :int_t, :int_t, :int_t, :int_t { jmp control }
 
 .pragma aux(pop)
 
-;
+
 ; DIALOG x, y, width, height [, helpID] [optional-statements] {...}
-;
-WriteDialog proc __ccall tokenarray:token_t
+
+WriteDialog proc __ccall tokenarray:token_t, index:int_t
 
    .new i:int_t = 1
-   .new characteristics:int_t
+   .new os:optional_statements
    .new extended_style:int_t
    .new caption:string_t
    .new typeface:string_t
    .new pointsize:int_t
    .new helpID:int_t
-   .new version:int_t
    .new height:int_t, width, y, x
    .new style:int_t
    .new class:int_t
    .new id:int_t
    .new weight:int_t, italic, charset
-   .new sublanguage:int_t
-   .new dlanguage:int_t
    .new menu:int_t
    .new count:int_t
 
@@ -874,7 +1012,7 @@ WriteDialog proc __ccall tokenarray:token_t
             .endif
             xor ecx,ecx
         .case T_CHARACTERISTICS
-            lea rcx,characteristics
+            lea rcx,os.characteristics
         .case T_CLASS
             lea rcx,class
         .case T_EXSTYLE
@@ -897,7 +1035,7 @@ WriteDialog proc __ccall tokenarray:token_t
         .case T_HELP
             lea rcx,helpID
         .case T_LANGUAGE
-            .ifd ( GetIntParams(rsi, &i, 2, &dlanguage) == ERROR )
+            .ifd ( GetIntParams(rsi, &i, 2, &os.language) == ERROR )
                 jmp error
             .endif
             xor ecx,ecx
@@ -906,7 +1044,7 @@ WriteDialog proc __ccall tokenarray:token_t
         .case T_STYLE
             lea rcx,style
         .case T_VERSION
-            lea rcx,version
+            lea rcx,os.version
         .endsw
         .if ( rcx )
             .ifd ( GetIntParams(rsi, &i, 1, rcx) == ERROR )
@@ -914,6 +1052,7 @@ WriteDialog proc __ccall tokenarray:token_t
             .endif
         .endif
     .endw
+    WriteResourceHeader( index, index, RT_DIALOG, &os )
     imul ebx,i,asm_tok
     add rbx,rsi
     .if ( [rbx].token != T_STRING )
@@ -962,19 +1101,19 @@ WriteDialog proc __ccall tokenarray:token_t
         add rbx,asm_tok
         .switch pascal eax
         .case T_CHECKBOX
-            ;
+
             ; CHECKBOX text, id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_CHECKBOX or WS_TABSTOP, 1)
         .case T_COMBOBOX
-            ;
+
             ; COMBOBOX id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, CBS_SIMPLE or WS_TABSTOP, 0)
         .case T_CONTROL
-            ;
+
             ; CONTROL text, id, class, style, x, y, width, height [, extended-style]
-            ;
+
             add edi,3
             mov i,edi
             .ifd ( GetIntParams(rsi, &i, 7, &id) == ERROR )
@@ -984,7 +1123,7 @@ WriteDialog proc __ccall tokenarray:token_t
                 xor ecx,ecx
                 .switch pascal eax
                 .case T_CHARACTERISTICS
-                    lea rcx,characteristics
+                    lea rcx,os.characteristics
                 .case T_EXSTYLE
                     lea rcx,extended_style
                 .case T_CLASS
@@ -1006,60 +1145,59 @@ WriteDialog proc __ccall tokenarray:token_t
             AddControl(helpID, extended_style, ecx,
                 [rbx].string_ptr, class, id, x, y, width, height)
         .case T_CTEXT
-            ;
+
             ; CTEXT text, id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_STATIC, SS_CENTER or WS_GROUP, 1)
         .case T_DEFPUSHBUTTON
-            ;
+
             ; DEFPUSHBUTTON text, id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_DEFPUSHBUTTON or WS_TABSTOP, 1)
         .case T_EDITTEXT
-            ;
+
             ; EDITTEXT id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE or DS_MODALFRAME, RC_EDIT, ES_LEFT or WS_BORDER or WS_TABSTOP, 0)
         .case T_GROUPBOX
-            ;
+
             ; GROUPBOX text, id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_GROUPBOX, 1)
         .case T_LISTBOX
-            ;
+
             ; LISTBOX id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, LBS_NOTIFY or WS_BORDER, 0)
         .case T_LTEXT
-            ;
+
             ; LTEXT text, id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_STATIC, SS_LEFT or WS_GROUP, 1)
         .case T_PUSHBOX
-            ;
+
             ; PUSHBOX text, id, x, y, width, height [, style [, extended-style]]
-            ; styles: WS_TABSTOP, WS_DISABLED, and WS_GROUP
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_PUSHBOX or WS_TABSTOP, 1)
         .case T_PUSHBUTTON
-            ;
+
             ; PUSHBUTTON text, id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_PUSHBUTTON or WS_TABSTOP, 1)
         .case T_RADIOBUTTON
-            ;
+
             ; RADIOBUTTON text, id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_RADIOBUTTON or WS_TABSTOP, 1)
         .case T_RTEXT
-            ;
+
             ; RTEXT text, id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_STATIC, SS_RIGHT or WS_GROUP, 1)
         .case T_SCROLLBAR
-            ;
+
             ; SCROLLBAR id, x, y, width, height [, style [, extended-style]]
-            ;
+
             WriteControl(WS_CHILD or WS_VISIBLE, RC_SCROLLB, SBS_HORZ, 0)
         .default
          error:
@@ -1076,74 +1214,16 @@ WriteDialog proc __ccall tokenarray:token_t
             jmp error
         .endsw
     .endf
+    AddLineQueueX( " size_" R2LABEL " %r $ - " R3LABEL, index, T_EQU, index )
     ret
     endp
 
     assume rsi:resource_t
 
-WriteEntry proc __ccall resource:resource_t, tokenarray:token_t
-
-    ldr rsi,resource
-    ldr rbx,tokenarray
-    mov edi,[rsi].name
-    add edi,RESID
-
-    mov dialogex,0
-    AddLineQueueX( " %r 4", T_ALIGN )
-    mov TokenCount,Tokenize( [rsi].line, 0, rbx, TOK_DEFAULT )
-    mov eax,[rsi].hash
-    .if ( eax != T_ICON && eax != T_CURSOR )
-        AddLineQueueX( R2LABEL " %r %r " R3LABEL ", size_" R2LABEL ", 0, 0", edi, T_DD, T_IMAGEREL, edi, edi )
-        AddLineQueueX( R3LABEL " %r %r", edi, T_LABEL, T_DWORD )
-        mov eax,[rsi].hash
-    .endif
-    xor ecx,ecx
-    .switch eax
-    .case T_DIALOGEX
-        inc dialogex
-    .case T_DIALOG
-        WriteDialog(rbx)
-        mov ecx,1
-       .endc
-    .case T_MENUEX
-        inc dialogex
-    .case T_MENU
-        .if ( dialogex )
-            AddLineQueueX( " %r 1, 4", T_DW )
-            .if ( TokenCount == 3 )
-                add rbx,asm_tok ; helpID
-                AddLineQueueX( " %r %s", T_DD, [rbx].string_ptr )
-            .else
-                AddLineQueueX( " %r 0", T_DD )
-            .endif
-        .else
-            AddLineQueueX( " %r 0", T_DD )
-        .endif
-        WriteMenu(rbx)
-        mov ecx,1
-       .endc
-    .case T_CURSOR
-    .case T_ICON
-        WriteIcon([rbx+asm_tok].tokpos, rsi)
-        xor ecx,ecx
-       .endc
-    .case T_STRINGTABLE
-        WriteStringTable(rbx, edi)
-        mov ecx,1
-       .endc
-    .case T_ACCELERATORS
-        WriteAccelerators(rbx)
-        mov ecx,1
-    .endsw
-    .if ( ecx )
-        AddLineQueueX( " size_" R2LABEL " %r $ - " R3LABEL, edi, T_EQU, edi )
-    .endif
-    ret
-    endp
-
-
 WriteResource proc public
 
+   .new language:int_t = R_LANGUAGE
+   .new sublanguage:int_t = R_SUBLANG
    .new ResIdCount:int_t
    .new StrCounter:int_t = STRID
    .new types[RCMAXTYPES]:byte = {0}
@@ -1154,103 +1234,155 @@ WriteResource proc public
     .for ( rsi = MODULE.ResStack : rsi : rsi = [rsi].next )
         mov eax,[rsi].hash
         .if ( eax == T_LANGUAGE )
-            SetLanguage(rsi)
+            SetLanguage(rsi, &language, &sublanguage)
         .endif
     .endf
+    mov g_language,language
 
-    ; write main directory and entries for types
+    .if ( MODULE.resource )
 
-    .for ( edi = 0, ebx = 0, rsi = MODULE.ResStack : rsi : rsi = [rsi].next )
-        mov eax,[rsi].type
-        .if ( eax )
-            mov [rsi].name,ebx
-            .if ( eax == RT_ICON || eax == RT_CURSOR )
-                movzx edx,[rsi].icon[2]
-                .for ( ecx = 0 : cx < [rsi].icon[0] : ecx++, edx++, edi++ )
-                    sub edx,RESID
-                    mov names[rdi],dl
-                    mov typei[rdi],al
-                    inc types[rax]
-                    add edx,RESID
-                .endf
-                .if ( eax == RT_ICON )
-                    inc types[RT_GROUP_ICON]
-                    mov eax,RT_GROUP_ICON
-                .else
-                    inc types[RT_GROUP_CURSOR]
-                    mov eax,RT_GROUP_CURSOR
-                .endif
-            .else
-                inc types[rax]
+        ; Write the global dummy header
+
+        AddLineQueueX( " %r 0,32,0xFFFF,0xFFFF", T_DD )
+        AddLineQueueX( " %r 0,0,0,0", T_DD )
+
+        .for ( edi = 0, ebx = 0, rsi = MODULE.ResStack : rsi : rsi = [rsi].next )
+            mov eax,[rsi].type
+            .if ( eax )
+                mov [rsi].name,ebx
+                inc ebx
             .endif
-            mov names[rdi],bl
-            mov typei[rdi],al
-            inc ebx
-            inc edi
-        .endif
-    .endf
-    mov ResIdCount,edi
-
-    .for ( ecx = 0, eax = 1 : eax < RCMAXTYPES : eax++ )
-        .if ( types[rax] )
-            inc ecx
-        .endif
-    .endf
-    shl ecx,16
-    AddLineQueueX( " %r 0,0,0,0x%X", T_DD, ecx )
-    .for ( edi = 1 : edi < RCMAXTYPES : edi++ )
-        .if ( types[rdi] )
-            AddLineQueueX( " %r %d, %r " R0LABEL " + 0x80000000", T_DD, edi, T_SECTIONREL, edi )
-        .endif
-    .endf
-
-    ; write directory and entries for each resource
-
-    .while 1
-        .for ( eax = 0 : eax < ResIdCount : eax++ )
-            .break .if ( typei[rax] )
         .endf
-        .break .if ( eax == ResIdCount )
-        movzx ebx,typei[rax]
-        .for ( ecx = 0, eax = 0 : eax < ResIdCount : eax++ )
-            .if ( bl == typei[rax] )
+
+    .else
+
+        ; write main directory and entries for types
+
+        .for ( edi = 0, ebx = 0, rsi = MODULE.ResStack : rsi : rsi = [rsi].next )
+            mov eax,[rsi].type
+            .if ( eax )
+                mov [rsi].name,ebx
+                .if ( eax == RT_ICON || eax == RT_CURSOR )
+                    movzx edx,[rsi].icon[2]
+                    .for ( ecx = 0 : cx < [rsi].icon[0] : ecx++, edx++, edi++ )
+                        sub edx,RESID
+                        mov names[rdi],dl
+                        mov typei[rdi],al
+                        inc types[rax]
+                        add edx,RESID
+                    .endf
+                    .if ( eax == RT_ICON )
+                        inc types[RT_GROUP_ICON]
+                        mov eax,RT_GROUP_ICON
+                    .else
+                        inc types[RT_GROUP_CURSOR]
+                        mov eax,RT_GROUP_CURSOR
+                    .endif
+                .else
+                    inc types[rax]
+                .endif
+                mov names[rdi],bl
+                mov typei[rdi],al
+                inc ebx
+                inc edi
+            .endif
+        .endf
+        mov ResIdCount,edi
+
+        .for ( ecx = 0, eax = 1 : eax < RCMAXTYPES : eax++ )
+            .if ( types[rax] )
                 inc ecx
             .endif
         .endf
         shl ecx,16
-        AddLineQueueX( R0LABEL " %r 0,0,0,0x%X", ebx, T_DD, ecx )
-        .for ( edi = 0 : edi < ResIdCount : edi++ )
-            .if ( bl == typei[rdi] )
-                mov typei[rdi],0
-                movsx edx,names[rdi]
-                add edx,RESID
-                mov ecx,edx
-                .if ( bl == RT_STRING )
-                    mov ecx,StrCounter
-                    add StrCounter,16
-                    shr ecx,4
-                    inc ecx
-                .endif
-                AddLineQueueX( " %r %d, %r " R1LABEL " + 0x80000000", T_DD, ecx, T_SECTIONREL, edx )
+        AddLineQueueX( " %r 0,0,0,0x%X", T_DD, ecx )
+        .for ( edi = 1 : edi < RCMAXTYPES : edi++ )
+            .if ( types[rdi] )
+                AddLineQueueX( " %r %d, %r " R0LABEL " + 0x80000000", T_DD, edi, T_SECTIONREL, edi )
             .endif
         .endf
-    .endw
 
-    ; write language directory and entries
+        ; write directory and entries for each resource
 
-    .for ( edi = 0 : edi < ResIdCount : edi++ )
-        movsx ebx,names[rdi]
-        add ebx,RESID
-        AddLineQueueX( R1LABEL " %r 0,0,0,0x10000", ebx, T_DD )
-        AddLineQueueX( " %r %d, %r " R2LABEL, T_DD, language, T_SECTIONREL, ebx )
-    .endf
+        .while 1
+            .for ( eax = 0 : eax < ResIdCount : eax++ )
+                .break .if ( typei[rax] )
+            .endf
+            .break .if ( eax == ResIdCount )
+            movzx ebx,typei[rax]
+            .for ( ecx = 0, eax = 0 : eax < ResIdCount : eax++ )
+                .if ( bl == typei[rax] )
+                    inc ecx
+                .endif
+            .endf
+            shl ecx,16
+            AddLineQueueX( R0LABEL " %r 0,0,0,0x%X", ebx, T_DD, ecx )
+            .for ( edi = 0 : edi < ResIdCount : edi++ )
+                .if ( bl == typei[rdi] )
+                    mov typei[rdi],0
+                    movsx edx,names[rdi]
+                    add edx,RESID
+                    mov ecx,edx
+                    .if ( bl == RT_STRING )
+                        mov ecx,StrCounter
+                        add StrCounter,16
+                        shr ecx,4
+                        inc ecx
+                    .endif
+                    AddLineQueueX( " %r %d, %r " R1LABEL " + 0x80000000", T_DD, ecx, T_SECTIONREL, edx )
+                .endif
+            .endf
+        .endw
+
+        ; write language directory and entries
+
+        .for ( edi = 0 : edi < ResIdCount : edi++ )
+            movsx ebx,names[rdi]
+            add ebx,RESID
+            AddLineQueueX( R1LABEL " %r 0,0,0,0x10000", ebx, T_DD )
+            AddLineQueueX( " %r 0x%X, %r " R2LABEL, T_DD, language, T_SECTIONREL, ebx )
+        .endf
+    .endif
 
     ; write entries
 
     mov rbx,PushInputStatus( &oldstat )
     .for ( rsi = MODULE.ResStack : rsi : rsi = [rsi].next )
         .if ( [rsi].type )
-            WriteEntry(rsi, rbx)
+            mov edi,[rsi].name
+            add edi,RESID
+            mov dialogex,0
+            AddLineQueueX( " %r 4", T_ALIGN )
+            mov TokenCount,Tokenize( [rsi].line, 0, rbx, TOK_DEFAULT )
+            mov eax,[rsi].hash
+            .switch eax
+            .case T_DIALOGEX
+                inc dialogex
+            .case T_DIALOG
+                WriteDialog(rbx, edi)
+               .endc
+            .case T_MENUEX
+                inc dialogex
+            .case T_MENU
+                WriteMenu(rbx, edi)
+               .endc
+            .case T_CURSOR
+            .case T_ICON
+                WriteIcon([rbx+asm_tok].tokpos, rsi)
+               .endc
+            .case T_STRINGTABLE
+                mov ecx,StrCounter
+                add StrCounter,16
+                shr ecx,4
+                inc ecx
+                WriteStringTable(rbx, edi, ecx)
+               .endc
+            .case T_ACCELERATORS
+                WriteAccelerators(rbx, edi)
+               .endc
+            .default
+                asmerr( 2008, [rbx].string_ptr )
+            .endsw
         .endif
     .endf
     PopInputStatus(&oldstat)

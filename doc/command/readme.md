@@ -91,6 +91,7 @@ Options may be preceded by both a forward slash (/) and a dash (-) in Windows bu
 <tr><td><b>-pe</b></td><td>Generate <a href="option-pe.md">PE</a> binary file, 32/64-bit.</td></tr>
 <tr><td><b>-q</b></td><td>Operate quietly.</td></tr>
 <tr><td><b>-r</b></td><td>Recurse subdirectories with use of wildcards.</td></tr>
+<tr><td><b>-res</b></td><td>Generate binary resource file.</td></tr>
 <tr><td><b>-Sa</b></td><td>Turns on listing of all available information.</td></tr>
 <tr><td><b>-safeseh</b></td><td>Marks the object as either containing no exception handlers or containing exception handlers that are all declared with SAFESEH.</td></tr>
 <tr><td><b>-Sf</b></td><td>Adds first-pass listing to listing file.</td></tr>

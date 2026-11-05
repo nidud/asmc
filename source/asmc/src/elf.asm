@@ -1276,6 +1276,8 @@ endif
             .if ( usepic && [rsi].curpc_used )
                 mov edx,R_X86_64_PC64
             .endif
+        .case FIX_OFF32_SECREL
+            mov edx,R_X86_64_GOTPCREL
         .case FIX_OFF32_IMGREL
             mov edx,R_X86_64_RELATIVE
         .case FIX_OFF32

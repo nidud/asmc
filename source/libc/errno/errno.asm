@@ -16,9 +16,9 @@ endif
 
 ifdef __UNIX__
 ifdef _WIN64
-ALIAS <__get_errno_ptr>=<_errno>
+__get_errno_ptr::
 else
-ALIAS <__errno_location>=<_errno>
+__errno_location::
 endif
 else
 ALIAS <__get_errno_ptr>=<_errno>

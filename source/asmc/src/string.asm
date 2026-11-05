@@ -152,50 +152,77 @@ ExpandCString proc __ccall uses rsi rdi rbx data:string_t, binary:string_t, stri
                     .endif
                     mov eax,'x0'
                     stosw
+                    inc rsi
+                    ;
+                    ; digits may be less than count: "\x7"
+                    ;
+                    .for ( ecx = 0 : islxdigit([rsi+rcx]) : ecx++ )
+                        .break .if ( cl >= hex_count )
+                    .endf
+                    mov digits,cl
+                    .if ( hex_count == 8 && ecx > 4 )
+                        sub ecx,4
+                        add rsi,rcx
+                        mov ecx,4
+                    .endif
+                    .for ( ebx = 0 : ebx < ecx : ebx++ )
+                        mov al,[rsi+rbx]
+                        stosb
+                        inc char_count
+                    .endf
                     .if ( hex_count == 8 )
-                        mov eax,[rsi+1+4]
-                        stosd
                         mov al,','
                         stosb
                         mov eax,'x0'
                         stosw
-                        add char_count,7
+                        add char_count,3
+                        mov cl,digits
+                        .if ( ecx <= 4 ) ; "\U1"
+                            mov al,'0'
+                            stosb
+                            inc char_count
+                        .else
+                            sub ecx,4
+                            .for ( rsi -= rcx, ebx = 0 : ebx < ecx : ebx++ )
+                                mov al,[rsi+rbx]
+                                stosb
+                                inc char_count
+                            .endf
+                        .endif
                     .endif
-                    mov eax,[rsi+1]
-                    .if ( hex_count > 2 )
-                        stosd
-                        add char_count,6
-                    .else
-                        stosw
-                        add char_count,4
-                    .endif
-                    xor ecx,ecx
-                    mov al,hex_count
-                    shr al,1
-                    mov digits,al
-                    .while ( islxdigit( [rsi+1] ) && hex_count )
-                        inc rsi
+
+                    .for ( ecx = 0, eax = 0 : digits : digits-- )
+                        lodsb
                         shl ecx,4
-                        and eax,not 30h
+                        and al,not 30h
                         bt  eax,6
                         sbb ebx,ebx
-                        and ebx,55
-                        sub eax,ebx
+                        and bl,55
+                        sub al,bl
                         add ecx,eax
-                        dec hex_count
-                    .endw
+                    .endf
+                    dec rsi
                     mov [rdx],cl
                     inc rdx
-                    dec digits
+                    movzx ebx,hex_count
+                    shr ebx,1 ; fixed byte count
+                    dec ebx
                     shr ecx,8
-                    .while digits ; zero allowed..?
+                    .while ebx
                         mov [rdx],cl
                         inc rdx
                         shr ecx,8
-                        dec digits
+                        dec ebx
                     .endw
                 .else
-                    mov eax,'x'
+                    .if ( !inside_quote )
+                        inc inside_quote
+                        mov ecx,'",'
+                        mov [rdi],cx
+                        add rdi,2
+                        add char_count,2
+                    .endif
+                    mov al,[rsi]
                     stosb
                     mov [rdx],al
                     inc rdx
@@ -279,7 +306,7 @@ ExpandCString proc __ccall uses rsi rdi rbx data:string_t, binary:string_t, stri
                 mov [rdx],cl
                 inc rdx
                .endc
-            .case '"'         ; <",'"',">
+            .case '"'
                 .if ( inside_quote )
                     mov inside_quote,0
                     .if ( char_count == 1 )

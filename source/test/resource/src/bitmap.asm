@@ -1,11 +1,13 @@
 
+; https://github.com/microsoftarchive/msdn-code-gallery-microsoft/tree/master/Official%20Windows%20Platform%20Sample/DPI%20Tutorial%20sample/[C%2B%2B]-DPI%20Tutorial%20sample/C%2B%2B
+
 define NTDDI_VERSION 0x06030000 ; NTDDI_WINBLUE
 
 include windows.inc
 include winnls.inc
 include shellscalingapi.inc
 include tchar.inc
-include resource.inc
+include res/bitmap.inc
 
 ; DPI Helper Class - functions to manage the state of DPI awareness, and scale
 ; values used for window size and rendering.
@@ -529,12 +531,12 @@ MyRegisterClass proc hInstance:HINSTANCE
     mov wcex.cbClsExtra,0
     mov wcex.cbWndExtra,0
     mov wcex.hInstance,hInstance
-    mov wcex.hIcon,LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DPITUTORIAL))
+    mov wcex.hIcon,LoadIcon(hInstance, MAKEINTRESOURCE(IDI_SMALL))
+    mov wcex.hIconSm,rax
     mov wcex.hCursor,LoadCursor(NULL, IDC_ARROW)
     mov wcex.hbrBackground,GetStockObject(COLOR_WINDOW + 1)
     mov wcex.lpszMenuName,MAKEINTRESOURCE(IDM_DPITUTORIAL)
     mov wcex.lpszClassName,&g_szWindowClass
-    mov wcex.hIconSm,LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL))
     .return RegisterClassEx(&wcex)
     endp
 

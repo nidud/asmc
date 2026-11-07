@@ -1,10 +1,9 @@
-include resource.inc
+include res/bitmap.inc
 
 .resource
 
 LANGUAGE 9, 1
 
-ICON res/dpitutorial.ico
 ICON res/small.ico
 
 BITMAP res/scaled100.bmp

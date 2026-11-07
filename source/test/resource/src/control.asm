@@ -28,6 +28,25 @@ OnClose proc hWnd:HWND
     endp
 
 OnInitAnimationDialog proc hWnd:HWND, hWndFocus:HWND, lParam:LPARAM
+    .new iccx:INITCOMMONCONTROLSEX = { sizeof(iccx) }
+    mov iccx.dwICC,ICC_ANIMATE_CLASS
+    .if (!InitCommonControlsEx(&iccx))
+        .return FALSE
+    .endif
+    .new rc:RECT = { 20, 20, 280, 60 }
+    .new hAnimate:HWND = CreateWindowEx(0, ANIMATE_CLASS, 0,
+            ACS_TIMER or ACS_AUTOPLAY or ACS_TRANSPARENT or WS_CHILD or WS_VISIBLE,
+            rc.left, rc.top, rc.right, rc.bottom,
+            hWnd, IDC_ANIMATION, g_hInst, 0)
+    .if (hAnimate == NULL)
+        .return FALSE
+    .endif
+    .if ( SendMessage(hAnimate, ACM_OPEN, 0, MAKEINTRESOURCE(IDR_UPLOAD_AVI)) == 0 )
+        .return FALSE
+    .endif
+    .if ( SendMessage(hAnimate, ACM_PLAY, -1, MAKELONG(0, -1)) == 0 )
+        .return FALSE
+    .endif
     .return TRUE
     endp
 
@@ -267,11 +286,11 @@ OnInitListviewDialog proc uses rsi rdi rbx hWnd:HWND, hWndFocus:HWND, lParam:LPA
      mov [rsi].LVHandles.hSmallIcons,ImageList_Create(sx, sy, ILC_COLOR32 or ILC_MASK, 1, 1)
     .new hLargeIcon:HICON
     .new hSmallIcon:HICON
-    .for (ebx = 1: ebx <= 10: ebx++)
-        mov hLargeIcon,LoadImage(g_hInst, IDI_ICON, IMAGE_ICON, lx, ly, 0)
+    .for ( ebx = IDI_ICON1 : ebx <= IDI_ICON10 : ebx++ )
+        mov hLargeIcon,LoadImage(g_hInst, MAKEINTRESOURCE(rbx), IMAGE_ICON, lx, ly, 0)
         ImageList_AddIcon([rsi].LVHandles.hLargeIcons, hLargeIcon)
         DestroyIcon(hLargeIcon)
-        mov hSmallIcon,LoadImage(g_hInst, IDI_ICON, IMAGE_ICON, sx, sy, 0)
+        mov hSmallIcon,LoadImage(g_hInst, MAKEINTRESOURCE(rbx), IMAGE_ICON, sx, sy, 0)
         ImageList_AddIcon([rsi].LVHandles.hSmallIcons, hSmallIcon)
         DestroyIcon(hSmallIcon)
     .endf

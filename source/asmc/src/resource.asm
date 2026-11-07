@@ -21,11 +21,12 @@ include lqueue.inc
 include fastpass.inc
 include resource.inc
 
+define MAXTYPES     16  ; Max RC_ types
+define MAXRESID     256 ; Max ID
+
 define RESID        100 ; First ID
 define STRID        384 ; First string ID
-
-define RCMAXTYPES   16  ; Max RC_ types
-define RCMAXRESID   256 ; Max ID
+define ICOID        800 ; First icon ID
 
 ; Labels for resource data
 
@@ -56,6 +57,7 @@ RHASH macro string
     T_AUTO3STATE        = RHASH(AUTO3STATE),
     T_AUTOCHECKBOX      = RHASH(AUTOCHECKBOX),
     T_AUTORADIOBUTTON   = RHASH(AUTORADIOBUTTON),
+    T_AVI               = RHASH(AVI),
     T_BITMAP            = RHASH(BITMAP),
     T_CAPTION           = RHASH(CAPTION),
     T_CHARACTERISTICS   = RHASH(CHARACTERISTICS),
@@ -172,7 +174,7 @@ ResourceDir proc __ccall i:int_t, tokenarray:token_t
     mov eax,MODULE.dotname
     mov dotname,eax
     mov MODULE.dotname,1
-    mov idcounter,1
+    mov idcounter,ICOID
     mov g_language,R_LANGUAGE
     .if ( MODULE.resource )
         mov lpRead,NULL
@@ -218,6 +220,7 @@ GetStatement proc fastcall token:StatementTokens
     .case T_SCROLLBAR
         inc eax
     .case T_ACCELERATORS
+    .case T_AVI
     .case T_BITMAP
     .case T_CURSOR
     .case T_DIALOG
@@ -237,6 +240,9 @@ GetStatementType proc fastcall token:StatementTokens
     .switch ecx
     .case T_ACCELERATORS
         mov eax,RT_ACCELERATOR
+       .endc
+    .case T_AVI
+        mov eax,RT_RCDATA
        .endc
     .case T_STRINGTABLE
         inc eax
@@ -437,6 +443,7 @@ WriteIcon proc __ccall file:string_t, resource:resource_t
         mov ebx,entry_id
         add ebx,i
         .if ( MODULE.resource )
+            AddLineQueueX( " %r 4", T_ALIGN )
             mov ecx,[rsi].dwBytesInRes
             .if ( is_cursor )
                 add ecx,4
@@ -622,6 +629,26 @@ WriteResourceHeader proc __ccall index:int_t, name:int_t, type:int_t, os:ptr opt
         AddLineQueueX( R2LABEL " %r %r " R3LABEL ", size_" R2LABEL ", 0,0", edi, T_DD, T_IMAGEREL, edi, edi )
     .endif
     AddLineQueueX( R3LABEL " %r %r", edi, T_LABEL, T_DWORD )
+    ret
+    endp
+
+
+; AVI <file> - Audio Video Interleave
+
+WriteAvi proc __ccall tokenarray:token_t, index:int_t
+    ldr rbx,tokenarray
+    ldr edi,index
+    .if ( MODULE.resource )
+        AddLineQueueX( " %r size_" R2LABEL ", 36", T_DD, edi )
+        AddLineQueueX( " %r 'A', 'V', 'I', 0", T_DW )
+        AddLineQueueX( " %r -1, 0x%X, 0, 0, 0x30, 0x%X, 0, 0", T_DW, edi, g_language )
+        AddLineQueueX( " %r 0", T_DD )
+    .else
+        asmerr( 2008, "AVI only supported for -res" )
+    .endif
+    AddLineQueueX( R3LABEL " %r %r", edi, T_LABEL, T_DWORD )
+    AddLineQueueX( " %r <%s>", T_INCBIN, [rbx+asm_tok].tokpos )
+    AddLineQueueX( " size_" R2LABEL " %r $ - " R3LABEL, edi, T_EQU, edi )
     ret
     endp
 
@@ -1239,9 +1266,9 @@ WriteResource proc public
    .new sublanguage:int_t = R_SUBLANG
    .new ResIdCount:int_t
    .new StrCounter:int_t = STRID
-   .new types[RCMAXTYPES]:byte = {0}
-   .new names[RCMAXRESID]:byte
-   .new typei[RCMAXRESID]:byte
+   .new types[MAXTYPES]:byte = {0}
+   .new names[MAXRESID]:word
+   .new typei[MAXRESID]:byte
    .new oldstat:input_status
 
     .for ( rsi = MODULE.ResStack : rsi : rsi = [rsi].next )
@@ -1279,7 +1306,7 @@ WriteResource proc public
                     movzx edx,[rsi].icon[2]
                     .for ( ecx = 0 : cx < [rsi].icon[0] : ecx++, edx++, edi++ )
                         sub edx,RESID
-                        mov names[rdi],dl
+                        mov names[rdi*2],dx
                         mov typei[rdi],al
                         inc types[rax]
                         add edx,RESID
@@ -1294,7 +1321,7 @@ WriteResource proc public
                 .else
                     inc types[rax]
                 .endif
-                mov names[rdi],bl
+                mov names[rdi*2],bx
                 mov typei[rdi],al
                 inc ebx
                 inc edi
@@ -1302,14 +1329,14 @@ WriteResource proc public
         .endf
         mov ResIdCount,edi
 
-        .for ( ecx = 0, eax = 1 : eax < RCMAXTYPES : eax++ )
+        .for ( ecx = 0, eax = 1 : eax < MAXTYPES : eax++ )
             .if ( types[rax] )
                 inc ecx
             .endif
         .endf
         shl ecx,16
         AddLineQueueX( " %r 0,0,0,0x%X", T_DD, ecx )
-        .for ( edi = 1 : edi < RCMAXTYPES : edi++ )
+        .for ( edi = 1 : edi < MAXTYPES : edi++ )
             .if ( types[rdi] )
                 AddLineQueueX( " %r %d, %r " R0LABEL " + 0x80000000", T_DD, edi, T_SECTIONREL, edi )
             .endif
@@ -1333,7 +1360,7 @@ WriteResource proc public
             .for ( edi = 0 : edi < ResIdCount : edi++ )
                 .if ( bl == typei[rdi] )
                     mov typei[rdi],0
-                    movsx edx,names[rdi]
+                    movsx edx,names[rdi*2]
                     add edx,RESID
                     mov ecx,edx
                     .if ( bl == RT_STRING )
@@ -1350,7 +1377,7 @@ WriteResource proc public
         ; write language directory and entries
 
         .for ( edi = 0 : edi < ResIdCount : edi++ )
-            movsx ebx,names[rdi]
+            movsx ebx,names[rdi*2]
             add ebx,RESID
             AddLineQueueX( R1LABEL " %r 0,0,0,0x10000", ebx, T_DD )
             AddLineQueueX( " %r 0x%X, %r " R2LABEL, T_DD, language, T_SECTIONREL, ebx )
@@ -1369,6 +1396,9 @@ WriteResource proc public
             mov TokenCount,Tokenize( [rsi].line, 0, rbx, TOK_DEFAULT )
             mov eax,[rsi].hash
             .switch eax
+            .case T_AVI
+                WriteAvi(rbx, edi)
+               .endc
             .case T_BITMAP
                 WriteBitmap(rbx, edi)
                .endc

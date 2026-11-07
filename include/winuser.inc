@@ -121,25 +121,19 @@ WINSTAENUMPROC		typedef WINSTAENUMPROCA
 DESKTOPENUMPROC		typedef DESKTOPENUMPROCA
 endif
 
-MAKEINTRESOURCEA macro i
+MAKEINTRESOURCE macro i
     if ( (OPATTR i) and 4 )
 	exitm<((i) and 0xFFFF)>
     endif
 	exitm<i>
 	endm
-MAKEINTRESOURCEW macro i
-    if ( (OPATTR i) and 4 )
-	exitm<((i) and 0xFFFF)>
-    endif
-	exitm<i>
-	endm
-ifdef _UNICODE
-MAKEINTRESOURCE		equ <MAKEINTRESOURCEW>
-else
-MAKEINTRESOURCE		equ <MAKEINTRESOURCEA>
-endif
+MAKEINTRESOURCEA	equ <MAKEINTRESOURCE>
+MAKEINTRESOURCEW	equ <MAKEINTRESOURCE>
 
 ifndef NORESOURCE
+
+define RC_RESID		100 ; Asmc: first resource id
+define RC_STRID		384 ; Asmc: first string id
 
 define IDC_STATIC	(-1)
 define IDC_ANIMATION	990

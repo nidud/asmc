@@ -16,7 +16,7 @@ Converts resource-definition statements into a binary resource file. Supported o
 
 Each line has to begin with a resource-definition statement. The resource-definition statements are case-sensitive.
 
-The unique 16-bit unsigned integer value that identifies a resource starts at 100, except for STRINGTABLE resources, which start at 384 (0x180) where each table allocates 16 strings. This means the maximum number of resource-definitions is 256 (100..383).
+The unique 16-bit unsigned integer value that identifies a resource starts at 100, except for STRINGTABLE resources, which start at 384 (0x180) where each table allocates 16 strings. This means the maximum number of resource-definitions is 256 if a string table is used (100..383).
 
 Lines are textual and can be continued by using a comma (,) at the end of the line. Statements beyond the default parameters can be specified in any order, but must be prefixed with their respective statement keywords.
 
@@ -48,6 +48,7 @@ The following table describes the resource-definition statements that define res
 <table>
 <tr><td>Resource</td><td>Description</td></tr>
 <tr><td><a href="accelerators.md">ACCELERATORS</a></td><td>Defines keyboard shortcuts for menu items.</td></tr>
+<tr><td><a href="avi.md">AVI</a></td><td>Defines a Audio Video Interleave file that contains it.</td></tr>
 <tr><td><a href="bitmap.md">BITMAP</a></td><td>Defines a bitmap by specifying the name of the file that contains it.</td></tr>
 <tr><td><a href="cursor.md">CURSOR</a></td><td>Defines a cursor by specifying the name of the file that contains it.</td></tr>
 <tr><td><a href="dialog.md">DIALOG</a></td><td>Defines a dialog box.</td></tr>

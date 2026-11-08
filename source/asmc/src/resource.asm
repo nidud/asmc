@@ -267,7 +267,7 @@ GetStatementType proc fastcall token:StatementTokens
 WriteResID proc __ccall ID:size_t
     ldr rcx,ID
     mov edx,0xFFFF
-    .ifs ( rcx > rdx )
+    .if ( rcx > rdx )
         AddLineQueueX( " %r %s, 0", T_DW, rcx )
     .else
         AddLineQueueX( " %r %u, 0", T_DW, ecx )

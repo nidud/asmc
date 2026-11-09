@@ -6,7 +6,7 @@
 ; background(9).stroke(w,66);for(t+=PI/240,i=1e4;i--;)a(i/254)}
 ;
 
-include stdafx.inc
+include yuruyurau.inc
 
 define TIMER   30
 define STEPDIV 240
@@ -65,4 +65,4 @@ CApplication::Point proc uses xmm6 xmm7 i:UINT
     ret
     endp
 
-include winmain.inc
+include yuruyurau2.inc

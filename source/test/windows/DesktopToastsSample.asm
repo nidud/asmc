@@ -658,7 +658,7 @@ DesktopToastsApp::CreateToastXml proc \
     .new hr:HRESULT = toastManager.GetTemplateContent(Windows::UI::Notifications::ToastTemplateType_ToastImageAndText04, inputXml)
     .if (SUCCEEDED(hr))
 
-        .new imagePath:PWSTR = _wfullpath(NULL, "toastImageAndText.png", MAX_PATH)
+        .new imagePath:PWSTR = _wfullpath(NULL, "res\\toastImageAndText.png", MAX_PATH)
         mov hr,HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)
         .if imagePath
             mov hr,S_OK

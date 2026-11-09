@@ -64,6 +64,8 @@ The following table describes the resource-definition statements that define res
 
 <table>
 <tr><td>Control</td><td>Description</td></tr>
+<tr><td><a href="autocheckbox.md">AUTOCHECKBOX</a></td><td>Creates a check box control.</td></tr>
+<tr><td><a href="autoradiobutton.md">AUTORADIOBUTTON</a></td><td>Creates a radio button control.</td></tr>
 <tr><td><a href="checkbox.md">CHECKBOX</a></td><td>Creates a check box control.</td></tr>
 <tr><td><a href="combobox.md">COMBOBOX</a></td><td>Creates a combo box control.</td></tr>
 <tr><td><a href="control.md">CONTROL</a></td><td>Creates a control.</td></tr>

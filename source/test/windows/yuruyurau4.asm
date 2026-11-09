@@ -5,7 +5,7 @@
 ; t=0,draw=$=>{t||createCanvas(w=400,w);background(9).stroke(w,96);
 ; for(t+=PI/60,i=1e4;i--;)a(i/498)}
 
-include stdafx.inc
+include yuruyurau.inc
 
 define TIMER   30
 define STEPDIV 60
@@ -67,5 +67,5 @@ CApplication::Point proc uses xmm6 xmm7 id:UINT
     ret
     endp
 
-include winmain.inc
+include yuruyurau2.inc
 

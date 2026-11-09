@@ -44,7 +44,7 @@ InitD3D proc hWnd:HWND
 InitGeometry proc uses rsi rdi rbx
 
     .new pD3DXMtrlBuffer:LPD3DXBUFFER
-    .ifsd ( D3DXLoadMeshFromX( L"Tiger.x", D3DXMESH_SYSTEMMEM, g_pd3dDevice, NULL,
+    .ifsd ( D3DXLoadMeshFromX( L"res\\Tiger.x", D3DXMESH_SYSTEMMEM, g_pd3dDevice, NULL,
             &pD3DXMtrlBuffer, NULL, &g_dwNumMaterials, &g_pMesh ) < 0 )
         MessageBox( NULL, L"Could not find tiger.x", L"Meshes.exe", MB_OK )
         .return( E_FAIL )

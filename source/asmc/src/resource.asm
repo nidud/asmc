@@ -186,6 +186,7 @@ ResourceDir proc __ccall i:int_t, tokenarray:token_t
     .endif
     AddLineQueueX( ".rsrc %r %s %r %r 'RSRC'", T_SEGMENT, lpRead, T_DWORD, T_FLAT, T_PUBLIC )
     AddLineQueueX( "%r wstring(%r, 1)", T_DOT_PRAGMA, T_PUSH )
+    AddLineQueueX( "%r linesize:0x2000", T_OPTION )
     RunLineQueue()
     mov MODULE.ResourceParsing,1
     .return( NOT_ERROR )
@@ -202,6 +203,8 @@ option proc: private
 GetStatement proc fastcall token:StatementTokens
     xor eax,eax
     .switch ecx
+    .case T_AUTOCHECKBOX
+    .case T_AUTORADIOBUTTON
     .case T_CHECKBOX
     .case T_COMBOBOX
     .case T_CONTROL
@@ -292,14 +295,18 @@ AddControl proc __ccall helpID:int_t, extended_style:int_t, style:int_t, name:st
     .endif
     AddLineQueueX( " %r -1, %d", T_DW, class )
     mov rcx,name
-    mov eax,0xFFFF
-    .if ( rcx > rax )
-        ExpandCString(&buffer, StringBufferEnd, rcx, 1)
-        AddLineQueueX( " %r %s, 0", T_DW, &buffer )
+    .if ( rcx )
+        mov eax,0xFFFF
+        .if ( rcx > rax )
+            ExpandCString(&buffer, StringBufferEnd, rcx, 1)
+            AddLineQueueX( " %r %s, 0", T_DW, &buffer )
+        .else
+            AddLineQueueX( " %r %u, 0", T_DW, ecx )
+        .endif
     .else
-        AddLineQueueX( " %r %u, 0", T_DW, ecx )
+        AddLineQueueX( " %r 0", T_DW )
     .endif
-    ; optional data..
+    ; optional data..?
     AddLineQueueX( " %r 0", T_DW )
     ret
     endp
@@ -1107,6 +1114,7 @@ WriteDialog proc __ccall tokenarray:token_t, index:int_t
     .else
         AddLineQueueX( " %r 0x%X, 0", T_DD, style )
     .endif
+    mov rsi,MODULE.tokenarray
     ;
     ; get the element-count
     ;
@@ -1140,20 +1148,20 @@ WriteDialog proc __ccall tokenarray:token_t, index:int_t
         mov eax,[rbx].hash2
         add rbx,asm_tok
         .switch pascal eax
+        .case T_AUTOCHECKBOX
+            ; AUTOCHECKBOX text, id, x, y, width, height [, style [, extended-style]]
+            WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_AUTOCHECKBOX or WS_TABSTOP, 1)
+        .case T_AUTORADIOBUTTON
+            ; AUTORADIOBUTTON text, id, x, y, width, height [, style [, extended-style]]
+            WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_AUTORADIOBUTTON or WS_TABSTOP, 1)
         .case T_CHECKBOX
-
             ; CHECKBOX text, id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_CHECKBOX or WS_TABSTOP, 1)
         .case T_COMBOBOX
-
             ; COMBOBOX id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, CBS_SIMPLE or WS_TABSTOP, 0)
         .case T_CONTROL
-
             ; CONTROL text, id, class, style, x, y, width, height [, extended-style]
-
             add edi,3
             mov i,edi
             .ifd ( GetIntParams(rsi, &i, 7, &id) == ERROR )
@@ -1185,59 +1193,37 @@ WriteDialog proc __ccall tokenarray:token_t, index:int_t
             AddControl(helpID, extended_style, ecx,
                 [rbx].string_ptr, class, id, x, y, width, height)
         .case T_CTEXT
-
             ; CTEXT text, id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_STATIC, SS_CENTER or WS_GROUP, 1)
         .case T_DEFPUSHBUTTON
-
             ; DEFPUSHBUTTON text, id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_DEFPUSHBUTTON or WS_TABSTOP, 1)
         .case T_EDITTEXT
-
             ; EDITTEXT id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE or DS_MODALFRAME, RC_EDIT, ES_LEFT or WS_BORDER or WS_TABSTOP, 0)
         .case T_GROUPBOX
-
             ; GROUPBOX text, id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_GROUPBOX, 1)
         .case T_LISTBOX
-
             ; LISTBOX id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, LBS_NOTIFY or WS_BORDER, 0)
         .case T_LTEXT
-
             ; LTEXT text, id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_STATIC, SS_LEFT or WS_GROUP, 1)
         .case T_PUSHBOX
-
             ; PUSHBOX text, id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_PUSHBOX or WS_TABSTOP, 1)
         .case T_PUSHBUTTON
-
             ; PUSHBUTTON text, id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_PUSHBUTTON or WS_TABSTOP, 1)
         .case T_RADIOBUTTON
-
             ; RADIOBUTTON text, id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_BUTTON, BS_RADIOBUTTON or WS_TABSTOP, 1)
         .case T_RTEXT
-
             ; RTEXT text, id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_STATIC, SS_RIGHT or WS_GROUP, 1)
         .case T_SCROLLBAR
-
             ; SCROLLBAR id, x, y, width, height [, style [, extended-style]]
-
             WriteControl(WS_CHILD or WS_VISIBLE, RC_SCROLLB, SBS_HORZ, 0)
         .default
          error:

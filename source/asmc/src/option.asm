@@ -729,6 +729,8 @@ endif
                     .endif
                     mov esi,MaxLineLength
                 .endw
+                Tokenize(p.start, 0, TokenArray, 0)
+                mov tokenarray,TokenArray
             .else
                 .return( asmerr( 2026 ) )
             .endif

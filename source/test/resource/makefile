@@ -2,7 +2,8 @@
 .EXTENSIONS: .inc
 
 OBJS =	icon.obj menu.obj cursor.obj dialog.obj string.obj
-APPS =	icon.exe menu.exe cursor.exe dialog.exe string.exe control.exe unicode.exe bitmap.exe
+APPS =	icon.exe menu.exe cursor.exe dialog.exe string.exe \
+	control.exe unicode.exe bitmap.exe shortcut.exe
 
 {src}.asm.exe:
 	asmc64 -q -Zp8 -ws -Cs -frame -peg $<

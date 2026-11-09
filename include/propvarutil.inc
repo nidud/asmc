@@ -39,7 +39,13 @@ InitPropVariantFromDoubleVector proto WINAPI :ptr, :ULONG, :ptr
 InitPropVariantFromFileTimeVector proto WINAPI :ptr, :ULONG, :ptr
 InitPropVariantFromStringVector proto WINAPI :ptr, :ULONG, :ptr
 InitPropVariantFromStringAsVector proto WINAPI :PCWSTR, :ptr
-InitPropVariantFromBoolean proto WINAPI :BOOL, :ptr
+
+InitPropVariantFromBoolean proto fastcall :BOOL, :ptr {
+    mov [rdx].PROPVARIANT.vt,VT_BOOL
+    mov [rdx].PROPVARIANT.ulVal,ecx
+    mov eax,S_OK
+    }
+
 InitPropVariantFromInt16 proto WINAPI :SWORD, :ptr
 InitPropVariantFromUInt16 proto WINAPI :USHORT, :ptr
 InitPropVariantFromInt32 proto WINAPI :LONG, :ptr

@@ -6,8 +6,8 @@
 .pragma list(push, 0)
 
 ifndef _ASMC_VER
-define _ASMC_VER    240
-define _ASMC_BUILD  15
+define _ASMC_VER    241
+define _ASMC_BUILD  1
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 

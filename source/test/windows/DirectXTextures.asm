@@ -58,7 +58,7 @@ InitGeometry proc uses rdi rbx
    .new pVertices:ptr CUSTOMVERTEX
    .new theta:FLOAT
 
-    .if FAILED(D3DXCreateTextureFromFile( g_pd3dDevice, L"tiger.png", &g_pTexture ))
+    .if FAILED(D3DXCreateTextureFromFile( g_pd3dDevice, L"res\\tiger.png", &g_pTexture ))
         MessageBox( NULL, L"Could not find tiger.png", L"Textures.exe", MB_OK )
        .return( E_FAIL )
     .endif

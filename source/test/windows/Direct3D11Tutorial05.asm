@@ -451,7 +451,7 @@ endif
     ;; Compile the vertex shader
 
     mov pVSBlob,NULL
-    .ifd CompileShaderFromFile( L"Direct3D11Tutorial05.fx", &VS, &vs_4_0, &pVSBlob ) != S_OK
+    .ifd CompileShaderFromFile( L"res\\Direct3D11Tutorial05.fx", &VS, &vs_4_0, &pVSBlob ) != S_OK
         mov hr,eax
         MessageBox(
             NULL,
@@ -490,7 +490,7 @@ endif
     ;; Compile the pixel shader
 
     mov pPSBlob,NULL
-    .ifd CompileShaderFromFile( L"Direct3D11Tutorial05.fx", &PS, &ps_4_0, &pPSBlob ) != S_OK
+    .ifd CompileShaderFromFile( L"res\\Direct3D11Tutorial05.fx", &PS, &ps_4_0, &pPSBlob ) != S_OK
         mov hr,eax
         MessageBox( NULL, "The FX file cannot be compiled."
             " Please run this executable from the directory that contains the FX file.",

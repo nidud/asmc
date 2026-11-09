@@ -1,6 +1,11 @@
-
+;
+; As an Icon (and Cursors) have additional ID's, and was enumerated
+; from 1, it overflows if count > 100 (which is the case here).
+;
+; Extended ID's now starts at 800 so ID's < 100 is not used.
+;
 .enum {
-    IDI_ICON1 = 100,
+    IDI_ICON1 = RC_RESID, ; 100
     IDI_ICON2,
     IDI_ICON3,
     IDI_ICON4,
@@ -29,22 +34,21 @@
     IDD_UPDOWNDIALOG,
     IDD_REBARDIALOG,
     IDR_UPLOAD_AVI,
+    IDC_BUTTON_ANIMATION = 1000,
+    IDC_BUTTON_COMBOBOXEX,
+    IDC_BUTTON_DATETIMEPICK,
+    IDC_BUTTON_HEADER,
+    IDC_BUTTON_IPADDRESS,
+    IDC_BUTTON_LISTVIEW,
+    IDC_BUTTON_MONTHCAL,
+    IDC_BUTTON_PROGRESS,
+    IDC_BUTTON_SYSLINK,
+    IDC_BUTTON_STATUS,
+    IDC_BUTTON_TABCONTROL,
+    IDC_BUTTON_TOOLBAR,
+    IDC_BUTTON_TOOLTIP,
+    IDC_BUTTON_TRACKBAR,
+    IDC_BUTTON_TREEVIEW,
+    IDC_BUTTON_UPDOWN,
+    IDC_BUTTON_REBAR,
     }
-
-define IDC_BUTTON_ANIMATION            1000
-define IDC_BUTTON_COMBOBOXEX           1001
-define IDC_BUTTON_DATETIMEPICK         1002
-define IDC_BUTTON_HEADER               1003
-define IDC_BUTTON_IPADDRESS            1004
-define IDC_BUTTON_LISTVIEW             1005
-define IDC_BUTTON_MONTHCAL             1006
-define IDC_BUTTON_PROGRESS             1007
-define IDC_BUTTON_SYSLINK              1008
-define IDC_BUTTON_STATUS               1009
-define IDC_BUTTON_TABCONTROL           1010
-define IDC_BUTTON_TOOLBAR              1011
-define IDC_BUTTON_TOOLTIP              1012
-define IDC_BUTTON_TRACKBAR             1013
-define IDC_BUTTON_TREEVIEW             1014
-define IDC_BUTTON_UPDOWN               1015
-define IDC_BUTTON_REBAR                1016

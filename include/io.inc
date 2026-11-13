@@ -398,8 +398,11 @@ endif ;; _NOT_CRTL_BUILD_
 else
 _setmode	proto __cdecl :int_t, :int_t
 endif ;; _CRTBLD
-
+ifdef __UNIX__
+_get_osfhandle	proto watcall :int_t {}
+else
 _get_osfhandle	proto __cdecl :int_t
+endif
 _open_osfhandle proto __cdecl :intptr_t, :int_t
 _alloc_osfhnd	proto __cdecl
 _set_osfhnd	proto __cdecl :int_t, :intptr_t

@@ -6,12 +6,15 @@ include winrt/Windows.ApplicationModel.datatransfer.inc
 include stdio.inc
 include tchar.inc
 
+
+.data
+ DECLARE_IID(IClipboardStatics2)
+
 .code
 
 ClipboardDelete proc
    .new hr:HRESULT
    .new hsClipboard:HSTRING = NULL
-   .new IID_IClipboardStatics2:GUID = {0xd2ac1b6a,0xd29f,0x554b,{0xb3,0x03,0xf0,0x45,0x23,0x45,0xfe,0x02}}
    .new pClipboard:ptr Windows::ApplicationModel::DataTransfer::IClipboardStatics2 = NULL
    .new strClass:LPWSTR = RuntimeClass_Windows_ApplicationModel_DataTransfer_Clipboard
     wcslen(strClass)

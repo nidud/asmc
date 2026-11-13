@@ -370,10 +370,10 @@ CreateConstant proc __ccall uses rsi rdi rbx tokenarray:token_t
     local argbuffer[MAX_LINE_LEN]:char_t
 
     ldr rbx,tokenarray
+
+    mov rax,[rbx].string_ptr
     .if ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_DEFINE )
         mov rax,[rbx+asm_tok].string_ptr
-    .else
-        NameSpace([rbx].string_ptr, [rbx].string_ptr)
     .endif
     mov name,rax
     mov i,2

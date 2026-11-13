@@ -17,7 +17,7 @@ _getkey proc
 
     ; Switch to raw mode (no line input, no echo input)
 
-ifndef __TTY__
+ifndef __UNIX__
     GetConsoleMode(_coninpfh, &oldstate)
     SetConsoleMode(_coninpfh, 0)
 endif
@@ -35,7 +35,7 @@ endif
             movzx   eax,ConInpRec.Event.KeyEvent.wVirtualKeyCode
             shl     eax,8
             mov     al,ConInpRec.Event.KeyEvent.uChar.AsciiChar
-ifndef __TTY__
+ifndef __UNIX__
             movzx   edx,al
             cmp     al,ah
             cmovz   eax,edx
@@ -48,7 +48,7 @@ endif
            .break
         .endif
     .endf
-ifndef __TTY__
+ifndef __UNIX__
     SetConsoleMode(_coninpfh, oldstate)
 endif
     .return( c )

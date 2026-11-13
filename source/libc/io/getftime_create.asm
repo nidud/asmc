@@ -6,11 +6,7 @@
 
 include io.inc
 include time.inc
-ifdef __UNIX__
-include sys/stat.inc
-else
 include winbase.inc
-endif
 include errno.inc
 
 .code
@@ -18,18 +14,14 @@ include errno.inc
 getftime_create proc fd:int_t
   local FileTime:FILETIME
     ldr ecx,fd
-ifdef __UNIX__
-    mov eax,-1
-else
     .ifd ( _get_osfhandle(ecx) != -1 )
         mov rcx,rax
         .ifd !GetFileTime(rcx, &FileTime, 0, 0)
             _dosmaperr( GetLastError() )
         .else
-            FileTimeToTime(&FileTime)
+            __timet_from_ft(&FileTime)
         .endif
     .endif
-endif
     ret
     endp
 

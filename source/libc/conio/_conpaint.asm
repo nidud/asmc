@@ -18,8 +18,10 @@ _conpaint proc uses rbx
    .new y:byte
    .new l:byte
 
-ifdef __TTY__
-    fprintf(_confp, ESC "7")
+ifdef __UNIX__
+   .new ci:CONSOLE_CURSOR_INFO
+    GetConsoleCursorInfo(NULL, &ci)
+    fprintf(_confh, ESC "7")
 endif
     mov rcx,_console
     mov rc,[rcx].TCONSOLE.rc
@@ -27,9 +29,9 @@ endif
     mov rax,[rcx].TCONSOLE.buffer
     sub rax,rbx
     mov p,rax
-ifdef __TTY__
-    .if ( [rcx].TCONSOLE.cvisible )
-        fprintf(_confp, CSI "?25l")
+ifdef __UNIX__
+    .if ( ci.bVisible )
+        fprintf(_confh, CSI "?25l")
     .endif
 endif
 
@@ -40,16 +42,12 @@ endif
             mov rdx,rbx
             add rdx,p
             mov eax,[rdx]
-
             .if ( eax != [rbx] )
-
                 mov     [rbx],eax
                 cmp     l,0
                 cmovz   rcx,rdx
                 inc     l
-
             .elseif ( l )
-
                 movzx   eax,x
                 sub     al,l
                 movzx   edx,y
@@ -61,11 +59,10 @@ endif
                 add     edx,0x10000
                 mov     sr.Right,ax
                 mov     l,0
-                _writeconsoleoutputw(_confh, rcx, edx, 0, &sr)
+                WriteConsoleOutputW(_confh, rcx, edx, 0, &sr)
             .endif
         .endf
         .if ( l )
-
             movzx   eax,x
             sub     al,l
             movzx   edx,y
@@ -77,16 +74,15 @@ endif
             add     edx,0x10000
             mov     sr.Right,ax
             mov     l,0
-            _writeconsoleoutputw(_confh, rcx, edx, 0, &sr)
+            WriteConsoleOutputW(_confh, rcx, edx, 0, &sr)
         .endif
     .endf
-ifdef __TTY__
-    fprintf(_confp, ESC "8")
-    mov rcx,_console
-    .if ( [rcx].TCONSOLE.cvisible )
-        fprintf(_confp, CSI "?25h")
+ifdef __UNIX__
+    fprintf(_confh, ESC "8")
+    .if ( ci.bVisible )
+        fprintf(_confh, CSI "?25h")
     .endif
-    fflush(_confp)
+    fflush(_confh)
 endif
     ret
     endp

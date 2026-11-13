@@ -1,5 +1,6 @@
 ifndef __ROAPI_H_
 define __ROAPI_H_
+.pragma list(push, 0)
 
 ifdef _CONTRACT_GEN
 include nt.inc
@@ -41,5 +42,5 @@ RoUnregisterForApartmentShutdown proto WINAPI :APARTMENT_SHUTDOWN_REGISTRATION_C
 RoGetApartmentIdentifier proto WINAPI :ptr
 
 endif
-
+.pragma list(pop)
 endif

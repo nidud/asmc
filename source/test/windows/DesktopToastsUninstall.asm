@@ -8,7 +8,7 @@ include pathcch.inc
 include tchar.inc
 
 .data
-FOLDERID_RoamingAppData GUID {0x3EB685DB,0x65F9,0x4CF6,{0xA0,0x3A,0xE3,0xEF,0x65,0x72,0x9F,0x3D}}
+ DECLARE_GUID(FOLDERID_RoamingAppData)
 
 .code
 _tmain proc

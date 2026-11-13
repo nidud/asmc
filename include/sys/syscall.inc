@@ -628,73 +628,74 @@ else
     SYS_SYNC_FILE_RANGE         = 314,
     SYS_TEE                     = 315,
     SYS_VMSPLICE                = 316,
+    SYS_UTIMENSAT               = 320,
+    SYS_UTIMENSAT64             = 412,
 
 endif
     }
 
 ifdef _WIN64
 
-sys_read proto :int_t, :ptr, :size_t {
+.pragma aux(rdi, rsi, rdx, r10, r8, r9)
+
+sys_read proto asmcall :int_t, :ptr, :size_t {
     mov eax,SYS_READ
     syscall
     }
-sys_write proto :int_t, :ptr, :size_t {
+sys_write proto asmcall :int_t, :ptr, :size_t {
     mov eax,SYS_WRITE
     syscall
     }
-sys_open proto :string_t, :int_t, :int_t {
+sys_open proto asmcall :string_t, :int_t, :int_t {
     mov eax,SYS_OPEN
     syscall
     }
-sys_close proto :int_t {
+sys_close proto asmcall :int_t {
     mov eax,SYS_CLOSE
     syscall
     }
-sys_newstat proto :string_t, :ptr {
+sys_newstat proto asmcall :string_t, :ptr {
     mov eax,SYS_STAT
     syscall
     }
-sys_newfstat proto :int_t, :ptr {
+sys_newfstat proto asmcall :int_t, :ptr {
     mov eax,SYS_FSTAT
     syscall
     }
-sys_newlstat proto :string_t, :ptr {
+sys_newlstat proto asmcall :string_t, :ptr {
     mov eax,SYS_LSTAT
     syscall
     }
-sys_poll proto :ptr, :uint_t, :int_t {
+sys_poll proto asmcall :ptr, :uint_t, :int_t {
     mov eax,SYS_POLL
     syscall
     }
-sys_lseek proto :int_t, :size_t, :uint_t {
+sys_lseek proto asmcall :int_t, :size_t, :uint_t {
     mov eax,SYS_LSEEK
     syscall
     }
-sys_mmap proto :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
-    mov r10,rcx
+sys_mmap proto asmcall :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
     mov rcx,rsi
     mov eax,SYS_MMAP
     syscall
     }
-sys_mprotect proto :ptr, :size_t, :ulong_t {
+sys_mprotect proto asmcall :ptr, :size_t, :ulong_t {
     mov eax,SYS_MPROTECT
     syscall
     }
-sys_munmap proto :ptr, :size_t {
+sys_munmap proto asmcall :ptr, :size_t {
     mov eax,SYS_MUNMAP
     syscall
     }
-sys_brk proto :ptr {
+sys_brk proto asmcall :ptr {
     mov eax,SYS_BRK
     syscall
     }
-sys_rt_sigaction proto :int_t, :ptr, :ptr, :size_t {
-    mov r10,rcx
+sys_rt_sigaction proto asmcall :int_t, :ptr, :ptr, :size_t {
     mov eax,SYS_RT_SIGACTION
     syscall
     }
-sys_rt_sigprocmask proto :int_t, :ptr, :ptr, :size_t {
-    mov r10,rcx
+sys_rt_sigprocmask proto asmcall :int_t, :ptr, :ptr, :size_t {
     mov eax,SYS_RT_SIGPROCMASK
     syscall
     }
@@ -702,36 +703,35 @@ sys_rt_sigreturn proto {
     mov eax,SYS_RT_SIGRETURN
     syscall
     }
-sys_ioctl proto :int_t, :int_t, :ptr {
+sys_ioctl proto asmcall :int_t, :int_t, :ptr {
     mov eax,SYS_IOCTL
     syscall
     }
-sys_pread64 proto :int_t, :ptr, :size_t, :uint64_t {
+sys_pread64 proto asmcall :int_t, :ptr, :size_t, :uint64_t {
     mov eax,SYS_PREAD64
     syscall
     }
-sys_pwrite64 proto :int_t, :ptr, :size_t, :uint64_t {
+sys_pwrite64 proto asmcall :int_t, :ptr, :size_t, :uint64_t {
     mov eax,SYS_PWRITE64
     syscall
     }
-sys_readv proto :ulong_t, :ptr, :ulong_t {
+sys_readv proto asmcall :ulong_t, :ptr, :ulong_t {
     mov eax,SYS_READV
     syscall
     }
-sys_writev proto :ulong_t, :ptr, :ulong_t {
+sys_writev proto asmcall :ulong_t, :ptr, :ulong_t {
     mov eax,SYS_WRITEV
     syscall
     }
-sys_access proto :string_t, :int_t {
+sys_access proto asmcall :string_t, :int_t {
     mov eax,SYS_ACCESS
     syscall
     }
-sys_pipe proto :ptr int_t {
+sys_pipe proto asmcall :ptr int_t {
     mov eax,SYS_PIPE
     syscall
     }
-sys_select proto :int_t, :ptr, :ptr, :ptr, :ptr {
-    mov r10,rcx
+sys_select proto asmcall :int_t, :ptr, :ptr, :ptr, :ptr {
     mov eax,SYS_SELECT
     syscall
     }
@@ -739,40 +739,39 @@ sys_sched_yield proto {
     mov eax,SYS_SCHED_YIELD
     syscall
     }
-sys_mremap proto :ptr, :ulong_t, :ulong_t, :ulong_t, :ptr {
-    mov r10,rcx
+sys_mremap proto asmcall :ptr, :ulong_t, :ulong_t, :ulong_t, :ptr {
     mov eax,SYS_MREMAP
     syscall
     }
-sys_msync proto :ptr, :size_t, :int_t {
+sys_msync proto asmcall :ptr, :size_t, :int_t {
     mov eax,SYS_MSYNC
     syscall
     }
-sys_mincore proto :ptr, :size_t, :ptr {
+sys_mincore proto asmcall :ptr, :size_t, :ptr {
     mov eax,SYS_MINCORE
     syscall
     }
-sys_madvise proto :ptr, :size_t, :int_t {
+sys_madvise proto asmcall :ptr, :size_t, :int_t {
     mov eax,SYS_MADVISE
     syscall
     }
-sys_shmget proto :int_t, :size_t, :int_t {
+sys_shmget proto asmcall :int_t, :size_t, :int_t {
     mov eax,SYS_SHMGET
     syscall
     }
-sys_shmat proto :int_t, :ptr, :int_t {
+sys_shmat proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_SHMAT
     syscall
     }
-sys_shmctl proto :int_t, :int_t, :ptr {
+sys_shmctl proto asmcall :int_t, :int_t, :ptr {
     mov eax,SYS_SHMCTL
     syscall
     }
-sys_dup proto :int_t {
+sys_dup proto asmcall :int_t {
     mov eax,SYS_DUP
     syscall
     }
-sys_dup2 proto :int_t, :int_t {
+sys_dup2 proto asmcall :int_t, :int_t {
     mov eax,SYS_DUP2
     syscall
     }
@@ -780,19 +779,19 @@ sys_pause proto {
     mov eax,SYS_PAUSE
     syscall
     }
-sys_nanosleep proto :ptr, :ptr {
+sys_nanosleep proto asmcall :ptr, :ptr {
     mov eax,SYS_NANOSLEEP
     syscall
     }
-sys_getitimer proto :int_t, :ptr {
+sys_getitimer proto asmcall :int_t, :ptr {
     mov eax,SYS_GETITIMER
     syscall
     }
-sys_alarm proto :uint_t {
+sys_alarm proto asmcall :uint_t {
     mov eax,SYS_ALARM
     syscall
     }
-sys_setitimer proto :int_t, :ptr, :ptr {
+sys_setitimer proto asmcall :int_t, :ptr, :ptr {
     mov eax,SYS_SETITIMER
     syscall
     }
@@ -800,78 +799,71 @@ sys_getpid proto {
     mov eax,SYS_GETPID
     syscall
     }
-sys_sendfile64 proto :int_t, :int_t, :ptr, :size_t {
-    mov r10,rcx
+sys_sendfile64 proto asmcall :int_t, :int_t, :ptr, :size_t {
     mov eax,SYS_SENDFILE
     syscall
     }
-sys_socket proto :int_t, :int_t, :int_t {
+sys_socket proto asmcall :int_t, :int_t, :int_t {
     mov eax,SYS_SOCKET
     syscall
     }
-sys_connect proto :int_t, :ptr, :int_t {
+sys_connect proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_CONNECT
     syscall
     }
-sys_accept proto :int_t, :ptr, :int_t {
+sys_accept proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_ACCEPT
     syscall
     }
-sys_sendto proto :int_t, :ptr, :size_t, :uint_t, :ptr, :int_t {
-    mov r10,rcx
+sys_sendto proto asmcall :int_t, :ptr, :size_t, :uint_t, :ptr, :int_t {
     mov eax,SYS_SENDTO
     syscall
     }
-sys_recvfrom proto :int_t, :ptr, :size_t, :uint_t, :ptr, :ptr {
-    mov r10,rcx
+sys_recvfrom proto asmcall :int_t, :ptr, :size_t, :uint_t, :ptr, :ptr {
     mov eax,SYS_RECVFROM
     syscall
     }
-sys_sendmsg proto :int_t, :ptr, :uint_t {
+sys_sendmsg proto asmcall :int_t, :ptr, :uint_t {
     mov eax,SYS_SENDMSG
     syscall
     }
-sys_recvmsg proto :int_t, :ptr, :uint_t {
+sys_recvmsg proto asmcall :int_t, :ptr, :uint_t {
     mov eax,SYS_RECVMSG
     syscall
     }
-sys_shutdown proto :int_t, :int_t {
+sys_shutdown proto asmcall :int_t, :int_t {
     mov eax,SYS_SHUTDOWN
     syscall
     }
-sys_bind proto :int_t, :ptr, :int_t {
+sys_bind proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_BIND
     syscall
     }
-sys_listen proto :int_t, :int_t {
+sys_listen proto asmcall :int_t, :int_t {
     mov eax,SYS_LISTEN
     syscall
     }
-sys_getsockname proto :int_t, :ptr, :ptr {
+sys_getsockname proto asmcall :int_t, :ptr, :ptr {
     mov eax,SYS_GETSOCKNAME
     syscall
     }
-sys_getpeername proto :int_t, :ptr, :ptr {
+sys_getpeername proto asmcall :int_t, :ptr, :ptr {
     mov eax,SYS_GETPEERNAME
     syscall
     }
-sys_socketpair proto :int_t, :int_t, :int_t, :ptr {
-    mov r10,rcx
+sys_socketpair proto asmcall :int_t, :int_t, :int_t, :ptr {
     mov eax,SYS_SOCKETPAIR
     syscall
     }
-sys_setsockopt proto :int_t, :int_t, :int_t, :ptr, :int_t {
-    mov r10,rcx
+sys_setsockopt proto asmcall :int_t, :int_t, :int_t, :ptr, :int_t {
     mov eax,SYS_SETSOCKOPT
     syscall
     }
-sys_getsockopt proto :int_t, :int_t, :int_t, :ptr, :ptr {
-    mov r10,rcx
+sys_getsockopt proto asmcall :int_t, :int_t, :int_t, :ptr, :ptr {
     mov eax,SYS_GETSOCKOPT
     syscall
     }
-sys_clone proto :size_t, :size_t, :ptr int_t, :size_t, :ptr int_t {
-    mov r10,rcx
+sys_clone proto asmcall :size_t, :size_t, :ptr int_t, :size_t, :ptr int_t {
     mov eax,SYS_CLONE
     syscall
     }
@@ -883,180 +875,175 @@ sys_vfork proto {
     mov eax,SYS_VFORK
     syscall
     }
-sys_execve proto :string_t, :array_t, :array_t {
+sys_execve proto asmcall :string_t, :array_t, :array_t {
     mov eax,SYS_EXECVE
     syscall
     }
-sys_exit proto :int_t {
+sys_exit proto asmcall :int_t {
     mov eax,SYS_EXIT
     syscall
     }
-sys_wait4 proto :int_t, :ptr int_t, :int_t, :ptr rusage {
-    mov r10,rcx
+sys_wait4 proto asmcall :int_t, :ptr int_t, :int_t, :ptr rusage {
     mov eax,SYS_WAIT4
     syscall
     }
-sys_kill proto :int_t, :int_t {
+sys_kill proto asmcall :int_t, :int_t {
     mov eax,SYS_KILL
     syscall
     }
-sys_newuname proto :ptr {
+sys_newuname proto asmcall :ptr {
     mov eax,SYS_UNAME
     syscall
     }
-sys_semget proto :int_t, :int_t, :int_t {
+sys_semget proto asmcall :int_t, :int_t, :int_t {
     mov eax,SYS_SEMGET
     syscall
     }
-sys_semop proto :int_t, :ptr, :uint_t {
+sys_semop proto asmcall :int_t, :ptr, :uint_t {
     mov eax,SYS_SEMOP
     syscall
     }
-sys_semctl proto :int_t, :int_t, :int_t, :ptr {
-    mov r10,rcx
+sys_semctl proto asmcall :int_t, :int_t, :int_t, :ptr {
     mov eax,SYS_SEMCTL
     syscall
     }
-sys_shmdt proto :ptr {
+sys_shmdt proto asmcall :ptr {
     mov eax,SYS_SHMDT
     syscall
     }
-sys_msgget proto :int_t, :int_t {
+sys_msgget proto asmcall :int_t, :int_t {
     mov eax,SYS_MSGGET
     syscall
     }
-sys_msgsnd proto :int_t, :ptr, :size_t, :int_t {
-    mov r10,rcx
+sys_msgsnd proto asmcall :int_t, :ptr, :size_t, :int_t {
     mov eax,SYS_MSGSND
     syscall
     }
-sys_msgrcv proto :int_t, :ptr, :size_t, :long_t, :int_t {
-    mov r10,rcx
+sys_msgrcv proto asmcall :int_t, :ptr, :size_t, :long_t, :int_t {
     mov eax,SYS_MSGRCV
     syscall
     }
-sys_msgctl proto :int_t, :int_t, :ptr {
+sys_msgctl proto asmcall :int_t, :int_t, :ptr {
     mov eax,SYS_MSGCTL
     syscall
     }
-sys_fcntl proto :int_t, :int_t, :int_t {
+sys_fcntl proto asmcall :int_t, :int_t, :int_t {
     mov eax,SYS_FCNTL
     syscall
     }
-sys_flock proto :uint_t, :uint_t {
+sys_flock proto asmcall :uint_t, :uint_t {
     mov eax,SYS_FLOCK
     syscall
     }
-sys_fsync proto :int_t {
+sys_fsync proto asmcall :int_t {
     mov eax,SYS_FSYNC
     syscall
     }
-sys_fdatasync proto :int_t {
+sys_fdatasync proto asmcall :int_t {
     mov eax,SYS_FDATASYNC
     syscall
     }
-sys_truncate proto :ptr, :int64_t {
+sys_truncate proto asmcall :ptr, :int64_t {
     mov eax,SYS_TRUNCATE
     syscall
     }
-sys_ftruncate proto :uint_t, :int64_t {
+sys_ftruncate proto asmcall :uint_t, :int64_t {
     mov eax,SYS_FTRUNCATE
     syscall
     }
-sys_getdents proto :int_t, :ptr, :uint_t {
+sys_getdents proto asmcall :int_t, :ptr, :uint_t {
     mov eax,SYS_GETDENTS
     syscall
     }
-sys_getcwd proto :string_t, :int_t {
+sys_getcwd proto asmcall :string_t, :int_t {
     mov eax,SYS_GETCWD
     syscall
     }
-sys_chdir proto :string_t {
+sys_chdir proto asmcall :string_t {
     mov eax,SYS_CHDIR
     syscall
     }
-sys_fchdir proto :int_t {
+sys_fchdir proto asmcall :int_t {
     mov eax,SYS_FCHDIR
     syscall
     }
-sys_rename proto :string_t, :string_t {
+sys_rename proto asmcall :string_t, :string_t {
     mov eax,SYS_RENAME
     syscall
     }
-sys_mkdir proto :string_t, :int_t {
+sys_mkdir proto asmcall :string_t, :int_t {
     mov eax,SYS_MKDIR
     syscall
     }
-sys_rmdir proto :string_t {
+sys_rmdir proto asmcall :string_t {
     mov eax,SYS_RMDIR
     syscall
     }
-sys_creat proto :string_t, :uint_t {
+sys_creat proto asmcall :string_t, :uint_t {
     mov eax,SYS_CREAT
     syscall
     }
-sys_link proto :string_t, :string_t {
+sys_link proto asmcall :string_t, :string_t {
     mov eax,SYS_LINK
     syscall
     }
-sys_unlink proto :string_t {
+sys_unlink proto asmcall :string_t {
     mov eax,SYS_UNLINK
     syscall
     }
-sys_symlink proto :string_t, :string_t {
+sys_symlink proto asmcall :string_t, :string_t {
     mov eax,SYS_SYMLINK
     syscall
     }
-sys_readlink proto :string_t, :string_t, :int_t {
+sys_readlink proto asmcall :string_t, :string_t, :int_t {
     mov eax,SYS_READLINK
     syscall
     }
-sys_chmod proto :string_t, :int_t {
+sys_chmod proto asmcall :string_t, :int_t {
     mov eax,SYS_CHMOD
     syscall
     }
-sys_fchmod proto :int_t, :int_t {
+sys_fchmod proto asmcall :int_t, :int_t {
     mov eax,SYS_FCHMOD
     syscall
     }
-sys_chown proto :string_t, :uint_t, :uint_t {
+sys_chown proto asmcall :string_t, :uint_t, :uint_t {
     mov eax,SYS_CHOWN
     syscall
     }
-sys_fchown proto :int_t, :uint_t, :uint_t {
+sys_fchown proto asmcall :int_t, :uint_t, :uint_t {
     mov eax,SYS_FCHOWN
     syscall
     }
-sys_lchown proto :string_t, :uint_t, :uint_t {
+sys_lchown proto asmcall :string_t, :uint_t, :uint_t {
     mov eax,SYS_LCHOWN
     syscall
     }
-sys_umask proto :int_t {
+sys_umask proto asmcall :int_t {
     mov eax,SYS_UMASK
     syscall
     }
-sys_gettimeofday proto :ptr, :ptr {
+sys_gettimeofday proto asmcall :ptr, :ptr {
     mov eax,SYS_GETTIMEOFDAY
     syscall
     }
-sys_getrlimit proto :uint_t, :ptr {
+sys_getrlimit proto asmcall :uint_t, :ptr {
     mov eax,SYS_GETRLIMIT
     syscall
     }
-sys_getrusage proto :int_t, :ptr {
+sys_getrusage proto asmcall :int_t, :ptr {
     mov eax,SYS_GETRUSAGE
     syscall
     }
-sys_sysinfo proto :ptr {
+sys_sysinfo proto asmcall :ptr {
     mov eax,SYS_SYSINFO
     syscall
     }
-sys_times proto :ptr {
+sys_times proto asmcall :ptr {
     mov eax,SYS_TIMES
     syscall
     }
-sys_ptrace proto :long_t, :long_t, :ptr, :ptr {
-    mov r10,rcx
+sys_ptrace proto asmcall :long_t, :long_t, :ptr, :ptr {
     mov eax,SYS_PTRACE
     syscall
     }
@@ -1064,7 +1051,7 @@ sys_getuid proto {
     mov eax,SYS_GETUID
     syscall
     }
-sys_syslog proto :int_t, :ptr, :int_t {
+sys_syslog proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_SYSLOG
     syscall
     }
@@ -1072,11 +1059,11 @@ sys_getgid proto {
     mov eax,SYS_GETGID
     syscall
     }
-sys_setuid proto :int_t {
+sys_setuid proto asmcall :int_t {
     mov eax,SYS_SETUID
     syscall
     }
-sys_setgid proto :int_t {
+sys_setgid proto asmcall :int_t {
     mov eax,SYS_SETGID
     syscall
     }
@@ -1088,7 +1075,7 @@ sys_getegid proto {
     mov eax,SYS_GETEGID
     syscall
     }
-sys_setpgid proto :int_t, :int_t {
+sys_setpgid proto asmcall :int_t, :int_t {
     mov eax,SYS_SETPGID
     syscall
     }
@@ -1104,88 +1091,87 @@ sys_setsid proto {
     mov eax,SYS_SETSID
     syscall
     }
-sys_setreuid proto :int_t, :int_t {
+sys_setreuid proto asmcall :int_t, :int_t {
     mov eax,SYS_SETREUID
     syscall
     }
-sys_setregid proto :int_t, :int_t {
+sys_setregid proto asmcall :int_t, :int_t {
     mov eax,SYS_SETREGID
     syscall
     }
-sys_getgroups proto :int_t, :ptr {
+sys_getgroups proto asmcall :int_t, :ptr {
     mov eax,SYS_GETGROUPS
     syscall
     }
-sys_setgroups proto :int_t, :ptr {
+sys_setgroups proto asmcall :int_t, :ptr {
     mov eax,SYS_SETGROUPS
     syscall
     }
-sys_setresuid proto :int_t, :int_t, :int_t {
+sys_setresuid proto asmcall :int_t, :int_t, :int_t {
     mov eax,SYS_SETRESUID
     syscall
     }
-sys_getresuid proto :ptr, :ptr, :ptr {
+sys_getresuid proto asmcall :ptr, :ptr, :ptr {
     mov eax,SYS_GETRESUID
     syscall
     }
-sys_setresgid proto :int_t, :int_t, :int_t {
+sys_setresgid proto asmcall :int_t, :int_t, :int_t {
     mov eax,SYS_SETRESGID
     syscall
     }
-sys_getresgid proto :ptr, :ptr, :ptr {
+sys_getresgid proto asmcall :ptr, :ptr, :ptr {
     mov eax,SYS_GETRESGID
     syscall
     }
-sys_getpgid proto :int_t {
+sys_getpgid proto asmcall :int_t {
     mov eax,SYS_GETPGID
     syscall
     }
-sys_setfsuid proto :int_t {
+sys_setfsuid proto asmcall :int_t {
     mov eax,SYS_SETFSUID
     syscall
     }
-sys_setfsgid proto :int_t {
+sys_setfsgid proto asmcall :int_t {
     mov eax,SYS_SETFSGID
     syscall
     }
-sys_getsid proto :int_t {
+sys_getsid proto asmcall :int_t {
     mov eax,SYS_GETSID
     syscall
     }
-sys_capget proto :ptr, :ptr {
+sys_capget proto asmcall :ptr, :ptr {
     mov eax,SYS_CAPGET
     syscall
     }
-sys_capset proto :ptr, :ptr {
+sys_capset proto asmcall :ptr, :ptr {
     mov eax,SYS_CAPSET
     syscall
     }
-sys_rt_sigpending proto :ptr, :size_t {
+sys_rt_sigpending proto asmcall :ptr, :size_t {
     mov eax,SYS_RT_SIGPENDING
     syscall
     }
-sys_rt_sigtimedwait proto :ptr, :ptr, :ptr, :size_t {
-    mov r10,rcx
+sys_rt_sigtimedwait proto asmcall :ptr, :ptr, :ptr, :size_t {
     mov eax,SYS_RT_SIGTIMEDWAIT
     syscall
     }
-sys_rt_sigqueueinfo proto :int_t, :int_t, :ptr {
+sys_rt_sigqueueinfo proto asmcall :int_t, :int_t, :ptr {
     mov eax,SYS_RT_SIGQUEUEINFO
     syscall
     }
-sys_rt_sigsuspend proto :ptr, :size_t {
+sys_rt_sigsuspend proto asmcall :ptr, :size_t {
     mov eax,SYS_RT_SIGSUSPEND
     syscall
     }
-sys_sigaltstack proto :ptr, :ptr {
+sys_sigaltstack proto asmcall :ptr, :ptr {
     mov eax,SYS_SIGALTSTACK
     syscall
     }
-sys_utime proto :string_t, :ptr {
+sys_utime proto asmcall :string_t, :ptr {
     mov eax,SYS_UTIME
     syscall
     }
-sys_mknod proto :ptr, :int_t, :int_t {
+sys_mknod proto asmcall :ptr, :int_t, :int_t {
     mov eax,SYS_MKNOD
     syscall
     }
@@ -1193,71 +1179,71 @@ sys_uselib proto {
     mov eax,SYS_USELIB
     syscall
     }
-sys_personality proto :uint_t {
+sys_personality proto asmcall :uint_t {
     mov eax,SYS_PERSONALITY
     syscall
     }
-sys_ustat proto :uint_t, :ptr {
+sys_ustat proto asmcall :uint_t, :ptr {
     mov eax,SYS_USTAT
     syscall
     }
-sys_statfs proto :ptr, :ptr {
+sys_statfs proto asmcall :ptr, :ptr {
     mov eax,SYS_STATFS
     syscall
     }
-sys_fstatfs proto :uint_t, :ptr {
+sys_fstatfs proto asmcall :uint_t, :ptr {
     mov eax,SYS_FSTATFS
     syscall
     }
-sys_sysfs proto :int_t, :uint_t, :ptr {
+sys_sysfs proto asmcall :int_t, :uint_t, :ptr {
     mov eax,SYS_SYSFS
     syscall
     }
-sys_getpriority proto :int_t, :int_t {
+sys_getpriority proto asmcall :int_t, :int_t {
     mov eax,SYS_GETPRIORITY
     syscall
     }
-sys_setpriority proto :int_t, :int_t, :int_t {
+sys_setpriority proto asmcall :int_t, :int_t, :int_t {
     mov eax,SYS_SETPRIORITY
     syscall
     }
-sys_sched_setparam proto :int_t, :ptr {
+sys_sched_setparam proto asmcall :int_t, :ptr {
     mov eax,SYS_SCHED_SETPARAM
     syscall
     }
-sys_sched_getparam proto :int_t, :ptr {
+sys_sched_getparam proto asmcall :int_t, :ptr {
     mov eax,SYS_SCHED_GETPARAM
     syscall
     }
-sys_sched_setscheduler proto :int_t, :int_t, :ptr {
+sys_sched_setscheduler proto asmcall :int_t, :int_t, :ptr {
     mov eax,SYS_SCHED_SETSCHEDULER
     syscall
     }
-sys_sched_getscheduler proto :int_t {
+sys_sched_getscheduler proto asmcall :int_t {
     mov eax,SYS_SCHED_GETSCHEDULER
     syscall
     }
-sys_sched_get_priority_max proto :int_t {
+sys_sched_get_priority_max proto asmcall :int_t {
     mov eax,SYS_SCHED_GET_PRIORITY_MAX
     syscall
     }
-sys_sched_get_priority_min proto :int_t {
+sys_sched_get_priority_min proto asmcall :int_t {
     mov eax,SYS_SCHED_GET_PRIORITY_MIN
     syscall
     }
-sys_sched_rr_get_interval proto :int_t, :ptr {
+sys_sched_rr_get_interval proto asmcall :int_t, :ptr {
     mov eax,SYS_SCHED_RR_GET_INTERVAL
     syscall
     }
-sys_mlock proto :ptr, :size_t {
+sys_mlock proto asmcall :ptr, :size_t {
     mov eax,SYS_MLOCK
     syscall
     }
-sys_munlock proto :ptr, :size_t {
+sys_munlock proto asmcall :ptr, :size_t {
     mov eax,SYS_MUNLOCK
     syscall
     }
-sys_mlockall proto :int_t {
+sys_mlockall proto asmcall :int_t {
     mov eax,SYS_MLOCKALL
     syscall
     }
@@ -1269,11 +1255,11 @@ sys_vhangup proto {
     mov eax,SYS_VHANGUP
     syscall
     }
-sys_modify_ldt proto :int_t, :ptr, :ulong_t {
+sys_modify_ldt proto asmcall :int_t, :ptr, :ulong_t {
     mov eax,SYS_MODIFY_LDT
     syscall
     }
-sys_pivot_root proto :ptr, :ptr {
+sys_pivot_root proto asmcall :ptr, :ptr {
     mov eax,SYS_PIVOT_ROOT
     syscall
     }
@@ -1281,24 +1267,23 @@ sys_ni_syscall proto {
     mov eax,SYS_NI_SYSCALL
     syscall
     }
-sys_prctl proto :int_t, :ptr, :ptr, :ptr, :ptr {
-    mov r10,rcx
+sys_prctl proto asmcall :int_t, :ptr, :ptr, :ptr, :ptr {
     mov eax,SYS_PRCTL
     syscall
     }
-sys_arch_prctl proto :int_t, :ptr {
+sys_arch_prctl proto asmcall :int_t, :ptr {
     mov eax,SYS_ARCH_PRCTL
     syscall
     }
-sys_adjtimex proto :ptr {
+sys_adjtimex proto asmcall :ptr {
     mov eax,SYS_ADJTIMEX
     syscall
     }
-sys_setrlimit proto :uint_t, :ptr {
+sys_setrlimit proto asmcall :uint_t, :ptr {
     mov eax,SYS_SETRLIMIT
     syscall
     }
-sys_chroot proto :string_t {
+sys_chroot proto asmcall :string_t {
     mov eax,SYS_CHROOT
     syscall
     }
@@ -1306,61 +1291,59 @@ sys_sync proto {
     mov eax,SYS_SYNC
     syscall
     }
-sys_acct proto :string_t {
+sys_acct proto asmcall :string_t {
     mov eax,SYS_ACCT
     syscall
     }
-sys_settimeofday proto :ptr, :ptr {
+sys_settimeofday proto asmcall :ptr, :ptr {
     mov eax,SYS_SETTIMEOFDAY
     syscall
     }
-sys_mount proto :ptr, :ptr, :ptr, :ulong_t, :ptr {
-    mov r10,rcx
+sys_mount proto asmcall :ptr, :ptr, :ptr, :ulong_t, :ptr {
     mov eax,SYS_MOUNT
     syscall
     }
-sys_umount proto :ptr, :int_t {
+sys_umount proto asmcall :ptr, :int_t {
     mov eax,SYS_UMONT
     syscall
     }
-sys_swapon proto :ptr, :int_t {
+sys_swapon proto asmcall :ptr, :int_t {
     mov eax,SYS_SWAPON
     syscall
     }
-sys_swapoff proto :ptr {
+sys_swapoff proto asmcall :ptr {
     mov eax,SYS_SWAPOFF
     syscall
     }
-sys_reboot proto :int_t, :int_t, :uint_t, :ptr {
-    mov r10,rcx
+sys_reboot proto asmcall :int_t, :int_t, :uint_t, :ptr {
     mov eax,SYS_REBOOT
     syscall
     }
-sys_sethostname proto :ptr, :int_t {
+sys_sethostname proto asmcall :ptr, :int_t {
     mov eax,SYS_SETHOSTNAME
     syscall
     }
-sys_setdomainname proto :ptr, :int_t {
+sys_setdomainname proto asmcall :ptr, :int_t {
     mov eax,SYS_SETDOMAINNAME
     syscall
     }
-sys_iopl proto :int_t {
+sys_iopl proto asmcall :int_t {
     mov eax,SYS_IOPL
     syscall
     }
-sys_ioperm proto :uint64_t, :uint64_t, :int_t {
+sys_ioperm proto asmcall :uint64_t, :uint64_t, :int_t {
     mov eax,SYS_IOPERM
     syscall
     }
-sys_init_module proto :ptr, :uint64_t, :ptr {
+sys_init_module proto asmcall :ptr, :uint64_t, :ptr {
     mov eax,SYS_INIT_MODULE
     syscall
     }
-sys_delete_module proto :ptr, :uint_t {
+sys_delete_module proto asmcall :ptr, :uint_t {
     mov eax,SYS_DELETE_MODULE
     syscall
     }
-sys_quotactl proto :int_t, :ptr, :int_t, :ptr {
+sys_quotactl proto asmcall :int_t, :ptr, :int_t, :ptr {
     mov eax,SYS_QUOTACTL
     syscall
     }
@@ -1368,120 +1351,111 @@ sys_gettid proto {
     mov eax,SYS_GETTID
     syscall
     }
-sys_readahead proto :int_t, :int64_t, :size_t {
+sys_readahead proto asmcall :int_t, :int64_t, :size_t {
     mov eax,SYS_READAHEAD
     syscall
     }
-sys_setxattr proto :ptr, :ptr, :size_t, :int_t {
-    mov r10,rcx
+sys_setxattr proto asmcall :ptr, :ptr, :size_t, :int_t {
     mov eax,SYS_SETXATTR
     syscall
     }
-sys_lsetxattr proto :ptr, :ptr, :ptr, :size_t, :int_t {
-    mov r10,rcx
+sys_lsetxattr proto asmcall :ptr, :ptr, :ptr, :size_t, :int_t {
     mov eax,SYS_LSETXATTR
     syscall
     }
-sys_fsetxattr proto :int_t, :ptr, :ptr, :size_t, :int_t {
-    mov r10,rcx
+sys_fsetxattr proto asmcall :int_t, :ptr, :ptr, :size_t, :int_t {
     mov eax,SYS_FSETXATTR
     syscall
     }
-sys_getxattr proto :ptr, :ptr, :ptr, :size_t {
-    mov r10,rcx
+sys_getxattr proto asmcall :ptr, :ptr, :ptr, :size_t {
     mov eax,SYS_GETXATTR
     syscall
     }
-sys_lgetxattr proto :ptr, :ptr, :ptr, :size_t {
-    mov r10,rcx
+sys_lgetxattr proto asmcall :ptr, :ptr, :ptr, :size_t {
     mov eax,SYS_LGETXATTR
     syscall
     }
-sys_fgetxattr proto :int_t, :ptr, :ptr, :size_t {
-    mov r10,rcx
+sys_fgetxattr proto asmcall :int_t, :ptr, :ptr, :size_t {
     mov eax,SYS_FGETXATTR
     syscall
     }
-sys_listxattr proto :ptr, :ptr, :size_t {
+sys_listxattr proto asmcall :ptr, :ptr, :size_t {
     mov eax,SYS_LISTXATTR
     syscall
     }
-sys_llistxattr proto :ptr, :ptr, :size_t {
+sys_llistxattr proto asmcall :ptr, :ptr, :size_t {
     mov eax,SYS_LLISTXATTR
     syscall
     }
-sys_flistxattr proto :int_t, :ptr, :size_t {
+sys_flistxattr proto asmcall :int_t, :ptr, :size_t {
     mov eax,SYS_FLISTXATTR
     syscall
     }
-sys_removexattr proto :ptr, :ptr {
+sys_removexattr proto asmcall :ptr, :ptr {
     mov eax,SYS_REMOVEXATTR
     syscall
     }
-sys_lremovexattr proto :ptr, :ptr {
+sys_lremovexattr proto asmcall :ptr, :ptr {
     mov eax,SYS_LREMOVEXATTR
     syscall
     }
-sys_fremovexattr proto :int_t, :ptr {
+sys_fremovexattr proto asmcall :int_t, :ptr {
     mov eax,SYS_FREMOVEXATTR
     syscall
     }
-sys_tkill proto :int_t, :int_t {
+sys_tkill proto asmcall :int_t, :int_t {
     mov eax,SYS_TKILL
     syscall
     }
-sys_time proto :ptr {
+sys_time proto asmcall :ptr {
     mov eax,SYS_TIME
     syscall
     }
-sys_futex proto :ptr, :int_t, :uint_t, :ptr, :ptr, :uint_t {
-    mov r10,rcx
+sys_futex proto asmcall :ptr, :int_t, :uint_t, :ptr, :ptr, :uint_t {
     mov eax,SYS_FUTEX
     syscall
     }
-sys_sched_setaffinity proto :int_t, :uint_t, :ptr {
+sys_sched_setaffinity proto asmcall :int_t, :uint_t, :ptr {
     mov eax,SYS_SCHED_SETAFFINITY
     syscall
     }
-sys_sched_getaffinity proto :int_t, :uint_t, :ptr {
+sys_sched_getaffinity proto asmcall :int_t, :uint_t, :ptr {
     mov eax,SYS_SCHED_GETAFFINITY
     syscall
     }
-sys_io_setup proto :uint_t, :ptr {
+sys_io_setup proto asmcall :uint_t, :ptr {
     mov eax,SYS_IO_SETUP
     syscall
     }
-sys_io_destroy proto :ptr {
+sys_io_destroy proto asmcall :ptr {
     mov eax,SYS_IO_DESTROY
     syscall
     }
-sys_io_getevents proto :ptr, :long_t, :long_t, :ptr, :ptr {
-    mov r10,rcx
+sys_io_getevents proto asmcall :ptr, :long_t, :long_t, :ptr, :ptr {
     mov eax,SYS_IO_GETEVENTS
     syscall
     }
-sys_io_submit proto :ptr, :long_t, :ptr {
+sys_io_submit proto asmcall :ptr, :long_t, :ptr {
     mov eax,SYS_IO_SUBMIT
     syscall
     }
-sys_io_cancel proto :ptr, :ptr, :ptr {
+sys_io_cancel proto asmcall :ptr, :ptr, :ptr {
     mov eax,SYS_IO_CANCEL
     syscall
     }
-sys_epoll_create proto :int_t {
+sys_epoll_create proto asmcall :int_t {
     mov eax,SYS_EPOLL_CREATE
     syscall
     }
-sys_remap_file_pages proto :ulong_t, :ulong_t, :ulong_t, :ulong_t, :ulong_t {
-    mov r10,rcx
+sys_remap_file_pages proto asmcall :ulong_t, :ulong_t, :ulong_t, :ulong_t, :ulong_t {
     mov eax,SYS_REMAP_FILE_PAGES
     syscall
     }
-sys_getdents64 proto :int_t, :ptr, :uint_t {
+sys_getdents64 proto asmcall :int_t, :ptr, :uint_t {
     mov eax,SYS_GETDENTS64
     syscall
     }
-sys_set_tid_address proto :ptr {
+sys_set_tid_address proto asmcall :ptr {
     mov eax,SYS_SET_TID_ADDRESS
     syscall
     }
@@ -1489,145 +1463,131 @@ sys_restart_syscall proto {
     mov eax,SYS_RESTART_SYSCALL
     syscall
     }
-sys_semtimedop proto :int_t, :ptr, :uint_t, :ptr {
-    mov r10,rcx
+sys_semtimedop proto asmcall :int_t, :ptr, :uint_t, :ptr {
     mov eax,SYS_SEMTIMEDOP
     syscall
     }
-sys_fadvise64 proto :int_t, :int64_t, :size_t, :int_t {
-    mov r10,rcx
+sys_fadvise64 proto asmcall :int_t, :int64_t, :size_t, :int_t {
     mov eax,SYS_FADVISE64
     syscall
     }
-sys_timer_create proto :int_t, :ptr, :ptr {
+sys_timer_create proto asmcall :int_t, :ptr, :ptr {
     mov eax,SYS_TIMER_CREATE
     syscall
     }
-sys_timer_settime proto :int_t, :int_t, :ptr, :ptr {
-    mov r10,rcx
+sys_timer_settime proto asmcall :int_t, :int_t, :ptr, :ptr {
     mov eax,SYS_TIMER_SETTIME
     syscall
     }
-sys_timer_gettime proto :int_t, :ptr {
+sys_timer_gettime proto asmcall :int_t, :ptr {
     mov eax,SYS_TIMER_GETTIME
     syscall
     }
-sys_timer_getoverrun proto :int_t {
+sys_timer_getoverrun proto asmcall :int_t {
     mov eax,SYS_TIMER_GETOVERRUN
     syscall
     }
-sys_timer_delete proto :int_t {
+sys_timer_delete proto asmcall :int_t {
     mov eax,SYS_TIMER_DELETE
     syscall
     }
-sys_clock_settime proto :int_t, :ptr {
+sys_clock_settime proto asmcall :int_t, :ptr {
     mov eax,SYS_CLOCK_SETTIME
     syscall
     }
-sys_clock_gettime proto :int_t, :ptr {
+sys_clock_gettime proto asmcall :int_t, :ptr {
     mov eax,SYS_CLOCK_GETTIME
     syscall
     }
-sys_clock_getres proto :int_t, :ptr {
+sys_clock_getres proto asmcall :int_t, :ptr {
     mov eax,SYS_CLOCK_GETRES
     syscall
     }
-sys_clock_nanosleep proto :int_t, :int_t, :ptr, :ptr {
-    mov r10,rcx
+sys_clock_nanosleep proto asmcall :int_t, :int_t, :ptr, :ptr {
     mov eax,SYS_CLOCK_NANOSLEEP
     syscall
     }
-sys_exit_group proto :int_t {
+sys_exit_group proto asmcall :int_t {
     mov eax,SYS_EXIT_GROUP
     syscall
     }
-sys_epoll_wait proto :int_t, :ptr, :int_t, :int_t  {
-    mov r10,rcx
+sys_epoll_wait proto asmcall :int_t, :ptr, :int_t, :int_t  {
     mov eax,SYS_EPOLL_WAIT
     syscall
     }
-sys_epoll_ctl proto :int_t, :int_t, :int_t, :ptr {
-    mov r10,rcx
+sys_epoll_ctl proto asmcall :int_t, :int_t, :int_t, :ptr {
     mov eax,SYS_EPOLL_CTL
     syscall
     }
-sys_tgkill proto :int_t, :int_t, :int_t {
+sys_tgkill proto asmcall :int_t, :int_t, :int_t {
     mov eax,SYS_TGKILL
     syscall
     }
-sys_utimes proto :ptr, :ptr {
+sys_utimes proto asmcall :ptr, :ptr {
     mov eax,SYS_UTIMES
     syscall
     }
-sys_mbind proto :ulong_t, :ulong_t, :ulong_t, :ptr, :ulong_t, :ulong_t {
-    mov r10,rcx
+sys_mbind proto asmcall :ulong_t, :ulong_t, :ulong_t, :ptr, :ulong_t, :ulong_t {
     mov eax,SYS_MBIND
     syscall
     }
-sys_set_mempolicy proto :int_t, :ptr, :ulong_t {
+sys_set_mempolicy proto asmcall :int_t, :ptr, :ulong_t {
     mov eax,SYS_SET_MEMPOLICY
     syscall
     }
-sys_get_mempolicy proto :ptr, :ulong_t, :ulong_t, :ulong_t {
+sys_get_mempolicy proto asmcall :ptr, :ulong_t, :ulong_t, :ulong_t {
     mov eax,SYS_GET_MEMPOLICY
     syscall
     }
-sys_mq_open proto :ptr, :int_t, :int_t, :ptr {
+sys_mq_open proto asmcall :ptr, :int_t, :int_t, :ptr {
     mov eax,SYS_MQ_OPEN
     syscall
     }
-sys_mq_unlink proto :ptr {
+sys_mq_unlink proto asmcall :ptr {
     mov eax,SYS_MQ_UNLINK
     syscall
     }
-sys_mq_timedsend proto :int_t, :ptr, :size_t, :uint_t, :ptr {
-    mov r10,rcx
+sys_mq_timedsend proto asmcall :int_t, :ptr, :size_t, :uint_t, :ptr {
     mov eax,SYS_MQ_TIMEDSEND
     syscall
     }
-sys_mq_timedreceive proto :int_t, :ptr, :size_t, :ptr, :ptr {
-    mov r10,rcx
+sys_mq_timedreceive proto asmcall :int_t, :ptr, :size_t, :ptr, :ptr {
     mov eax,SYS_MQ_TIMEDRECEIVE
     syscall
     }
-sys_mq_notify proto :int_t, :ptr {
+sys_mq_notify proto asmcall :int_t, :ptr {
     mov eax,SYS_MQ_NOTIFY
     syscall
     }
-sys_mq_getsetattr proto :int_t, :ptr, :ptr {
+sys_mq_getsetattr proto asmcall :int_t, :ptr, :ptr {
     mov eax,SYS_MQ_GETSETATTR
     syscall
     }
-sys_kexec_load proto :ulong_t, :ulong_t, :ptr, :ulong_t {
-    mov r10,rcx
+sys_kexec_load proto asmcall :ulong_t, :ulong_t, :ptr, :ulong_t {
     mov eax,SYS_KEXEC_LOAD
     syscall
     }
-sys_waitid proto :int_t, :int_t, :ptr, :int_t, :ptr {
-    mov r10,rcx
+sys_waitid proto asmcall :int_t, :int_t, :ptr, :int_t, :ptr {
     mov eax,SYS_WAITID
     syscall
     }
-sys_add_key proto :ptr, :ptr, :ptr, :size_t, :ptr {
-    mov r10,rcx
+sys_add_key proto asmcall :ptr, :ptr, :ptr, :size_t, :ptr {
     mov eax,SYS_ADD_KEY
     syscall
     }
-sys_request_key proto :ptr, :ptr, :ptr, :ptr {
-    mov r10,rcx
+sys_request_key proto asmcall :ptr, :ptr, :ptr, :ptr {
     mov eax,SYS_REQUEST_KEY
     syscall
     }
-sys_keyctl proto :int_t, :ptr, :ptr, :ptr, :ptr {
-    mov r10,rcx
+sys_keyctl proto asmcall :int_t, :ptr, :ptr, :ptr, :ptr {
     mov eax,SYS_KEYCTL
     syscall
     }
-sys_ioprio_set proto :int_t, :int_t, :int_t {
+sys_ioprio_set proto asmcall :int_t, :int_t, :int_t {
     mov eax,SYS_IOPRIO_SET
     syscall
     }
-sys_ioprio_get proto :int_t, :int_t {
+sys_ioprio_get proto asmcall :int_t, :int_t {
     mov eax,SYS_IOPRIO_GET
     syscall
     }
@@ -1635,527 +1595,467 @@ sys_inotify_init proto {
     mov eax,SYS_INOTIFY_INIT
     syscall
     }
-sys_inotify_add_watch proto :int_t, :ptr, :uint_t {
+sys_inotify_add_watch proto asmcall :int_t, :ptr, :uint_t {
     mov eax,SYS_INOTIFY_ADD_WATCH
     syscall
     }
-sys_inotify_rm_watch proto :int_t, :int_t {
+sys_inotify_rm_watch proto asmcall :int_t, :int_t {
     mov eax,SYS_INOTIFY_RM_WATCH
     syscall
     }
-sys_migrate_pages proto :int_t, :uint64_t, :ptr, :ptr {
-    mov r10,rcx
+sys_migrate_pages proto asmcall :int_t, :uint64_t, :ptr, :ptr {
     mov eax,SYS_MIGRATE_PAGES
     syscall
     }
-sys_openat proto :int_t, :ptr, :int_t, :int_t {
-    mov r10,rcx
+sys_openat proto asmcall :int_t, :ptr, :int_t, :int_t {
     mov eax,SYS_OPENAT
     syscall
     }
-sys_mkdirat proto :int_t, :ptr, :int_t {
+sys_mkdirat proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_MKDIRAT
     syscall
     }
-sys_mknodat proto :int_t, :ptr, :int_t {
+sys_mknodat proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_MKNODAT
     syscall
     }
-sys_fchownat proto :int_t, :ptr, :int_t, :uint_t {
-    mov r10,rcx
+sys_fchownat proto asmcall :int_t, :ptr, :int_t, :uint_t {
     mov eax,SYS_FCHOWNAT
     syscall
     }
-sys_futimesat proto :int_t, :ptr, :int_t, :int_t, :int_t {
-    mov r10,rcx
+sys_futimesat proto asmcall :int_t, :ptr, :int_t, :int_t, :int_t {
     mov eax,SYS_FUTIMESAT
     syscall
     }
-sys_newfstatat proto :int_t, :ptr, :ptr {
+sys_newfstatat proto asmcall :int_t, :ptr, :ptr {
     mov eax,SYS_NEWFSTATAT
     syscall
     }
-sys_unlinkat proto :int_t, :ptr, :int_t {
+sys_unlinkat proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_UNLINKAT
     syscall
     }
-sys_renameat proto :int_t, :ptr, :int_t, :ptr {
-    mov r10,rcx
+sys_renameat proto asmcall :int_t, :ptr, :int_t, :ptr {
     mov eax,SYS_RENAMEAT
     syscall
     }
-sys_linkat proto :int_t, :ptr, :int_t, :ptr, :int_t {
-    mov r10,rcx
+sys_linkat proto asmcall :int_t, :ptr, :int_t, :ptr, :int_t {
     mov eax,SYS_LINKAT
     syscall
     }
-sys_symlinkat proto :ptr, :int_t, :ptr {
+sys_symlinkat proto asmcall :ptr, :int_t, :ptr {
     mov eax,SYS_SYMLINKAT
     syscall
     }
-sys_readlinkat proto :int_t, :ptr, :ptr, :int_t {
-    mov r10,rcx
+sys_readlinkat proto asmcall :int_t, :ptr, :ptr, :int_t {
     mov eax,SYS_READLINKAT
     syscall
     }
-sys_fchmodat proto :int_t, :ptr, :int_t {
+sys_fchmodat proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_FCHMODAT
     syscall
     }
-sys_faccessat proto :int_t, :ptr, :ptr {
+sys_faccessat proto asmcall :int_t, :ptr, :ptr {
     mov eax,SYS_FACCESSAT
     syscall
     }
-sys_pselect6 proto :int_t, :ptr, :ptr, :ptr, :ptr, :ptr {
-    mov r10,rcx
+sys_pselect6 proto asmcall :int_t, :ptr, :ptr, :ptr, :ptr, :ptr {
     mov eax,SYS_PSELECT6
     syscall
     }
-sys_ppoll proto :ptr, :uint_t, :ptr, :ptr, :size_t {
-    mov r10,rcx
+sys_ppoll proto asmcall :ptr, :uint_t, :ptr, :ptr, :size_t {
     mov eax,SYS_PPOLL
     syscall
     }
-sys_unshare proto :uint_t {
+sys_unshare proto asmcall :uint_t {
     mov eax,SYS_UNSHARE
     syscall
     }
-sys_set_robust_list proto :ptr, :size_t {
+sys_set_robust_list proto asmcall :ptr, :size_t {
     mov eax,SYS_SET_ROBUST_LIST
     syscall
     }
-sys_get_robust_list proto :int_t, :ptr, :ptr {
+sys_get_robust_list proto asmcall :int_t, :ptr, :ptr {
     mov eax,SYS_GET_ROBUST_LIST
     syscall
     }
-sys_splice proto :int_t, :ptr, :int_t, :ptr, :size_t, :uint_t {
-    mov r10,rcx
+sys_splice proto asmcall :int_t, :ptr, :int_t, :ptr, :size_t, :uint_t {
     mov eax,SYS_SPLICE
     syscall
     }
-sys_tee proto :int_t, :int_t, :size_t, :uint_t {
-    mov r10,rcx
+sys_tee proto asmcall :int_t, :int_t, :size_t, :uint_t {
     mov eax,SYS_TEE
     syscall
     }
-sys_sync_file_range proto :int_t, :int64_t, :int64_t, :uint_t {
-    mov r10,rcx
+sys_sync_file_range proto asmcall :int_t, :int64_t, :int64_t, :uint_t {
     mov eax,SYS_SYNC_FILE_RANGE
     syscall
     }
-sys_vmsplice proto :int_t, :ptr, :ulong_t, :uint_t {
-    mov r10,rcx
+sys_vmsplice proto asmcall :int_t, :ptr, :ulong_t, :uint_t {
     mov eax,SYS_VMSPLICE
     syscall
     }
 
 ;;;;;;;;;;;;;;;;;;;;;;
 
-sys_move_pages proto :int_t, :ptr, :ptr, :ptr, :ptr, :int_t {
-    mov r10,rcx
+sys_move_pages proto asmcall :int_t, :ptr, :ptr, :ptr, :ptr, :int_t {
     mov eax,SYS_MOVE_PAGES
     syscall
     }
-sys_utimensat proto :int_t, :ptr, :ptr, :int_t {
-    mov r10,rcx
+sys_utimensat proto asmcall :int_t, :ptr, :ptr, :int_t {
     mov eax,SYS_UTIMENSAT
     syscall
     }
-sys_epoll_pwait proto :int_t, :ptr, :int_t, :int_t, :ptr, :size_t {
-    mov r10,rcx
+sys_epoll_pwait proto asmcall :int_t, :ptr, :int_t, :int_t, :ptr, :size_t {
     mov eax,SYS_EPOLL_PWAIT
     syscall
     }
-sys_signalfd proto :int_t, :ptr, :size_t {
+sys_signalfd proto asmcall :int_t, :ptr, :size_t {
     mov eax,SYS_SIGNALFD
     syscall
     }
-sys_timerfd_create proto :int_t, :int_t {
+sys_timerfd_create proto asmcall :int_t, :int_t {
     mov eax,SYS_TIMERFD_CREATE
     syscall
     }
-sys_eventfd proto :uint_t {
+sys_eventfd proto asmcall :uint_t {
     mov eax,SYS_EVENTFD
     syscall
     }
-sys_fallocate proto :int_t, :int_t, :int64_t, :int64_t {
-    mov r10,rcx
+sys_fallocate proto asmcall :int_t, :int_t, :int64_t, :int64_t {
     mov eax,SYS_FALLOCATE
     syscall
     }
-sys_timerfd_settime proto :int_t, :int_t, :ptr, :ptr {
-    mov r10,rcx
+sys_timerfd_settime proto asmcall :int_t, :int_t, :ptr, :ptr {
     mov eax,SYS_TIMERFD_SETTIME
     syscall
     }
-sys_timerfd_gettime proto :int_t, :ptr {
+sys_timerfd_gettime proto asmcall :int_t, :ptr {
     mov eax,SYS_TIMERFD_GETTIME
     syscall
     }
-sys_accept4 proto :int_t, :ptr, :ptr, :int_t {
-    mov r10,rcx
+sys_accept4 proto asmcall :int_t, :ptr, :ptr, :int_t {
     mov eax,SYS_ACCEPT4
     syscall
     }
-sys_signalfd4 proto :int_t, :ptr, :size_t, :int_t {
-    mov r10,rcx
+sys_signalfd4 proto asmcall :int_t, :ptr, :size_t, :int_t {
     mov eax,SYS_SIGNALFD4
     syscall
     }
-sys_eventfd2 proto :uint_t, :int_t {
+sys_eventfd2 proto asmcall :uint_t, :int_t {
     mov eax,SYS_EVENTFD2
     syscall
     }
-sys_epoll_create1 proto :int_t {
+sys_epoll_create1 proto asmcall :int_t {
     mov eax,SYS_EPOLL_CREATE1
     syscall
     }
-sys_dup3 proto :int_t, :int_t, :int_t {
+sys_dup3 proto asmcall :int_t, :int_t, :int_t {
     mov eax,SYS_DUP3
     syscall
     }
-sys_pipe2 proto :ptr, :int_t {
+sys_pipe2 proto asmcall :ptr, :int_t {
     mov eax,SYS_PIPE2
     syscall
     }
-sys_inotify_init1 proto :int_t {
+sys_inotify_init1 proto asmcall :int_t {
     mov eax,SYS_INOTIFY_INIT1
     syscall
     }
-sys_preadv proto :uint64_t, :ptr, :uint64_t, :uint64_t, :uint64_t {
-    mov r10,rcx
+sys_preadv proto asmcall :uint64_t, :ptr, :uint64_t, :uint64_t, :uint64_t {
     mov eax,SYS_PREADV
     syscall
     }
-sys_pwritev proto :uint64_t, :ptr, :uint64_t, :uint64_t, :uint64_t {
-    mov r10,rcx
+sys_pwritev proto asmcall :uint64_t, :ptr, :uint64_t, :uint64_t, :uint64_t {
     mov eax,SYS_PWRITEV
     syscall
     }
-sys_rt_tgsigqueueinfo proto :int_t, :int_t, :int_t, :ptr {
-    mov r10,rcx
+sys_rt_tgsigqueueinfo proto asmcall :int_t, :int_t, :int_t, :ptr {
     mov eax,SYS_RT_TGSIGQUEUEINFO
     syscall
     }
-sys_perf_event_open proto :ptr, :int_t, :int_t, :int_t, :int_t {
-    mov r10,rcx
+sys_perf_event_open proto asmcall :ptr, :int_t, :int_t, :int_t, :int_t {
     mov eax,SYS_PERF_EVENT_OPEN
     syscall
     }
-sys_recvmmsg proto :int_t, :ptr, :int_t, :int_t, :ptr {
-    mov r10,rcx
+sys_recvmmsg proto asmcall :int_t, :ptr, :int_t, :int_t, :ptr {
     mov eax,SYS_RECVMMSG
     syscall
     }
-sys_fanotify_init proto :uint_t, :uint_t {
+sys_fanotify_init proto asmcall :uint_t, :uint_t {
     mov eax,SYS_FANOTIFY_INIT
     syscall
     }
-sys_fanotify_mark proto :int_t, :int_t, :uint64_t, :int_t, :ptr {
-    mov r10,rcx
+sys_fanotify_mark proto asmcall :int_t, :int_t, :uint64_t, :int_t, :ptr {
     mov eax,SYS_FANOTIFY_MARK
     syscall
     }
-sys_prlimit64 proto :int_t, :int_t, :ptr, :ptr {
-    mov r10,rcx
+sys_prlimit64 proto asmcall :int_t, :int_t, :ptr, :ptr {
     mov eax,SYS_PRLIMIT64
     syscall
     }
-sys_name_to_handle_at proto :int_t, :ptr, :ptr, :ptr, :int_t {
-    mov r10,rcx
+sys_name_to_handle_at proto asmcall :int_t, :ptr, :ptr, :ptr, :int_t {
     mov eax,SYS_NAME_TO_HANDLE_AT
     syscall
     }
-sys_open_by_handle_at proto :int_t, :ptr, :int_t {
+sys_open_by_handle_at proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_OPEN_BY_HANDLE_AT
     syscall
     }
-sys_clock_adjtime proto :int_t, :ptr {
+sys_clock_adjtime proto asmcall :int_t, :ptr {
     mov eax,SYS_CLOCK_ADJTIME
     syscall
     }
-sys_syncfs proto :int_t {
+sys_syncfs proto asmcall :int_t {
     mov eax,SYS_SYNCFS
     syscall
     }
-sys_sendmmsg proto :int_t, :ptr, :int_t, :int_t {
-    mov r10,rcx
+sys_sendmmsg proto asmcall :int_t, :ptr, :int_t, :int_t {
     mov eax,SYS_SENDMMSG
     syscall
     }
-sys_setns proto :int_t, :int_t {
+sys_setns proto asmcall :int_t, :int_t {
     mov eax,SYS_SETNS
     syscall
     }
-sys_getcpu proto :ptr, :ptr, :ptr {
+sys_getcpu proto asmcall :ptr, :ptr, :ptr {
     mov eax,SYS_GETCPU
     syscall
     }
-sys_process_vm_readv proto :int_t, :ptr, :ptr, :int64_t, :int64_t {
-    mov r10,rcx
+sys_process_vm_readv proto asmcall :int_t, :ptr, :ptr, :int64_t, :int64_t {
     mov eax,SYS_PROCESS_VM_READV
     syscall
     }
-sys_process_vm_writev proto :int_t, :ptr, :ulong_t, :ptr, :ulong_t, :ulong_t {
-    mov r10,rcx
+sys_process_vm_writev proto asmcall :int_t, :ptr, :ulong_t, :ptr, :ulong_t, :ulong_t {
     mov eax,SYS_PROCESS_VM_WRITEV
     syscall
     }
-sys_kcmp proto :int_t, :int_t, :int_t, :ulong_t, :ulong_t {
-    mov r10,rcx
+sys_kcmp proto asmcall :int_t, :int_t, :int_t, :ulong_t, :ulong_t {
     mov eax,SYS_KCMP
     syscall
     }
-sys_finit_module proto :int_t, :ptr, :int_t {
+sys_finit_module proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_FINIT_MODULE
     syscall
     }
-sys_sched_setattr proto :int_t, :ptr, :int_t {
+sys_sched_setattr proto asmcall :int_t, :ptr, :int_t {
     mov eax,SYS_SCHED_SETATTR
     syscall
     }
-sys_sched_getattr proto :int_t, :ptr, :int_t, :int_t {
-    mov r10,rcx
+sys_sched_getattr proto asmcall :int_t, :ptr, :int_t, :int_t {
     mov eax,SYS_SCHED_GETATTR
     syscall
     }
-sys_renameat2 proto :int_t, :ptr, :int_t, :ptr, :uint_t {
-    mov r10,rcx
+sys_renameat2 proto asmcall :int_t, :ptr, :int_t, :ptr, :uint_t {
     mov eax,SYS_RENAMEAT2
     syscall
     }
-sys_seccomp proto :uint_t, :uint_t, :ptr {
+sys_seccomp proto asmcall :uint_t, :uint_t, :ptr {
     mov eax,SYS_SECCOMP
     syscall
     }
-sys_getrandom proto :ptr, :size_t, :uint_t {
+sys_getrandom proto asmcall :ptr, :size_t, :uint_t {
     mov eax,SYS_GETRANDOM
     syscall
     }
-sys_memfd_create proto :ptr, :uint_t {
+sys_memfd_create proto asmcall :ptr, :uint_t {
     mov eax,SYS_MEMFD_CREATE
     syscall
     }
-sys_kexec_file_load proto :int_t, :int_t, :ulong_t, :ptr, :ulong_t {
-    mov r10,rcx
+sys_kexec_file_load proto asmcall :int_t, :int_t, :ulong_t, :ptr, :ulong_t {
     mov eax,SYS_KEXEC_FILE_LOAD
     syscall
     }
-sys_bpf proto :int_t, :ptr, :size_t {
+sys_bpf proto asmcall :int_t, :ptr, :size_t {
     mov eax,SYS_BPF
     syscall
     }
-sys_execveat proto :int_t, :ptr, :ptr, :ptr, :int_t {
-    mov r10,rcx
+sys_execveat proto asmcall :int_t, :ptr, :ptr, :ptr, :int_t {
     mov eax,SYS_EXECVAT
     syscall
     }
-sys_userfaultfd proto :int_t {
+sys_userfaultfd proto asmcall :int_t {
     mov eax,SYS_USERFAULTFD
     syscall
     }
-sys_membarrier proto :int_t, :int_t, :int_t {
+sys_membarrier proto asmcall :int_t, :int_t, :int_t {
     mov eax,SYS_MEMBARRIER
     syscall
     }
-sys_mlock2 proto :ulong_t, :size_t, :int_t {
+sys_mlock2 proto asmcall :ulong_t, :size_t, :int_t {
     mov eax,SYS_MLOCK2
     syscall
     }
-sys_copy_file_range proto :int_t, :ptr, :uint64_t, :ptr, :size_t, :uint_t {
-    mov r10,rcx
+sys_copy_file_range proto asmcall :int_t, :ptr, :uint64_t, :ptr, :size_t, :uint_t {
     mov eax,SYS_COPY_FILE_RANGE
     syscall
     }
-sys_preadv2 proto :ulong_t, :ptr, :ulong_t, :ulong_t, :ulong_t, :int_t {
-    mov r10,rcx
+sys_preadv2 proto asmcall :ulong_t, :ptr, :ulong_t, :ulong_t, :ulong_t, :int_t {
     mov eax,SYS_PREADV2
     syscall
     }
-sys_pwritev2 proto :ulong_t, :ptr, :ulong_t, :ulong_t, :ulong_t, :int_t {
-    mov r10,rcx
+sys_pwritev2 proto asmcall :ulong_t, :ptr, :ulong_t, :ulong_t, :ulong_t, :int_t {
     mov eax,SYS_PWRITEV2
     syscall
     }
-sys_pkey_mprotect proto :ulong_t, :size_t, :ulong_t, :int_t {
-    mov r10,rcx
+sys_pkey_mprotect proto asmcall :ulong_t, :size_t, :ulong_t, :int_t {
     mov eax,SYS_PKEY_MPROTECT
     syscall
     }
-sys_pkey_alloc proto :ulong_t, :ulong_t {
+sys_pkey_alloc proto asmcall :ulong_t, :ulong_t {
     mov eax,SYS_PKEY_ALLOC
     syscall
     }
-sys_pkey_free proto :int_t {
+sys_pkey_free proto asmcall :int_t {
     mov eax,SYS_PKEY_FREE
     syscall
     }
-sys_statx proto :int_t, :ptr, :uint_t, :uint_t, :ptr {
-    mov r10,rcx
+sys_statx proto asmcall :int_t, :ptr, :uint_t, :uint_t, :ptr {
     mov eax,SYS_STATX
     syscall
     }
-sys_io_pgetevents proto :int_t, :long_t, :long_t, :ptr, :ptr, :ptr {
-    mov r10,rcx
+sys_io_pgetevents proto asmcall :int_t, :long_t, :long_t, :ptr, :ptr, :ptr {
     mov eax,SYS_IO_PGETEVENTS
     syscall
     }
-sys_rseq proto :ptr, :uint_t, :int_t, :uint_t {
-    mov r10,rcx
+sys_rseq proto asmcall :ptr, :uint_t, :int_t, :uint_t {
     mov eax,SYS_RSEQ
     syscall
     }
-sys_pidfd_send_signal proto :int_t, :int_t, :ptr, :uint_t {
-    mov r10,rcx
+sys_pidfd_send_signal proto asmcall :int_t, :int_t, :ptr, :uint_t {
     mov eax,SYS_PIDFD_SEND_SIGNAL
     syscall
     }
-sys_io_uring_setup proto :uint_t, :ptr {
+sys_io_uring_setup proto asmcall :uint_t, :ptr {
     mov eax,SYS_IO_URING_SETUP
     syscall
     }
-sys_io_uring_enter proto :uint_t, :uint_t, :uint_t, :uint_t, :ptr, :size_t {
-    mov r10,rcx
+sys_io_uring_enter proto asmcall :uint_t, :uint_t, :uint_t, :uint_t, :ptr, :size_t {
     mov eax,SYS_IO_URING_ENTER
     syscall
     }
-sys_io_uring_register proto :uint_t, :uint_t, :ptr, :uint_t {
-    mov r10,rcx
+sys_io_uring_register proto asmcall :uint_t, :uint_t, :ptr, :uint_t {
     mov eax,SYS_IO_URING_REGISTER
     syscall
     }
-sys_open_tree proto :int_t, :ptr, :uint_t {
+sys_open_tree proto asmcall :int_t, :ptr, :uint_t {
     mov eax,SYS_OPEN_TREE
     syscall
     }
-sys_move_mount proto :int_t, :ptr, :int_t, :ptr, :uint_t {
-    mov r10,rcx
+sys_move_mount proto asmcall :int_t, :ptr, :int_t, :ptr, :uint_t {
     mov eax,SYS_MOVE_MOUNT
     syscall
     }
-sys_fsopen proto :ptr, :int_t {
+sys_fsopen proto asmcall :ptr, :int_t {
     mov eax,SYS_FSOPEN
     syscall
     }
-sys_fsconfig proto :int_t, :uint_t, :ptr, :ptr, :int_t {
-    mov r10,rcx
+sys_fsconfig proto asmcall :int_t, :uint_t, :ptr, :ptr, :int_t {
     mov eax,SYS_FSCONFIG
     syscall
     }
-sys_fsmount proto :int_t, :uint_t, :uint_t {
+sys_fsmount proto asmcall :int_t, :uint_t, :uint_t {
     mov eax,SYS_FSMOUNT
     syscall
     }
-sys_fspick proto :int_t, :ptr, :uint_t {
+sys_fspick proto asmcall :int_t, :ptr, :uint_t {
     mov eax,SYS_FSPICK
     syscall
     }
-sys_pidfd_open proto :int_t, :uint_t {
+sys_pidfd_open proto asmcall :int_t, :uint_t {
     mov eax,SYS_PIDFD_OPEN
     syscall
     }
-sys_clone3 proto :ptr, :size_t {
+sys_clone3 proto asmcall :ptr, :size_t {
     mov eax,SYS_CLONE3
     syscall
     }
-sys_close_range proto :uint_t, :uint_t, :uint_t {
+sys_close_range proto asmcall :uint_t, :uint_t, :uint_t {
     mov eax,SYS_CLOSE_RANGE
     syscall
     }
-sys_openat2 proto :int_t, :ptr, :ptr, :size_t {
-    mov r10,rcx
+sys_openat2 proto asmcall :int_t, :ptr, :ptr, :size_t {
     mov eax,SYS_OPENAT2
     syscall
     }
-sys_pidfd_getfd proto :int_t, :int_t, :uint_t {
+sys_pidfd_getfd proto asmcall :int_t, :int_t, :uint_t {
     mov eax,SYS_PIDFD_GETFD
     syscall
     }
-sys_faccessat2 proto :int_t, :ptr, :int_t, :int_t {
-    mov r10,rcx
+sys_faccessat2 proto asmcall :int_t, :ptr, :int_t, :int_t {
     mov eax,SYS_FACCESSAT2
     syscall
     }
-sys_process_madvise proto :int_t, :ptr, :size_t, :uint_t {
-    mov r10,rcx
+sys_process_madvise proto asmcall :int_t, :ptr, :size_t, :uint_t {
     mov eax,SYS_PROCESS_MADVICE
     syscall
     }
-sys_epoll_pwait2 proto :int_t, :ptr, :int_t, :ptr, :size_t {
-    mov r10,rcx
+sys_epoll_pwait2 proto asmcall :int_t, :ptr, :int_t, :ptr, :size_t {
     mov eax,SYS_EPOLL_PWAIT2
     syscall
     }
-sys_mount_setattr proto :int_t, :ptr, :uint_t, :ptr, :size_t {
-    mov r10,rcx
+sys_mount_setattr proto asmcall :int_t, :ptr, :uint_t, :ptr, :size_t {
     mov eax,SYS_MOUNT_SETATTR
     syscall
     }
-sys_quotactl_fd proto :uint_t, :uint_t, :int_t, :ptr {
-    mov r10,rcx
+sys_quotactl_fd proto asmcall :uint_t, :uint_t, :int_t, :ptr {
     mov eax,SYS_QUOTACTL_FD
     syscall
     }
-sys_landlock_create_ruleset proto :ptr, :size_t, :uint_t {
+sys_landlock_create_ruleset proto asmcall :ptr, :size_t, :uint_t {
     mov eax,SYS_LANDLOCK_CREATE_RULESET
     syscall
     }
-sys_landlock_add_rule proto :int_t, :int_t, :ptr, :uint_t {
-    mov r10,rcx
+sys_landlock_add_rule proto asmcall :int_t, :int_t, :ptr, :uint_t {
     mov eax,SYS_LANDLOCK_ADD_RULE
     syscall
     }
-sys_landlock_restrict_self proto :int_t, :uint_t {
+sys_landlock_restrict_self proto asmcall :int_t, :uint_t {
     mov eax,SYS_LANDLOCK_RESTRICT_SELF
     syscall
     }
-sys_memfd_secret proto :uint_t {
+sys_memfd_secret proto asmcall :uint_t {
     mov eax,SYS_MEMFD_SECRET
     syscall
     }
-sys_process_mrelease proto :int_t, :uint_t {
+sys_process_mrelease proto asmcall :int_t, :uint_t {
     mov eax,SYS_PROCESS_MRELEASE
     syscall
     }
-sys_futex_waitv proto :ptr, :uint_t, :uint_t, :ptr, :int_t {
-    mov r10,rcx
+sys_futex_waitv proto asmcall :ptr, :uint_t, :uint_t, :ptr, :int_t {
     mov eax,SYS_FUTEX_WAITV
     syscall
     }
-sys_set_mempolicy_home_node proto :ulong_t, :ulong_t, :ulong_t, :ulong_t {
-    mov r10,rcx
+sys_set_mempolicy_home_node proto asmcall :ulong_t, :ulong_t, :ulong_t, :ulong_t {
     mov eax,SYS_SET_MEMPOLICY_HOME_NODE
     syscall
     }
-sys_cachestat proto :uint_t, :ptr, :ptr, :uint_t {
-    mov r10,rcx
+sys_cachestat proto asmcall :uint_t, :ptr, :ptr, :uint_t {
     mov eax,SYS_CACHESTAT
     syscall
     }
-sys_fchmodat2 proto :int_t, :ptr, :int_t, :uint_t {
-    mov r10,rcx
+sys_fchmodat2 proto asmcall :int_t, :ptr, :int_t, :uint_t {
     mov eax,SYS_FCHMODAT2
     syscall
     }
-sys_map_shadow_stack proto :ulong_t, :ulong_t, :uint_t {
+sys_map_shadow_stack proto asmcall :ulong_t, :ulong_t, :uint_t {
     mov eax,SYS_MAP_SHADOW_STACK
     syscall
     }
-sys_futex_wake proto :ptr, :ulong_t, :int_t, :uint_t {
-    mov r10,rcx
+sys_futex_wake proto asmcall :ptr, :ulong_t, :int_t, :uint_t {
     mov eax,SYS_FUTEX_WAKE
     syscall
     }
-sys_futex_wait proto :ptr, :ulong_t, :ulong_t, :uint_t, :ptr, :int_t {
-    mov r10,rcx
+sys_futex_wait proto asmcall :ptr, :ulong_t, :ulong_t, :uint_t, :ptr, :int_t {
     mov eax,SYS_FUTEX_WAIT
     syscall
     }
-sys_futex_requeue proto :ptr, :uint_t, :int_t, :int_t {
-    mov r10,rcx
+sys_futex_requeue proto asmcall :ptr, :uint_t, :int_t, :int_t {
     mov eax,SYS_FUTEX_REQUEUE
     syscall
     }
+
+.pragma aux(pop)
 
 else
 
@@ -2955,6 +2855,9 @@ sys_sync_file_range proto fastcall :int_t, :int_t, :abs, :abs {
     }
 sys_vmsplice proto fastcall :int_t, :ptr, :abs, :abs {
     sys_call(SYS_VMSPLICE, _1, _2, _3, _4)
+    }
+sys_utimensat proto fastcall :int_t, :ptr, :abs, :abs {
+    sys_call(SYS_UTIMENSAT64, _1, _2, _3, _4)
     }
 
 endif

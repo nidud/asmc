@@ -1,5 +1,7 @@
 .pragma list(push, 0)
 
+include libc.inc
+
 ifdef __UNIX__
 define _O_CREAT		0x0040
 define _O_EXCL		0x0080

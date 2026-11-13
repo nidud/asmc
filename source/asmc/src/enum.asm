@@ -48,11 +48,8 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov rsi,LclAlloc(asym)
         mov CurrEnum,rax
         mov [rsi].nextitem,rdi
-        ;mov [rsi].name,0
-        ;mov [rsi].value,0
         mov [rsi].total_size,4
         mov [rsi].mem_type,MT_SDWORD
-        ;mov [rsi].total_length,0
         .if [rbx].tokval == T_DOT_ENUMT
             inc [rsi].total_length
         .endif
@@ -136,7 +133,7 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov CurrEnum,[rsi].nextitem
             .break
         .endif
-        mov name,rcx
+        mov name,NameSpace(rcx, rcx)
         inc i
         mov opndx.value,[rsi].value
         add [rsi].value,1

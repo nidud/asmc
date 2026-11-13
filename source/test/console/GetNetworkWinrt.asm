@@ -11,15 +11,13 @@ include winrt/wrl/wrappers/corewrappers.inc
 include tchar.inc
 
 .data
- IID_IActivationFactory IID {0x00000035,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
- IID_INetworkInformationStatics IID {0x5074F851,0x950D,0x4165,{0x9C,0x15,0x36,0x56,0x19,0x48,0x1E,0xEA}}
+ DECLARE_IID(IActivationFactory)
+ DECLARE_IID(INetworkInformationStatics)
 
 .code
 
 _tmain proc
-
-   .new hr:HRESULT = CoInitializeEx(nullptr, COINIT_MULTITHREADED)
-
+    .new hr:HRESULT = CoInitializeEx(nullptr, COINIT_MULTITHREADED)
     .if (SUCCEEDED(hr))
        .new interfaceName:HString(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation)
        .new classFactory:ptr IActivationFactory = NULL
@@ -35,13 +33,11 @@ _tmain proc
                    .new cost:ptr Windows::Networking::Connectivity::IConnectionCost
                     mov hr,connection.GetConnectionCost(&cost)
                     .if (SUCCEEDED(hr))
-
                        .new connectivityLevel:int_t = 0
                        .new connectivityCost:int_t = 0
                        .new approachingDataLimit:int_t = 0
                        .new overDataLimit:int_t = 0
                        .new roaming:int_t = 0
-
                         connection.GetNetworkConnectivityLevel(&connectivityLevel)
                         cost.get_NetworkCostType(&connectivityCost)
                         cost.get_Roaming(&roaming)

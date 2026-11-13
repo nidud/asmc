@@ -36,12 +36,12 @@ DynamicDaylightTimeDisabled BOOLEAN ?
 TIME_DYNAMIC_ZONE_INFORMATION ends
 PDYNAMIC_TIME_ZONE_INFORMATION typedef ptr TIME_DYNAMIC_ZONE_INFORMATION
 
-SystemTimeToTzSpecificLocalTime proto WINAPI :ptr, :ptr, :LPSYSTEMTIME
-TzSpecificLocalTimeToSystemTime proto WINAPI :ptr, :ptr, :LPSYSTEMTIME
-FileTimeToSystemTime proto WINAPI :ptr, :LPSYSTEMTIME
-SystemTimeToFileTime proto WINAPI :ptr, :LPFILETIME
+SystemTimeToTzSpecificLocalTime proto WINAPI :LPTIME_ZONE_INFORMATION, :LPSYSTEMTIME, :LPSYSTEMTIME
+TzSpecificLocalTimeToSystemTime proto WINAPI :LPTIME_ZONE_INFORMATION, :LPSYSTEMTIME, :LPSYSTEMTIME
+FileTimeToSystemTime proto WINAPI :LPFILETIME, :LPSYSTEMTIME
+SystemTimeToFileTime proto WINAPI :LPSYSTEMTIME, :LPFILETIME
 GetTimeZoneInformation proto WINAPI :LPTIME_ZONE_INFORMATION
-SetTimeZoneInformation proto WINAPI :ptr
+SetTimeZoneInformation proto WINAPI :LPTIME_ZONE_INFORMATION
 
 if (_WIN32_WINNT ge 0x0600)
 SetDynamicTimeZoneInformation proto WINAPI :ptr

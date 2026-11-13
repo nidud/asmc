@@ -8,11 +8,13 @@ include asmc.inc
 include parser.inc
 include memalloc.inc
 
-    .code
+.code
+ assume rsi:ptr nsp_item
 
-    assume rsi:ptr nsp_item
+NameSpace proc __ccall uses rsi rdi rbx Name:string_t, retval:string_t
 
-NameSpace proc watcall uses rsi rdi rbx Name:string_t, retval:string_t
+    ldr rax,Name
+    ldr rdx,retval
 
     mov rsi,MODULE.NspStack
     .if ( rsi || rax != rdx )

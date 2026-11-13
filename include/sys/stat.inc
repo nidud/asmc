@@ -1,8 +1,8 @@
 ifndef __STAT_INC
 define __STAT_INC
 .pragma list(push, 0)
-ifndef _LIBC_
-include libc.inc
+ifndef  __TIME_INC
+include time.inc
 endif
 
 define _S_IFMT   0xF000
@@ -59,6 +59,14 @@ define ACCESSPERMS  (S_IRWXU or S_IRWXG or S_IRWXO) ; 0777
 define ALLPERMS     (S_ISUID or S_ISGID or S_ISVTX or S_IRWXU or S_IRWXG or S_IRWXO) ; 07777
 define DEFFILEMODE  (S_IRUSR or S_IWUSR or S_IRGRP or S_IWGRP or S_IROTH or S_IWOTH) ; 0666
 
+ifndef UTIME_NOW
+define UTIME_NOW    ((1 shl 30) - 1)
+define UTIME_OMIT   ((1 shl 30) - 2)
+endif
+ifndef AT_FDCWD
+define AT_FDCWD     (-3041965)
+endif
+
 ifndef _INO_T_DEFINED
 define _INO_T_DEFINED
 _ino_t typedef word
@@ -109,12 +117,9 @@ ifdef __UNIX__
     st_size     size_t ?
     st_blksize  size_t ?
     st_blocks   size_t ?
-    st_atime    size_t ?
-    st_atimesec size_t ?
-    st_mtime    size_t ?
-    st_mtimesec size_t ?
-    st_ctime    size_t ?
-    st_ctimesec size_t ?
+    st_atime    timespec <>
+    st_mtime    timespec <>
+    st_ctime    timespec <>
  ifndef _WIN64
     st_reserved db 8 dup(?)
  else
@@ -148,12 +153,9 @@ ifdef __UNIX__
     st_size     dq ?
     st_blksize  dq ?
     st_blocks   dq ?
-    st_atime    dq ?
-    st_atimesec dq ?
-    st_mtime    dq ?
-    st_mtimesec dq ?
-    st_ctime    dq ?
-    st_ctimesec dq ?
+    st_atime    timespec <>
+    st_mtime    timespec <>
+    st_ctime    timespec <>
     st_reserved db 24 dup(?)
 else
     st_dev      dd ?
@@ -221,6 +223,8 @@ define _fstat64 <fstat64>
 chmod       proto __cdecl :string_t, :int_t
 lstat       proto __cdecl :string_t, :PSTAT
 lstat64     proto __cdecl :string_t, :PSTAT64
+utimensat   proto __cdecl :int_t, :string_t, :ptr timespec, :int_t
+futimens    proto __cdecl :int_t, :ptr timespec
 endif
 
 _stat       proto __cdecl :string_t, :PSTAT

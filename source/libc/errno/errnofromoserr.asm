@@ -6,6 +6,8 @@
 
 include errno.inc
 include winerror.inc
+include winbase.inc
+
 
 errentry    struct
 oscode      uint_t ?    ; OS return value
@@ -21,8 +23,8 @@ errtable errentry \
     { ERROR_TOO_MANY_OPEN_FILES,    EMFILE    }, ;; 4
     { ERROR_ACCESS_DENIED,          EACCES    }, ;; 5
     { ERROR_INVALID_HANDLE,         EBADF     }, ;; 6
-    { ERROR_ARENA_TRASHED,          ENOMEM    }, ;; 7
     { ERROR_NOT_ENOUGH_MEMORY,      ENOMEM    }, ;; 8
+    { ERROR_ARENA_TRASHED,          ENOMEM    }, ;; 7
     { ERROR_INVALID_BLOCK,          ENOMEM    }, ;; 9
     { ERROR_BAD_ENVIRONMENT,        E2BIG     }, ;; 10
     { ERROR_BAD_FORMAT,             ENOEXEC   }, ;; 11
@@ -88,4 +90,15 @@ _get_errno_from_oserr proc oserrno:uint_t
     ret
     endp
 
+ifdef __UNIX__
+GetLastError proc WINAPI
+    mov ecx,errno
+    .for ( rdx = &errtable, eax = 0 : eax < ERRTABLESIZE : ++eax )
+        .if ( ecx == [rdx+rax*sizeof(errentry)].errentry.errnocode )
+            .return( [rdx+rax*sizeof(errentry)].errentry.oscode )
+        .endif
+    .endf
+    .return( -1 )
+    endp
+endif
     end

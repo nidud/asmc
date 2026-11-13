@@ -8,15 +8,10 @@ include io.inc
 include conio.inc
 include malloc.inc
 include tchar.inc
-ifdef __UNIX__
-include sys/ioctl.inc
-elseifdef __TTY__
-include winnls.inc
-endif
 
 define EOF (-1)
 
-ifdef __TTY__
+ifdef __UNIX__
 
 .data
  inbuf db 32 dup(0)
@@ -32,7 +27,6 @@ chbuf int_t EOF
 .code
 
 _gettch proc
-
     .if ( chbuf != EOF )
         movzx eax,byte ptr chbuf
         mov chbuf,EOF
@@ -44,15 +38,7 @@ _gettch proc
         .endif
         lea rcx,inbuf
         mov chptr,rcx
-ifdef __UNIX__
         mov count,_read(_coninpfd, rcx, sizeof(inbuf))
-else
-        .new wc[sizeof(inbuf)/2-1]:wchar_t
-        .new n:int_t
-        .ifd ReadConsoleW( _coninpfh, &wc, lengthof(wc), &n, NULL)
-            mov count,WideCharToMultiByte(CP_UTF8, 0, &wc, n, chptr, sizeof(inbuf), NULL, NULL)
-        .endif
-endif
         .if ( eax == 0 )
             .return( EOF )
         .endif
@@ -66,16 +52,11 @@ endif
     endp
 
 _kbhit proc
-
     .new NumPending:DWORD
     .if ( count || chbuf != EOF )
         .return( 1 )
     .endif
-ifdef __UNIX__
-    .ifd !ioctl( _coninpfd, FIONREAD, &NumPending )
-else
     .ifd GetNumberOfConsoleInputEvents( _coninpfh, &NumPending )
-endif
         .if ( NumPending )
             .return( 1 )
         .endif
@@ -299,9 +280,6 @@ _gettche proc
 
 
 _kbhit proc uses rbx
-ifdef __UNIX__
-    .return( FALSE )
-else
     .new NumPending:DWORD
     .new NumPeeked:DWORD
     .new retval:int_t = FALSE
@@ -334,7 +312,6 @@ else
     .endif
     _freea( pIRBuf )
     .return retval
-endif
     endp
 
 _getextendedkeycode proc private pKE:ptr KEY_EVENT_RECORD
@@ -417,7 +394,7 @@ _ungettch proc c:int_t
 
 _kbflush proc
     mov chbuf,EOF
-ifdef __TTY__
+ifdef __UNIX__
     mov count,0
 endif
     ret

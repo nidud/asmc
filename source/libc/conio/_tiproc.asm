@@ -6,9 +6,7 @@
 
 include malloc.inc
 include ltype.inc
-ifndef __UNIX__
 include winuser.inc
-endif
 include io.inc
 include conio.inc
 include tchar.inc
@@ -56,11 +54,7 @@ IncreaseX proc fastcall ti:PTEDIT
 
 tinocando proc fastcall ti:PTEDIT
     .if ( [rcx].flags & TE_USEBEEP )
-ifdef __UNIX__
-        _write(_confd, "\x7", 1)
-else
         MessageBeep(MB_ICONERROR)
-endif
     .endif
     .return( 0 ) ; operation fail (end of line/buffer)
     endp

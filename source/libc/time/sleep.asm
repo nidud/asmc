@@ -18,13 +18,12 @@ _sleep proc milliseconds:uint_t
 ifdef __UNIX__
    .new req:timespec
    .new rem:timespec
-
-    ldr  ecx,milliseconds
-    mov  eax,1000
+    ldr  eax,milliseconds
+    mov  ecx,1000
     xor  edx,edx
     div  rcx
     mov  req.tv_sec,rax
-    imul rax,rdx,1000
+    imul rax,rdx,1000000
     mov  req.tv_nsec,rax
     nanosleep( &req, &rem )
     mov  rcx,rem.tv_nsec

@@ -176,7 +176,7 @@ _getmessage proc uses rsi rdi rbx msg:PMESSAGE, hwnd:THWND, Idle:int_t
                 .else
                     mov esi,WM_XBUTTONDBLCLK
                 .endif
-ifdef __TTY__
+ifdef __UNIX__
             .case MOUSE_BUTTON_UP
                 mov eax,msbuttons
                 mov msbuttons,0

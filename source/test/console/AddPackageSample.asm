@@ -26,17 +26,20 @@ option dllimport:none
     IInvoke         proc :ptr IAsyncActionWithProgress, :AsyncStatus
    .ends
 
-   .code
+.data
+ DECLARE_IID(IUriRuntimeClassFactory)
+ DECLARE_IID(IActivationFactory)
+ DECLARE_IID(IPackageManager)
+
+.code
 
 _tmain proc argc:int_t, argv:ptr wstring_t
 
     wcout << "Copyright (C) The Asmc Contributors. All Rights Reserved." << endl
     wcout << "AddPackage sample" << endl << endl
-
     .if ( argc < 2 )
-
         wcout << "Usage: AddPackageSample.exe packageUri" << endl
-        .return 1
+       .return 1
     .endif
 
     mov rdx,argv
@@ -53,7 +56,6 @@ _tmain proc argc:int_t, argv:ptr wstring_t
             wcout << "CreateEvent Failed, error code=" << GetLastError() << endl
             mov returnValue,1
         .else
-           .new factoryGUI:GUID = {0x44A9796F,0x723E,0x4FDF,{0xA2,0x18,0x03,0x3E,0x75,0xB0,0xC0,0x84}}
            .new inputPackageUri:HSTRING = nullptr
            .new foundationUri:HSTRING = nullptr
            .new uriString:LPTSTR = RuntimeClass_Windows_Foundation_Uri
@@ -65,7 +67,7 @@ _tmain proc argc:int_t, argv:ptr wstring_t
             .endif
             .if (SUCCEEDED(hr))
                .new classFactory:ptr Windows::Foundation::IUriRuntimeClassFactory = nullptr
-                mov hr,RoGetActivationFactory(foundationUri, &factoryGUI, &classFactory)
+                mov hr,RoGetActivationFactory(foundationUri, &IID_IUriRuntimeClassFactory, &classFactory)
             .endif
             .if (SUCCEEDED(hr))
                .new packageUri:ptr Windows::Foundation::IUriRuntimeClass = nullptr
@@ -74,22 +76,20 @@ _tmain proc argc:int_t, argv:ptr wstring_t
             .if (SUCCEEDED(hr))
 
                .new activationFactory:ptr IActivationFactory
-               .new activationGUI:GUID = {0x00000035,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
                .new activationUri:HSTRING = nullptr
                .new uriString:LPTSTR = RuntimeClass_Windows_Management_Deployment_PackageManager
                .new uriStrLen:size_t = _tcslen(uriString)
 
                 mov hr,WindowsCreateString(uriString, uriStrLen, &activationUri)
                 .if (SUCCEEDED(hr))
-                    mov hr,RoGetActivationFactory(activationUri, &activationGUI, &activationFactory)
+                    mov hr,RoGetActivationFactory(activationUri, &IID_IActivationFactory, &activationFactory)
                 .endif
                 .if (SUCCEEDED(hr))
                     mov hr,activationFactory.ActivateInstance(&activationFactory)
                 .endif
                 .if (SUCCEEDED(hr))
                   .new packageManager:ptr Windows::Management::Deployment::IPackageManager = nullptr
-                  .new managerGUI:GUID = {0x9A7D4B65,0x5E8F,0x4FC7,{0xA2,0xE5,0x7F,0x69,0x25,0xCB,0x8B,0x53}}
-                   mov hr,activationFactory.QueryInterface(&managerGUI, &packageManager)
+                   mov hr,activationFactory.QueryInterface(&IID_IPackageManager, &packageManager)
                 .endif
             .endif
 

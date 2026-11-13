@@ -26,13 +26,13 @@ include res/shortcut.inc
     )
 
 .data
- IID_IShellLinkW        GUID {0x000214F9,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
- IID_IPersistFile       GUID {0x0000010b,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
- IID_IShellLinkDataList GUID {0x45e2b4ae,0xb1c3,0x11d0,{0xb9,0x2f,0x00,0xa0,0xc9,0x03,0x12,0xe1}}
- CLSID_ShellLink        GUID {0x00021401,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
- IID_IPropertyStore     GUID {0x886d8eeb,0x8cf2,0x4446,{0x8d,0x02,0xcd,0xba,0x1d,0xbd,0xcf,0x99}}
- PKEY_LineSelection     PROPERTYKEY {{0x0C570607,0x0396,0x43DE,{0x9D,0x61,0xE3,0x21,0xD7,0xDF,0x50,0x26}},5}
-
+ DECLARE_IIDT(IShellLink)
+ DECLARE_IID(IPersistFile)
+ DECLARE_IID(IShellLinkDataList)
+ DECLARE_IID(IPropertyStore)
+ DECLARE_CLSID(ShellLink)
+ DECLARE_PKEY(Console_LineSelection)
+ align LPTSTR
  g_AsmcDir LPTSTR 0
  g_hInst HINSTANCE 0
 
@@ -196,7 +196,7 @@ CreateLink proc uses rsi rdi rbx hWnd:HWND, buffer:LPTSTR
                     .if SUCCEEDED(pShellLink.QueryInterface(&IID_IPropertyStore, &pPropStore))
                         .new propVar:PROPVARIANT
                         .if SUCCEEDED(InitPropVariantFromBoolean(FALSE, &propVar))
-                            .if SUCCEEDED(pPropStore.SetValue(&PKEY_LineSelection, &propVar))
+                            .if SUCCEEDED(pPropStore.SetValue(&PKEY_Console_LineSelection, &propVar))
                                 pPropStore.Commit()
                             .endif
                         .endif

@@ -72,15 +72,16 @@ PDEVPROPKEY		typedef ptr DEVPROPKEY
 endif
 
 ifndef IsEqualDevPropKey
-ifdef __cplusplus
-IsEqualDevPropKey macro a, b
-	exitm<(((a).pid EQ (b).pid) AND IsEqualGUID((a).fmtid, (b).fmtid))>
-	endm
-else
-IsEqualDevPropKey macro a, b
-	exitm<(((a).pid EQ (b).pid) AND IsEqualGUID( AND (a).fmtid, AND (b).fmtid))>
-	endm
-endif
+IsEqualDevPropKey proto watcall :ptr, :ptr {
+	xchg	rax,rsi
+	xchg	rdx,rdi
+	mov	ecx,DEVPROPKEY/4
+	repz	cmpsd
+	mov	rsi,rax
+	mov	rdi,rdx
+	setz	al
+	movzx	eax,al
+	}
 endif
 
 .enum DEVPROPSTORE { DEVPROP_STORE_SYSTEM, DEVPROP_STORE_USER }

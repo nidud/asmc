@@ -6,26 +6,20 @@
 
 include io.inc
 include time.inc
-ifdef __UNIX__
-include sys/stat.inc
-else
 include winbase.inc
-endif
 include errno.inc
 
 .code
 
 setftime_create proc uses rbx fd:int_t, ftime:uint_t
-
   local FileTime:FILETIME
-
     ldr ecx,fd
 ifdef __UNIX__
     mov eax,-1
 else
     .ifd ( _get_osfhandle(ecx) != -1 )
         mov rbx,rax
-        .ifd !SetFileTime(rbx, TimeToFileTime(ftime, &FileTime), 0, 0)
+        .ifd !SetFileTime(rbx, __timet_to_ft(ftime, &FileTime), 0, 0)
             _dosmaperr( GetLastError() )
         .else
             xor eax,eax

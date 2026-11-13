@@ -1,5 +1,5 @@
 _syserr:
-	asmc64 -q -D__TTY__ $@.asm
+	asmc64 -q -MT $@.asm
 ifdef YACC
 	./$@
 else

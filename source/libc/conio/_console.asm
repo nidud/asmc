@@ -23,10 +23,8 @@ __initconsole proc uses rsi rdi rbx
    .new sr:SMALL_RECT
    .new ci:CONSOLE_SCREEN_BUFFER_INFOEX = {CONSOLE_SCREEN_BUFFER_INFOEX}
 
-    .if _getconsolescreenbufferinfoex(_confh, &ci)
-
-        _setconsolecursorposition(_confh, 0)
-
+    .if GetConsoleScreenBufferInfoEx(_confh, &ci)
+        SetConsoleCursorPosition(_confh, 0)
         movzx eax,ci.srWindow.Right
         sub ax,ci.srWindow.Left
         inc eax
@@ -45,21 +43,15 @@ __initconsole proc uses rsi rdi rbx
             mov eax,MINROWS
         .endif
         mov h,eax
-
-ifndef __TTY__
-
         lea rdi,_rgbcolortable
         lea rsi,ci.ColorTable
         mov ecx,16
         rep movsd
-
         mov eax,w
         dec eax
         mov edx,h
         dec edx
-
         .if ( dx != ci.srWindow.Right || ax != ci.srWindow.Bottom )
-
             mov ci.srWindow.Top,0
             mov ci.srWindow.Left,0
             mov ci.srWindow.Right,dx
@@ -70,7 +62,6 @@ ifndef __TTY__
         shl edx,16
         mov dx,word ptr w
         SetConsoleScreenBufferSize(_confh, edx)
-endif
     .endif
 
     mov rc.col,w
@@ -82,12 +73,10 @@ endif
     mov w,_rcmemsize(rc, W_UNICODE)
     lea ecx,[rax*2+TCONSOLE+MESSAGE*MAXMSGCNT]
     .if ( malloc(ecx) == NULL )
-
         .return
     .endif
 
     assume rbx:PCONSOLE
-
     mov rbx,rax
     mov rdi,rax
     mov ecx,TCONSOLE
@@ -128,35 +117,24 @@ endif
     mov [rax].MESSAGE.prev,rdx
     mov [rbx].focus,1
 
-ifdef __TTY__
-
-    _write(_confd, "\e]4;0;rgb:00/00/00\e\\\e]4;7;rgb:AA/AA/AA\e\\", 40)
-    _write(_confd, "\e[48;5;0m", 9)
-    _write(_confd, "\e[38;5;7m", 9)
-
-else
-
-    movzx   eax,rc.col
-    movzx   edx,rc.row
-    movzx   ecx,rc.y
-    mov     bz.X,ax
-    mov     bz.Y,dx
-    mov     sr.Top,cx
-    lea     ecx,[rcx+rdx-1]
-    mov     sr.Bottom,cx
-    movzx   ecx,rc.x
-    mov     sr.Left,cx
-    lea     eax,[rcx+rax-1]
-    mov     sr.Right,ax
-
+    movzx eax,rc.col
+    movzx edx,rc.row
+    movzx ecx,rc.y
+    mov bz.X,ax
+    mov bz.Y,dx
+    mov sr.Top,cx
+    lea ecx,[rcx+rdx-1]
+    mov sr.Bottom,cx
+    movzx ecx,rc.x
+    mov sr.Left,cx
+    lea eax,[rcx+rax-1]
+    mov sr.Right,ax
     .ifd ReadConsoleOutputW(_confh, [rbx].window, bz, 0, &sr)
-
         mov rsi,[rbx].window
         mov rdi,[rbx].buffer
         mov ecx,w
         rep movsb
     .endif
-endif
     lea rcx,_rgbcolortable
     mov [rbx].color,rcx
     mov [rbx].conmax.X,rc.col

@@ -37,26 +37,17 @@ mousey proc
 
 
 readevent proc private
-ifdef __TTY__
-    _write(_confd, SET_ANY_EVENT_MOUSE, 8)
-else
    .new oldstate:uint_t
     GetConsoleMode(_coninpfh, &oldstate)
     SetConsoleMode(_coninpfh, ENABLE_WINDOW_INPUT or ENABLE_MOUSE_INPUT)
-endif
     .ifsd ( _getmessage(&msg, NULL, 0) > 0 )
-
         _dispatchmsg(&msg)
     .else
         _tupdate()
         _tidle()
         mov msg.message,0
     .endif
-ifdef __TTY__
-    _write(_confd, RST_ANY_EVENT_MOUSE, 8)
-else
     SetConsoleMode(_coninpfh, oldstate)
-endif
     mov eax,msg.message
     .switch eax
     .case WM_MOUSEMOVE

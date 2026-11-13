@@ -9,6 +9,13 @@ ifdef __UNIX__
 include io.inc
 include fcntl.inc
 include string.inc
+.data?
+ tz_buf     char_t 4096 dup(?)
+ tz_trans   ptr time_t ?
+ tz_types   pbyte_t ?
+ tz_ttinfo  pbyte_t ?
+ tz_timecnt int_t ?
+ tz_typecnt int_t ?
 .data
  tzh_done char_t 0
 else
@@ -16,119 +23,173 @@ include winbase.inc
 endif
 .code
 
-_tzset proc uses rbx
 ifdef __UNIX__
-   .new zone[128]:char_t
-   .new rbuf[2048]:char_t
+;
+; Look up exact UTC offset (in seconds east of UTC) and isdst for any 64-bit Unix timestamp
+; Returns: eax = UTC offset in seconds (e.g., +3600 for CET, +7200 for CEST)
+;          edx = isdst (0 or 1)
+;
+__tz_lookup proc uses rsi rdi rbx t:time_t
+    .if ( !tzh_done )
+        _tzset()
+    .endif
+
+    mov ecx,tz_timecnt
+    mov rdx,tz_trans
+    .if ( ecx == 0 || !rdx || !tz_ttinfo )
+        mov eax,_timezone
+        neg eax
+        xor edx,edx
+       .return
+    .endif
+    mov rdi,t
+    xor esi,esi
+    mov ebx,ecx
+
+    .while ( esi < ebx )
+        lea eax,[rsi+rbx]
+        shr eax,1               ; mid = (low + high) / 2
+      ifdef _WIN64
+        mov rcx,[rdx+rax*8]
+        bswap rcx               ; Big-endian int64 -> host int64
+        .ifs ( rcx <= rdi )
+            lea esi,[rax+1]
+        .else
+            mov ebx,eax
+        .endif
+      else
+        mov ecx,[edx+eax*4]
+        bswap ecx               ; Big-endian int32 -> host int32
+        .ifs ( ecx <= edi )
+            lea esi,[eax+1]
+        .else
+            mov ebx,eax
+        .endif
+      endif
+    .endw
+
+    ; Transition index is (low - 1); if low == 0, default to type 0
+    xor eax,eax
+    .ifs ( esi > 0 )
+        dec esi
+        mov rax,tz_types
+        movzx eax,byte ptr [rax+rsi]
+    .endif
+    imul    eax,eax,6
+    mov     rcx,tz_ttinfo
+    add     rcx,rax
+    mov     eax,[rcx]
+    bswap   eax                   ; Signed UTC offset in seconds (east of UTC)
+    movzx   edx,byte ptr [rcx+4]  ; tt_isdst (0 or 1)
+    ret
+    endp
+
+endif
+
+_tzset proc uses rbx rsi
+ifdef __UNIX__
    .new size:int_t
    .new fd:int_t
-   .new timecnt:int_t
-   .new typecnt:int_t
-   .new timidx:int_t
-   .new stdzon:int_t
-   .new dstzon:int_t
+   .new v1_timecnt:int_t
 
     .if ( tzh_done )
         .return
     .endif
-    .ifsd ( open( "/etc/timezone", O_RDONLY ) < 0 )
+
+    .ifsd ( open( "/etc/localtime", O_RDONLY ) < 0 )
         .return
     .endif
     mov fd,eax
-    mov ebx,read(fd, &zone, 127)
-    close(fd)
-    mov zone[rbx],0
-    .ifd ( strtrim(&zone) == 0 )
-        .return
-    .endif
-
-    lea rbx,rbuf
-    strcpy(rbx, "/usr/share/zoneinfo/")
-    .ifsd ( open( strcat(rbx, &zone), O_RDONLY ) < 0 )
-        .return
-    .endif
-    mov size,read(fd, rbx, 2048)
+    lea rbx,tz_buf
+    mov size,read(fd, rbx, 4096)
     close(fd)
 
     mov eax,[rbx]
-    .if ( eax != 'fiZT' || size < 1024 )
+    .if ( eax != 'fiZT' || size < 44 )
         .return
     .endif
 
-    mov     eax,[rbx+32]
-    mov     ecx,[rbx+36]
-    bswap   eax
+    mov     ecx,[rbx+32]
     bswap   ecx
-    mov     timecnt,eax
-    mov     typecnt,ecx
-    add     rbx,44
-    mov     timidx,0
-    mov     edx,time(0)
-
-    .for ( ecx = 0 : ecx < timecnt : ecx++, rbx += 4 )
-
-        mov     eax,[rbx]
-        bswap   eax
-        .if ( edx >= eax )
-            mov timidx,ecx
-        .endif
-    .endf
-
-    mov     eax,timidx
-    movzx   ecx,byte ptr [rbx+rax]
-    imul    ecx,ecx,6
-    add     ecx,timecnt
-    mov     stdzon,ecx
-    movzx   edx,byte ptr [rbx+rcx+4]
-
-    .ifs ( eax > 0 )
-
-        movzx eax,byte ptr [rbx+rax-1]
-        imul  eax,eax,6
-        add   eax,timecnt
-        .if ( edx )
-            mov stdzon,eax
-        .else
-            mov ecx,eax
-        .endif
-    .endif
-
-    xor eax,eax
-    xor edx,edx
-    mov dstzon,ecx
-    .if ( ecx != stdzon )
-
-        mov     eax,[rbx+rcx]
-        bswap   eax
-        mov     ecx,stdzon
-        mov     ecx,[rbx+rcx]
-        bswap   ecx
-        sub     eax,ecx
-        mov     edx,1
-    .endif
-    neg     eax
-    mov     _dstbias,eax
-    mov     _daylight,edx
-    mov     ecx,stdzon
-    mov     eax,[rbx+rcx]
+    mov     v1_timecnt,ecx
+  ifdef _WIN64
+    mov     eax,[rbx+20]
     bswap   eax
-    neg     eax
-    mov     _timezone,eax
-    movzx   ecx,byte ptr [rbx+rcx+5]
-    add     ecx,timecnt
-    imul    edx,typecnt,6
-    add     ecx,edx
-    mov     eax,dstzon
-    movzx   eax,byte ptr [rbx+rax+5]
-    add     eax,timecnt
-    add     eax,edx
-    lea     rdx,[rbx+rax]
-    lea     rbx,[rbx+rcx]
-    lea     rcx,_tzname
-    strcpy( [rcx], rdx )
-    lea     rcx,_tzname
-    strcpy( [rcx+size_t], rbx )
-    mov     tzh_done,1
+    mov     ecx,[rbx+24]
+    bswap   ecx
+    add     eax,ecx
+    mov     ecx,[rbx+28]
+    bswap   ecx
+    imul    ecx,ecx,8
+    add     eax,ecx
+    mov     ecx,v1_timecnt
+    imul    ecx,ecx,5
+    add     eax,ecx
+    mov     ecx,[rbx+36]
+    bswap   ecx
+    imul    ecx,ecx,6
+    add     eax,ecx
+    mov     ecx,[rbx+40]
+    bswap   ecx
+    add     eax,ecx
+    add     eax,44                 ; Offset to v2 header
+
+    mov cl,[rbx+4]
+    .if ( (cl != '2' && cl != '3') || eax >= size )
+        .return
+    .endif
+    lea rsi,[rbx+rax]
+    .if ( dword ptr [rsi] != 'fiZT' )
+        .return
+    .endif
+
+    mov     eax,[rsi+32]
+    bswap   eax
+    mov     tz_timecnt,eax
+    mov     ecx,[rsi+36]
+    bswap   ecx
+    mov     tz_typecnt,ecx
+    add     rsi,44
+    mov     tz_trans,rsi
+    imul    eax,eax,8
+  else
+    mov     eax,v1_timecnt
+    mov     tz_timecnt,eax
+    mov     ecx,[rbx+36]
+    bswap   ecx
+    mov     tz_typecnt,ecx
+    lea     rsi,[rbx+44]
+    mov     tz_trans,rsi
+    imul    eax,eax,4
+  endif
+    add     rsi,rax
+    mov     tz_types,rsi
+    mov     eax,tz_timecnt
+    add     rsi,rax
+    mov     tz_ttinfo,rsi
+
+     mov tzh_done,1
+
+    ; Populate _timezone, _daylight, and _dstbias for current time
+
+    __tz_lookup(time(0))
+    .if ( edx == 0 )
+        neg eax
+        mov _timezone,eax
+        mov _daylight,0
+        mov _dstbias,0
+    .else
+        mov rbx,rax
+        time(0)
+        sub rax,15768000
+        __tz_lookup(rax)
+        sub ebx,eax
+        neg ebx
+        mov _dstbias,ebx
+        mov _daylight,1
+        neg eax
+        mov _timezone,eax
+    .endif
 
 else
 
@@ -165,14 +226,23 @@ endif
     ret
     endp
 
-
 _isindst proc uses rsi rdi rbx tb:ptr tm
-
-    ldr rsi,tb
-
+    ldr rbx,tb
+    .if ( !rbx )
+        .return( 0 )
+    .endif
+ifdef __UNIX__
+    mov edi,[rbx].tm.tm_year
+    add edi,1900
+    mov esi,[rbx].tm.tm_mon
+    inc esi
+    _loctotime_t( edi, esi, [rbx].tm.tm_mday, [rbx].tm.tm_hour, [rbx].tm.tm_min, [rbx].tm.tm_sec, 0 )
+    __tz_lookup(rax)
+    mov eax,edx                 ; Return tt_isdst (0 or 1)
+else
     xor eax,eax
-    mov ecx,[rsi].tm.tm_mon
-    mov edx,[rsi].tm.tm_year
+    mov ecx,[rbx].tm.tm_mon
+    mov edx,[rbx].tm.tm_year
     .if ( eax == _daylight || edx < 67 || ecx < 3 || ecx > 9 )
         .return
     .endif
@@ -182,15 +252,15 @@ _isindst proc uses rsi rdi rbx tb:ptr tm
     .endif
     lea rax,_days
     mov edi,edx
-    mov ebx,[rax+rcx*4+4]
+    mov esi,[rax+rcx*4+4]
     .if ( edx > 86 && ecx == 3 )
-        mov ebx,[rax+rcx*4]
-        add ebx,7
+        mov esi,[rax+rcx*4]
+        add esi,7
     .endif
     .if !(edx & 3)
-        inc ebx
+        inc esi
     .endif
-    lea  rax,[rbx+365]
+    lea  rax,[rsi+365]
     lea  rcx,[rdx-70]
     mul  ecx
     lea  rax,[rax+rdi-1]
@@ -200,19 +270,20 @@ _isindst proc uses rsi rdi rbx tb:ptr tm
     mov  ecx,7
     idiv ecx
     mov  eax,1
-    .if ( [rsi].tm.tm_mon == 3 )
-        .if ( edx != [rsi].tm.tm_yday )
-            .if ( edx > [rsi].tm.tm_yday )
+    .if ( [rbx].tm.tm_mon == 3 )
+        .if ( edx != [rbx].tm.tm_yday )
+            .if ( edx > [rbx].tm.tm_yday )
                 dec eax
             .endif
-        .elseif ( [rsi].tm.tm_hour < 2 )
+        .elseif ( [rbx].tm.tm_hour < 2 )
             dec eax
         .endif
-    .elseif ( edx <= [rsi].tm.tm_yday )
-        .if ( edx < [rsi].tm.tm_yday || [rsi].tm.tm_hour >= 1 )
+    .elseif ( edx <= [rbx].tm.tm_yday )
+        .if ( edx < [rbx].tm.tm_yday || [rbx].tm.tm_hour >= 1 )
             dec eax
         .endif
     .endif
+endif
     ret
     endp
 

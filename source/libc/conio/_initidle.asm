@@ -24,10 +24,7 @@ _tidle proc
     .if ( rax )
         rax()
     .else
-ifdef __UNIX__
-else
         Sleep( 4 )
-endif
     .endif
     xor eax,eax
     ret

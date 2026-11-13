@@ -3,12 +3,7 @@ define _CONIO_
 define NOGDI
 include wincon.inc
 ifdef __UNIX__
-ifndef __TTY__
-define __TTY__
-endif
 include termios.inc
-endif
-ifdef __TTY__
 include stdio.inc
 endif
 
@@ -89,15 +84,6 @@ _cwscanf	proto __Cdecl :LPWSTR, :VARARG
 _vcwprintf	proto __cdecl :LPWSTR, :PVOID
 
 ;;;;;;;;;;;;;;; crtl
-
-if defined(_MSVCRT) or not defined(__TTY__)
-define _getconsolecursorinfo		<GetConsoleCursorInfo>
-define _setconsolecursorinfo		<SetConsoleCursorInfo>
-define _getconsolescreenbufferinfo	<GetConsoleScreenBufferInfo>
-define _getconsolescreenbufferinfoex	<GetConsoleScreenBufferInfoEx>
-define _setconsolecursorposition	<SetConsoleCursorPosition>
-define _writeconsoleoutputw		<WriteConsoleOutputW>
-endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
 
@@ -271,7 +257,7 @@ define _D_FOREG		0x0004
 define _D_COLOR		(_D_BACKG or _D_FOREG)
 
 .enum CURSOR_TYPE {
-ifdef __TTY__
+ifdef __UNIX__
     CURSOR_DEFAULT,
     CURSOR_BLOCK_BL,
     CURSOR_BLOCK,
@@ -462,10 +448,6 @@ define MAXMSGCNT 32
     modein	int_t ?
     modeout	int_t ?
     paint	int_t ?
-ifdef __TTY__
-    csize	uint_t ?
-    cvisible	uint_t ?
-endif
    .ends
     PCONSOLE	typedef ptr TCONSOLE
 
@@ -477,18 +459,6 @@ define CONOUT	<"/dev/tty">
 else
 define CONIN	<"CONIN$">
 define CONOUT	<"CONOUT$">
-endif
-
-ifdef __TTY__
-
-_getconsolecursorinfo		proto WINAPI :HANDLE, :PCONSOLE_CURSOR_INFO
-_setconsolecursorinfo		proto WINAPI :HANDLE, :PCONSOLE_CURSOR_INFO
-_getconsolescreenbufferinfo	proto WINAPI :HANDLE, :PCONSOLE_SCREEN_BUFFER_INFO
-_getconsolescreenbufferinfoex	proto WINAPI :HANDLE, :PCONSOLE_SCREEN_BUFFER_INFOEX
-_setconsolecursorposition	proto WINAPI :HANDLE, :COORD
-_writeconsoleoutputw		proto WINAPI :HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT
-
-externdef	_confp:LPFILE
 endif
 
 externdef	_confh:HANDLE

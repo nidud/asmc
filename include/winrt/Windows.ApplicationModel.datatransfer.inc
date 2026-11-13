@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef _RPCNDR500_
 include rpcndr500.inc
 endif
@@ -1012,3 +1013,4 @@ endif
 endif ; __windows2Eapplicationmodel2Edatatransfer_p_h__
 
 endif ; __windows2Eapplicationmodel2Edatatransfer_h__
+.pragma list(pop)

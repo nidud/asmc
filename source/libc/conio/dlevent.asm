@@ -114,9 +114,7 @@ NextItem proc private uses rsi
 
 scroll_delay proc private
     _tupdate()
-ifndef __UNIX__
     Sleep(2)
-endif
     ret
     endp
 

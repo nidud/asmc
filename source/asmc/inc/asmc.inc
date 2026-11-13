@@ -7,7 +7,7 @@
 
 ifndef _ASMC_VER
 define _ASMC_VER    241
-define _ASMC_BUILD  1
+define _ASMC_BUILD  2
 define _ASMC_MAJOR  (_ASMC_VER / 100)
 define _ASMC_MINOR  (_ASMC_VER MOD 100)
 
@@ -878,7 +878,7 @@ tstrstart               proto fastcall :string_t
 
 QEnqueue                proto fastcall :qdesc_t, :ptr
 QAddItem                proto fastcall :qdesc_t, :ptr
-NameSpace               proto watcall :string_t, :string_t
+NameSpace               proto __ccall :string_t, :string_t
 NameSpaceDirective      proto __ccall :int_t, :token_t
 CreateConstant          proto __ccall :token_t
 CreateVariable          proto __ccall :string_t, :int_t

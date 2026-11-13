@@ -600,6 +600,8 @@ endif
 .endn
 .endn
 
+DEFINE_GUIDS(CLSID_NotificationActivator, "23A5B06E-20BB-4E7E-A0AC-6982ED6A6041")
+
 define RuntimeClass_Windows_UI_Notifications_TileUpdater <L"Windows.UI.Notifications.TileUpdater">
 define RuntimeClass_Windows_UI_Notifications_TileNotification <L"Windows.UI.Notifications.TileNotification">
 define RuntimeClass_Windows_UI_Notifications_ScheduledTileNotification <L"Windows.UI.Notifications.ScheduledTileNotification">

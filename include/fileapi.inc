@@ -80,7 +80,7 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
 
-FileTimeToLocalFileTime proto WINAPI :ptr, :LPFILETIME
+FileTimeToLocalFileTime proto WINAPI :LPFILETIME, :LPFILETIME
 
 endif
 
@@ -381,7 +381,7 @@ ifdef _UNICODE
 define GetVolumePathName  <GetVolumePathNameW>
 endif
 
-LocalFileTimeToFileTime proto WINAPI :ptr, :LPFILETIME
+LocalFileTimeToFileTime proto WINAPI :LPFILETIME, :LPFILETIME
 LockFile proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD, :DWORD
 LockFileEx proto WINAPI :HANDLE, :DWORD, :DWORD, :DWORD, :DWORD, :LPOVERLAPPED
 
@@ -427,7 +427,7 @@ endif
 
 SetFilePointer proto WINAPI :HANDLE, :LONG, :PLONG, :DWORD
 SetFilePointerEx proto WINAPI :HANDLE, :LARGE_INTEGER, :PLARGE_INTEGER, :DWORD
-SetFileTime proto WINAPI :HANDLE, :ptr, :ptr, :ptr
+SetFileTime proto WINAPI :HANDLE, :LPFILETIME, :LPFILETIME, :LPFILETIME
 
 if _WIN32_WINNT ge 0x0501
 SetFileValidData proto WINAPI :HANDLE, :LONGLONG

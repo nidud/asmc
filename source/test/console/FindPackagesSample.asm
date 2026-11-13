@@ -11,6 +11,11 @@ ifdef _LIBCMT
 .pragma comment(linker,"/defaultlib:\asmc\lib\x64\combase")
 endif
 
+.data
+ DECLARE_IID(IStorageItem)
+ DECLARE_IID(IActivationFactory)
+ DECLARE_IID(IPackageManager)
+
 .code
 
 DisplayHString proc name:ptr wchar_t, hstring:HSTRING, hr:HRESULT
@@ -41,10 +46,7 @@ DisplayPackageInfo proc Package:ptr Windows::ApplicationModel::IPackage
         DisplayHString("PublisherId: ", hstring, PackageId.get_PublisherId(&hstring))
         .if (SUCCEEDED(Package.get_InstalledLocation(&StorageFolder)))
             .new pItem:ptr Windows::Storage::IStorageItem
-            .new ItemGUI:GUID = {
-                0x4207A996,0xCA2F,0x42F7,{0xBD,0xE8,0x8B,0x10,0x45,0x7A,0x7F,0x30}
-                }
-            .if (SUCCEEDED(StorageFolder.QueryInterface(&ItemGUI, &pItem)))
+            .if (SUCCEEDED(StorageFolder.QueryInterface(&IID_IStorageItem, &pItem)))
                 DisplayHString("Location: ", hstring, pItem.get_Path(&hstring))
             .endif
         .endif
@@ -144,23 +146,19 @@ _tmain proc
    .new hr:HRESULT = CoInitializeEx(nullptr, COINIT_MULTITHREADED)
     .if (SUCCEEDED(hr))
        .new activationFactory:ptr IActivationFactory = nullptr
-       .new activationGUI:GUID = {
-                0x00000035,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
        .new activationUri:HSTRING = nullptr
        .new uriString:LPTSTR = RuntimeClass_Windows_Management_Deployment_PackageManager
        .new uriStrLen:size_t = _tcslen(uriString)
         mov hr,WindowsCreateString(uriString, uriStrLen, &activationUri)
         .if (SUCCEEDED(hr))
-            mov hr,RoGetActivationFactory(activationUri, &activationGUI, &activationFactory)
+            mov hr,RoGetActivationFactory(activationUri, &IID_IActivationFactory, &activationFactory)
         .endif
         .if (SUCCEEDED(hr))
             mov hr,activationFactory.ActivateInstance(&activationFactory)
         .endif
         .if (SUCCEEDED(hr))
             .new packageManager:ptr Windows::Management::Deployment::IPackageManager = nullptr
-            .new managerGUI:GUID = {
-                    0x9A7D4B65,0x5E8F,0x4FC7,{0xA2,0xE5,0x7F,0x69,0x25,0xCB,0x8B,0x53}}
-            mov hr,activationFactory.QueryInterface(&managerGUI, &packageManager)
+            mov hr,activationFactory.QueryInterface(&IID_IPackageManager, &packageManager)
         .endif
         .if (SUCCEEDED(hr))
            .new Packages:ptr __FIIterable_1_Windows__CApplicationModel__CPackage = nullptr

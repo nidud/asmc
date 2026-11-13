@@ -1,5 +1,5 @@
 _rsopen:
-	asmc64 -q -D__TTY__ $@.asm -idd res/OpenFile.idd
+	asmc64 -q -MT $@.asm -idd res/OpenFile.idd
 ifdef YACC
 	./$@
 else

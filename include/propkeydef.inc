@@ -1,14 +1,15 @@
 .pragma list(push, 0)
 
 ifndef PID_FIRST_USABLE
-PID_FIRST_USABLE equ 2
+define PID_FIRST_USABLE 2
 endif
 ifndef REFPROPERTYKEY
 REFPROPERTYKEY typedef ptr PROPERTYKEY
 endif
 
+ifndef DEFINE_PROPERTYKEY
 DEFINE_PROPERTYKEY macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8, pid
-if defined(__PE__) or defined(__GUID__)
+ifdef _DLL
 _&name& equ <{{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}},pid}>
 elseifdef INITGUID
 echo name PROPERTYKEY {{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}},pid}
@@ -17,15 +18,23 @@ externdef name:PROPERTYKEY
 endif
     exitm<>
     endm
+endif
 
 ifndef IsEqualPropertyKey
-IsEqualPropertyKey macro a, b
-	exitm<(((a).pid EQ (b).pid) AND IsEqualIID((a).fmtid, (b).fmtid) )>
-	endm
+IsEqualPropertyKey proto watcall :ptr, :ptr {
+	xchg	rax,rsi
+	xchg	rdx,rdi
+	mov	ecx,PROPERTYKEY/4
+	repz	cmpsd
+	mov	rsi,rax
+	mov	rdi,rdx
+	setz	al
+	movzx	eax,al
+	}
 endif
 
 ifndef _PROPERTYKEY_EQUALITY_OPERATORS_
-_PROPERTYKEY_EQUALITY_OPERATORS_ equ 1
+define _PROPERTYKEY_EQUALITY_OPERATORS_ 1
 endif
 
 .pragma list(pop)

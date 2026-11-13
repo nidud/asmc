@@ -7,140 +7,47 @@
 include io.inc
 include errno.inc
 include time.inc
-ifdef __UNIX__
-include direct.inc
-include string.inc
-include malloc.inc
-include sys/stat.inc
-else
 include winbase.inc
-endif
 include tchar.inc
 
-ifdef __UNIX__
+.code
 
-.template FFDATA
-    dirp LPDIR ?
-    mask string_t ?
-    path char_t 3 dup(?)
-   .ends
+ assume rbx:ptr _tfinddatai64_t, rcx:LPWIN32_FIND_DATA
 
-   .code
-
-    assume rbx:ptr FFDATA
-
-_tfindnexti64 proc uses rbx handle:ptr, ff:ptr _tfinddatai64_t
-
-   .new file:string_t
-   .new q:_tstati64
-   .new path[1024]:char_t
-
-    ldr rbx,handle
-
-    .while 1
-        .if ( !readdir( [rbx].dirp ) )
-            dec rax
-           .return
-        .endif
-        mov file,&[rax].dirent.d_name
-
-        .ifd ( _tcswild([rbx].mask, file) )
-            mov rcx,strcat( strcat( strcpy(&path, &[rbx].path), "/" ), file )
-            .ifd ( _tstat64(rcx, &q) == 0 )
-                assume rbx:ptr _tfinddatai64_t
-                mov rbx,ff
-                strcpy(&[rbx].name, file)
-                mov [rbx].attrib,q.st_mode
-ifdef _WIN64
-                mov [rbx].time_create,q.st_ctime
-                mov [rbx].time_access,q.st_atime
-                mov [rbx].time_write,q.st_mtime
-else
-                mov eax,dword ptr q.st_ctime
-                mov [rbx].time_create,eax
-                mov eax,dword ptr q.st_atime
-                mov [rbx].time_access,eax
-                mov eax,dword ptr q.st_mtime
-                mov [rbx].time_write,eax
-endif
-                mov [rbx].size,q.st_size
-                assume rbx:ptr FFDATA
-               .return( 0 )
-            .endif
-        .endif
-    .endw
-    ret
-    endp
-
-
-_tfindfirsti64 proc uses rbx lpFileName:tstring_t, ff:ptr _tfinddatai64_t
-   .new dir:ptr DIR
-    ldr rbx,lpFileName
-    .if ( malloc( &[strlen(rbx)+FFDATA] ) == NULL )
-        dec rax
-       .return
-    .endif
-    mov dir,rax
-    .if ( _tcsfn(rbx) == rbx )
-        mov rcx,dir
-        strcpy(&[rcx].FFDATA.path, "./")
-        strcat(rax, rbx)
-    .else
-        mov rcx,dir
-        strcpy(&[rcx].FFDATA.path, rbx)
-    .endif
-    mov rbx,dir
-    mov [rbx].mask,_tcsfn(rax)
-    mov byte ptr [rax-1],0
-    mov [rbx].dirp,opendir(&[rbx].path)
-    .if ( rax == NULL )
-        free(rbx)
-       .return( -1 )
-    .endif
-    .ifd ( _tfindnexti64(rbx, ff) == -1 )
-        _findclose( rbx )
-        .return( -1 )
-    .endif
-    mov rax,rbx
-    ret
-    endp
-
-
-else
-
-   .code
-
-    ASSUME  rsi:ptr WIN32_FIND_DATA
-    ASSUME  rdi:ptr _tfinddatai64_t
-
-copyblock proc private
-    mov eax,[rsi].dwFileAttributes
+ _lk_copyblk proc private pFindFileData:LPWIN32_FIND_DATA
+    ldr rcx,pFindFileData
+    mov eax,[rcx].dwFileAttributes
+ifndef __UNIX__
     .if ( eax == FILE_ATTRIBUTE_NORMAL )
         xor eax,eax
     .endif
-    mov [rdi].attrib,eax
-    mov eax,[rsi].nFileSizeLow
-    mov dword ptr [rdi].size,eax
-    mov eax,[rsi].nFileSizeHigh
-    mov dword ptr [rdi].size[4],eax
-    mov [rdi].time_create,__timet_from_ft( addr [rsi].ftCreationTime )
-    mov [rdi].time_access,__timet_from_ft( addr [rsi].ftLastAccessTime )
-    mov [rdi].time_write,__timet_from_ft( addr [rsi].ftLastWriteTime )
-    lea rsi,[rsi].cFileName
-    lea rdi,[rdi].name
-    mov ecx,sizeof(WIN32_FIND_DATA.cFileName) / 4
-    rep movsd
-    xor eax,eax
+endif
+    mov [rbx].attrib,eax
+    mov eax,[rcx].nFileSizeLow
+    mov dword ptr [rbx].size,eax
+if sizeof(_tfinddatai64_t.size) eq 8
+    mov eax,[rcx].nFileSizeHigh
+    mov dword ptr [rbx].size[4],eax
+endif
+    mov [rbx].time_create,__timet_from_ft( &[rcx].ftCreationTime )
+    mov rcx,pFindFileData
+    mov [rbx].time_access,__timet_from_ft( &[rcx].ftLastAccessTime )
+    mov rcx,pFindFileData
+    mov [rbx].time_write,__timet_from_ft( &[rcx].ftLastWriteTime )
+    mov rcx,pFindFileData
+    _tcsncpy( &[rbx].name, &[rcx].cFileName, lengthof(WIN32_FIND_DATA.cFileName) )
     ret
     endp
 
 
-_tfindnexti64 proc uses rsi rdi handle:ptr, ff:ptr _tfinddatai64_t
-  local wf:WIN32_FIND_DATA
-    ldr rdi,ff
-    lea rsi,wf
-    .if FindNextFile( ldr(handle), rsi )
-        copyblock()
+ _tfindfirsti64 proc uses rbx lpFileName:tstring_t, ff:ptr _tfinddatai64_t
+   .new findFileData:WIN32_FIND_DATA
+   .new hFindFile:HANDLE
+    ldr rbx,ff
+    .ifd ( FindFirstFile( ldr(lpFileName), &findFileData ) != -1 )
+        mov hFindFile,rax
+        _lk_copyblk(&findFileData)
+        mov rax,hFindFile
     .else
         _dosmaperr( GetLastError() )
     .endif
@@ -148,20 +55,16 @@ _tfindnexti64 proc uses rsi rdi handle:ptr, ff:ptr _tfinddatai64_t
     endp
 
 
-_tfindfirsti64 proc uses rsi rdi rbx lpFileName:tstring_t, ff:ptr _tfinddatai64_t
-  local FindFileData:WIN32_FIND_DATA
-    ldr rdi,ff
-    lea rsi,FindFileData
-    .ifd ( FindFirstFile( ldr(lpFileName), rsi ) != -1 )
-        mov rbx,rax
-        copyblock()
-        mov rax,rbx
+ _tfindnexti64 proc uses rbx hFindFile:ptr, ff:ptr _tfinddatai64_t
+   .new findFileData:WIN32_FIND_DATA
+    ldr rbx,ff
+    .if FindNextFile( ldr(hFindFile), &findFileData )
+        _lk_copyblk(&findFileData)
+        xor eax,eax
     .else
         _dosmaperr( GetLastError() )
     .endif
     ret
     endp
-
-endif ; __UNIX__
 
     end

@@ -26,12 +26,12 @@ ifdef _WIN64
         " .st_size     %d\n"
         " .st_blksize  %d\n"
         " .st_blocks   %d\n"
-        " .st_atime    %p\n"
-        " .st_atimesec %p\n"
-        " .st_mtime    %p\n"
-        " .st_mtimesec %p\n"
-        " .st_ctime    %p\n"
-        " .st_ctimesec %p\n",
+        " .st_atime.tv_sec  %p\n"
+        " .st_atime.tv_nsec %p\n"
+        " .st_mtime.tv_sec  %p\n"
+        " .st_mtime.tv_nsec %p\n"
+        " .st_ctime.tv_sec  %p\n"
+        " .st_ctime.tv_nsec %p\n",
         q.st_dev,
         q.st_ino,
         q.st_nlink,
@@ -43,12 +43,12 @@ ifdef _WIN64
         q.st_size,
         q.st_blksize,
         q.st_blocks,
-        q.st_atime,
-        q.st_atimesec,
-        q.st_mtime,
-        q.st_mtimesec,
-        q.st_ctime,
-        q.st_ctimesec)
+        q.st_atime.tv_sec,
+        q.st_atime.tv_nsec,
+        q.st_mtime.tv_sec,
+        q.st_mtime.tv_nsec,
+        q.st_ctime.tv_sec,
+        q.st_ctime.tv_nsec)
  else
     _tprintf(
         "_stati64:\n"
@@ -94,12 +94,12 @@ else
         " .st_size     %d\n"
         " .st_blksize  %d\n"
         " .st_blocks   %d\n"
-        " .st_atime    %p\n"
-        " .st_atimesec %p\n"
-        " .st_mtime    %p\n"
-        " .st_mtimesec %p\n"
-        " .st_ctime    %p\n"
-        " .st_ctimesec %p\n",
+        " .st_atime.tv_sec  %p\n"
+        " .st_atime.tv_nsec %p\n"
+        " .st_mtime.tv_sec  %p\n"
+        " .st_mtime.tv_nsec %p\n"
+        " .st_ctime.tv_sec  %p\n"
+        " .st_ctime.tv_nsec %p\n",
         p.st_dev,
         p.st_ino,
         p.st_nlink,
@@ -110,12 +110,12 @@ else
         p.st_size,
         p.st_blksize,
         p.st_blocks,
-        p.st_atime,
-        p.st_atimesec,
-        p.st_mtime,
-        p.st_mtimesec,
-        p.st_ctime,
-        p.st_ctimesec)
+        p.st_atime.tv_sec,
+        p.st_atime.tv_nsec,
+        p.st_mtime.tv_sec,
+        p.st_mtime.tv_nsec,
+        p.st_ctime.tv_sec,
+        p.st_ctime.tv_nsec)
  else
     _tprintf(
         "_stat32:\n"

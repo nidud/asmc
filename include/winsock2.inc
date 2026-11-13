@@ -64,8 +64,8 @@ FD_ISSET macro fd, set
 	endm
 
 timeval		STRUC
-tv_sec		LONG ?
-tv_usec		LONG ?
+tv_sec		long_t ?
+tv_usec		long_t ?
 timeval		ENDS
 
 timerisset macro tvp

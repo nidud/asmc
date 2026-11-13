@@ -10,9 +10,9 @@ include conio.inc
 
 _cursortype proc type:int_t
     .new cu:CONSOLE_CURSOR_INFO
-    .ifd _getconsolecursorinfo(_confh, &cu)
+    .ifd GetConsoleCursorInfo(_confh, &cu)
         mov cu.dwSize,type
-        _setconsolecursorinfo(_confh, &cu)
+        SetConsoleCursorInfo(_confh, &cu)
     .endif
     ret
     endp

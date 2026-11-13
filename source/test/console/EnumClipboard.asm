@@ -11,13 +11,16 @@ include winrt/Windows.ApplicationModel.datatransfer.inc
 include stdio.inc
 include tchar.inc
 
+.data
+ DECLARE_IID(IClipboardStatics2)
+ DECLARE_IID(IStandardDataFormatsStatics)
+
 .code
 
 GetClipboardHistory proc p:ptr ptr Windows::ApplicationModel::DataTransfer::IClipboardHistoryItemsResult
 
     .new hr:HRESULT
     .new hsClipboard:HSTRING = NULL
-    .new IID_IClipboardStatics2:GUID = {0xd2ac1b6a,0xd29f,0x554b,{0xb3,0x03,0xf0,0x45,0x23,0x45,0xfe,0x02}}
     .new pClipboard:ptr Windows::ApplicationModel::DataTransfer::IClipboardStatics2 = NULL
     .new strClass:LPWSTR = RuntimeClass_Windows_ApplicationModel_DataTransfer_Clipboard
      mov ecx,wcslen(strClass)
@@ -55,7 +58,6 @@ GetTextFormat proc format:ptr HSTRING
 
    .new hr:HRESULT
    .new hsFormat:HSTRING = NULL
-   .new IID_IStandardDataFormatsStatics:GUID = {0x7ed681a1,0xa880,0x40c9,{0xb4,0xed,0x0b,0xee,0x1e,0x15,0xf5,0x49}}
    .new strClass:LPWSTR = RuntimeClass_Windows_ApplicationModel_DataTransfer_StandardDataFormats
     mov ecx,wcslen(strClass)
     mov hr,WindowsCreateString(strClass, ecx, &hsFormat)

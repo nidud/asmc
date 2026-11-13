@@ -161,17 +161,13 @@ endif
         add   format,tchar_t
         movzx eax,tchar_t ptr [rax]
         mov   edx,eax
-
         .break .if ( !eax || charsout > INT_MAX )
-
         .if ( eax >= ' ' && eax <= 'z' )
-
             mov al,[rcx+rax-32]
             and eax,15
         .else
             xor eax,eax
         .endif
-
         shl eax,3
         add eax,state
         mov al,[rcx+rax]
@@ -186,11 +182,8 @@ endif
                 mov bufferiswide,tchar_t-1
                 mov ecx,edx
 if not defined(__UNIX__) and not defined(_UNICODE) and not defined(NOUTF8)
-
                 .if isleadbyte( ecx )
-
                     write_char( ecx, fp, &charsout )
-
                     mov rax,format
                     inc format
                     movzx ecx,BYTE PTR [rax]
@@ -221,16 +214,13 @@ endif
 
             .case ST_WIDTH
                 .if ( edx == '*' )
-
                     mov eax,_va_arg(arglist)
                     .ifs ( eax < 0 )
                         or  flags,FL_LEFT
                         neg eax
                     .endif
                     mov fldwidth,eax
-
                 .else
-
                     movsx edx,dl
                     imul  eax,fldwidth,10
                     add   eax,edx
@@ -246,7 +236,6 @@ endif
             .case ST_PRECIS
                 mov ecx,precision
                 .if ( edx == '*' )
-
                     mov ecx,_va_arg(arglist)
                     .ifs ( ecx < 0 )
                         mov ecx,-1
@@ -370,12 +359,10 @@ endif
                     mov text,rdx
 ifdef _UNICODE
                     .if ( flags & FL_SHORT )
-
                         MultiByteToWideChar( CP_ACP, 0, rcx, 1, rdx, 1 )
                     .else
 elseifndef __UNIX__
                     .if ( flags & ( FL_LONG or FL_WIDECHAR ) )
-
                         WideCharToMultiByte( CP_ACP, 0, rcx, 1, rdx, 1, 0, 0 )
                     .else
 endif

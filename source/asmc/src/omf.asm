@@ -1322,7 +1322,7 @@ GetFileTimeStamp proc __ccall private uses rsi rdi filename:string_t
     .ifd ( stat( filename, &statbuf ) != 0 )
         .return( 0 )
     .endif
-    .return( statbuf.st_mtime )
+    .return( statbuf.st_mtime.tv_sec )
     endp
 
 else

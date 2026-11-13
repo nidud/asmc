@@ -13,7 +13,7 @@ _gotoxy proc x:uint_t, y:uint_t
     ldr edx,y
     shl edx,16
     mov dx,cx
-    _setconsolecursorposition(_confh, edx)
+    SetConsoleCursorPosition(_confh, edx)
     ret
     endp
 

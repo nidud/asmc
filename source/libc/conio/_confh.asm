@@ -9,57 +9,30 @@ include fcntl.inc
 include stdio.inc
 include conio.inc
 
-    .data
-    _confh      HANDLE -1
-ifdef __TTY__
-    _confp      LPFILE 0
-endif
-    _confd      int_t -1
-if not defined(__UNIX__) and defined(__TTY__)
-    _conoutcp   int_t 0
-    _modeout    int_t -1
-endif
+.data
+ _confh HANDLE -1
+ _confd int_t -1
 
-    .code
+.code
 
 __initconout proc private
 
     mov _confd,_open(CONOUT, O_BINARY or O_RDWR or O_NOCTTY)
     .ifs ( eax > 0 )
-        mov _confh,_get_osfhandle(eax)
-ifdef __TTY__
+ifdef __UNIX__
         .if _getst()
-            mov _confp,rax
             mov ecx,_confd
             mov [rax].FILE._file,ecx
             mov [rax].FILE._flag,_IOWRT
         .endif
+else
+        _get_osfhandle(eax)
 endif
+        mov _confh,rax
     .endif
-if not defined(__UNIX__) and defined(__TTY__)
-    .ifs ( _confd > 0 )
-        .ifd GetConsoleMode(_confh, &_modeout)
-            SetConsoleMode(_confh, ENABLE_PROCESSED_OUTPUT or ENABLE_VIRTUAL_TERMINAL_PROCESSING)
-        .endif
-    .endif
-    mov _conoutcp,GetConsoleOutputCP()
-    SetConsoleOutputCP(65001)
-endif
     ret
     endp
 
-if not defined(__UNIX__) and defined(__TTY__)
-__exitconout proc private
-
-    .if ( _confh > 0 )
-        SetConsoleMode(_confh, _modeout)
-    .endif
-    SetConsoleOutputCP(_conoutcp)
-    ret
-    endp
-
-.pragma exit(__exitconout, 10)
-endif
 .pragma init(__initconout, 21)
 
     end

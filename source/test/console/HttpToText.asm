@@ -27,10 +27,10 @@ option dllimport:none
    .ends
 
 .data
- IID_IUnknown                   GUID {0x00000000,0x0000,0x0000,{0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46}}
- IID_Progress                   GUID {0x98ab9acb,0x38db,0x588f,{0xa5,0xf9,0x9f,0x48,0x4b,0x22,0x00,0xcd}}
- IID_IUriRuntimeClassFactory    GUID {0x44A9796F,0x723E,0x4FDF,{0xA2,0x18,0x03,0x3E,0x75,0xB0,0xC0,0x84}}
- IID_IHtmlUtilities             GUID {0xFEC00ADD,0x2399,0x4FAC,{0xB5,0xA7,0x05,0xE9,0xAC,0xD7,0x18,0x1D}}
+ DECLARE_IID(IUnknown)
+ DECLARE_IID(__FIAsyncOperationWithProgressCompletedHandler_2_HSTRING_Windows__CWeb__CHttp__CHttpProgress)
+ DECLARE_IID(IUriRuntimeClassFactory)
+ DECLARE_IID(IHtmlUtilities)
 
 .code
 
@@ -193,7 +193,6 @@ wmain proc argc:int_t, argv:ptr wstring_t
     .new file:ptr wchar_t = "url"
     .new hr:HRESULT = E_INVALIDARG
     .if ( ecx < 2 )
-
         wprintf("Usage: %s <url> [[file_name]]\n", [rdx])
     .else
         .if ( ecx == 3 )
@@ -201,23 +200,17 @@ wmain proc argc:int_t, argv:ptr wstring_t
         .endif
         mov hr,RoInitialize(RO_INIT_MULTITHREADED)
     .endif
-
     .if (SUCCEEDED(hr))
-
         mov rcx,argv
         mov hr,HttpToText([rcx+8], file)
         RoUninitialize()
     .endif
-
     .if (FAILED(hr))
-
        .new szMessage:ptr wchar_t
         mov edx,hr
         .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
-
             mov hr,HRESULT_CODE(edx)
         .endif
-
         FormatMessage(
             FORMAT_MESSAGE_ALLOCATE_BUFFER or \
             FORMAT_MESSAGE_FROM_SYSTEM or \
@@ -228,26 +221,24 @@ wmain proc argc:int_t, argv:ptr wstring_t
             &szMessage,
             0,
             NULL)
-
         wprintf("\nError code: %08X\n\n%s", hr, szMessage)
         LocalFree(szMessage)
     .endif
     .return(0)
+    endp
 
-wmain endp
 
+   assume class:rbx
 
-   assume rcx:ptr ProgressHandler
-
-ProgressHandler::QueryInterface proc riid:LPIID, ppv:ptr ptr
-
-    mov rax,[rdx]
-    mov rdx,[rdx+8]
-    .if ( ( rax == qword ptr IID_Progress && rdx == qword ptr IID_Progress[8] ) ||
-          ( rax == qword ptr IID_IUnknown && rdx == qword ptr IID_IUnknown[8] ) )
-
-        mov [r8],rcx
-        lock inc [rcx].m_refCount
+ProgressHandler::QueryInterface proc uses rsi rdi riid:LPIID, ppv:ptr ptr
+    ldr rsi,riid
+    ldr rdi,ppv
+    .ifd !IsEqualGUID(rsi, &IID___FIAsyncOperationWithProgressCompletedHandler_2_HSTRING_Windows__CWeb__CHttp__CHttpProgress)
+        IsEqualGUID(rsi, &IID_IUnknown)
+    .endif
+    .if ( eax )
+        mov [rdi],rbx
+        lock inc m_refCount
        .return( S_OK )
     .endif
     .return( E_NOINTERFACE )
@@ -255,12 +246,12 @@ ProgressHandler::QueryInterface proc riid:LPIID, ppv:ptr ptr
 
 
 ProgressHandler::AddRef proc
-    .return InterlockedIncrement(&[rcx].m_refCount)
+    .return InterlockedIncrement(&m_refCount)
     endp
 
 ProgressHandler::Release proc
-    .if ( InterlockedDecrement(&[rcx].m_refCount) == 0 )
-        free(this)
+    .if ( InterlockedDecrement(&m_refCount) == 0 )
+        free(rbx)
         xor eax,eax
     .endif
     ret
@@ -268,10 +259,11 @@ ProgressHandler::Release proc
 
 
 ProgressHandler::IInvoke proc asyncInfo:ptr IAsyncActionWithProgress, status:AsyncStatus
-    mov rax,[rcx].m_pStatus
-    mov [rax],r8d
-    .if ( r8d >= AsyncStatus_Completed )
-        mov rcx,[rcx].m_pEvent
+    ldr edx,status
+    mov rax,m_pStatus
+    mov [rax],edx
+    .if ( edx >= AsyncStatus_Completed )
+        mov rcx,m_pEvent
         SetEvent([rcx])
     .endif
     .return(S_OK)
@@ -279,11 +271,13 @@ ProgressHandler::IInvoke proc asyncInfo:ptr IAsyncActionWithProgress, status:Asy
 
 
 ProgressHandler::ProgressHandler proc pEvent:ptr HANDLE, pStatus:ptr AsyncStatus
-    @ComAlloc(ProgressHandler)
-    mov rdx,pStatus
-    mov [rax].ProgressHandler.m_pStatus,rdx
-    mov rdx,pEvent
-    mov [rax].ProgressHandler.m_pEvent,rdx
+    .if @ComAlloc(ProgressHandler)
+        mov rbx,rax
+        mov rdx,pStatus
+        mov m_pStatus,rdx
+        mov rdx,pEvent
+        mov m_pEvent,rdx
+    .endif
     ret
     endp
 

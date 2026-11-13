@@ -5,25 +5,11 @@
 ;
 
 include io.inc
-ifdef __UNIX__
-include direct.inc
-include malloc.inc
-else
 include errno.inc
 include winbase.inc
-endif
 
 .code
 
-ifdef __UNIX__
-_findclose proc uses rbx handle:ptr
-    ldr rbx,handle
-    closedir( [rbx] )
-    free(rbx)
-    xor eax,eax
-    ret
-    endp
-else
 _findclose proc handle:ptr
     .if !FindClose( handle )
         _dosmaperr( GetLastError() )
@@ -32,6 +18,5 @@ _findclose proc handle:ptr
     .endif
     ret
     endp
-endif
 
     end

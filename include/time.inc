@@ -189,9 +189,14 @@ tv_sec		long_t ?
 tv_nsec		long_t ?
 timespec	ends
 
+timespec64	struct
+tv_sec		dq ?
+tv_nsec		dq ?
+timespec64	ends
+
 timeval		struct
-tv_sec		size_t ? ; Seconds
-tv_usec		size_t ? ; Microseconds
+tv_sec		long_t ? ; Seconds
+tv_usec		long_t ? ; Microseconds
 timeval		ends
 
 itimerval	struct
@@ -214,6 +219,8 @@ clock_gettime	proto __cdecl :int_t, :ptr timespec
 clock_settime	proto __cdecl :int_t, :ptr timespec
 clock_nanosleep proto __cdecl :int_t, :int_t, :ptr timespec, :ptr timespec
 
+__timespec_to_ft proto fastcall :ptr timespec, :ptr FILETIME
+__tz_lookup	proto __cdecl :time_t
 endif
 
 __daylight	proto __cdecl
@@ -243,43 +250,9 @@ externdef __cdecl __dnames:char_t
 externdef __cdecl __mnames:char_t
 endif
 
-DaysInFebruary		proto __cdecl :uint_t
-DaysInMonth		proto __cdecl :uint_t, :uint_t
-GetDayCount		proto __cdecl :uint_t, :uint_t, :uint_t
-GetWeekDay		proto __cdecl :uint_t, :uint_t, :uint_t
 __timet_from_ft		proto __cdecl :LPFILETIME
-FileTimeToTime		proto __cdecl :LPFILETIME
-SystemTimeToTime	proto __cdecl :LPSYSTEMTIME
-TimeToFileTime		proto __cdecl :time_t, :LPFILETIME
-TimeToSystemTime	proto __cdecl :time_t, :LPSYSTEMTIME
-StringToSystemTimeA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
-StringToSystemTimeW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
-StringToSystemDateA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
-StringToSystemDateW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
-SystemTimeToStringA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
-SystemTimeToStringW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
-SystemDateToStringA	proto __cdecl :LPSTR,  :LPSYSTEMTIME
-SystemDateToStringW	proto __cdecl :LPWSTR, :LPSYSTEMTIME
-FileTimeToStringA	proto __cdecl :LPSTR,  :LPFILETIME
-FileTimeToStringW	proto __cdecl :LPWSTR, :LPFILETIME
-FileDateToStringA	proto __cdecl :LPSTR,  :LPFILETIME
-FileDateToStringW	proto __cdecl :LPWSTR, :LPFILETIME
-
-ifdef _UNICODE
-define StringToSystemTime <StringToSystemTimeW>
-define StringToSystemDate <StringToSystemDateW>
-define SystemDateToString <SystemDateToStringW>
-define SystemTimeToString <SystemTimeToStringW>
-define FileTimeToString	  <FileTimeToStringW>
-define FileDateToString	  <FileDateToStringW>
-else
-define StringToSystemTime <StringToSystemTimeA>
-define StringToSystemDate <StringToSystemDateA>
-define SystemDateToString <SystemDateToStringA>
-define SystemTimeToString <SystemTimeToStringA>
-define FileTimeToString	  <FileTimeToStringA>
-define FileDateToString	  <FileDateToStringA>
-endif
+__timet_to_ft		proto __cdecl :time_t, :LPFILETIME
+__timet_to_st		proto __cdecl :time_t, :LPSYSTEMTIME
 
 ifdef _CRTBLD
 ;

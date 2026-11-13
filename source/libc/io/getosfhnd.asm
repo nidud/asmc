@@ -6,12 +6,10 @@
 
 include io.inc
 
-    .code
+.code
 
+ifndef __UNIX__
 _get_osfhandle proc handle:int_t
-ifdef __UNIX__
-    ldr eax,handle
-else
     ldr ecx,handle
     mov rdx,_pioinfo(ecx)
     mov rax,-1
@@ -20,8 +18,7 @@ else
             mov rax,[rdx].ioinfo.osfhnd
         .endif
     .endif
-endif
     ret
     endp
-
+endif
     end

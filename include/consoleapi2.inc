@@ -88,7 +88,7 @@ SetConsoleScreenBufferSize proto WINAPI :HANDLE, :COORD
 SetConsoleCursorPosition proto WINAPI :HANDLE, :COORD
 GetLargestConsoleWindowSize proto WINAPI :HANDLE
 SetConsoleTextAttribute proto WINAPI :HANDLE, :WORD
-SetConsoleWindowInfo proto WINAPI :HANDLE, :BOOL, :ptr
+SetConsoleWindowInfo proto WINAPI :HANDLE, :BOOL, :PSMALL_RECT
 WriteConsoleOutputCharacterA proto WINAPI :HANDLE, :LPCSTR, :DWORD, :COORD, :LPDWORD
 WriteConsoleOutputCharacterW proto WINAPI :HANDLE, :LPCWSTR, :DWORD, :COORD, :LPDWORD
 ifdef _UNICODE

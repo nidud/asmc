@@ -16,7 +16,7 @@ ifdef __UNIX__
     ldr rax,Time
     ldr rcx,lpFileTime
     .if ( !rcx )
-        .return( FALSE )
+        .return( rcx )
     .endif
   ifdef _WIN64
     imul rax,rax,NSEC_PER_SEC
@@ -27,7 +27,7 @@ ifdef __UNIX__
     mov [ecx],eax
     mov [ecx+4],edx
   endif
-    .return( TRUE )
+    .return( rcx )
 else
   local SystemTime:SYSTEMTIME
     SystemTimeToFileTime(__timet_to_st(Time, &SystemTime), lpFileTime)

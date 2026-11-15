@@ -22,7 +22,9 @@ define SHUT_RDWR 0x02
 endif
 endif
 
-sleep       proto __cdecl :dword
+ttyname     proto __cdecl :int_t
+
+sleep       proto __cdecl :uint_t
 ifndef __NO_ISOCEXT
 include sys/types.inc
 usleep      proto __cdecl :useconds_t

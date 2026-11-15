@@ -41,7 +41,7 @@ ifndef _ID_T_DEFINED
 define _ID_T_DEFINED
 id_t typedef dword
 endif
-useconds_t typedef sdword
+useconds_t typedef dword
 
 if __STDC__
 _ino_t          typedef ino_t

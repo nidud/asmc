@@ -46,24 +46,6 @@ else
 
 define A_D 0x10
 
-_lk_getltime proc private ft:PVOID
-  local SystemTime:SYSTEMTIME
-  local LocalFTime:FILETIME
-    .if FileTimeToLocalFileTime(ft, &LocalFTime)
-        .if FileTimeToSystemTime(&LocalFTime, &SystemTime)
-            _loctotime_t(
-                SystemTime.wYear,
-                SystemTime.wMonth,
-                SystemTime.wDay,
-                SystemTime.wHour,
-                SystemTime.wMinute,
-                SystemTime.wSecond,
-                -1 )
-        .endif
-    .endif
-    ret
-    endp
-
 _lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
 
    .new path:tstring_t
@@ -107,15 +89,15 @@ _lk_stat proc private file:tstring_t, buf:PSTAT, b64:int_t
             mov c_time,eax
         .else
             FindClose( rax )
-            .ifd !_lk_getltime( &ff.ftLastWriteTime )
+            .ifd !__timet_from_ft( &ff.ftLastWriteTime )
                 .return _dosmaperr( GetLastError() )
             .endif
             mov m_time,eax
-            .ifd !_lk_getltime( &ff.ftLastAccessTime )
+            .ifd !__timet_from_ft( &ff.ftLastAccessTime )
                 mov eax,m_time
             .endif
             mov a_time,eax
-            .ifd !_lk_getltime( &ff.ftCreationTime )
+            .ifd !__timet_from_ft( &ff.ftCreationTime )
                 mov eax,m_time
             .endif
             mov c_time,eax

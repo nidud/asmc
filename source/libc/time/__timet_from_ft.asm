@@ -7,37 +7,46 @@
 include time.inc
 include winbase.inc
 
-define NSEC_PER_SEC 1000000000
+define NSEC_PER_SEC     1000000000
+define WIN_TICK_PER_SEC 10000000
+define WIN_EPOCH_OFFSET 116444736000000000
 
 .code
 
 __timet_from_ft proc ft:LPFILETIME
-ifdef __UNIX__
     ldr rcx,ft
     .if ( !rcx )
         .return( -1 )
     .endif
+ifdef __UNIX__
     mov rax,[rcx]
- ifdef _WIN64
+  ifdef _WIN64
     mov ecx,NSEC_PER_SEC
     cqo
- else
+  else
     mov edx,[ecx+4]
     mov ecx,NSEC_PER_SEC
- endif
+  endif
     idiv rcx
     .ifs ( rdx < 0 )
         dec rax
     .endif
 else
-    .new s:SYSTEMTIME
-    .new u:SYSTEMTIME
-    .ifd FileTimeToSystemTime(ldr(ft), &u)
-        .ifd SystemTimeToTzSpecificLocalTime(NULL, &u, &s)
-            .return _loctotime_t( s.wYear, s.wMonth, s.wDay, s.wHour, s.wMinute, s.wSecond, -1 )
-        .endif
-    .endif
-    dec rax
+  ifdef _WIN64
+    mov rax,[rcx]
+    mov rdx,WIN_EPOCH_OFFSET
+    sub rax,rdx
+    mov ecx,WIN_TICK_PER_SEC
+    cqo
+    idiv rcx
+  else
+    mov eax,[ecx]
+    mov edx,[ecx+4]
+    sub eax,low32(WIN_EPOCH_OFFSET)
+    sbb edx,high32(WIN_EPOCH_OFFSET)
+    mov ecx,WIN_TICK_PER_SEC
+    idiv ecx
+  endif
 endif
     ret
     endp

@@ -26,21 +26,19 @@ ifdef __SSE2__
 
 __vdecl_atanf4 proc __vdecl x:XVECTOR
 
-    _mm_store_ps(xmm3, _mm_set1_ps(1.0))
+    _mm_mov_ps(xmm3, _mm_set1_ps(1.0))
     _mm_cmpgt_ps(xmm2, xmm0, xmm3)
-    _mm_store_ps(xmm1, xmm2)
-    _mm_and_ps(xmm1, xmm3)
+    _mm_and_ps(_mm_mov_ps(xmm1, xmm2), xmm3)
     _mm_andnot_ps(xmm2, _mm_set1_ps(-1.0))
     _mm_or_ps(xmm2, xmm1)
     _mm_max_ps(_mm_sub_ps(_mm_setzero_ps(xmm5), xmm0), xmm0)
-    _mm_cmple_ps(xmm5, xmm3)
-    _mm_store_ps(xmm1, xmm5)
-    _mm_store_ps(xmm4, xmm5)
+    _mm_mov_ps(xmm1, _mm_cmple_ps(xmm5, xmm3))
+    _mm_mov_ps(xmm4, xmm5)
     _mm_andnot_ps(xmm5, xmm2)
     _mm_and_ps(xmm1, xmm0)
     _mm_andnot_ps(xmm4, _mm_div_ps(xmm3, xmm0))
     _mm_or_ps(xmm1, xmm4)
-    _mm_mul_ps(_mm_store_ps(xmm0, xmm1), xmm0)
+    _mm_mul_ps(_mm_mov_ps(xmm0, xmm1), xmm0)
     _mm_mul_ps(_mm_mov_ps(xmm2, _mm_set1_ps(C1)), xmm0)
     _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C2)), xmm0)
     _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C3)), xmm0)
@@ -50,13 +48,11 @@ __vdecl_atanf4 proc __vdecl x:XVECTOR
     _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C7)), xmm0)
     _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(C8)), xmm0)
     _mm_mul_ps(_mm_add_ps(xmm2, _mm_set1_ps(1.0)), xmm1)
-    _mm_store_ps(xmm0, xmm5)
+    _mm_mov_ps(xmm0, xmm5)
     _mm_sub_ps(_mm_mul_ps(xmm5, _mm_set1_ps(M_PI_2)), xmm2)
     _mm_cmpeq_ps(xmm0, _mm_setzero_ps(xmm3))
-    _mm_store_ps(xmm3, xmm0)
-    _mm_and_ps(xmm0, xmm2)
-    _mm_andnot_ps(xmm3, xmm5)
-    _mm_or_ps(xmm0, xmm3)
+    _mm_andnot_ps(_mm_mov_ps(xmm3, xmm0), xmm5)
+    _mm_or_ps(_mm_and_ps(xmm0, xmm2), xmm3)
     ret
     endp
 endif

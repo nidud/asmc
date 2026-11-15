@@ -4,7 +4,7 @@ ifndef _APIQUERY2_H_
 include apiquery2.inc
 endif
 
-QueryPerformanceCounter proto WINAPI :ptr
-QueryPerformanceFrequency proto WINAPI :ptr
+QueryPerformanceCounter proto WINAPI :PLARGE_INTEGER
+QueryPerformanceFrequency proto WINAPI :PLARGE_INTEGER
 
 endif

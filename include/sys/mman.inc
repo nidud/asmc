@@ -32,6 +32,8 @@ CALL_MMAP macro s, map:=<MMAP_FLAGS>
     exitm<sys_mmap(0, (s), MMAP_PROT, map, -1, 0)>
     endm
 
+mmap        proto __cdecl :ptr, :size_t, :int_t, :int_t, :int_t, :size_t
+munmap      proto __cdecl :ptr, :size_t
 mprotect    proto __cdecl :ptr, :size_t, :int_t
 
 endif

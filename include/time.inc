@@ -114,7 +114,6 @@ difftime	proto __cdecl :time_t, :time_t
 difftm64	proto __cdecl :__time64_t, :__time64_t
 
 gmtime		proto __cdecl :ptr time_t
-_sleep		proto __cdecl :uint_t
 
 localtime	proto __cdecl :ptr time_t
 _localtime32	proto __cdecl :ptr __time32_t

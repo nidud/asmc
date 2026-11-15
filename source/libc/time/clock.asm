@@ -5,9 +5,7 @@
 ;
 
 include time.inc
-ifndef __UNIX__
-include winbase.inc
-endif
+include sysinfoapi.inc
 
 .data
  __stime uint_t 0
@@ -15,21 +13,13 @@ endif
 .code
 
 clock proc
-ifdef __UNIX__
-    times(NULL)
-else
     GetTickCount()
-endif
     sub eax,__stime
     ret
     endp
 
 __inittime proc
-ifdef __UNIX__
-    times(NULL)
-else
     GetTickCount()
-endif
     mov __stime,eax
     ret
     endp

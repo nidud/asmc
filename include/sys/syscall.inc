@@ -675,7 +675,6 @@ sys_lseek proto asmcall :int_t, :size_t, :uint_t {
     syscall
     }
 sys_mmap proto asmcall :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
-    mov rcx,rsi
     mov eax,SYS_MMAP
     syscall
     }
@@ -2333,14 +2332,14 @@ sys_reboot proto fastcall :int_t, :int_t, :abs, :abs {
     sys_call(SYS_REBOOT, _1, _2, _3, _4)
     }
 sys_mmap proto fastcall :ptr, :size_t, :abs, :abs, :abs, :abs {
-   .new mmap:mmap_arg_struct
-    mov mmap.m_addr,ecx
-    mov mmap.m_len,edx
-    mov mmap.m_prot,_3
-    mov mmap.m_flags,_4
-    mov mmap.m_fd,_5
-    mov mmap.m_offset,_6
-    lea ecx,mmap
+   .new mm_args:mmap_arg_struct
+    mov mm_args.m_addr,ecx
+    mov mm_args.m_len,edx
+    mov mm_args.m_prot,_3
+    mov mm_args.m_flags,_4
+    mov mm_args.m_fd,_5
+    mov mm_args.m_offset,_6
+    lea ecx,mm_args
     sys_call(SYS_MMAP, ecx)
     }
 sys_munmap proto fastcall :ptr, :size_t {

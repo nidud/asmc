@@ -16,11 +16,11 @@ include string.inc
  tz_ttinfo  pbyte_t ?
  tz_timecnt int_t ?
  tz_typecnt int_t ?
-.data
- tzh_done char_t 0
+ tzh_done   char_t ?
 else
 include winbase.inc
 endif
+
 .code
 
 ifdef __UNIX__
@@ -167,8 +167,7 @@ ifdef __UNIX__
     mov     eax,tz_timecnt
     add     rsi,rax
     mov     tz_ttinfo,rsi
-
-     mov tzh_done,1
+    mov     tzh_done,1
 
     ; Populate _timezone, _daylight, and _dstbias for current time
 
@@ -179,7 +178,7 @@ ifdef __UNIX__
         mov _daylight,0
         mov _dstbias,0
     .else
-        mov rbx,rax
+        mov ebx,eax
         time(0)
         sub rax,15768000
         __tz_lookup(rax)
@@ -262,13 +261,13 @@ else
     .endif
     lea  rax,[rsi+365]
     lea  rcx,[rdx-70]
-    mul  ecx
+    mul  rcx
     lea  rax,[rax+rdi-1]
-    shr  eax,2
-    sub  eax,_LEAP_YEAR_ADJUST + _BASE_DOW
+    shr  rax,2
+    sub  rax,_LEAP_YEAR_ADJUST + _BASE_DOW
     xor  edx,edx
     mov  ecx,7
-    idiv ecx
+    idiv rcx
     mov  eax,1
     .if ( [rbx].tm.tm_mon == 3 )
         .if ( edx != [rbx].tm.tm_yday )

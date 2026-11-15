@@ -2857,7 +2857,7 @@ sys_vmsplice proto fastcall :int_t, :ptr, :abs, :abs {
     sys_call(SYS_VMSPLICE, _1, _2, _3, _4)
     }
 sys_utimensat proto fastcall :int_t, :ptr, :abs, :abs {
-    sys_call(SYS_UTIMENSAT64, _1, _2, _3, _4)
+    sys_call(SYS_UTIMENSAT, _1, _2, _3, _4)
     }
 
 endif

@@ -30,24 +30,6 @@ endif
     endp
 else
 
-_lk_getltime proc private ft:LPFILETIME
-  local SystemTime:SYSTEMTIME
-  local LocalFTime:FILETIME
-    .if FileTimeToLocalFileTime( ldr(ft), &LocalFTime )
-        .if FileTimeToSystemTime(&LocalFTime, &SystemTime)
-            _loctotime_t(
-                SystemTime.wYear,
-                SystemTime.wMonth,
-                SystemTime.wDay,
-                SystemTime.wHour,
-                SystemTime.wMinute,
-                SystemTime.wSecond,
-                -1 )
-        .endif
-    .endif
-    ret
-    endp
-
     assume rdi:PSTAT64
 
 _fstat64 proc uses rsi rdi rbx fd:int_t, buf:PSTAT64
@@ -137,9 +119,9 @@ _fstat64 proc uses rsi rdi rbx fd:int_t, buf:PSTAT64
 
     ; set file date and size fields
 
-    mov rbx,_lk_getltime(&bhfi.ftLastWriteTime)
-    mov rsi,_lk_getltime(&bhfi.ftLastAccessTime)
-    mov rcx,_lk_getltime(&bhfi.ftCreationTime)
+    mov rbx,__timet_from_ft(&bhfi.ftLastWriteTime)
+    mov rsi,__timet_from_ft(&bhfi.ftLastAccessTime)
+    mov rcx,__timet_from_ft(&bhfi.ftCreationTime)
     mov dword ptr [rdi].st_size[4],bhfi.nFileSizeHigh
     mov dword ptr [rdi].st_size[0],bhfi.nFileSizeLow
     xor eax,eax

@@ -552,7 +552,8 @@ data_item proc __ccall uses rsi rdi rbx start_pos:ptr int_t, tokenarray:token_t,
     .new total:uint_32 = 0
     .new initwarn:int_t = FALSE
     .new pchar:string_t
-    .new tmp:char_t
+    .new tmp:int_t
+    .new wcnt:int_t
     .new fixup_type:fixup_types
     .new fixp:ptr fixup
     .new opndx:expr
@@ -1001,10 +1002,26 @@ endif
                                 .endif
                                 add rsi,rcx
                                 sub edi,ecx
-                                mov tmp,ah
+                                ; v2.41 - handle High/Low surrogate for 2 word's
+                                .if ( eax >= 0x10000 )
+                                    sub eax,0x10000
+                                    mov tmp,eax
+                                    shr eax,10
+                                    add eax,0xD800      ; High surrogate
+                                    mov byte ptr tmp,ah
+                                    movzx ecx,al
+                                    FillDataBytes( cl, 1 )
+                                    movzx ecx,byte ptr tmp
+                                    FillDataBytes( cl, 1 )
+                                    mov eax,tmp
+                                    shr eax,16
+                                    and eax,0x3FF
+                                    add eax,0xDC00      ; Low surrogate
+                                .endif
+                                mov tmp,eax
                                 movzx ecx,al
                                 FillDataBytes( cl, 1 )
-                                movzx ecx,tmp
+                                movzx ecx,byte ptr tmp[1]
                                 FillDataBytes( cl, 1 )
                             .endw
                         .endif

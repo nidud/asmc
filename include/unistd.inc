@@ -23,6 +23,7 @@ endif
 endif
 
 ttyname     proto __cdecl :int_t
+readlink    proto __cdecl :string_t, :string_t, :size_t
 
 sleep       proto __cdecl :uint_t
 ifndef __NO_ISOCEXT

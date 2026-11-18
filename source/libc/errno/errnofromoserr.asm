@@ -90,15 +90,4 @@ _get_errno_from_oserr proc oserrno:uint_t
     ret
     endp
 
-ifdef __UNIX__
-GetLastError proc WINAPI
-    mov ecx,errno
-    .for ( rdx = &errtable, eax = 0 : eax < ERRTABLESIZE : ++eax )
-        .if ( ecx == [rdx+rax*sizeof(errentry)].errentry.errnocode )
-            .return( [rdx+rax*sizeof(errentry)].errentry.oscode )
-        .endif
-    .endf
-    .return( -1 )
-    endp
-endif
     end

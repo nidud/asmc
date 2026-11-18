@@ -8,7 +8,7 @@ define IDS_ARABICSTRING     400
 .resource
 
  STRINGTABLE {
-    "\U52a95e2e",
+    "\u5e2e\u52a9",
     "\u0421\u043f\x0440\x0430\x0432\x043a\x0430"
     }
  STRINGTABLE {

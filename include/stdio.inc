@@ -107,7 +107,10 @@ endif
 
 ifdef __UNIX__
 define _fileno	<fileno>
+define _popen	<popen>
+define _pclose	<pclose>
 endif
+
 _fileno		proto __cdecl :LPFILE
 
 _input		proto __cdecl :LPFILE, :string_t, :ptr

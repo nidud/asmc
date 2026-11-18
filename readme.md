@@ -18,7 +18,6 @@ For Windows run the asmc-2.41.cmd file in the root directory.
 Linux:
 
     cd asmc/source/asmc
-    make
     make install
 
 

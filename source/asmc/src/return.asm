@@ -133,11 +133,16 @@ AssignReturnValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:
     mov address,0
     mov ecx,[rsi]
     add ecx,count
-    .if ( [rbx].token == '(' && [rbx+asm_tok].token == '&' )
-        .while ( byte ptr [rdi] != '&' )
+    .if ( [rbx].token == '(' )
+        .if ( [rbx+asm_tok].token == '&' )
+            .while ( byte ptr [rdi] != '&' )
+                inc rdi
+            .endw
             inc rdi
-        .endw
-        inc rdi
+        .else
+            .for ( rdi++ : byte ptr [rdi] == ' ' || byte ptr [rdi] == 9 : rdi++ )
+            .endf
+        .endif
         .for ( rdx = rdi : byte ptr [rdx] : rdx++ )
         .endf
         .while ( byte ptr [rdx-1] <= ' ' )
@@ -145,10 +150,19 @@ AssignReturnValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:
             dec rdx
         .endw
         .if ( byte ptr [rdx-1] == ')' )
-            mov byte ptr [rdx-1],0
+            dec rdx
+            mov byte ptr [rdx],0
+            .while ( byte ptr [rdx-1] <= ' ' )
+                mov byte ptr [rdx-1],0
+                dec rdx
+            .endw
         .endif
-        inc address
-        add dword ptr [rsi],2
+        .if ( [rbx+asm_tok].token == '&' )
+            inc address
+            add dword ptr [rsi],2
+        .else
+            inc dword ptr [rsi]
+        .endif
     .elseif ( byte ptr [rdi] == '&' )
         inc rdi
         inc address

@@ -150,51 +150,17 @@ ExpandCString proc __ccall uses rsi rdi rbx data:string_t, binary:string_t, stri
                         stosb
                         inc char_count
                     .endif
-                    mov eax,'x0'
-                    stosw
+                    ;
+                    ; v2.41 - handle High/Low surrogate for \U
+                    ;
+                    ; 1. Parse up to hex_count hex digits into ecx
+                    ;
                     inc rsi
-                    ;
-                    ; digits may be less than count: "\x7"
-                    ;
-                    .for ( ecx = 0 : islxdigit([rsi+rcx]) : ecx++ )
-                        .break .if ( cl >= hex_count )
-                    .endf
-                    mov digits,cl
-                    .if ( hex_count == 8 && ecx > 4 )
-                        sub ecx,4
-                        add rsi,rcx
-                        mov ecx,4
-                    .endif
-                    .for ( ebx = 0 : ebx < ecx : ebx++ )
-                        mov al,[rsi+rbx]
-                        stosb
-                        inc char_count
-                    .endf
-                    .if ( hex_count == 8 )
-                        mov al,','
-                        stosb
-                        mov eax,'x0'
-                        stosw
-                        add char_count,3
-                        mov cl,digits
-                        .if ( ecx <= 4 ) ; "\U1"
-                            mov al,'0'
-                            stosb
-                            inc char_count
-                        .else
-                            sub ecx,4
-                            .for ( rsi -= rcx, ebx = 0 : ebx < ecx : ebx++ )
-                                mov al,[rsi+rbx]
-                                stosb
-                                inc char_count
-                            .endf
-                        .endif
-                    .endif
-
-                    .for ( ecx = 0, eax = 0 : digits : digits-- )
+                    mov digits,hex_count
+                    .for ( ecx = 0 : islxdigit([rsi]) && digits : digits-- )
                         lodsb
                         shl ecx,4
-                        and al,not 30h
+                        and eax,0xCF
                         bt  eax,6
                         sbb ebx,ebx
                         and bl,55
@@ -202,18 +168,121 @@ ExpandCString proc __ccall uses rsi rdi rbx data:string_t, binary:string_t, stri
                         add ecx,eax
                     .endf
                     dec rsi
-                    mov [rdx],cl
-                    inc rdx
-                    movzx ebx,hex_count
-                    shr ebx,1 ; fixed byte count
-                    dec ebx
-                    shr ecx,8
-                    .while ebx
+                    ;
+                    ; 2. Handle \U codepoints >= 0x10000 as UTF-16 surrogate pairs
+                    ;
+                    .if ( hex_count == 8 && ecx >= 0x10000 )
+                        .if ( ecx > 0x10FFFF )
+                            mov rbx,rdx
+                            asmerr( 2156 )
+                            mov rdx,rbx
+                            mov ecx,0x10FFFF
+                        .endif
+                        sub ecx,0x10000
+                        mov eax,ecx
+                        shr eax,10
+                        add eax,0xD800      ; High surrogate
+                        and ecx,0x3FF
+                        add ecx,0xDC00      ; Low surrogate
+                        shl ecx,16
+                        or  ecx,eax         ; Low:High
+                    .endif
+                    ;
+                    ; 3. Emit first value (or high surrogate)
+                    ;
+                    mov eax,'x0'
+                    stosw
+                    add char_count,2
+                    .if ( ch )
+                        movzx eax,ch
+                        shr al,4
+                        add al,'0'
+                        .if ( al > '9' )
+                            add al,HEXOFFS
+                        .endif
+                        stosb
+                        mov al,ch
+                        and al,0x0F
+                        add al,'0'
+                        .if ( al > '9' )
+                            add al,HEXOFFS
+                        .endif
+                        stosb
+                        add char_count,2
+                    .endif
+                    movzx eax,cl
+                    shr al,4
+                    add al,'0'
+                    .if ( al > '9' )
+                        add al,HEXOFFS
+                    .endif
+                    stosb
+                    mov al,cl
+                    and al,0x0F
+                    add al,'0'
+                    .if ( al > '9' )
+                        add al,HEXOFFS
+                    .endif
+                    stosb
+                    add char_count,2
+                    mov eax,ecx
+                    shr eax,16
+                    .if ( hex_count == 2 )
                         mov [rdx],cl
                         inc rdx
-                        shr ecx,8
-                        dec ebx
-                    .endw
+                    .elseif ( hex_count == 4 )
+                        mov [rdx],cx
+                        add rdx,2
+                    .elseif ( hex_count == 8 )
+                        ;
+                        ; 4. emit low surrogate if \U had a surrogate pair
+                        ;
+                        .if ( eax )
+                            mov [rdx],ecx
+                            add rdx,4
+                            mov ecx,eax
+                            mov al,','
+                            stosb
+                            mov eax,'x0'
+                            stosw
+                            add char_count,3
+                            .if ( ch )
+                                movzx eax,ch
+                                shr al,4
+                                add al,'0'
+                                .if ( al > '9' )
+                                    add al,HEXOFFS
+                                .endif
+                                stosb
+                                mov al,ch
+                                and al,0x0F
+                                add al,'0'
+                                .if ( al > '9' )
+                                    add al,HEXOFFS
+                                .endif
+                                stosb
+                                add char_count,2
+                            .endif
+                            movzx eax,cl
+                            shr al,4
+                            add al,'0'
+                            .if ( al > '9' )
+                                add al,HEXOFFS
+                            .endif
+                            stosb
+                            mov al,cl
+                            and al,0x0F
+                            add al,'0'
+                            .if ( al > '9' )
+                                add al,HEXOFFS
+                            .endif
+                            stosb
+                            add char_count,2
+                        .else
+                            mov [rdx],cx
+                            add rdx,2
+                        .endif
+                    .endif
                 .else
                     .if ( !inside_quote )
                         inc inside_quote

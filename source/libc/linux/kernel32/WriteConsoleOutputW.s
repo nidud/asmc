@@ -10,7 +10,7 @@ include conio.inc
 
 .code
 
-WriteConsoleOutputW proc WINAPI uses rbx fp:HANDLE, lpBuffer:PCHAR_INFO,
+ WriteConsoleOutputW proc WINAPI uses rsi rdi rbx fp:HANDLE, lpBuffer:PCHAR_INFO,
         dwBufferSize:COORD, dwBufferCoord:COORD, lpWriteRegion:PSMALL_RECT
 
    .new x:int_t
@@ -50,7 +50,8 @@ WriteConsoleOutputW proc WINAPI uses rbx fp:HANDLE, lpBuffer:PCHAR_INFO,
             mov cl,[rdx+rcx]
             fprintf(fp, CSI "38;5;%dm" CSI "48;5;%dm", eax, ecx)
         .endif
-        mov wc,_wtoutf([rbx])
+        movzx edi,[rbx].CHAR_INFO.Char.UnicodeChar
+        mov wc,_wtoutf(edi)
         mov edx,ecx
         fwrite(&wc, 1, edx, fp)
     .endf

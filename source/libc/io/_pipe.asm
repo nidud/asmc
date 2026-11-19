@@ -4,26 +4,34 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include io.inc
 include errno.inc
-
 ifdef __UNIX__
-
 include unistd.inc
 include sys/syscall.inc
 
 .code
 
-pipe proc pfd:ptr int_t
-    .ifsd ( sys_pipe( ldr(pfd) ) < 0 )
+pipe proc uses rbx pfd:ptr int_t
+    ldr rbx,pfd
+    .ifsd ( sys_pipe( rbx ) < 0 )
         neg eax
         _set_errno( eax )
     .endif
+    mov ecx,[rbx]
+    .ifs ( ecx >= 0 && ecx < _nfile )
+        mov [_pioinfo(ecx)].ioinfo.osfile,FOPEN or FPIPE
+    .endif
+    mov ecx,[rbx+4]
+    .ifs ( ecx >= 0 && ecx < _nfile )
+        mov [_pioinfo(ecx)].ioinfo.osfile,FOPEN or FPIPE
+    .endif
+    xor eax,eax
     ret
     endp
 
 else
 
-include io.inc
 include fcntl.inc
 include stdlib.inc
 include winbase.inc

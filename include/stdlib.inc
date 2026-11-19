@@ -661,7 +661,7 @@ _xtow		proto __cdecl :qword, :wstring_t, :int_t, :int_t
 _xtoa_s		proto __cdecl :qword, :string_t, :size_t, :uint_t, :int_t
 _xtow_s		proto __cdecl :qword, :wstring_t, :size_t, :uint_t, :int_t
 _wtoutf		proto __cdecl :int_t
-_utftow		proto __cdecl :string_t
+_utftow		proto __cdecl :string_t, :int_t
 _utftows	proto __cdecl :string_t
 _utfslen	proto __cdecl :string_t
 _wtoutfs	proto __cdecl :string_t, :wstring_t

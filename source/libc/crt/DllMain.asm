@@ -27,9 +27,7 @@ ifndef _WIN64
 endif
     _initterm( &__xi_a, &__xi_z )
 endif
-
     .new retcode:int_t = DllMain(hDllHandle, dwReason, lpreserved)
-
     .if ( eax == false && dwReason == DLL_PROCESS_ATTACH )
 
         ; The user's DllMain routine returned failure.  Unwind the init.
@@ -37,15 +35,12 @@ endif
         DllMain(hDllHandle, DLL_PROCESS_DETACH, lpreserved)
         mov dwReason,DLL_PROCESS_DETACH
     .endif
-
     .if ( dwReason == DLL_PROCESS_DETACH )
-
         _initterm(&__xt_a, &__xt_z)
     .endif
     mov eax,retcode
 endif
     ret
-
-_DllMainCRTStartup endp
+    endp
 
     end

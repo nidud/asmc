@@ -16,19 +16,16 @@ main proto syscall :int_t, :ptr, :ptr
 externdef __xi_a:ptr ; pointers to initialization sections
 externdef __xi_z:ptr
 
-    .code
+.code
 
 cstart_ proc
-
   local _exception_registration[2]:dword
-
     _initterm( &__xi_a, &__xi_z )
     mov ecx,__argc
     mov rdx,__argv
     mov rbx,_environ
     mov eax,ecx
     exit(main(ecx, rdx, rbx))
-
-cstart_ endp
+    endp
 endif
     end

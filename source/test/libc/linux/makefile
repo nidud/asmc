@@ -3,7 +3,7 @@
 .asm.obj:
 	asmc64 -q -Cs -MT -Fe$*.exe $<
 
-OBJS =	localtime.obj tz_systemtime.obj
+OBJS =	localtime.obj systemtime.obj
 
 build:	$(OBJS)
 

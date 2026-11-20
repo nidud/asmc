@@ -19,8 +19,6 @@ ifndef __UNIX__
    .new retval:intptr_t
    .new retstatus:int_t
 
-    DBG_UNREFERENCED_PARAMETER(action_code)
-
     ; Explicitly check for process_id being -1 or -2. In Windows NT,
     ; -1 is a handle on the current process, -2 is a handle on the
     ; current thread, and it is perfectly legal to to wait (forever)

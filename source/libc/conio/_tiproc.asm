@@ -361,17 +361,17 @@ event_prevword proc fastcall uses rsi rbx ti:PTEDIT
     endp
 
 
-ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
+ClipDelete proc fastcall uses rbx rdi ti:PTEDIT
     .if ClipIsSelected(rcx)
         mov edi,[rcx].clip_so
-        mov esi,[rcx].xoffs
-        add esi,[rcx].boffs
-        .if ( esi < edi )
+        mov ebx,[rcx].xoffs
+        add ebx,[rcx].boffs
+        .if ( ebx < edi )
             .repeat
                .break .ifd !IncreaseX(rcx)
-                inc esi
-            .until ( edi == esi )
-        .elseif ( esi > edi )
+                inc ebx
+            .until ( edi == ebx )
+        .elseif ( ebx > edi )
             .repeat
                 .if [rcx].xoffs
                     dec [rcx].xoffs
@@ -380,8 +380,8 @@ ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
                 .else
                     .break
                 .endif
-                dec esi
-            .until ( edi == esi )
+                dec ebx
+            .until ( edi == ebx )
         .endif
         or  [rcx].flags,TE_MODIFIED
         mov rdi,[rcx].base
@@ -389,9 +389,9 @@ ClipDelete proc fastcall uses rsi rdi ti:PTEDIT
         mov edx,[rcx].clip_eo
         lea rax,[rdi+rax*tchar_t]
         lea rdx,[rdi+rdx*tchar_t]
-        mov rsi,rcx
+        mov rbx,rcx
         _tcscpy(rax, rdx)
-        getline(rsi)
+        getline(rbx)
         ClipSet(rcx)
         mov eax,1
     .endif
@@ -522,6 +522,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
    .new clip_clear:char_t = true
    .new clip_delete:char_t = false
    .new add_char:char_t = false
+   .new vk_shift:int_t
 
     ldr rax,hwnd
     mov rbx,[rax].TDIALOG.tedit
@@ -544,6 +545,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
     .elseif ( ecx & ( RIGHT_CTRL_PRESSED or LEFT_CTRL_PRESSED ) )
         mov edx,VK_CONTROL
     .endif
+    mov vk_shift,edx
     .if ( ecx & ENHANCED_KEY )
         .switch eax
         .case VK_UP
@@ -593,7 +595,7 @@ wm_char proc uses rbx hwnd:THWND, wParam:uint_t, lParam:uint_t
                .endc
             .endif
             .gotosw(VK_UP) .ifd !event_right(rbx)
-            .if ( edx == VK_SHIFT )
+            .if ( vk_shift == VK_SHIFT )
                 mov clip_clear,false
                 mov eax,[rbx].boffs
                 add eax,[rbx].xoffs

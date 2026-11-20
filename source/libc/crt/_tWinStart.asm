@@ -18,10 +18,9 @@ externdef __xi_a:ptr
 externdef __xi_z:ptr
 endif
 
-    .code
+.code
 
 _tWinMainCRTStartup proc uses rbx
-
 ifndef _MSVCRT
 ifndef _WIN64
   local _exception_registration[2]:dword
@@ -30,7 +29,6 @@ endif
 endif
     mov rbx,GetModuleHandle( 0 )
     ExitProcess( _tWinMain( rbx, 0, GetCommandLine(), SW_SHOWDEFAULT ) )
-
-_tWinMainCRTStartup endp
+    endp
 endif
     end

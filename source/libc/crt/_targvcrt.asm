@@ -17,7 +17,7 @@ _initargv proc private
     mov _targvcrt,__targv
     mov _tenvironcrt,_tenviron
     ret
-_initargv endp
+    endp
 
 .pragma init(_initargv, 10)
 

@@ -6,13 +6,23 @@
 
 include malloc.inc
 
-    .code
+.code
 
-calloc proc n:size_t, nsize:size_t
+calloc proc uses rbx n:size_t, nsize:size_t
     ldr rcx,n
     ldr rax,nsize
     mul rcx
-    malloc( rax )
+    mov rbx,rax
+    .if malloc( rax )
+        mov rcx,rbx
+        mov rdx,rdi
+        mov rbx,rax
+        mov rdi,rax
+        xor eax,eax
+        rep stosb
+        mov rdi,rdx
+        mov rax,rbx
+    .endif
     ret
     endp
 

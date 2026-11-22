@@ -22,17 +22,15 @@ include stringapiset.inc
     .new i:int_t
     .new char_count:int_t = 0
     .new is_nul_term:BOOL = FALSE
-    .if ( dwFlags )
-        SetLastError( ERROR_INVALID_FLAGS )
-        .return( 0 )
+    .if ( ldr(dwFlags) )
+        .return( SetLastError( ERROR_INVALID_FLAGS ) )
     .endif
-    .if ( ldr(CodePage) != CP_UTF8 || cbMultiByte == 0 )
-        SetLastError( ERROR_INVALID_PARAMETER )
-        .return( 0 )
-    .elseif ( cbMultiByte == -1 )
+    .if ( ldr(CodePage) != CP_UTF8 || ldr(cbMultiByte) == 0 )
+        .return( SetLastError( ERROR_INVALID_PARAMETER ) )
+    .elseif ( ldr(cbMultiByte) == -1 )
         mov is_nul_term,TRUE
         mov cbMultiByte,0
-        .for ( rbx = lpMultiByteStr : char_t ptr [rbx] : )
+        .for ( rbx = ldr(lpMultiByteStr) : char_t ptr [rbx] : )
             _utftow(rbx, -1)
             add rbx,rcx
             add cbMultiByte,ecx
@@ -54,8 +52,7 @@ include stringapiset.inc
     .if ( cchWideChar == 0 )
        .return( char_count )
     .elseif ( char_count > cchWideChar )
-        SetLastError( ERROR_INSUFFICIENT_BUFFER )
-        .return( 0 )
+        .return( SetLastError( ERROR_INSUFFICIENT_BUFFER ) )
     .endif
     .for ( rbx = lpWideCharStr : cbMultiByte > 0 : )
         _utftow(lpMultiByteStr, cbMultiByte)

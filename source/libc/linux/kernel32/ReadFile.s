@@ -13,9 +13,7 @@ include sys/syscall.inc
  ReadFile proc WINAPI hFile:HANDLE, lpBuffer:LPVOID, nNumberOfBytesToRead:DWORD,
         lpNumberOfBytesRead:LPDWORD, lpOverlapped:LPOVERLAPPED
     .ifsd ( sys_read( ldr(hFile), lpBuffer, ldr(nNumberOfBytesToRead) ) < 0 )
-        neg eax
-        _set_errno( eax )
-        .return( 0 )
+        .return( _sys_maperr(eax) )
     .endif
     mov rcx,lpNumberOfBytesRead
     .if ( rcx )

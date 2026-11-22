@@ -8,58 +8,62 @@ include stdio.inc
 include stdlib.inc
 include conio.inc
 
+__conwrite_span proto WINAPI :HANDLE, :PCHAR_INFO, :int_t, :int_t, :int_t
+
 .code
 
  WriteConsoleOutputW proc WINAPI uses rsi rdi rbx fp:HANDLE, lpBuffer:PCHAR_INFO,
         dwBufferSize:COORD, dwBufferCoord:COORD, lpWriteRegion:PSMALL_RECT
-
    .new x:int_t
    .new y:int_t
-   .new l:int_t
+   .new rows:int_t
    .new cols:int_t
-   .new wc:int_t
-   .new color_changed:int_t = 0
-   .new foreground:int_t = 0
-   .new background:int_t = 0
-
+   .new stride:size_t
+   .new ci:CONSOLE_CURSOR_INFO
     ldr rbx,lpBuffer
-    ldr rcx,lpWriteRegion
-
-    movzx eax,[rcx].SMALL_RECT.Left
-    inc eax
-    mov x,eax
-    movzx eax,[rcx].SMALL_RECT.Top
-    inc eax
-    mov y,eax
-    mov ax,[rcx].SMALL_RECT.Right
-    sub ax,[rcx].SMALL_RECT.Left
-    inc eax
-    mov cols,eax
-    fprintf(fp, CSI "%d;%dH", y, x)
-    .for ( l = cols : l : l--, rbx += 4 )
-        movzx eax,byte ptr [rbx+2]
-        mov ecx,eax
-        and eax,0x0F
-        shr ecx,4
-        .if ( eax != foreground || ecx != background )
-            mov color_changed,1
-            mov foreground,eax
-            mov background,ecx
-            lea rdx,_terminalcolorid
-            mov al,[rdx+rax]
-            mov cl,[rdx+rcx]
-            fprintf(fp, CSI "38;5;%dm" CSI "48;5;%dm", eax, ecx)
-        .endif
-        movzx edi,[rbx].CHAR_INFO.Char.UnicodeChar
-        mov wc,_wtoutf(edi)
-        mov edx,ecx
-        fwrite(&wc, 1, edx, fp)
-    .endf
-    .if ( color_changed )
-        fprintf(fp, CSI "m")
+    mov rcx,lpWriteRegion
+    .if ( !rbx || !rcx )
+        .return( 0 )
     .endif
-    mov eax,1
-    ret
+    movzx eax,[rcx].SMALL_RECT.Left
+    mov x,eax
+    movzx edx,[rcx].SMALL_RECT.Right
+    sub edx,eax
+    inc edx
+    mov cols,edx
+    movzx eax,[rcx].SMALL_RECT.Top
+    mov y,eax
+    movzx edx,[rcx].SMALL_RECT.Bottom
+    sub edx,eax
+    inc edx
+    mov rows,edx
+    .ifs ( cols <= 0 || rows <= 0 )
+        .return( 1 )
+    .endif
+    mov eax,dwBufferSize
+    movzx edx,ax
+    lea eax,[rdx*4]
+    mov stride,rax
+    mov eax,dwBufferCoord
+    movzx ecx,ax
+    shr eax,16
+    imul eax,edx
+    add eax,ecx
+    lea rbx,[rbx+rax*4]
+    GetConsoleCursorInfo(fp, &ci)
+    fprintf(fp, ESC "7")
+    .if ( ci.bVisible )
+        fprintf(fp, CSI "?25l")
+    .endif
+    .for ( : rows > 0 : rows--, y++, rbx += stride )
+        __conwrite_span(fp, rbx, x, y, cols)
+    .endf
+    fprintf(fp, ESC "8")
+    .if ( ci.bVisible )
+        fprintf(fp, CSI "?25h")
+    .endif
+    fflush(fp)
+    .return( 1 )
     endp
 
     end

@@ -9,6 +9,7 @@ include ltype.inc
 include winuser.inc
 include io.inc
 include conio.inc
+include stdlib.inc
 include tchar.inc
 
     .code
@@ -452,28 +453,35 @@ ClipPaste proc fastcall uses rbx ti:PTEDIT
 
 
 _tiputs proc public uses rsi rdi rbx ti:PTEDIT
-   .new ci[MAXSCRLINE]:CHAR_INFO
+
    .new i:int_t
    .new x:byte
+   .new ci[MAXSCRLINE]:CHAR_INFO
+
     ldr rbx,ti
     lea rdi,ci
     mov ecx,[rbx].scols
     mov eax,[rbx].clrattrib
     rep stosd
+    ;
+    ; MultiByteToWideChar(CP_UTF8, 0, [rbx].base, -1, NULL, 0)
+    ;
     _tcslen([rbx].base)
     mov rsi,[rbx].base
     .if ( eax > [rbx].boffs )
-        mov eax,[rbx].boffs
-        lea rsi,[rsi+rax*tchar_t]
-        mov ecx,[rbx].scols
-        lea rdi,ci
-        .repeat
-            movzx eax,tchar_t ptr [rsi]
-            .break .if !eax
-            mov [rdi],ax
-            add rsi,tchar_t
-            add rdi,4
-        .untilcxz
+        mov ecx,[rbx].boffs
+        lea rdi,[rsi+rcx*tchar_t]
+        .for ( i = 0 : i < [rbx].scols && char_t ptr [rdi] : i++ )
+            _utftow(rdi, -1)
+            add rdi,rcx
+            mov edx,i
+            mov word ptr ci[rdx*4],ax
+            .if ( ecx == 4 )
+                shr eax,16
+                mov word ptr ci[rdx*4+4],ax
+                inc i
+            .endif
+        .endf
     .endif
     mov edi,[rbx].boffs
     mov ecx,[rbx].clip_eo
@@ -504,13 +512,12 @@ _tiputs proc public uses rsi rdi rbx ti:PTEDIT
             .untilcxz
         .endif
     .endif
-    .for ( i = 0 : i < [rbx].scols : i++ )
-        mov ecx,i
-        mov eax,[rbx].xpos
-        add eax,ecx
-        mov x,al
-        _scputw(x, byte ptr [rbx].ypos, 1, ci[rcx*4])
-    .endf
+    _scgetp( byte ptr [rbx].xpos, byte ptr [rbx].ypos, byte ptr [rbx].scols)
+    mov rdi,rcx
+    movzx ecx,dl
+    lea rsi,ci
+    rep movsd
+    _cendpaint()
     .return( 0 )
     endp
 

@@ -50,6 +50,9 @@ externdef	_sys_nerr:int_t
 endif
 __sys_nerr	proto __cdecl
 _dosmaperr	proto __cdecl :uint_t
+if defined(__UNIX__) and defined(_CRTBLD)
+_sys_maperr	proto __cdecl :errno_t
+endif
 
 define ENOERR		0
 define EPERM		1
@@ -86,10 +89,17 @@ define EDOM		33
 define EUCLEAN		35
 define EDEADLK		36
 define EUNKNOWN		37
+ifdef __UNIX__
+define ENAMETOOLONG	36
+define ENOSYS		38
+define ENOTEMPTY	39
+else
 define ENAMETOOLONG	38
-define ENOLCK		39
 define ENOSYS		40
 define ENOTEMPTY	41
+endif
+
+define ENOLCK		39
 
 ;; Error codes used in the Secure CRT functions
 
@@ -117,7 +127,11 @@ define EHOSTUNREACH	110
 define EIDRM		111
 define EINPROGRESS	112
 define EISCONN		113
+ifdef __UNIX__
+define ELOOP		40
+else
 define ELOOP		114
+endif
 define EMSGSIZE		115
 define ENETDOWN		116
 define ENETRESET	117
@@ -143,6 +157,10 @@ define EPROTOTYPE	136
 define ETIME		137
 define ETIMEDOUT	138
 define ETXTBSY		139
+ifdef __UNIX__
+define EWOULDBLOCK	11
+else
 define EWOULDBLOCK	140
+endif
 
 endif

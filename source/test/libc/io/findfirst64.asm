@@ -2,17 +2,12 @@ include io.inc
 include stdio.inc
 include tchar.inc
 
-ifdef _WIN64
-define FORMAT <"%08X %08llX %08llX %08llX %8jd %s\n">
-else
-define FORMAT <"%08X %08X %08X %08X %8jd %s\n">
-endif
-
 .code
  _tmain proc argc:int_t, argv:tarray_t
     .new ff:_tfinddatai64_t
     .new h:intptr_t
     .if ( argc != 2 )
+        _tprintf("Usage: findfirst64 \"*.asm\"\n")
         .return( 0 )
     .endif
     mov rcx,argv
@@ -22,7 +17,7 @@ endif
         .return( 1 )
     .endif
     .repeat
-        _tprintf(FORMAT,
+        _tprintf("%08X %08zX %08zX %08zX %8jd %s\n",
             ff.attrib,
             ff.time_create,
             ff.time_access,

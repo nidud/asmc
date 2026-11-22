@@ -46,7 +46,11 @@ _tmain proc
     puts( "This goes to stdout\n" )
     puts( "The file 'data' contains:" )
     _flushall()
+ifdef __UNIX__
+    system( "cat data" )
+else
     system( "type data" )
+endif
     ret
     endp
 

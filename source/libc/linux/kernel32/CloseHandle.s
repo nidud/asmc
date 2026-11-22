@@ -13,9 +13,7 @@ include sys/syscall.inc
  CloseHandle proc WINAPI hFile:HANDLE
     ldr rcx,hFile
     .ifsd ( sys_close(ecx) < 0 )
-        neg eax
-        _set_errno( eax )
-        .return( 0 )
+        .return( _sys_maperr(eax) )
     .endif
     .return( TRUE )
     endp

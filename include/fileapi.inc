@@ -302,13 +302,13 @@ endif
 endif
 
 GetFileTime proto WINAPI :HANDLE, :LPFILETIME, :LPFILETIME, :LPFILETIME
-GetFullPathNameW proto WINAPI :LPCWSTR, :DWORD, :LPWSTR, :ptr
+GetFullPathNameW proto WINAPI :LPCWSTR, :DWORD, :LPWSTR, :ptr LPWSTR
 
 ifdef _UNICODE
 define GetFullPathName  <GetFullPathNameW>
 endif
 
-GetFullPathNameA proto WINAPI :LPCSTR, :DWORD, :LPSTR, :ptr
+GetFullPathNameA proto WINAPI :LPCSTR, :DWORD, :LPSTR, :ptr LPSTR
 
 ifndef _UNICODE
 define GetFullPathName <GetFullPathNameA>

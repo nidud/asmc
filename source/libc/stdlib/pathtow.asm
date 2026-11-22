@@ -10,13 +10,9 @@ include errno.inc
 include winnls.inc
 include awint.inc
 
-    .code
+.code
 
 _pathtow proc path:string_t, outPath:ptr wstring_t
-ifdef __UNIX__
-    int 3
-    ret
-else
    .new len:int_t
    .new codePage:uint_t = CP_ACP
     ldr rcx,path
@@ -48,7 +44,6 @@ else
        .return( FALSE )
     .endif
     .return( TRUE )
-endif
     endp
 
     end

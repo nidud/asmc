@@ -16,9 +16,7 @@ include sys/syscall.inc
     ldr rbx,lpNumberOfBytesWritten
     ldr rcx,hFile
     .ifs ( sys_write( ecx, lpBuffer, ldr(nNumberOfBytesToWrite) ) < 0 )
-        neg eax
-        _set_errno( eax )
-        .return( FALSE )
+       .return( _sys_maperr(eax) )
     .endif
     .if ( rbx )
         mov [rbx],eax

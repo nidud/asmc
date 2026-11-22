@@ -9,6 +9,10 @@ include conio.inc
 
 .code
 
+ifdef __UNIX__
+__conwrite_span proto WINAPI :HANDLE, :PCHAR_INFO, :int_t, :int_t, :int_t
+endif
+
 _conpaint proc uses rbx
 
    .new sr:SMALL_RECT
@@ -48,6 +52,11 @@ endif
                 cmovz   rcx,rdx
                 inc     l
             .elseif ( l )
+ifdef __UNIX__
+                movzx   edx,x
+                sub     dl,l
+                __conwrite_span(_confh, rcx, edx, y, l)
+else
                 movzx   eax,x
                 sub     al,l
                 movzx   edx,y
@@ -58,11 +67,17 @@ endif
                 add     eax,edx
                 add     edx,0x10000
                 mov     sr.Right,ax
-                mov     l,0
                 WriteConsoleOutputW(_confh, rcx, edx, 0, &sr)
+endif
+                mov     l,0
             .endif
         .endf
         .if ( l )
+ifdef __UNIX__
+            movzx   edx,x
+            sub     dl,l
+            __conwrite_span(_confh, rcx, edx, y, l)
+else
             movzx   eax,x
             sub     al,l
             movzx   edx,y
@@ -73,8 +88,9 @@ endif
             add     eax,edx
             add     edx,0x10000
             mov     sr.Right,ax
-            mov     l,0
             WriteConsoleOutputW(_confh, rcx, edx, 0, &sr)
+endif
+            mov     l,0
         .endif
     .endf
 ifdef __UNIX__

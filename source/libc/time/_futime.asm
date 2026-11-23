@@ -13,7 +13,7 @@ include time.inc
 include errno.inc
 include sys/utime.inc
 ifdef __UNIX__
-include sys/syscall.inc
+include sys/stat.inc
 else
 include winbase.inc
 ifdef _WIN64
@@ -29,7 +29,7 @@ endif
 
 _futime proc uses rbx fh:int_t, utimp:ptr utimbuf
 ifdef __UNIX__
-   _set_errno( ENOSYS )
+   .new ts[2]:timespec
 else
    .new tmb:tm
    .new deftimes:utimbuf
@@ -37,17 +37,29 @@ else
    .new LastWriteTime:FILETIME
    .new LastAccessTime:FILETIME
    .new LocalFileTime:FILETIME
-
+endif
     ldr ebx,fh
     ldr rdx,utimp
 
-    .ifs ( ebx < 0 || ebx < _nfile || !(_osfile(ebx) & FOPEN) )
+    .ifs ( ebx < 0 || ebx >= _nfile || !(_osfile(ebx) & FOPEN) )
         .return( _set_errno(EBADF) )
     .endif
+ifdef __UNIX__
+    .if ( rdx )
+        mov rax,[rdx].utimbuf.actime
+        mov ts[0].tv_sec,rax
+        mov ts[0].tv_nsec,0
+        mov rax,[rdx].utimbuf.modtime
+        mov ts[timespec].tv_sec,rax
+        mov ts[timespec].tv_nsec,0
+        lea rdx,ts
+    .endif
+    utimensat(ebx, NULL, rdx, 0)
+else
     .if ( rdx == NULL )
         time(&deftimes.modtime)
         mov deftimes.actime,deftimes.modtime
-        lea edx,deftimes
+        lea rdx,deftimes
         mov utimp,rdx
     .endif
     .ifd _localtime_s(&tmb, &[rdx].utimbuf.modtime)

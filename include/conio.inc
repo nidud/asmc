@@ -1064,6 +1064,7 @@ define KEY_CTRLV	(KEY_CTRL or ('V' shl 8))
 
 define ESC <"\e">
 define CSI <"\e[">
+define OSC <"\e]">
 
 define SET_X10_MOUSE		   <CSI "?9h">
 define SET_VT200_MOUSE		   <CSI "?1001h">

@@ -9,7 +9,7 @@ include winbase.inc
 
 .code
 
-ExitProcess proc WINAPI retval:UINT
+ ExitProcess proc WINAPI retval:UINT
     exit(ldr(retval))
     ret
     endp

@@ -6,10 +6,10 @@
 
 include stdlib.inc
 
-    .data
-    _tenvptr tstring_t 0
+.data
+ _tenvptr tstring_t 0
 
-    .code
+.code
 ifndef __UNIX__
 __initenvptr proc private
     mov _tenvptr,_tgetenvs()

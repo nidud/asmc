@@ -5,21 +5,17 @@
 ;
 
 include stdlib.inc
-ifdef __UNIX__
-include sys/syscall.inc
-else
 include winbase.inc
-endif
 
 externdef _CRTFINI_S:ptr
 externdef _CRTFINI_E:ptr
 externdef _exitflag:char_t
 
-    .data
-     _C_Termination_Done int_t FALSE
-     _C_Exit_Done        int_t FALSE
+.data
+ _C_Termination_Done int_t FALSE
+ _C_Exit_Done        int_t FALSE
 
-    .code
+.code
 
 doexit proc code:int_t, quick:int_t, retcaller:int_t
     .if ( _C_Exit_Done != TRUE )
@@ -30,11 +26,7 @@ doexit proc code:int_t, quick:int_t, retcaller:int_t
     .endif
     .if ( !retcaller )
         mov _C_Exit_Done,TRUE
-ifdef __UNIX__
-        sys_exit(code)
-else
         ExitProcess(code)
-endif
     .endif
     ret
     endp

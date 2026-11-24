@@ -8,7 +8,7 @@ include stdlib.inc
 include string.inc
 include tchar.inc
 
-    .code
+.code
 
 _tgetenv proc uses rbx enval:tstring_t
    .new len:int_t

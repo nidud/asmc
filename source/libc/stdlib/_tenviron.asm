@@ -7,10 +7,10 @@
 include stdlib.inc
 include tchar.inc
 
-    .data
-    _tenviron tarray_t 0
+.data
+ _tenviron tarray_t 0
 
-    .code
+.code
 ifndef __UNIX__
 __initenviron proc private
     _tsetenvp( &_tenviron )

@@ -17,21 +17,18 @@ ifndef __UNIX__
     ldr ecx,fh
     ldr rdx,value
     _pioinfo(ecx)
-    .if ( sdword ptr ecx >= 0 && ecx < _nfile && [rax].ioinfo.osfhnd == INVALID_HANDLE_VALUE )
+    .ifs ( ecx >= 0 && ecx < _nfile && [rax].ioinfo.osfhnd == INVALID_HANDLE_VALUE )
         mov [rax].ioinfo.osfhnd,rdx
-;       .if ( __app_type == _CONSOLE_APP )
-            .switch ecx
-            .case 0
-                SetStdHandle( STD_INPUT_HANDLE, rdx )
-               .endc
-            .case 1
-                SetStdHandle( STD_OUTPUT_HANDLE, rdx )
-               .endc
-            .case 2
-                SetStdHandle( STD_ERROR_HANDLE, rdx )
-               .endc
-            .endsw
-;       .endif
+        mov eax,ecx
+        xor ecx,ecx
+        .switch pascal eax
+        .case 0: mov ecx,STD_INPUT_HANDLE
+        .case 1: mov ecx,STD_OUTPUT_HANDLE
+        .case 2: mov ecx,STD_ERROR_HANDLE
+        .endsw
+        .if ( ecx )
+            SetStdHandle( ecx, rdx )
+        .endif
         xor eax,eax
     .else
         mov _doserrno,0

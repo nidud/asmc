@@ -72,7 +72,5 @@ endif
     mov rax,aEnv
     ret
     endp
-
 endif
-
     end

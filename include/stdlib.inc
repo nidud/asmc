@@ -354,6 +354,9 @@ _byteswap_uint64 proto watcall :qword {
 endif
 
 getenv		proto __cdecl :string_t
+setenv		proto __cdecl :string_t, :string_t, :int_t
+unsetenv	proto __cdecl :string_t
+
 if __STDC_WANT_SECURE_LIB__
 getenv_s	proto __cdecl :ptr size_t, :string_t, :size_t, :string_t
 endif

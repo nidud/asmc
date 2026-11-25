@@ -17,18 +17,22 @@ endif
 
 .code
 
-_tputenv proc uses rsi rbx string:tstring_t
-   .new envp:tstring_t
-    xor ebx,ebx
-    .if ( _tcschr(string, '=') != NULL )
-        mov tchar_t ptr [rax],0
-        lea rbx,[rax+tchar_t]
+_tputenv proc uses rbx string:tstring_t
+   .new value:tstring_t = NULL
+   .new namebuf[256]:tchar_t
+    ldr rbx,string
+    .if ( !rbx || byte ptr [rbx] == 0 )
+        .return( _set_errno( EINVAL ) )
     .endif
-    SetEnvironmentVariable(string, rbx)
-    .if ( rbx )
-        mov tchar_t ptr [rbx-tchar_t],'='
+    .if ( _tcschr(rbx, '=') != NULL )
+        mov rcx,rax
+        add rax,tchar_t
+        mov value,rax
+        sub rcx,rbx
+        mov namebuf[rcx],0
+        mov rbx,memcpy(&namebuf, rbx, rcx)
     .endif
-    .if ( !eax )
+    .ifd !SetEnvironmentVariable(rbx, value)
         dec rax
        .return
     .endif
@@ -38,10 +42,10 @@ else
     .if ( _tgetenvs() )
         mov rbx,_tenvptr
         mov _tenvptr,rax
-        .if ( _tsetenvp( &envp ) )
+        .if ( _tsetenvp( &value ) )
             free(rbx)
             free(_tenviron)
-            mov _tenviron,envp
+            mov _tenviron,value
             xor eax,eax
         .else
             free(_tenvptr)

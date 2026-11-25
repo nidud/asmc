@@ -33,21 +33,17 @@ include tchar.inc
 .code
 
 _tsopen proc uses rsi rdi rbx path:tstring_t, oflag:int_t, shflag:int_t, args:vararg
-
 ifdef __UNIX__
-
    .new mode:uint_t
    .new share:uint_t
    .new faccess:uint_t
    .new fh:uint_t
-
     ldr rdi,path
     ldr esi,oflag
     ldr edx,shflag
 ifndef _WIN64
     mov ecx,args
 endif
-
     mov eax,esi
     and eax,O_RDONLY or O_WRONLY or O_RDWR
 
@@ -92,7 +88,6 @@ endif
        .return( _set_errno( EINVAL ) )
     .endsw
     or faccess,eax
-
     mov eax,FOPEN
 
     ; figure out binary/text mode
@@ -108,10 +103,8 @@ endif
         or eax,FAPPEND
     .endif
     mov fh,eax
-
     mov edx,faccess
     .if ( esi & O_CREAT )
-
         or edx,ecx
         .if ( esi & O_APPEND )
             mov rbx,rdi
@@ -126,7 +119,6 @@ endif
         sys_open(rdi, esi, edx)
     .endif
     .ifs ( eax < 0 )
-
         neg eax
        .return( _set_errno( eax ) )
     .endif
@@ -153,10 +145,8 @@ else
     .new fileflags:char_t = 0       ; _osfile flags
 
     ldr edi,oflag
-
     mov _doserrno,0
     _get_fmode(&fmode)
-
     .if ( edi & O_NOINHERIT )
         mov fileflags,FNOINHERIT
     .else
@@ -251,15 +241,12 @@ else
 
     mov ecx,FILE_ATTRIBUTE_NORMAL
     .if ( edi & O_CREAT )
-
         mov eax,_umaskval
         not eax
         lea rcx,args
         and eax,[rcx]
         mov ecx,FILE_ATTRIBUTE_NORMAL
-
         .if !( eax & _S_IWRITE )
-
             mov ecx,FILE_ATTRIBUTE_READONLY
         .endif
     .endif
@@ -283,9 +270,7 @@ else
     .endif
     or ecx,eax
     mov fileattrib,ecx
-
     .ifd ( _alloc_osfhnd() == -1 )
-
         .return( _set_errno( EMFILE ) )
     .endif
 
@@ -314,7 +299,6 @@ else
             and fileaccess,NOT GENERIC_READ
             .ifd ( CreateFile( path, fileaccess, fileshare, &SecurityAttributes,
                     filecreate, fileattrib, NULL ) == -1 )
-
                 .return( _dosmaperr( GetLastError() ) )
             .endif
         .else
@@ -323,14 +307,11 @@ else
     .endif
 
     mov osfh,rax
-
     .ifd ( GetFileType( rax ) == FILE_TYPE_UNKNOWN )
-
         mov dwLastError,GetLastError()
         CloseHandle(osfh)
         _dosmaperr(dwLastError)
         .if ( dwLastError == ERROR_SUCCESS )
-
             ;
             ; If GetFileType returns FILE_TYPE_UNKNOWN but doesn't fail,
             ; GetLastError returns ERROR_SUCCESS.
@@ -362,27 +343,19 @@ else
         ; byte, and shortening the file if it is a CTRL-Z.
 
         .if ( _lseeki64( fh, -1, SEEK_END ) != -1 )
-
             mov eof,0
             mov rbx,rax
-
             .if ( _read( fh, &eof, 1 ) == 0 )
-
                 .if ( eof == 26 )
-
                     .if ( _chsize( fh, rbx ) == -1 )
-
                         jmp error
                     .endif
                 .endif
             .endif
             .if ( _lseeki64( fh, 0, SEEK_SET ) == -1 )
-
                 jmp error
             .endif
-
         .elseif ( _doserrno != ERROR_NEGATIVE_SEEK )
-
             jmp error
         .endif
     .endif
@@ -415,15 +388,11 @@ else
         ; have nothing to do - textmode's already set to default specified in oflag
 
         .if ( edi & (_O_WTEXT or _O_U16TEXT or _O_U8TEXT) )
-
             mov bom,0
             xor ebx,ebx
-
             .if ( !( fileflags & FDEV ) )
-
                 mov eax,fileaccess
                 and eax,(GENERIC_READ or GENERIC_WRITE)
-
                 .switch eax
                 .case GENERIC_READ
                     or ebx,BOM_CHECK
@@ -441,9 +410,7 @@ else
                         ; Fall through otherwise
 
                         .if ( _lseeki64(fh, 0, SEEK_END) != 0 )
-
                             .if ( _lseeki64(fh, 0, SEEK_SET) == -1 )
-
                                 jmp error
                             .endif
                         .endif
@@ -501,12 +468,9 @@ else
                     ;
 
                     .ifs ( eax > 0 && ebx & BOM_WRITE )
-
                         and ebx,not BOM_WRITE
                     .endif
-
                     mov ecx,bom
-
                     .switch eax
                     .case -1
                         jmp error
@@ -554,12 +518,9 @@ else
                     ; If we are creating a new file, we write a UTF-16LE or UTF8 BOM
 
                     .if ( tmode == __IOINFO_TM_UTF16LE )
-
                         mov bom,UTF16LE_BOM
                         mov ebx,UTF16_BOMLEN
-
                     .elseif ( tmode == __IOINFO_TM_UTF8 )
-
                         mov bom,UTF8_BOM
                         mov ebx,UTF8_BOMLEN
                     .endif
@@ -585,9 +546,7 @@ else
     .endif
 
     mov [rsi].textmode,tmode
-
     .if ( !( fileflags & FDEV or FPIPE ) && edi & O_APPEND )
-
         or [rsi].osfile,FAPPEND
     .endif
 
@@ -617,7 +576,6 @@ else
             ; already set the file handle in the _ioinfo structure
             ;
             _dosmaperr(GetLastError())
-
             mov [rsi].osfile,0
            .return
         .else
@@ -630,13 +588,10 @@ else
         .endif
     .endif
     .return(fh)
-
 error:
     _close(fh)
     .return(-1)
-
 endif
-
-_tsopen endp
+    endp
 
     end

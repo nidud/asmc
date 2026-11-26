@@ -46,6 +46,12 @@ else
 define NUMSTATES        (ST_TYPE + 1)
 endif
 
+ifdef __UNIX__
+define CP_CRT CP_UTF8
+else
+define CP_CRT CP_ACP
+endif
+
 externdef __lookuptable:byte
 
     .code
@@ -353,24 +359,26 @@ endif
                     ;
                     mov bufferiswide,tchar_t-1
                     _va_arg(arglist)
-                    mov rcx,rax
-                    lea rdx,buffer
+                    mov rdx,rax
+                    lea rcx,buffer
                     mov textlen,1 ; print just a single character
-                    mov text,rdx
+                    mov text,rcx
 ifdef _UNICODE
                     .if ( flags & FL_SHORT )
-                        MultiByteToWideChar( CP_ACP, 0, rcx, 1, rdx, 1 )
+                        MultiByteToWideChar( CP_ACP, 0, rdx, 1, rcx, 1 )
                     .else
-elseifndef __UNIX__
+else
                     .if ( flags & ( FL_LONG or FL_WIDECHAR ) )
-                        WideCharToMultiByte( CP_ACP, 0, rcx, 1, rdx, 1, 0, 0 )
+                        .ifd WideCharToMultiByte( CP_CRT, 0, rdx, 1, rcx, sizeof(buffer), 0, 0 )
+                            mov textlen,eax
+                        .else
+                            mov byte ptr [rcx],'?'
+                        .endif
                     .else
 endif
-                        mov _tal,[rcx]
-                        mov [rdx],_tal
-ifndef __UNIX__
+                        mov _tal,[rdx]
+                        mov [rcx],_tal
                     .endif
-endif
                     .endc
 
                 .case 'S' ; ISO wide character string
@@ -383,15 +391,12 @@ endif
                     .endif
 
                 .case 's'
-
                     mov rax,_va_arg(arglist)
                     mov ecx,precision
                     .if ( ecx == -1 )
                         mov ecx,INT_MAX
                     .endif
-
                     .if ( !rax )
-
                         lea rax,@CStr("(null)")
 ifndef _UNICODE
                         and flags,not ( FL_LONG or FL_WIDECHAR )
@@ -402,21 +407,16 @@ ifdef _UNICODE
                     .if ( !( flags & FL_SHORT ) )
 else
                     .if ( flags & ( FL_LONG or FL_WIDECHAR ) )
-
                         mov bufferiswide,1
 endif
                         .while ( ecx && word ptr [rax] )
-
                             add rax,2
                             dec ecx
                         .endw
                         sub rax,rdx
                         sar eax,1
-
                     .else
-
                         .while ( ecx && byte ptr [rax] )
-
                             inc rax
                             dec ecx
                         .endw
@@ -424,13 +424,15 @@ endif
 ifdef _UNICODE
                         mov text,rdx
                         mov textlen,eax
-                        .for ( ebx = 0 : ebx < textlen && ebx < lengthof(buffer)-1 : ebx++ )
-
-                            mov rcx,text
-                            add rcx,rbx
-                            MultiByteToWideChar( CP_ACP, 0, rcx, 1, &buffer[rbx*2], 1 )
-                        .endf
-                        mov eax,ebx
+                        .if ( eax > 0 )
+                            .ifd !MultiByteToWideChar( CP_CRT, 0, text, textlen, &buffer, lengthof(buffer) )
+                                mov ecx,lengthof(buffer)
+                                .if ( textlen < ecx )
+                                    mov ecx,textlen
+                                .endif
+                                MultiByteToWideChar( CP_CRT, 0, text, ecx, &buffer, lengthof(buffer) )
+                            .endif
+                        .endif
                         lea rdx,buffer
 endif
                     .endif
@@ -511,7 +513,6 @@ else
                         mov rax,rcx
 endif
                     .endif
-
                     .if ( flags & FL_ALTERNATE )
                         or edx,_ST_ALTERNATE
                     .endif
@@ -520,7 +521,6 @@ ifdef _UNICODE
 endif
                     _cfltcvt( rax, text, ebx, precision, edx )
                     .ifs ( eax < 0 )
-
                         or  flags,FL_NEGATIVE
                         neg eax
                     .endif
@@ -606,15 +606,12 @@ endif
                     mov rcx,rax
                     mov eax,[rcx]
                     .if ( flags & ( FL_I64 or FL_LONGLONG ) )
-
                         mov edx,[rcx+4]
 ifndef _WIN64
                         add arglist,size_t
 endif
                     .endif
-
                     .if ( flags & FL_SHORT )
-
                         .if ( flags & FL_CHAR )
                             .if ( flags & FL_SIGNED )
                                 movsx eax,al ; sign extend
@@ -629,19 +626,13 @@ endif
                             .endif
                         .endif
                     .endif
-
                     .if ( flags & FL_SIGNED )
-
                         .if ( !( flags & ( FL_I64 or FL_LONGLONG ) ) )
-
                             .ifs ( eax < 0 )
-
                                 dec edx
                                 or  flags,FL_NEGATIVE
                             .endif
-
                         .elseifs ( edx < 0 )
-
                             or  flags,FL_NEGATIVE
                         .endif
                     .endif
@@ -665,7 +656,6 @@ endif
                     ; and number is zero, we get no digits at all.
                     ;
                     .if ( flags & FL_SIGNED )
-
                         test edx,edx
                         .ifs
                             neg edx
@@ -674,15 +664,12 @@ endif
                             or  flags,FL_NEGATIVE
                         .endif
                     .endif
-
                     lea rbx,buffer[BUFFERSIZE*tchar_t-tchar_t]
 ifdef _WIN64
                     mov ecx,curadix
                     shl rdx,32
                     or  rax,rdx
-
                     .fors ( : rax || precision > 0 : precision-- )
-
                         xor edx,edx
                         div rcx
                         add dl,'0'
@@ -692,31 +679,21 @@ ifdef _WIN64
                         mov [rbx],_tdl
                         sub rbx,tchar_t
                     .endf
-
 else
-
                     .fors ( : eax || edx || precision > 0 : precision-- )
-
                         .if ( !edx || !curadix )
-
                             div curadix
                             mov ecx,edx
                             xor edx,edx
-
                         .else
-
                             push esi
                             push edi
-
                             .for ( ecx = 64, esi = 0, edi = 0 : ecx : ecx-- )
-
                                 add eax,eax
                                 adc edx,edx
                                 adc esi,esi
                                 adc edi,edi
-
                                 .if ( edi || esi >= curadix )
-
                                     sub esi,curadix
                                     sbb edi,0
                                     inc eax
@@ -726,7 +703,6 @@ else
                             pop edi
                             pop esi
                         .endif
-
                         add ecx,'0'
                         .ifs ( ecx > '9' )
                             add ecx,hexoff
@@ -734,7 +710,6 @@ else
                         mov [ebx],_tcl
                         sub ebx,tchar_t
                     .endf
-
 endif
                     ; compute length of number
 
@@ -812,26 +787,25 @@ endif
 
                     ; write text
 
-if not defined(__UNIX__) and not defined(_UNICODE)
-
+ifndef _UNICODE
                     .if ( bufferiswide && textlen )
-
-                        mov rbx,text
-                        .while textlen
-
-                            .break .ifd !WideCharToMultiByte( 0, 0, rbx, 1, &mbuf, 1, 0, 0 )
-
-                            movzx ecx,mbuf
-                            write_char( ecx, fp, &charsout )
-
-                            add rbx,2
-                            sub textlen,1
-                           .break .ifs
-                        .endw
+                        .ifd ( WideCharToMultiByte( CP_CRT, 0, text, textlen, NULL, 0, 0, 0 ) <= sizeof(buffer) )
+                            mov ebx,WideCharToMultiByte( CP_CRT, 0, text, textlen, &buffer, sizeof(buffer), 0, 0 )
+                            write_string( &buffer, ebx, fp, &charsout )
+                        .else
+                            .while textlen
+                                .break .ifd !WideCharToMultiByte( CP_CRT, 0, text, 1, &mbuf, 4, 0, 0 )
+                                mov ebx,eax
+                                write_string( &mbuf, ebx, fp, &charsout )
+                                add text,2
+                                sub textlen,1
+                               .break .ifs
+                            .endw
+                        .endif
                     .else
 endif
                         write_string( text, textlen, fp, &charsout )
-if not defined(__UNIX__) and not defined(_UNICODE)
+ifndef _UNICODE
                     .endif
 endif
 

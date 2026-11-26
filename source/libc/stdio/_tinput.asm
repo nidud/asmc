@@ -11,6 +11,12 @@ include fltintrn.inc
 include winnls.inc
 include tchar.inc
 
+ifdef __UNIX__
+define CP_CRT CP_UTF8
+else
+define CP_CRT CP_ACP
+endif
+
 DIGIT   union
 q       int64_t ?
 struct
@@ -56,12 +62,15 @@ endif
     assume rbx:tstring_t
 
 _tinput proc uses rsi rdi rbx stream:LPFILE, format:tstring_t, argptr:ptr
-
    .new arglist:ptr
-if defined(__UNIX__) and defined(_AMD64_)
+ifdef __UNIX__
+   .new tchid:int_t
+   .new utfcnt:int_t
+ ifdef _AMD64_
    .new argxmm:ptr
    .new argcnt:int_t
    .new argcntsave:int_t
+ endif
 endif
    .new floatstring[_CVTBUFSIZE+3]:char_t
    .new number:DIGIT
@@ -88,7 +97,6 @@ endif
    .new suppress:char_t
    .new match:char_t
    .new fl_wchar_arg:char_t
-
     ldr rbx,format
     .if ( rbx == NULL || ldr(stream) == NULL )
         .return( _set_errno( EINVAL ) )
@@ -128,11 +136,8 @@ endif
 
         movzx ecx,[rbx]
         .break .if ( !ecx )
-
         .ifd _istspace(ecx)
-
             .while 1
-
                 mov tch,_inc(stream)
                 .return .if ( eax == -1 )
                 .ifd ( _istspace(eax) == 0 )
@@ -141,7 +146,6 @@ endif
                 .endif
             .endw
             .for ( :: rbx+=tchar_t )
-
                 movzx ecx,[rbx]
                 .break .ifd !_istspace(ecx)
             .endf
@@ -172,18 +176,14 @@ endif
                 add rbx,tchar_t
                 movzx ecx,[rbx]
                 mov comchr,ecx
-
                 .ifd _istdigit( ecx )
-
-                    inc     widthset
-                    imul    eax,width,10
-                    mov     ecx,comchr
-                    sub     ecx,'0'
-                    add     eax,ecx
-                    mov     width,eax
-
+                    inc  widthset
+                    imul eax,width,10
+                    mov  ecx,comchr
+                    sub  ecx,'0'
+                    add  eax,ecx
+                    mov  width,eax
                 .else
-
                     mov eax,comchr
                     .switch eax
                     .case 'F'
@@ -197,16 +197,12 @@ endif
                         movzx ecx,[rbx+tchar_t]
                         movzx edx,[rbx+tchar_t*2]
                         .if ( ecx == '6' && edx == '4' )
-
                             add rbx,2*tchar_t
                             inc integer64
                            .endc
-
                         .elseif ( ecx == '3' && edx == '2' )
-
                             add rbx,2*tchar_t
                            .endc
-
                         .elseif ( ecx == 'd' || ecx == 'i' || ecx == 'o' || ecx == 'x' || ecx == 'X' )
 ifdef _WIN64
                             inc integer64
@@ -217,11 +213,9 @@ ifdef _WIN64
                         inc integer64
 endif
                         jmp DEFAULT_LABEL
-
                     .case 'L'
                         inc longone
                        .endc
-
                     .case 'l'
                         .if ( [rbx+tchar_t] == 'l' )
                             add rbx,tchar_t
@@ -271,16 +265,11 @@ else
 endif
                 .endif
             .endif
-
             or eax,( 'a' - 'A' )
             mov comchr,eax
-
             .if ( eax != 'n' )
-
                 .if ( eax != 'c' )
-
                     .while 1
-
                         mov _ch,_inc(stream)
                         .break .if ( eax == -1 )
                         .break .ifd ( _istspace(eax) == 0 )
@@ -289,16 +278,12 @@ endif
                     mov _ch,_inc(stream)
                 .endif
             .endif
-
             .if ( comchr != 'n' )
-
                 .if ( _ch == -1 )
                     jmp error_return
                 .endif
             .endif
-
             .if ( !widthset || width )
-
                 mov eax,comchr
                 .switch eax
                 .case 'c'
@@ -317,42 +302,70 @@ endif
 scanit:
                     mov start,pointer
                     _un_inc(_ch, stream)
-
                     .while 1
-
                         mov eax,width
                         .if ( widthset )
-
                             dec width
                            .break .if ( eax == 0 )
                         .endif
-
                         mov _ch,_inc(stream)
                         mov ecx,comchr
                         .if ( eax != -1 && ( ecx == 'c' || ( ecx == 's' && ( !( eax >= 9 && eax <= 13 ) && eax != ' ' ) ) ) )
-
                             .if ( !suppress )
-
                                 mov rcx,pointer
                                 mov eax,_ch
                                 .if ( fl_wchar_arg )
-if not defined(_UNICODE) and not defined(__UNIX__)
-                                    mov tch,eax
-                                    mov _ch,'?'
-                                    .ifd isleadbyte( eax )
-
-                                        _inc(stream)
-                                        mov byte ptr tch[1],al
-                                        mov ecx,2
+                                  ifndef _UNICODE
+                                    .if ( eax < 0x80 ) ; 7-bit ASCII --> 1:1
+                                        mov rcx,pointer
+                                        mov [rcx],ax
+                                        add rcx,2
                                     .else
-                                        mov ecx,1
+                                        mov byte ptr tch,al
+                                        mov _ch,'?'
+                                      ifdef __UNIX__
+                                        mov edx,eax
+                                        and edx,0xF8
+                                        mov eax,4
+                                        .if ( edx != 0xF0 )
+                                            and edx,0xF0
+                                            dec eax
+                                            .if ( edx != 0xE0 )
+                                                dec eax
+                                            .endif
+                                        .endif
+                                        .for ( utfcnt = eax, tchid = 1 : tchid < utfcnt : tchid++ )
+                                            _inc(stream)
+                                            .break .ifs ( eax == EOF )
+                                            mov ecx,tchid
+                                            mov byte ptr tch[rcx],al
+                                        .endf
+                                        mov ecx,tchid
+                                      else
+                                        .ifd isleadbyte( eax )
+                                            _inc(stream)
+                                            mov byte ptr tch[1],al
+                                            mov ecx,2
+                                        .else
+                                            mov ecx,1
+                                        .endif
+                                      endif
+                                        MultiByteToWideChar(CP_CRT, 0, &tch, ecx, &_ch, 2)
+                                        mov rcx,pointer
+                                        cmp eax,2
+                                        mov eax,_ch
+                                        mov [rcx],ax
+                                        lea rcx,[rcx+2]
+                                        .ifz
+                                            shr eax,16
+                                            mov [rcx],ax
+                                            add rcx,2
+                                        .endif
                                     .endif
-                                    MultiByteToWideChar(CP_ACP, 0, &tch, ecx, &_ch, 1)
-                                    mov eax,_ch
-                                    mov rcx,pointer
-endif
+                                  else
                                     mov [rcx],ax
                                     add rcx,2
+                                  endif
                                 .else
                                     mov [rcx],al
                                     inc rcx
@@ -366,13 +379,11 @@ endif
                             .break
                         .endif
                     .endw
-
                     mov rcx,pointer
                     .if ( start != rcx )
                         .if ( !suppress )
                             inc count
                             .if ( comchr != 'c' )
-
                                 xor eax,eax
                                 .if ( fl_wchar_arg )
                                     mov [rcx],ax
@@ -385,16 +396,12 @@ endif
                         .endif
                     .endif
                     .endc
-
                 .case 'i'
                     mov comchr,'d'
                 .case 'x'
-
                     .if ( _ch == '-' )
-
                         inc negative
                         jmp x_incwidth
-
                     .elseif ( _ch == '+' )
 x_incwidth:
                         dec width
@@ -404,14 +411,10 @@ x_incwidth:
                             mov _ch,_inc(stream)
                         .endif
                     .endif
-
                     .if ( _ch == '0' )
-
                         mov _ch,_inc(stream)
                         .if ( eax == 'x' || eax == 'X' )
-
                             mov _ch,_inc(stream)
-
                             .if ( widthset )
                                 sub width,2
                                 .if ( width < 1 )
@@ -443,9 +446,7 @@ endif
                 .case 'o'
                 .case 'u'
                 .case 'd'
-
                     .if ( _ch == '-' )
-
                         inc negative
                         jmp d_incwidth
 
@@ -461,9 +462,7 @@ d_incwidth:
 
 getnum:
                     .while ( !done_flag )
-
                         .if ( comchr == 'x' || comchr == 'p' )
-
                             .ifd _istxdigit(_ch)
 ifdef _WIN64
                                 shl number.q,4
@@ -479,9 +478,7 @@ endif
                             .else
                                 inc done_flag
                             .endif
-
                         .elseifd _istdigit(_ch)
-
                             .if ( comchr == 'o' )
                                 .if ( _ch <= '8' )
 ifdef _WIN64
@@ -519,9 +516,7 @@ endif
                         .else
                             inc done_flag
                         .endif
-
                         .if ( !done_flag )
-
                             inc started
                             mov eax,_ch
                             sub eax,'0'
@@ -530,7 +525,6 @@ ifndef _WIN64
                             adc number.h,0
 endif
                             dec width
-
                             .if ( widthset && !width )
                                 inc done_flag
                             .else
@@ -540,7 +534,6 @@ endif
                             _un_inc(_ch, stream)
                         .endif
                     .endw
-
                     .if ( negative )
 ifdef _WIN64
                         neg number.q
@@ -554,14 +547,11 @@ else
                         mov number.h,edx
 endif
                     .endif
-
                     .if ( comchr == 'F' )
                         mov started,0
                     .endif
-
                     .if ( started )
                         .if ( !suppress )
-
                             inc count
 assign_num:
                             mov rcx,pointer
@@ -582,7 +572,6 @@ endif
                         jmp error_return
                     .endif
                     .endc
-
                 .case 'n'
                     mov eax,charcount
                     mov size_t ptr number.q,rax
@@ -590,36 +579,28 @@ endif
                         jmp assign_num
                     .endif
                     .endc
-
-
                 .case 'e'
                 .case 'f'
                 .case 'g'
                     mov nFloatStrUsed,0
                     mov eax,_ch
                     .if ( eax == '-' )
-
                         mov ecx,nFloatStrUsed
                         inc nFloatStrUsed
                         mov floatstring[rcx],al
                         jmp f_incwidth
-
                     .elseif ( eax == '+' )
 f_incwidth:
                         dec width
                         mov _ch,_inc(stream)
                     .endif
-
                     .if ( !widthset )
                         mov width,-1
                     .endif
-
                     .whiled _istdigit(_ch)
-
                         mov eax,width
                         dec width
                         .break .if !eax
-
                         inc started
                         mov ecx,nFloatStrUsed
                         mov eax,_ch
@@ -630,16 +611,12 @@ f_incwidth:
                         .endif
                         mov _ch,_inc(stream)
                     .endw
-
                     xor eax,eax
                     .if ( _ch == '.' )
-
                         mov eax,width
                         dec width
                     .endif
-
                     .if ( eax )
-
                         mov _ch,_inc(stream)
                         mov ecx,nFloatStrUsed
                         mov eax,'.'
@@ -648,13 +625,10 @@ f_incwidth:
                         .if ( ecx >= lengthof(floatstring)-1 )
                             jmp error_return
                         .endif
-
                         .whiled _istdigit(_ch)
-
                             mov eax,width
                             dec width
                             .break .if !eax
-
                             inc started
                             mov ecx,nFloatStrUsed
                             mov eax,_ch
@@ -666,16 +640,12 @@ f_incwidth:
                             mov _ch,_inc(stream)
                         .endw
                     .endif
-
                     xor eax,eax
                     .if ( started && ( _ch == 'e' || _ch == 'E' ) )
-
                         mov eax,width
                         dec width
                     .endif
-
                     .if ( eax )
-
                         mov ecx,nFloatStrUsed
                         mov eax,'e'
                         inc nFloatStrUsed
@@ -684,9 +654,7 @@ f_incwidth:
                             jmp error_return
                         .endif
                         mov _ch,_inc(stream)
-
                         .if ( _ch == '-' )
-
                             mov ecx,nFloatStrUsed
                             mov eax,'-'
                             inc nFloatStrUsed
@@ -695,7 +663,6 @@ f_incwidth:
                                 jmp error_return
                             .endif
                             jmp f_incwidth2
-
                         .elseif ( _ch == '+' )
 f_incwidth2:
                             mov eax,width
@@ -706,9 +673,7 @@ f_incwidth2:
                                 mov _ch,_inc(stream)
                             .endif
                         .endif
-
                         .whiled _istdigit(_ch)
-
                             mov eax,width
                             dec width
                             .break .if !eax
@@ -722,13 +687,10 @@ f_incwidth2:
                             .endif
                             mov _ch,_inc(stream)
                         .endw
-
                     .endif
                     _un_inc(_ch, stream)
-
                     .if ( started )
                         .if ( !suppress )
-
                             inc count
                             mov ecx,nFloatStrUsed
                             xor eax,eax
@@ -743,7 +705,6 @@ f_incwidth2:
                         jmp error_return
                     .endif
                     .endc
-
                 .default
                     movzx eax,[rbx]
                     .if ( eax != _ch )
@@ -765,9 +726,7 @@ endif
                 jmp error_return
             .endif
             add rbx,tchar_t
-
         .else
-
             .if ( [rbx] == '%' && [rbx+tchar_t] == '%' )
                 add rbx,tchar_t
             .endif

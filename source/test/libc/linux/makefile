@@ -3,9 +3,14 @@
 .asm.obj:
 	asmc64 -q -Cs -MT -Fe$*.exe $<
 
-OBJS =	localtime.obj systemtime.obj
+OBJS =	localtime.obj \
+	systemtime.obj \
+	widechar.obj \
+	searchpath.obj \
+	memory.obj \
+	clipboard.obj
 
 build:	$(OBJS)
 
 clean:
-	rm -f *.o* *.exe
+	rm -f *.o *.exe

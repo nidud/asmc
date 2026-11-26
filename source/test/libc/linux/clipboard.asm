@@ -9,7 +9,8 @@
 ; - echo "DISPLAY=$DISPLAY WAYLAND_DISPLAY=$WAYLAND_DISPLAY"
 ; - in WSL WAYLAND_DISPLAY is defined without binaries
 ;   the copied text is avilable in Windows and right-click
-;   in the Linux terminal, but no luck using the keyboard
+;   in the Linux terminal.
+; - using keyboard works in sample /gtk-4.0/search-bar.asm
 ;
 ; Build and debug:
 ;   asmc64 -MT -Zd clipboard.asm

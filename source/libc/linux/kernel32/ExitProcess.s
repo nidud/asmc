@@ -6,11 +6,12 @@
 
 include stdlib.inc
 include winbase.inc
+include sys/syscall.inc
 
 .code
 
  ExitProcess proc WINAPI retval:UINT
-    exit(ldr(retval))
+    sys_exit(ldr(retval))
     ret
     endp
 
